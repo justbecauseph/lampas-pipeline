@@ -1,0 +1,65 @@
+name: Release Modpack
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "lampas-pack-v*"
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Target release channel"
+        required: true
+        default: "stable"
+        type: choice
+        options:
+          - stable
+          - beta
+          - dev
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Validate pack definitions
+        run: bun run lampasctl validate
+
+      - name: Build published manifests
+        run: bun run lampasctl manifest
+
+      - name: Compile standalone lampasctl binary
+        run: bun run build:cli
+
+      - name: Publish to Lampas Portal
+        if: env.PORTAL_URL != '' && env.PACK_PUBLISH_SECRET != ''
+        env:
+          PORTAL_URL: ${{ secrets.PORTAL_URL }}
+          PACK_PUBLISH_SECRET: ${{ secrets.PACK_PUBLISH_SECRET }}
+        run: |
+          CHANNEL="${{ github.event.inputs.channel || 'stable' }}"
+          bun run lampasctl publish --portal "$PORTAL_URL" --secret "$PACK_PUBLISH_SECRET" --channel "$CHANNEL"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            manifest/client-manifest.json
+            manifest/server-manifest.json
+            manifest/release.json
+            lampasctl
+            lampasctl.exe
+          generate_release_notes: true

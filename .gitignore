@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build outputs & executables
+/dist/
+/build/
+/lampasctl.exe
+/lampasctl
+
+# Local test instances & runtime directories
+test-instance/
+.lampas/
+.minecraft-lampas/
+.minecraft-lampas-update/
+instance/
+
+# Temporary files & logs
+*.log
+*.tmp
+*.tmp.*
+*.bak
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.suo
+*.user
