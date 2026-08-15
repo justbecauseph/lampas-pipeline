@@ -113,13 +113,12 @@ window.lampas.game.onExit((code) => {
 // Auth & Profile Management
 function updateUserUI(user) {
   currentUser = user;
-  const authButtons = document.getElementById("auth-buttons");
 
   if (user) {
-    authButtons?.classList.add("hidden");
+    btnLogin.classList.add("hidden");
     userCard.classList.remove("hidden");
     userName.innerText = user.minecraftUsername || user.name || user.discordTag || "Player";
-    userRole.innerText = user.isTech ? "Tech Staff" : user.isAdmin ? "Admin" : "Online MSA";
+    userRole.innerText = user.isTech ? "Tech Staff" : user.isAdmin ? "Admin" : "Verified";
     userAvatar.innerText = (user.minecraftUsername || user.name || "U")[0].toUpperCase();
 
     // Channel gating
@@ -129,7 +128,7 @@ function updateUserUI(user) {
       btn.disabled = !allowed.includes(ch);
     });
   } else {
-    authButtons?.classList.remove("hidden");
+    btnLogin.classList.remove("hidden");
     userCard.classList.add("hidden");
     channelBtns.forEach((btn) => {
       btn.disabled = btn.dataset.channel !== "stable";
