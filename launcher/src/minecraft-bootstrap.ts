@@ -1,11 +1,23 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { createHash } from "node:crypto";
+import { unzipSync } from "fflate";
+import versionMeta262 from "./version-meta-26.2.json";
 
 interface MavenCoordinate {
   name: string;
   url?: string;
   sha1?: string;
+  rules?: Array<{ action: "allow" | "disallow"; os?: { name: string } }>;
+  downloads?: {
+    artifact?: {
+      sha1: string;
+      size: number;
+      url: string;
+      path?: string;
+    };
+    classifiers?: Record<string, { sha1: string; size: number; url: string; path?: string }>;
+  };
 }
 
 function parseMavenCoordinate(name: string): { group: string; artifact: string; version: string; classifier?: string } {
@@ -28,20 +40,28 @@ function computeFileSha1(filePath: string): string {
   return createHash("sha1").update(buffer).digest("hex");
 }
 
-// Minecraft 26.2 Official Client Metadata & Core Libraries
-const MC_26_2_CLIENT_JAR = {
-  url: "https://piston-data.mojang.com/v1/objects/2dc72797acbc1b63fc16a11c4ac393605f453754/client.jar",
-  sha1: "2dc72797acbc1b63fc16a11c4ac393605f453754",
-  size: 39193383,
-};
+function isLibraryAllowed(lib: MavenCoordinate): boolean {
+  if (!lib.rules || lib.rules.length === 0) return true;
 
-const MC_26_2_ASSET_INDEX = {
-  id: "32",
-  url: "https://piston-meta.mojang.com/v1/packages/cf75b185cb35b32e299b0c8e674fa202d7911a3c/32.json",
-  sha1: "cf75b185cb35b32e299b0c8e674fa202d7911a3c",
-};
+  const currentOs = process.platform === "win32" ? "windows" : process.platform === "darwin" ? "osx" : "linux";
+  let allowed = false;
 
-const FABRIC_LOADER_LIBRARIES: MavenCoordinate[] = [
+  for (const rule of lib.rules) {
+    if (rule.action === "allow") {
+      if (!rule.os || rule.os.name === currentOs) {
+        allowed = true;
+      }
+    } else if (rule.action === "disallow") {
+      if (rule.os && rule.os.name === currentOs) {
+        allowed = false;
+      }
+    }
+  }
+
+  return allowed;
+}
+
+const FABRIC_LOADER_LIBRARIES = [
   { name: "org.ow2.asm:asm:9.10.1", url: "https://maven.fabricmc.net/" },
   { name: "org.ow2.asm:asm-analysis:9.10.1", url: "https://maven.fabricmc.net/" },
   { name: "org.ow2.asm:asm-commons:9.10.1", url: "https://maven.fabricmc.net/" },
@@ -53,10 +73,11 @@ const FABRIC_LOADER_LIBRARIES: MavenCoordinate[] = [
 ];
 
 export class MinecraftBootstrap {
-  private static async downloadFile(url: string, destPath: string, expectedSha1?: string): Promise<void> {
+  private static async downloadFile(url: string, destPath: string, expectedSha1?: string): Promise<Buffer> {
     if (fs.existsSync(destPath)) {
-      if (!expectedSha1 || computeFileSha1(destPath) === expectedSha1) {
-        return;
+      const existing = fs.readFileSync(destPath);
+      if (!expectedSha1 || createHash("sha1").update(existing).digest("hex") === expectedSha1) {
+        return existing;
       }
     }
 
@@ -75,6 +96,26 @@ export class MinecraftBootstrap {
     }
 
     fs.writeFileSync(destPath, buffer);
+    return buffer;
+  }
+
+  private static extractNatives(jarBuffer: Buffer, nativesDir: string): void {
+    try {
+      const unzipped = unzipSync(new Uint8Array(jarBuffer));
+      for (const [filename, fileBytes] of Object.entries(unzipped)) {
+        if (
+          filename.endsWith(".dll") ||
+          filename.endsWith(".so") ||
+          filename.endsWith(".dylib") ||
+          filename.endsWith(".jnilib")
+        ) {
+          const dest = path.join(nativesDir, path.basename(filename));
+          fs.writeFileSync(dest, Buffer.from(fileBytes));
+        }
+      }
+    } catch {
+      // Ignore non-zip or corrupt native jars
+    }
   }
 
   static async prepareGameEnvironment(
@@ -96,14 +137,15 @@ export class MinecraftBootstrap {
     onLog(`[Bootstrap] Resolving Minecraft ${mcVersion} environment (Fabric Loader ${fabricVersion})...`);
 
     // 1. Download Minecraft 26.2 Client JAR
+    const clientJar = versionMeta262.mainJar.downloads.artifact;
     const clientJarPath = path.join(versionsDir, `${mcVersion}-client.jar`);
     onLog(`[Bootstrap] Verifying Minecraft ${mcVersion} client JAR...`);
-    await this.downloadFile(MC_26_2_CLIENT_JAR.url, clientJarPath, MC_26_2_CLIENT_JAR.sha1);
+    await this.downloadFile(clientJar.url, clientJarPath, clientJar.sha1);
 
     const classpath: string[] = [clientJarPath];
 
-    // 2. Download Fabric Loader 0.19.3 & Intermediary 26.2 libraries
-    onLog(`[Bootstrap] Verifying Fabric Loader & Intermediary libraries...`);
+    // 2. Download Fabric Loader 0.19.3 & Intermediary 26.2
+    onLog(`[Bootstrap] Verifying Fabric Loader & Intermediary...`);
     for (const lib of FABRIC_LOADER_LIBRARIES) {
       const coord = parseMavenCoordinate(lib.name);
       const relPath = mavenToPath(coord);
@@ -115,12 +157,44 @@ export class MinecraftBootstrap {
       classpath.push(destPath);
     }
 
-    // 3. Download Asset Index 32
+    // 3. Download Mojang & LWJGL 3.4.1 Libraries (Fastutil, Gson, Guava, Log4j, LWJGL, etc.)
+    const allLibs = (versionMeta262.libraries || []) as MavenCoordinate[];
+    const allowedLibs = allLibs.filter(isLibraryAllowed);
+    onLog(`[Bootstrap] Verifying ${allowedLibs.length} core game libraries (Mojang & LWJGL)...`);
+
+    for (const lib of allowedLibs) {
+      const coord = parseMavenCoordinate(lib.name);
+      const relPath = mavenToPath(coord);
+      const destPath = path.join(librariesDir, relPath);
+
+      let downloadUrl = lib.downloads?.artifact?.url;
+      let expectedSha1 = lib.downloads?.artifact?.sha1;
+
+      if (!downloadUrl) {
+        const repoUrl = lib.url || "https://libraries.minecraft.net/";
+        downloadUrl = `${repoUrl.replace(/\/+$/, "")}/${relPath}`;
+      }
+
+      const buffer = await this.downloadFile(downloadUrl, destPath, expectedSha1);
+      classpath.push(destPath);
+
+      // Extract platform natives if this library is a native bundle
+      if (
+        coord.classifier?.includes("natives") ||
+        coord.artifact.includes("natives") ||
+        lib.name.includes("natives")
+      ) {
+        this.extractNatives(buffer, nativesDir);
+      }
+    }
+
+    // 4. Download Asset Index 32
+    const assetIndex = versionMeta262.assetIndex;
     const assetIndexDir = path.join(assetsDir, "indexes");
-    const assetIndexPath = path.join(assetIndexDir, `${MC_26_2_ASSET_INDEX.id}.json`);
+    const assetIndexPath = path.join(assetIndexDir, `${assetIndex.id}.json`);
     if (!fs.existsSync(assetIndexPath)) {
-      onLog(`[Bootstrap] Downloading Minecraft 26.2 asset index (${MC_26_2_ASSET_INDEX.id})...`);
-      await this.downloadFile(MC_26_2_ASSET_INDEX.url, assetIndexPath, MC_26_2_ASSET_INDEX.sha1);
+      onLog(`[Bootstrap] Downloading Minecraft 26.2 asset index (${assetIndex.id})...`);
+      await this.downloadFile(assetIndex.url, assetIndexPath, assetIndex.sha1);
     }
 
     const mainClass = "net.fabricmc.loader.impl.launch.knot.KnotClient";
@@ -128,7 +202,7 @@ export class MinecraftBootstrap {
     return {
       classpath,
       mainClass,
-      assetIndex: MC_26_2_ASSET_INDEX.id,
+      assetIndex: assetIndex.id,
     };
   }
 }
