@@ -489,6 +489,22 @@ The launcher stores downloaded artifacts in `cache/sha256/<hash-prefix>/<hash>`.
 
 ---
 
+### Zero Third-Party Launcher Dependencies Mandate
+The Lampas Launcher is **100% standalone and self-sufficient**. It does **NOT** depend on PrismLauncher, CurseForge App, MultiMC, or the official Minecraft Launcher.
+
+1. **Self-Contained Game Environment**:
+   - Manages its own isolated game root in `.minecraft-lampas`.
+   - Provisions Minecraft 26.2 client JAR (`piston-data.mojang.com`).
+   - Downloads all 174 core Mojang (`fastutil`, `log4j`, `gson`, `guava`, `authlib`, `brigadier`, `netty`, etc.) and LWJGL 3.4.1 runtime libraries.
+   - Extracts native binaries (`.dll`, `.so`, `.dylib`) directly into `.minecraft-lampas/natives/`.
+   - Downloads Fabric Loader `0.19.3` and Intermediary `26.2` (`maven.fabricmc.net`).
+2. **Direct KnotClient JVM Execution**:
+   - Dynamically constructs the complete Java classpath string containing all runtime libraries and the client JAR.
+   - Spawns the standard OpenJDK Java 21+ runtime invoking `net.fabricmc.loader.impl.launch.knot.KnotClient` with optimized G1GC JVM parameters.
+   - Streams live game output (`stdout`/`stderr`) directly into the launcher's built-in console without relying on external wrappers.
+
+---
+
 ## 13. Dedicated Server Pipeline (`lampas-server-fabric`)
 
 The dedicated server at [`C:\Users\markj\source\repos\lampas-server-fabric`](file:///C:/Users/markj/source/repos/lampas-server-fabric) uses `server-manifest.json`:
