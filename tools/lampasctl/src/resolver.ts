@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseTomlFile, writeJsonFile } from "./utils";
 import { ArtifactResolver } from "./providers";
+import { enrichPackLock } from "./enricher";
 import type { ModDefinition, PackConfig, PackLock, ResolvedArtifact } from "./types";
 
 export interface ResolveOptions {
@@ -74,6 +75,13 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
 
   writeJsonFile(options.lockFile, lock, true);
   console.log(`\n[Resolver] Successfully resolved ${Object.keys(artifacts).length} artifacts to ${options.lockFile}`);
+
+  // Automatically enrich metadata from Modrinth
+  try {
+    await enrichPackLock({ packDir: options.packDir, lockFile: options.lockFile });
+  } catch (enrichErr: any) {
+    console.warn(`[Resolver Warning] Failed to enrich metadata: ${enrichErr.message}`);
+  }
 
   return lock;
 }

@@ -428,4 +428,34 @@ export class LauncherSync {
       packName: syncResult.packName,
     };
   }
+
+  static async getModCatalog(): Promise<any[]> {
+    const config = ConfigManager.get();
+    const portalUrl = (config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const channel = config.selectedChannel || "stable";
+
+    try {
+      const channelResp = await fetch(`${portalUrl}/api/v1/channels/${channel}`);
+      if (channelResp.ok) {
+        const channelData = await channelResp.json();
+        const manifestResp = await fetch(`${portalUrl}/api/v1/releases/${channelData.version}/client-manifest`);
+        if (manifestResp.ok) {
+          const manifest = await manifestResp.json();
+          if (manifest.mods && Array.isArray(manifest.mods)) {
+            return manifest.mods;
+          }
+        }
+      }
+    } catch {}
+
+    const localManifestPath = path.join(__dirname, "../../manifest/client-manifest.json");
+    if (fs.existsSync(localManifestPath)) {
+      try {
+        const manifest = JSON.parse(fs.readFileSync(localManifestPath, "utf-8"));
+        return manifest.mods || [];
+      } catch {}
+    }
+
+    return [];
+  }
 }

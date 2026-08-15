@@ -79,6 +79,7 @@ app.whenReady().then(() => {
       (log) => mainWindow?.webContents.send("game:log", log)
     );
   });
+  ipcMain.handle("sync:getModCatalog", () => LauncherSync.getModCatalog());
 
   // IPC Handlers: Game
   ipcMain.handle("game:launch", async (_, user: UserProfile | null) => {

@@ -9,6 +9,7 @@ import { publishRelease } from "./publisher";
 import { checkPackUpdates } from "./checker";
 import { diffManifests } from "./diff";
 import { addMod, removeMod } from "./manager";
+import { enrichPackLock } from "./enricher";
 
 function printUsage() {
   console.log(`
@@ -271,6 +272,16 @@ async function main() {
           toManifestPath: path.resolve(toManifest),
           markdownOut,
         });
+        break;
+      }
+
+      case "enrich": {
+        const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
+        const lockFile = path.resolve(flags.lock || path.join(packDir, "pack.lock.json"));
+        const outDir = path.resolve(flags.out || path.join(rootDir, "manifest"));
+
+        await enrichPackLock({ packDir, lockFile });
+        await buildManifests({ packDir, lockFile, outDir, portalBaseUrl: flags.portal });
         break;
       }
 

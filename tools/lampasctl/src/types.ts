@@ -48,6 +48,16 @@ export interface ModDefinition {
   notes?: string;
 }
 
+export interface ModMetadata {
+  description?: string;
+  iconUrl?: string;
+  categories?: string[];
+  sourceUrl?: string;
+  clientSide?: string;
+  serverSide?: string;
+  author?: string;
+}
+
 export interface ResolvedArtifact {
   id: string;
   name: string;
@@ -64,6 +74,7 @@ export interface ResolvedArtifact {
     versionId?: string | number;
     file?: string;
   };
+  metadata?: ModMetadata;
 }
 
 export interface PackLock {
@@ -93,6 +104,18 @@ export interface ManifestFile {
   policy: FilePolicy;
 }
 
+export interface ModCatalogEntry {
+  id: string;
+  name: string;
+  side: Side;
+  filename: string;
+  size: number;
+  description?: string;
+  iconUrl?: string;
+  categories?: string[];
+  sourceUrl?: string;
+}
+
 export interface PackManifest {
   schemaVersion: number;
   pack: string;
@@ -104,6 +127,7 @@ export interface PackManifest {
     version: string;
   };
   protocol: number;
+  mods?: ModCatalogEntry[];
   files: ManifestFile[];
 }
 
@@ -122,6 +146,8 @@ export interface ReleaseDescriptor {
   created: string;
   clientManifest: string;
   serverManifest: string;
+  totalMods?: number;
+  totalFiles?: number;
 }
 
 export interface InstallationState {

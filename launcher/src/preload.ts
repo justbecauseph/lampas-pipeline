@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld("lampas", {
       ipcRenderer.invoke("sync:start"),
     repair: (): Promise<{ success: boolean; message: string; version: string; packName: string }> =>
       ipcRenderer.invoke("sync:repair"),
+    getModCatalog: (): Promise<any[]> => ipcRenderer.invoke("sync:getModCatalog"),
     onProgress: (callback: (progress: SyncProgress) => void) => {
       const handler = (_: any, data: SyncProgress) => callback(data);
       ipcRenderer.on("sync:progress", handler);

@@ -598,9 +598,149 @@ async function init() {
         updateUserUI(null);
       }
     }
+
+    // Load rich mod catalog
+    await loadModCatalog();
   } catch (err) {
     console.error("Initialization error:", err);
   }
 }
 
+// ========================================================
+// Mod Explorer & Metadata Catalog
+// ========================================================
+let allMods = [];
+let activeModFilter = "all";
+let activeModSearch = "";
+
+const modsGrid = document.getElementById("mods-grid");
+const modsSearchInput = document.getElementById("mods-search-input");
+const modsFilteredCount = document.getElementById("mods-filtered-count");
+const modFilterPills = document.querySelectorAll(".mod-filter-pill");
+
+function formatBytes(bytes) {
+  if (!bytes || isNaN(bytes)) return "N/A";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function renderMods() {
+  if (!modsGrid) return;
+
+  const query = (activeModSearch || "").toLowerCase().trim();
+  const filter = (activeModFilter || "all").toLowerCase();
+
+  const filtered = allMods.filter((mod) => {
+    // Filter check
+    if (filter === "client" && mod.side !== "client") return false;
+    if (filter === "server" && mod.side !== "server") return false;
+    if (filter === "both" && mod.side !== "both") return false;
+    if (filter !== "all" && filter !== "client" && filter !== "server" && filter !== "both") {
+      const cats = (mod.categories || []).map((c) => c.toLowerCase());
+      if (!cats.includes(filter)) return false;
+    }
+
+    // Search query check
+    if (query) {
+      const matchName = (mod.name || "").toLowerCase().includes(query);
+      const matchId = (mod.id || "").toLowerCase().includes(query);
+      const matchDesc = (mod.description || "").toLowerCase().includes(query);
+      const matchCats = (mod.categories || []).some((c) => c.toLowerCase().includes(query));
+      if (!matchName && !matchId && !matchDesc && !matchCats) return false;
+    }
+
+    return true;
+  });
+
+  if (modsFilteredCount) {
+    modsFilteredCount.innerText = `${filtered.length} of ${allMods.length}`;
+  }
+
+  if (filtered.length === 0) {
+    modsGrid.innerHTML = `
+      <div class="col-span-2 py-12 text-center text-slate-500 text-xs">
+        No mods found matching your search and filter criteria.
+      </div>
+    `;
+    return;
+  }
+
+  modsGrid.innerHTML = filtered
+    .map((mod) => {
+      const sideBadge =
+        mod.side === "client"
+          ? '<span class="text-[9px] font-bold text-cyan-400 bg-cyan-950/80 border border-cyan-800/60 px-1.5 py-0.5 rounded-md">CLIENT ONLY</span>'
+          : mod.side === "server"
+          ? '<span class="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-1.5 py-0.5 rounded-md">SERVER ONLY</span>'
+          : '<span class="text-[9px] font-bold text-indigo-400 bg-indigo-950/80 border border-indigo-800/60 px-1.5 py-0.5 rounded-md">DUAL-SIDED</span>';
+
+      const iconHtml = mod.iconUrl
+        ? `<img src="${mod.iconUrl}" class="w-8 h-8 rounded-lg object-contain bg-slate-900 border border-slate-800 flex-shrink-0" loading="lazy" />`
+        : `<div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-black text-xs text-indigo-400 flex-shrink-0">${(mod.name || "M")[0].toUpperCase()}</div>`;
+
+      const catsHtml = (mod.categories || [])
+        .slice(0, 3)
+        .map((c) => `<span class="text-[9px] text-slate-500 bg-slate-950 px-1.5 py-0.5 rounded">#${c}</span>`)
+        .join(" ");
+
+      const linkBtn = mod.sourceUrl
+        ? `<button onclick="window.lampas.utils.openPath('${mod.sourceUrl}')" class="text-[10px] text-slate-400 hover:text-indigo-400 transition-colors ml-auto">View ↗</button>`
+        : "";
+
+      return `
+        <div class="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700/80 transition-all flex flex-col justify-between space-y-2">
+          <div class="flex items-start gap-3">
+            ${iconHtml}
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-1">
+                <h5 class="font-bold text-xs text-white truncate" title="${mod.name}">${mod.name}</h5>
+                ${sideBadge}
+              </div>
+              <p class="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${mod.description || "Synchronized modpack component."}</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-1 border-t border-slate-900/80 text-[10px] text-slate-500 font-mono">
+            <div class="flex items-center gap-1 overflow-hidden">
+              ${catsHtml}
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span>${formatBytes(mod.size)}</span>
+              ${linkBtn}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+async function loadModCatalog() {
+  try {
+    if (window.lampas.sync?.getModCatalog) {
+      allMods = await window.lampas.sync.getModCatalog();
+      renderMods();
+    }
+  } catch (err) {
+    console.warn("Failed to load mod catalog:", err);
+  }
+}
+
+if (modsSearchInput) {
+  modsSearchInput.oninput = (e) => {
+    activeModSearch = e.target.value;
+    renderMods();
+  };
+}
+
+modFilterPills.forEach((pill) => {
+  pill.onclick = () => {
+    modFilterPills.forEach((p) => p.classList.remove("active"));
+    pill.classList.add("active");
+    activeModFilter = pill.dataset.filter || "all";
+    renderMods();
+  };
+});
+
 init();
+
