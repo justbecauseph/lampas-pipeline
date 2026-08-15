@@ -6,6 +6,8 @@ import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
 import { syncInstance } from "./sync";
 import { publishRelease } from "./publisher";
+import { checkPackUpdates } from "./checker";
+import { diffManifests } from "./diff";
 
 function printUsage() {
   console.log(`
@@ -44,6 +46,16 @@ Commands:
     --manifest <path>   Path to client-manifest.json or server-manifest.json
     --target <path>     Target Minecraft instance directory
     --portal <url>      Lampas Portal base URL (optional)
+
+  check-updates         Check Modrinth & CurseForge for newer upstream releases
+    --pack <path>       Pack directory (default: ./pack)
+    --apply             Automatically update TOML descriptors with latest version IDs
+    --markdown <path>   Write markdown summary to file (useful for GitHub Actions / PRs)
+
+  diff                  Compare two pack manifests for added/removed/updated mods & size delta
+    --from <path>       Base manifest (e.g. previous release client-manifest.json)
+    --to <path>         Target manifest (e.g. new release client-manifest.json)
+    --markdown <path>   Write markdown diff to file
 
   help                  Show this help message
 `);
@@ -151,6 +163,38 @@ async function main() {
           manifestPath: path.resolve(manifestPath),
           targetDir: path.resolve(targetDir),
           portalBaseUrl: flags.portal,
+        });
+        break;
+      }
+
+      case "check-updates": {
+        const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
+        const apply = flags.apply === "true";
+        const markdownOut = flags.markdown ? path.resolve(flags.markdown) : undefined;
+
+        await checkPackUpdates({
+          packDir,
+          apply,
+          markdownOut,
+        });
+        break;
+      }
+
+      case "diff": {
+        const fromManifest = flags.from;
+        const toManifest = flags.to;
+        const markdownOut = flags.markdown ? path.resolve(flags.markdown) : undefined;
+
+        if (!fromManifest || !toManifest) {
+          console.error("Error: --from and --to are required for 'diff'");
+          printUsage();
+          process.exit(1);
+        }
+
+        await diffManifests({
+          fromManifestPath: path.resolve(fromManifest),
+          toManifestPath: path.resolve(toManifest),
+          markdownOut,
         });
         break;
       }

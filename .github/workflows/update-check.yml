@@ -1,13 +1,17 @@
-name: Check Mod Updates
+name: Upstream Modpack Update Checker
 
 on:
   schedule:
-    # Run daily at 06:00 UTC
-    - cron: "0 6 * * *"
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  check-updates:
+  check-and-update:
     name: Check Upstream Mod Updates
     runs-on: ubuntu-latest
 
@@ -23,5 +27,34 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Validate current definitions
-        run: bun run lampasctl validate
+      - name: Run Upstream Update Checker
+        id: check_updates
+        run: |
+          bun run tools/lampasctl/src/cli.ts check-updates --apply --markdown update_report.md
+          if [ -f update_report.md ]; then
+            echo "updates_found=true" >> "$GITHUB_OUTPUT"
+            cat update_report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "updates_found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-resolve pack and build manifests
+        if: steps.check_updates.outputs.updates_found == 'true'
+        run: |
+          bun run tools/lampasctl/src/cli.ts resolve
+          bun run tools/lampasctl/src/cli.ts validate
+          bun run tools/lampasctl/src/cli.ts manifest
+
+      - name: Create Pull Request with Updates
+        if: steps.check_updates.outputs.updates_found == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update upstream mod releases"
+          title: "chore(deps): upstream modpack updates"
+          body-path: update_report.md
+          branch: bot/automated-mod-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated-pr
