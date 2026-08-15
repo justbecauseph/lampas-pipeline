@@ -41,10 +41,13 @@ export type ProviderConfig =
       size?: number;
     };
 
+export type ArtifactType = "mod" | "shader" | "resourcepack";
+
 export interface ModDefinition {
   name: string;
   side: Side;
   provider: ProviderConfig;
+  type?: ArtifactType;
   notes?: string;
 }
 
@@ -68,6 +71,8 @@ export interface ResolvedArtifact {
   sha512?: string;
   sha1?: string;
   downloadUrl: string;
+  targetDir?: string;
+  artifactType?: ArtifactType;
   provider: {
     type: "modrinth" | "curseforge" | "lampas" | "direct";
     projectId?: string | number;

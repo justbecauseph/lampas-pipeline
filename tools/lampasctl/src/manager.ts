@@ -108,7 +108,6 @@ export async function addMod(options: AddModOptions) {
       // Direct version URL: https://modrinth.com/version/{version_id}
       const versionIdFromUrl = query.split("modrinth.com/version/")[1].split("?")[0].split("/")[0];
       explicitVersion = versionIdFromUrl;
-      // Fetch version to get project_id
       const vRes = await fetch(`https://api.modrinth.com/v2/version/${versionIdFromUrl}`, {
         headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
       });
@@ -117,13 +116,20 @@ export async function addMod(options: AddModOptions) {
       }
       const vData = await vRes.json();
       query = vData.project_id;
-    } else if (query.includes("modrinth.com/mod/")) {
-      // Mod page or mod version page: https://modrinth.com/mod/{slug}/version/{version_id_or_number}
-      const afterMod = query.split("modrinth.com/mod/")[1].split("?")[0];
-      const segments = afterMod.split("/").filter(Boolean);
-      query = segments[0];
-      if (segments.length >= 3 && segments[1] === "version" && segments[2]) {
-        explicitVersion = segments[2];
+    } else if (
+      query.includes("modrinth.com/mod/") ||
+      query.includes("modrinth.com/shader/") ||
+      query.includes("modrinth.com/resourcepack/") ||
+      query.includes("modrinth.com/datapack/")
+    ) {
+      const match = query.match(/modrinth\.com\/(?:mod|shader|resourcepack|datapack)\/([^/?#]+)/);
+      if (match) {
+        query = match[1];
+        if (query.includes("/version/")) {
+          const parts = query.split("/version/");
+          query = parts[0];
+          explicitVersion = parts[1];
+        }
       }
     } else if (query.includes("curseforge.com/minecraft/mc-mods/")) {
       const afterMod = query.split("curseforge.com/minecraft/mc-mods/")[1].split("?")[0];
@@ -156,7 +162,7 @@ export async function addMod(options: AddModOptions) {
     if (providerType === "modrinth") {
       const indent = "  ".repeat(depth);
       const verDisplay = explicitVersion ? ` (Version: ${explicitVersion})` : "";
-      console.log(`${indent}[Mod Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
+      console.log(`${indent}[Artifact Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
 
       // 1. Query project metadata
       const projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
@@ -171,9 +177,19 @@ export async function addMod(options: AddModOptions) {
       const projectId = projData.id;
       const slug = projData.slug;
       const modName = projData.title;
+      const projectType = projData.project_type || "mod";
 
-      // Automatically determine target side if not explicitly specified
-      const targetSide = detectModSide(projData, options.side);
+      // Determine side and target directory
+      let targetSide = detectModSide(projData, options.side);
+      let targetDir = modsDir;
+      if (projectType === "shader") {
+        targetSide = "client";
+        targetDir = path.join(options.packDir, "shaderpacks");
+      } else if (projectType === "resourcepack") {
+        targetSide = "client";
+        targetDir = path.join(options.packDir, "resourcepacks");
+      }
+      os_ensure_dir(targetDir);
 
       // 2. Query matching version
       let selectedVersion: any = null;
@@ -230,37 +246,37 @@ export async function addMod(options: AddModOptions) {
             `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`
           );
         }
-
-        // Check compatibility warning
-        const isMcCompatible = selectedVersion.game_versions?.includes(targetMc);
-        const isLoaderCompatible = selectedVersion.loaders?.includes(targetLoader);
-        if (!isMcCompatible || !isLoaderCompatible) {
-          console.warn(
-            `${indent}  ⚠️ [Compatibility Warning] Selected version '${selectedVersion.version_number}' is marked for MC [${selectedVersion.game_versions?.join(
-              ", "
-            )}] & loaders [${selectedVersion.loaders?.join(", ")}]. (Pipeline Target: MC ${targetMc}, ${targetLoader})`
-          );
-        }
       } else {
-        // Find latest compatible with target MC and Loader
-        const compatibleVersions = allVersions.filter(
-          (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
-        );
-
-        if (compatibleVersions.length === 0) {
-          const availableList = allVersions
-            .slice(0, 6)
-            .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
-            .join("\n");
-          throw new Error(
-            `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
-              `You can explicitly install a specific version with:\n` +
-              `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
-              `Available upstream versions:\n${availableList}`
+        if (projectType === "shader") {
+          // Shaders are largely version-agnostic / Iris compatible
+          const irisCompatible = allVersions.filter((v) =>
+            v.loaders?.some((l: string) => ["iris", "canvas", "optifine"].includes(l.toLowerCase()))
           );
-        }
+          selectedVersion = irisCompatible[0] || allVersions[0];
+        } else if (projectType === "resourcepack") {
+          const mcCompatible = allVersions.filter((v) => v.game_versions?.includes(targetMc));
+          selectedVersion = mcCompatible[0] || allVersions[0];
+        } else {
+          // Find latest compatible with target MC and Loader
+          const compatibleVersions = allVersions.filter(
+            (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
+          );
 
-        selectedVersion = compatibleVersions[0];
+          if (compatibleVersions.length === 0) {
+            const availableList = allVersions
+              .slice(0, 6)
+              .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
+              .join("\n");
+            throw new Error(
+              `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
+                `You can explicitly install a specific version with:\n` +
+                `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
+                `Available upstream versions:\n${availableList}`
+            );
+          }
+
+          selectedVersion = compatibleVersions[0];
+        }
       }
 
       const versionId: string = selectedVersion.id;
@@ -271,10 +287,11 @@ export async function addMod(options: AddModOptions) {
       const dependencies: Array<{ project_id: string | null; version_id: string | null; dependency_type: string }> =
         selectedVersion.dependencies || [];
 
-      const tomlPath = path.join(modsDir, `${slug}.toml`);
+      const tomlPath = path.join(targetDir, `${slug}.toml`);
       const def: ModDefinition = {
         name: modName,
         side: targetSide,
+        type: projectType as any,
         provider: {
           type: "modrinth",
           project_id: projectId,
@@ -283,7 +300,7 @@ export async function addMod(options: AddModOptions) {
       };
 
       writeTomlFile(tomlPath, def);
-      console.log(`\n${indent}✓ [Added Mod] ${modName} (${slug})`);
+      console.log(`\n${indent}✓ [Added ${projectType.toUpperCase()}] ${modName} (${slug})`);
       console.log(`${indent}   Provider: Modrinth (${projectId})`);
       console.log(`${indent}   Version:  ${versionNumber} [ID: ${versionId}] (${versionName})`);
       console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(auto-detected)"}`);

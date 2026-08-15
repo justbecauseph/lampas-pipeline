@@ -67,8 +67,9 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   const serverModsCatalog: ModCatalogEntry[] = [];
 
   for (const [modId, artifact] of Object.entries(lock.artifacts)) {
+    const targetDir = artifact.targetDir || (artifact.artifactType === "shader" ? "shaderpacks" : artifact.artifactType === "resourcepack" ? "resourcepacks" : "mods");
     const fileEntry: ManifestFile = {
-      path: `mods/${artifact.filename}`,
+      path: `${targetDir}/${artifact.filename}`,
       size: artifact.size,
       hashes: {
         sha256: artifact.sha256,
@@ -81,6 +82,11 @@ export async function buildManifests(options: ManifestOptions): Promise<{
       policy: "MANAGED",
     };
 
+    const categories = [...(artifact.metadata?.categories || [])];
+    if (artifact.artifactType === "shader" && !categories.includes("shader")) {
+      categories.unshift("shader");
+    }
+
     const catalogEntry: ModCatalogEntry = {
       id: modId,
       name: artifact.name || modId,
@@ -89,7 +95,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
       size: artifact.size,
       description: artifact.metadata?.description || undefined,
       iconUrl: artifact.metadata?.iconUrl || undefined,
-      categories: artifact.metadata?.categories || [],
+      categories,
       sourceUrl: artifact.metadata?.sourceUrl || undefined,
     };
 

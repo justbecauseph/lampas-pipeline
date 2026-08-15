@@ -126,6 +126,9 @@ export class ArtifactResolver {
         sha256 = hashes.sha256;
       }
 
+      const artifactType = def.type || "mod";
+      const targetDir = def.type === "shader" ? "shaderpacks" : def.type === "resourcepack" ? "resourcepacks" : "mods";
+
       return {
         id: modId,
         name: def.name,
@@ -136,6 +139,8 @@ export class ArtifactResolver {
         sha512: primaryFile.hashes.sha512,
         sha1: primaryFile.hashes.sha1,
         downloadUrl: primaryFile.url,
+        artifactType,
+        targetDir,
         provider: {
           type: "modrinth",
           projectId: provider.project_id,
@@ -152,6 +157,8 @@ export class ArtifactResolver {
 
       const hashes = computeFileHashes(filePath);
       const filename = path.basename(filePath);
+      const artifactType = def.type || (provider.file.includes("shader") ? "shader" : provider.file.includes("resource") ? "resourcepack" : "mod");
+      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
 
       return {
         id: modId,
@@ -163,6 +170,8 @@ export class ArtifactResolver {
         sha512: hashes.sha512,
         sha1: hashes.sha1,
         downloadUrl: `/api/v1/blobs/${hashes.sha256}`,
+        artifactType,
+        targetDir,
         provider: {
           type: "lampas",
           file: provider.file,
@@ -171,6 +180,9 @@ export class ArtifactResolver {
     }
 
     if (provider.type === "direct") {
+      const artifactType = def.type || "mod";
+      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
+
       return {
         id: modId,
         name: def.name,
@@ -179,6 +191,8 @@ export class ArtifactResolver {
         size: provider.size || 0,
         sha256: provider.sha256,
         downloadUrl: provider.url,
+        artifactType,
+        targetDir,
         provider: {
           type: "direct",
         },
