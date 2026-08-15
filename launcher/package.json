@@ -1,11 +1,17 @@
 {
   "name": "lampas-launcher",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Deterministic, Standalone Modpack Launcher for Lampas SMP",
   "private": true,
   "main": "dist/main.js",
+  "author": "Lampas Tech Team",
   "scripts": {
     "dev": "concurrently \"tsc -w\" \"electron .\"",
-    "build": "tsc && vite build",
+    "build": "tsc",
+    "package:dir": "tsc && electron-builder --dir",
+    "package:win": "tsc && electron-builder --win",
+    "package:linux": "tsc && electron-builder --linux",
+    "package:all": "tsc && electron-builder -mwl",
     "start": "electron ."
   },
   "dependencies": {
@@ -16,6 +22,38 @@
     "@types/node": "^22.13.9",
     "concurrently": "^9.1.2",
     "electron": "^34.3.0",
+    "electron-builder": "^26.15.3",
     "typescript": "^5.8.2"
+  },
+  "build": {
+    "appId": "gg.lampas.launcher",
+    "productName": "Lampas Launcher",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "ui/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "category": "Game"
+    }
   }
 }

@@ -1,4 +1,4 @@
-name: Release Modpack
+name: Release Modpack & Launcher
 
 on:
   push:
@@ -18,7 +18,7 @@ on:
           - dev
 
 jobs:
-  release:
+  release-pack:
     name: Build & Publish Release
     runs-on: ubuntu-latest
 
@@ -52,6 +52,12 @@ jobs:
           CHANNEL="${{ github.event.inputs.channel || 'stable' }}"
           bun run lampasctl publish --portal "$PORTAL_URL" --secret "$PACK_PUBLISH_SECRET" --channel "$CHANNEL"
 
+      - name: Build Linux Launcher Package
+        working-directory: ./launcher
+        run: |
+          bun install
+          bun run package:linux
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -62,4 +68,33 @@ jobs:
             manifest/release.json
             lampasctl
             lampasctl.exe
+            launcher/release/*.AppImage
+            launcher/release/*.tar.gz
           generate_release_notes: true
+
+  release-windows-launcher:
+    name: Build Windows Launcher Installer
+    runs-on: windows-latest
+    needs: release-pack
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build Windows Installer (.exe)
+        working-directory: ./launcher
+        run: |
+          bun install
+          bun run package:win
+
+      - name: Upload Windows Installer to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            launcher/release/*.exe
