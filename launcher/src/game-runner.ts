@@ -73,7 +73,7 @@ export class GameRunner {
     // 1. Bootstrap Mojang & Fabric Libraries & Assets
     const { classpath, mainClass, assetIndex } = await MinecraftBootstrap.prepareGameEnvironment(
       gameDir,
-      "1.21.1",
+      "26.2",
       "0.19.3",
       (msg) => log("INFO", msg)
     );
@@ -102,7 +102,7 @@ export class GameRunner {
       "--username",
       username,
       "--version",
-      "1.21.1",
+      "26.2",
       "--gameDir",
       gameDir,
       "--assetsDir",
