@@ -500,7 +500,7 @@ The Lampas Launcher is **100% standalone and self-sufficient**. It does **NOT** 
    - Downloads Fabric Loader `0.19.3` and Intermediary `26.2` (`maven.fabricmc.net`).
 2. **Direct KnotClient JVM Execution**:
    - Dynamically constructs the complete Java classpath string containing all runtime libraries and the client JAR.
-   - Spawns the standard OpenJDK Java 21+ runtime invoking `net.fabricmc.loader.impl.launch.knot.KnotClient` with optimized G1GC JVM parameters.
+   - Automatically provisions and spawns the **OpenJDK 25 (`java-runtime-epsilon`)** runtime invoking `net.fabricmc.loader.impl.launch.knot.KnotClient` with optimized G1GC JVM parameters.
    - Streams live game output (`stdout`/`stderr`) directly into the launcher's built-in console without relying on external wrappers.
 
 ---
@@ -531,7 +531,7 @@ Create timestamped world backup (/backup/YYYY-MM-DD_v2.14.0/)
 Apply staged update atomically
     │
     ▼
-Start server with eclipse-temurin:21 JVM
+Start server with OpenJDK 25 (java-runtime-epsilon / Temurin 25) JVM
 ```
 
 ---

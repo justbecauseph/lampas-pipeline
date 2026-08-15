@@ -3,6 +3,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import { ConfigManager } from "./config";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
+import { JavaRuntimeManager } from "./java-runtime";
 import type { GameLogEntry, UserProfile } from "./types";
 
 export class GameRunner {
@@ -10,36 +11,6 @@ export class GameRunner {
 
   static isGameRunning(): boolean {
     return this.runningProcess !== null && !this.runningProcess.killed;
-  }
-
-  private static findJavaExecutable(): string {
-    const config = ConfigManager.get();
-    if (config.javaPath && fs.existsSync(config.javaPath)) {
-      return config.javaPath;
-    }
-
-    if (process.env.JAVA_HOME) {
-      const homeJava = path.join(
-        process.env.JAVA_HOME,
-        "bin",
-        process.platform === "win32" ? "javaw.exe" : "java"
-      );
-      if (fs.existsSync(homeJava)) return homeJava;
-    }
-
-    // Common Java 21 runtime locations on Windows
-    if (process.platform === "win32") {
-      const commonPaths = [
-        "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.6.7-hotspot\\bin\\javaw.exe",
-        "C:\\Program Files\\Microsoft\\jdk-21.0.6.7-hotspot\\bin\\javaw.exe",
-        "C:\\Program Files\\Java\\jdk-21\\bin\\javaw.exe",
-      ];
-      for (const p of commonPaths) {
-        if (fs.existsSync(p)) return p;
-      }
-    }
-
-    return "java";
   }
 
   static async launchGame(
@@ -66,20 +37,20 @@ export class GameRunner {
       });
     };
 
-    log("INFO", `Preparing Standalone Minecraft + Fabric Environment...`);
+    log("INFO", `Preparing Standalone Minecraft + Fabric Environment (Java 25)...`);
     log("INFO", `Game Directory: ${gameDir}`);
     log("INFO", `Player: ${username} (UUID: ${uuid})`);
 
-    // 1. Bootstrap Mojang & Fabric Libraries & Assets
+    // 1. Ensure OpenJDK 25 Runtime
+    const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg));
+
+    // 2. Bootstrap Mojang & Fabric Libraries & Assets
     const { classpath, mainClass, assetIndex } = await MinecraftBootstrap.prepareGameEnvironment(
       gameDir,
       "26.2",
       "0.19.3",
       (msg) => log("INFO", msg)
     );
-
-    const javaExe = this.findJavaExecutable();
-    log("INFO", `Java Runtime: ${javaExe}`);
 
     // 2. Build JVM and Game Classpath
     const cpSeparator = process.platform === "win32" ? ";" : ":";
