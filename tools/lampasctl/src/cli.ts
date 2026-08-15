@@ -1,3 +1,8 @@
+import * as path from "node:path";
+import * as fs from "node:fs";
+import { importExistingMods } from "./importer";
+import { resolvePack } from "./resolver";
+import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
 import { syncInstance } from "./sync";
 import { publishRelease } from "./publisher";
