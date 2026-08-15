@@ -117,7 +117,23 @@ lampas-pipeline/
 
 `lampasctl` is the single CLI driving pack maintenance, validation, and deployment.
 
-### 1. Daily Upstream Update Checker
+### 1. 1-Click Mod Management (`add` & `remove`)
+Add or remove mods directly from the command line. Automatically detects project metadata, fetches latest compatible releases for Minecraft 26.2, updates `pack/mods/*.toml`, updates `pack.lock.json`, and rebuilds manifests in one step:
+
+```bash
+# Add a Modrinth mod (by slug, ID, or web URL)
+bun run lampasctl add appleskin --side client
+bun run lampasctl add 5sy6g3kz --side both
+bun run lampasctl add https://modrinth.com/mod/sodium --side client
+
+# Add a custom local JAR
+bun run lampasctl add ./my-custom-mod.jar --side both
+
+# Remove a mod and re-synchronize manifests
+bun run lampasctl remove appleskin
+```
+
+### 2. Daily Upstream Update Checker
 Scan all pack mods concurrently against Modrinth / CurseForge APIs:
 ```bash
 # Check for newer compatible releases on Minecraft 26.2
@@ -130,7 +146,7 @@ bun run lampasctl check-updates --apply
 bun run lampasctl check-updates --markdown update_summary.md
 ```
 
-### 2. Lockfile & Manifest Generation
+### 3. Lockfile & Manifest Generation
 ```bash
 # Resolve all TOML descriptors into pack.lock.json
 bun run lampasctl resolve

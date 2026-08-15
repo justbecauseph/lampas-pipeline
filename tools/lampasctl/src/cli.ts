@@ -8,6 +8,7 @@ import { syncInstance } from "./sync";
 import { publishRelease } from "./publisher";
 import { checkPackUpdates } from "./checker";
 import { diffManifests } from "./diff";
+import { addMod, removeMod } from "./manager";
 
 function printUsage() {
   console.log(`
@@ -17,10 +18,13 @@ Usage:
   lampasctl <command> [options]
 
 Commands:
-  import                Bootstrap pack definitions from existing mod folders
-    --client <path>     Path to client mods folder
-    --server <path>     Path to server mods folder
-    --out <path>        Output directory for pack definitions (default: ./pack)
+  add <slug|url|jar>    Add a mod to the pack and auto-update lockfile & manifests
+    --side <side>       Target side: client | server | both (default: both)
+    --version <id>      Pin a specific version ID (optional, defaults to latest compatible)
+    --pack <path>       Pack directory (default: ./pack)
+
+  remove <mod-id>       Remove a mod from the pack and auto-update manifests (alias: rm)
+    --pack <path>       Pack directory (default: ./pack)
 
   resolve               Resolve pack definitions into pack.lock.json
     --pack <path>       Pack directory (default: ./pack)
@@ -57,12 +61,18 @@ Commands:
     --to <path>         Target manifest (e.g. new release client-manifest.json)
     --markdown <path>   Write markdown diff to file
 
+  import                Bootstrap pack definitions from existing mod folders
+    --client <path>     Path to client mods folder
+    --server <path>     Path to server mods folder
+    --out <path>        Output directory for pack definitions (default: ./pack)
+
   help                  Show this help message
 `);
 }
 
-function parseArgs(args: string[]): { command: string; flags: Record<string, string> } {
+function parseArgs(args: string[]): { command: string; positional: string[]; flags: Record<string, string> } {
   const command = args[0] || "help";
+  const positional: string[] = [];
   const flags: Record<string, string> = {};
 
   for (let i = 1; i < args.length; i++) {
@@ -76,18 +86,57 @@ function parseArgs(args: string[]): { command: string; flags: Record<string, str
       } else {
         flags[key] = "true";
       }
+    } else {
+      positional.push(arg);
     }
   }
 
-  return { command, flags };
+  return { command, positional, flags };
 }
 
 async function main() {
-  const { command, flags } = parseArgs(process.argv.slice(2));
+  const { command, positional, flags } = parseArgs(process.argv.slice(2));
   const rootDir = process.cwd();
 
   try {
     switch (command) {
+      case "add": {
+        const query = positional[0] || flags.query;
+        if (!query) {
+          console.error("Error: Please specify a mod slug, project ID, Modrinth URL, or .jar file path.");
+          console.log("Example: lampasctl add appleskin --side client");
+          process.exit(1);
+        }
+
+        const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
+        const side = (flags.side as "client" | "server" | "both") || "both";
+
+        await addMod({
+          packDir,
+          query,
+          side,
+          versionId: flags.version,
+        });
+        break;
+      }
+
+      case "remove":
+      case "rm": {
+        const modId = positional[0] || flags.id;
+        if (!modId) {
+          console.error("Error: Please specify the mod ID to remove.");
+          console.log("Example: lampasctl remove appleskin");
+          process.exit(1);
+        }
+
+        const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
+        await removeMod({
+          packDir,
+          modId,
+        });
+        break;
+      }
+
       case "import": {
         const clientDir = flags.client;
         const serverDir = flags.server;
