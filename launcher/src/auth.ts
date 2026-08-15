@@ -80,7 +80,10 @@ export class LauncherAuth {
             }
 
             const json = await resp.json();
-            ConfigManager.set({ token: json.token });
+            ConfigManager.set({
+              token: json.user?.minecraftAccessToken || json.token,
+              offlineUsername: json.user?.minecraftUsername || json.user?.name,
+            });
 
             resolve({
               token: json.token,
