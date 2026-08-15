@@ -24,7 +24,7 @@ export interface LauncherConfig {
 }
 
 export interface SyncProgress {
-  status: "idle" | "checking" | "downloading" | "verifying" | "staging" | "complete" | "error";
+  status: "idle" | "checking" | "downloading" | "verifying" | "staging" | "repairing" | "complete" | "error";
   message: string;
   currentFile?: string;
   filesCompleted: number;

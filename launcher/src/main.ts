@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import * as path from "node:path";
 import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
@@ -48,7 +48,15 @@ app.whenReady().then(() => {
       mainWindow?.maximize();
     }
   });
+  ipcMain.handle("window:isMaximized", () => mainWindow?.isMaximized() ?? false);
   ipcMain.handle("window:close", () => mainWindow?.close());
+
+  // IPC Handlers: Utils
+  ipcMain.handle("utils:openPath", async (_, targetPath: string) => {
+    if (targetPath) {
+      await shell.openPath(targetPath);
+    }
+  });
 
   // IPC Handlers: Config
   ipcMain.handle("config:get", () => ConfigManager.get());
@@ -59,11 +67,17 @@ app.whenReady().then(() => {
   ipcMain.handle("auth:logout", () => LauncherAuth.logout());
   ipcMain.handle("auth:verify", (_, portalUrl) => LauncherAuth.verifySession(portalUrl));
 
-  // IPC Handlers: Sync
+  // IPC Handlers: Sync & Repair
   ipcMain.handle("sync:start", async () => {
     return LauncherSync.syncClient((progress) => {
       mainWindow?.webContents.send("sync:progress", progress);
     });
+  });
+  ipcMain.handle("sync:repair", async () => {
+    return LauncherSync.repairInstallation(
+      (progress) => mainWindow?.webContents.send("sync:progress", progress),
+      (log) => mainWindow?.webContents.send("game:log", log)
+    );
   });
 
   // IPC Handlers: Game

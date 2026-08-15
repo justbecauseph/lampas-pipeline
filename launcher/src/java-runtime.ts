@@ -61,7 +61,6 @@ export class JavaRuntimeManager {
 
     if (process.platform === "win32") {
       searchPaths.push(
-        path.join(process.env.APPDATA || "", "PrismLauncher", "java", "java-runtime-epsilon", "bin", "javaw.exe"),
         path.join(process.env.LOCALAPPDATA || "", "Programs", "Eclipse Adoptium", "jdk-25", "bin", "javaw.exe"),
         "C:\\Program Files\\Microsoft\\jdk-25\\bin\\javaw.exe",
         "C:\\Program Files\\Eclipse Adoptium\\jdk-25\\bin\\javaw.exe",

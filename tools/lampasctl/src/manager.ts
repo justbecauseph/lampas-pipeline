@@ -20,7 +20,7 @@ export interface RemoveModOptions {
 }
 
 /**
- * Returns a map of all project IDs and slugs currently defined in pack/mods/
+ * Returns a set of all project IDs and slugs currently defined in pack/mods/
  */
 function getExistingModIdentifiers(modsDir: string): Set<string> {
   const ids = new Set<string>();
@@ -77,13 +77,14 @@ export async function addMod(options: AddModOptions) {
   os_ensure_dir(modsDir);
   os_ensure_dir(customDir);
 
-  let query = options.query.trim();
+  let rawQuery = options.query.trim();
+  let explicitVersion = options.versionId?.trim();
 
   // 1. Handle local file paths
-  if (query.endsWith(".jar") && fs.existsSync(query)) {
-    const filename = path.basename(query);
+  if (rawQuery.endsWith(".jar") && fs.existsSync(rawQuery)) {
+    const filename = path.basename(rawQuery);
     const dest = path.join(customDir, filename);
-    fs.copyFileSync(query, dest);
+    fs.copyFileSync(rawQuery, dest);
 
     const modId = filename.replace(/\.jar$/i, "").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
     const tomlPath = path.join(modsDir, `${modId}.toml`);
@@ -100,18 +101,62 @@ export async function addMod(options: AddModOptions) {
     writeTomlFile(tomlPath, def);
     console.log(`✓ [Added Custom Mod] ${filename} -> ${tomlPath}`);
   } else {
-    // Clean URL into slug/ID
-    if (query.includes("modrinth.com/mod/")) {
-      query = query.split("modrinth.com/mod/")[1].split("/")[0].split("?")[0];
+    let query = rawQuery;
+
+    // 2. Parse URL patterns
+    if (query.includes("modrinth.com/version/")) {
+      // Direct version URL: https://modrinth.com/version/{version_id}
+      const versionIdFromUrl = query.split("modrinth.com/version/")[1].split("?")[0].split("/")[0];
+      explicitVersion = versionIdFromUrl;
+      // Fetch version to get project_id
+      const vRes = await fetch(`https://api.modrinth.com/v2/version/${versionIdFromUrl}`, {
+        headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+      });
+      if (!vRes.ok) {
+        throw new Error(`Modrinth version '${versionIdFromUrl}' not found (${vRes.status})`);
+      }
+      const vData = await vRes.json();
+      query = vData.project_id;
+    } else if (query.includes("modrinth.com/mod/")) {
+      // Mod page or mod version page: https://modrinth.com/mod/{slug}/version/{version_id_or_number}
+      const afterMod = query.split("modrinth.com/mod/")[1].split("?")[0];
+      const segments = afterMod.split("/").filter(Boolean);
+      query = segments[0];
+      if (segments.length >= 3 && segments[1] === "version" && segments[2]) {
+        explicitVersion = segments[2];
+      }
     } else if (query.includes("curseforge.com/minecraft/mc-mods/")) {
-      query = query.split("curseforge.com/minecraft/mc-mods/")[1].split("/")[0].split("?")[0];
+      const afterMod = query.split("curseforge.com/minecraft/mc-mods/")[1].split("?")[0];
+      const segments = afterMod.split("/").filter(Boolean);
+      query = segments[0];
+      if (segments.length >= 3 && segments[1] === "files" && segments[2]) {
+        explicitVersion = segments[2];
+      }
+    }
+
+    // 3. Parse inline version syntax if not already set (e.g. slug@version, slug:version, slug==version)
+    if (!explicitVersion) {
+      if (query.includes("@")) {
+        const parts = query.split("@");
+        query = parts[0];
+        explicitVersion = parts[1];
+      } else if (query.includes("==")) {
+        const parts = query.split("==");
+        query = parts[0];
+        explicitVersion = parts[1];
+      } else if (query.includes(":") && !query.startsWith("http://") && !query.startsWith("https://")) {
+        const parts = query.split(":");
+        query = parts[0];
+        explicitVersion = parts[1];
+      }
     }
 
     const providerType = options.provider || "modrinth";
 
     if (providerType === "modrinth") {
       const indent = "  ".repeat(depth);
-      console.log(`${indent}[Mod Manager] Querying Modrinth for '${query}' (MC ${targetMc}, ${targetLoader})...`);
+      const verDisplay = explicitVersion ? ` (Version: ${explicitVersion})` : "";
+      console.log(`${indent}[Mod Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
 
       // 1. Query project metadata
       const projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
@@ -130,42 +175,101 @@ export async function addMod(options: AddModOptions) {
       // Automatically determine target side if not explicitly specified
       const targetSide = detectModSide(projData, options.side);
 
-      // 2. Query matching versions
-      let versionId = options.versionId;
-      let versionName = "";
-      let filename = "";
-      let dependencies: Array<{ project_id: string | null; version_id: string | null; dependency_type: string }> = [];
+      // 2. Query matching version
+      let selectedVersion: any = null;
 
-      if (!versionId) {
-        const verUrl = `https://api.modrinth.com/v2/project/${projectId}/version?game_versions=[%22${targetMc}%22]&loaders=[%22${targetLoader}%22]`;
-        const verRes = await fetch(verUrl, {
-          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-        });
+      // Fetch all project versions
+      const allVersRes = await fetch(`https://api.modrinth.com/v2/project/${projectId}/version`, {
+        headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+      });
 
-        if (!verRes.ok) {
-          throw new Error(`Failed to query versions for ${slug}`);
-        }
-
-        const versions = await verRes.json();
-        if (!Array.isArray(versions) || versions.length === 0) {
-          throw new Error(`No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader})`);
-        }
-
-        const latest = versions[0];
-        versionId = latest.id;
-        versionName = latest.name;
-        filename = (latest.files.find((f: any) => f.primary) || latest.files[0])?.filename || latest.name;
-        dependencies = latest.dependencies || [];
-      } else {
-        // Query specific version for dependencies
-        const verRes = await fetch(`https://api.modrinth.com/v2/version/${versionId}`, {
-          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-        });
-        if (verRes.ok) {
-          const verData = await verRes.json();
-          dependencies = verData.dependencies || [];
-        }
+      if (!allVersRes.ok) {
+        throw new Error(`Failed to query versions for '${slug}' (${allVersRes.status})`);
       }
+
+      const allVersions: any[] = await allVersRes.json();
+
+      if (explicitVersion) {
+        const needle = explicitVersion.toLowerCase();
+
+        // 2a. Match exact ID, version_number, name, or filename
+        selectedVersion = allVersions.find(
+          (v) =>
+            v.id === explicitVersion ||
+            v.version_number?.toLowerCase() === needle ||
+            v.name?.toLowerCase() === needle ||
+            v.files?.some((f: any) => f.filename?.toLowerCase() === needle)
+        );
+
+        // 2b. Fuzzy / Prefix match if exact not found
+        if (!selectedVersion) {
+          selectedVersion = allVersions.find(
+            (v) =>
+              v.version_number?.toLowerCase().startsWith(needle) ||
+              v.name?.toLowerCase().includes(needle) ||
+              needle.startsWith(v.version_number?.toLowerCase() || "")
+          );
+        }
+
+        // 2c. Direct version lookup by ID if still not found
+        if (!selectedVersion) {
+          const directVerRes = await fetch(`https://api.modrinth.com/v2/version/${explicitVersion}`, {
+            headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+          });
+          if (directVerRes.ok) {
+            selectedVersion = await directVerRes.json();
+          }
+        }
+
+        if (!selectedVersion) {
+          const availableList = allVersions
+            .slice(0, 6)
+            .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}) [ID: ${v.id}]`)
+            .join("\n");
+          throw new Error(
+            `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`
+          );
+        }
+
+        // Check compatibility warning
+        const isMcCompatible = selectedVersion.game_versions?.includes(targetMc);
+        const isLoaderCompatible = selectedVersion.loaders?.includes(targetLoader);
+        if (!isMcCompatible || !isLoaderCompatible) {
+          console.warn(
+            `${indent}  ⚠️ [Compatibility Warning] Selected version '${selectedVersion.version_number}' is marked for MC [${selectedVersion.game_versions?.join(
+              ", "
+            )}] & loaders [${selectedVersion.loaders?.join(", ")}]. (Pipeline Target: MC ${targetMc}, ${targetLoader})`
+          );
+        }
+      } else {
+        // Find latest compatible with target MC and Loader
+        const compatibleVersions = allVersions.filter(
+          (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
+        );
+
+        if (compatibleVersions.length === 0) {
+          const availableList = allVersions
+            .slice(0, 6)
+            .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
+            .join("\n");
+          throw new Error(
+            `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
+              `You can explicitly install a specific version with:\n` +
+              `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
+              `Available upstream versions:\n${availableList}`
+          );
+        }
+
+        selectedVersion = compatibleVersions[0];
+      }
+
+      const versionId: string = selectedVersion.id;
+      const versionName: string = selectedVersion.name || selectedVersion.version_number || versionId;
+      const versionNumber: string = selectedVersion.version_number || "";
+      const primaryFile = selectedVersion.files?.find((f: any) => f.primary) || selectedVersion.files?.[0];
+      const filename: string = primaryFile?.filename || versionName;
+      const dependencies: Array<{ project_id: string | null; version_id: string | null; dependency_type: string }> =
+        selectedVersion.dependencies || [];
 
       const tomlPath = path.join(modsDir, `${slug}.toml`);
       const def: ModDefinition = {
@@ -181,7 +285,7 @@ export async function addMod(options: AddModOptions) {
       writeTomlFile(tomlPath, def);
       console.log(`\n${indent}✓ [Added Mod] ${modName} (${slug})`);
       console.log(`${indent}   Provider: Modrinth (${projectId})`);
-      console.log(`${indent}   Version:  ${versionId} ${versionName ? `(${versionName})` : ""}`);
+      console.log(`${indent}   Version:  ${versionNumber} [ID: ${versionId}] (${versionName})`);
       console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(auto-detected)"}`);
       console.log(`${indent}   File:     ${filename}`);
       console.log(`${indent}   Saved to: ${tomlPath}\n`);

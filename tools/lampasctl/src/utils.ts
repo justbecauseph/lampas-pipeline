@@ -116,7 +116,7 @@ export function parseTomlFile<T = unknown>(filePath: string): T {
   return parseToml(content) as T;
 }
 
-export function writeTomlFile(filePath: string, data: Record<string, unknown>): void {
+export function writeTomlFile(filePath: string, data: any): void {
   ensureDir(path.dirname(filePath));
   const content = stringifyToml(data);
   fs.writeFileSync(filePath, content, "utf-8");

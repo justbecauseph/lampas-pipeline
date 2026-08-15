@@ -2,6 +2,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { createHash } from "node:crypto";
 import { ConfigManager } from "./config";
+import { MinecraftBootstrap } from "./minecraft-bootstrap";
+import { JavaRuntimeManager } from "./java-runtime";
 import type { SyncProgress } from "./types";
 
 const PROTECTED_PREFIXES = [
@@ -326,6 +328,104 @@ export class LauncherSync {
       success: true,
       version: targetVersion,
       packName: newState.pack,
+    };
+  }
+
+  static async repairInstallation(
+    onProgress: (progress: SyncProgress) => void,
+    onLog?: (entry: { level: "INFO" | "WARN" | "ERROR"; message: string; timestamp: string }) => void
+  ): Promise<{ success: boolean; message: string; version: string; packName: string }> {
+    const config = ConfigManager.get();
+    const gameDir = config.gameDir;
+    const log = (level: "INFO" | "WARN" | "ERROR", msg: string) => {
+      if (onLog) {
+        onLog({ level, message: msg, timestamp: new Date().toLocaleTimeString() });
+      }
+    };
+
+    log("INFO", "[Repair] Starting full installation repair and integrity verification...");
+
+    // 1. Force full synchronization of all modpack files with SHA-256 validation
+    onProgress({
+      status: "repairing",
+      message: "Verifying and repairing modpack files...",
+      filesCompleted: 0,
+      totalFiles: 100,
+      percent: 5,
+      bytesDownloaded: 0,
+      totalBytes: 0,
+    });
+
+    const syncResult = await this.syncClient((p) => {
+      onProgress({
+        ...p,
+        status: "repairing",
+        percent: Math.round(p.percent * 0.4), // 0% - 40%
+      });
+    });
+
+    log("INFO", `[Repair] Modpack files verified and repaired (${syncResult.packName} v${syncResult.version}).`);
+
+    // 2. Minecraft 26.2 client JAR, Fabric Loader, libraries, natives, and 5,000+ asset objects
+    onProgress({
+      status: "repairing",
+      message: "Verifying Minecraft libraries, natives, and asset objects...",
+      filesCompleted: 40,
+      totalFiles: 100,
+      percent: 45,
+      bytesDownloaded: 0,
+      totalBytes: 0,
+    });
+
+    await MinecraftBootstrap.prepareGameEnvironment(
+      gameDir,
+      "26.2",
+      "0.19.3",
+      (msg) => {
+        log("INFO", msg);
+        onProgress({
+          status: "repairing",
+          message: msg,
+          filesCompleted: 70,
+          totalFiles: 100,
+          percent: 75,
+          bytesDownloaded: 0,
+          totalBytes: 0,
+        });
+      }
+    );
+
+    // 3. Java 25 verification
+    onProgress({
+      status: "repairing",
+      message: "Verifying OpenJDK 25 runtime environment...",
+      filesCompleted: 85,
+      totalFiles: 100,
+      percent: 85,
+      bytesDownloaded: 0,
+      totalBytes: 0,
+    });
+
+    const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg));
+    log("INFO", `[Repair] Java runtime verified: ${javaExe}`);
+
+    onProgress({
+      status: "complete",
+      message: "Repair complete! All modpack files, assets, and libraries are verified.",
+      filesCompleted: 100,
+      totalFiles: 100,
+      percent: 100,
+      bytesDownloaded: 0,
+      totalBytes: 0,
+    });
+
+    log("INFO", "[Repair] All installation components successfully repaired.");
+
+    return {
+      success: true,
+      message: "Installation repaired successfully.",
+      version: syncResult.version,
+      packName: syncResult.packName,
     };
   }
 }

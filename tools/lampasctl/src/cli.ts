@@ -19,40 +19,45 @@ Usage:
 
 Commands:
   add <slug|url|jar>    Add a mod to the pack and auto-update lockfile & manifests
-    --side <side>       Target side: client | server | both (default: both)
-    --version <id>      Pin a specific version ID (optional, defaults to latest compatible)
-    --pack <path>       Pack directory (default: ./pack)
+                        Supports:
+                          lampasctl add appleskin
+                          lampasctl add appleskin --version 2.5.1
+                          lampasctl add appleskin@2.5.1
+                          lampasctl add https://modrinth.com/mod/appleskin/version/mc1.21-2.5.1
+    -s, --side <side>   Target side: client | server | both (default: both)
+    -v, --version <ver> Pin a specific version ID, number, or name (e.g. 2.5.1, AAbbCCdd)
+    -p, --pack <path>   Pack directory (default: ./pack)
 
   remove <mod-id>       Remove a mod from the pack and auto-update manifests (alias: rm)
-    --pack <path>       Pack directory (default: ./pack)
+    -p, --pack <path>   Pack directory (default: ./pack)
 
   resolve               Resolve pack definitions into pack.lock.json
-    --pack <path>       Pack directory (default: ./pack)
-    --lock <path>       Lockfile destination (default: ./pack/pack.lock.json)
+    -p, --pack <path>   Pack directory (default: ./pack)
+    -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
 
   validate              Validate pack definitions, lockfile, and integrity
-    --pack <path>       Pack directory (default: ./pack)
-    --lock <path>       Lockfile destination (default: ./pack/pack.lock.json)
+    -p, --pack <path>   Pack directory (default: ./pack)
+    -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
 
   manifest              Generate client-manifest.json and server-manifest.json
-    --pack <path>       Pack directory (default: ./pack)
-    --lock <path>       Lockfile destination (default: ./pack/pack.lock.json)
-    --out <path>        Manifest output directory (default: ./manifest)
+    -p, --pack <path>   Pack directory (default: ./pack)
+    -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
+    -o, --out <path>    Manifest output directory (default: ./manifest)
 
   publish               Publish release and upload blobs to Lampas Portal
     --portal <url>      Lampas Portal URL (e.g. http://localhost:3000)
     --secret <token>    Publish bearer secret token
     --channel <name>    Channel pointer to update (dev | beta | stable)
-    --pack <path>       Pack directory (default: ./pack)
-    --manifest <path>   Manifest directory (default: ./manifest)
+    -p, --pack <path>   Pack directory (default: ./pack)
+    -m, --manifest <p>  Manifest directory (default: ./manifest)
 
   install               Synchronize a Minecraft instance directory to a manifest
-    --manifest <path>   Path to client-manifest.json or server-manifest.json
-    --target <path>     Target Minecraft instance directory
+    -m, --manifest <p>  Path to client-manifest.json or server-manifest.json
+    -t, --target <path> Target Minecraft instance directory
     --portal <url>      Lampas Portal base URL (optional)
 
   check-updates         Check Modrinth & CurseForge for newer upstream releases
-    --pack <path>       Pack directory (default: ./pack)
+    -p, --pack <path>   Pack directory (default: ./pack)
     --apply             Automatically update TOML descriptors with latest version IDs
     --markdown <path>   Write markdown summary to file (useful for GitHub Actions / PRs)
 
@@ -64,7 +69,7 @@ Commands:
   import                Bootstrap pack definitions from existing mod folders
     --client <path>     Path to client mods folder
     --server <path>     Path to server mods folder
-    --out <path>        Output directory for pack definitions (default: ./pack)
+    -o, --out <path>    Output directory for pack definitions (default: ./pack)
 
   help                  Show this help message
 `);
@@ -75,12 +80,33 @@ function parseArgs(args: string[]): { command: string; positional: string[]; fla
   const positional: string[] = [];
   const flags: Record<string, string> = {};
 
+  const shortMap: Record<string, string> = {
+    v: "version",
+    s: "side",
+    p: "pack",
+    l: "lock",
+    m: "manifest",
+    o: "out",
+    t: "target",
+    h: "help",
+  };
+
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
     if (arg.startsWith("--")) {
       const key = arg.substring(2);
       const next = args[i + 1];
-      if (next && !next.startsWith("--")) {
+      if (next && !next.startsWith("-")) {
+        flags[key] = next;
+        i++;
+      } else {
+        flags[key] = "true";
+      }
+    } else if (arg.startsWith("-") && arg.length === 2) {
+      const shortKey = arg.substring(1);
+      const key = shortMap[shortKey] || shortKey;
+      const next = args[i + 1];
+      if (next && !next.startsWith("-")) {
         flags[key] = next;
         i++;
       } else {

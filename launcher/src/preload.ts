@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld("lampas", {
   sync: {
     start: (): Promise<{ success: boolean; version: string; packName: string }> =>
       ipcRenderer.invoke("sync:start"),
+    repair: (): Promise<{ success: boolean; message: string; version: string; packName: string }> =>
+      ipcRenderer.invoke("sync:repair"),
     onProgress: (callback: (progress: SyncProgress) => void) => {
       const handler = (_: any, data: SyncProgress) => callback(data);
       ipcRenderer.on("sync:progress", handler);
@@ -41,6 +43,10 @@ contextBridge.exposeInMainWorld("lampas", {
   window: {
     minimize: () => ipcRenderer.invoke("window:minimize"),
     maximize: () => ipcRenderer.invoke("window:maximize"),
+    isMaximized: (): Promise<boolean> => ipcRenderer.invoke("window:isMaximized"),
     close: () => ipcRenderer.invoke("window:close"),
+  },
+  utils: {
+    openPath: (targetPath: string): Promise<string> => ipcRenderer.invoke("utils:openPath", targetPath),
   },
 });

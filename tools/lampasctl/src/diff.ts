@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { readJsonFile } from "./utils";
-import type { PackManifest, ManifestFileEntry } from "./types";
+import type { PackManifest, ManifestFile } from "./types";
 
 export interface DiffOptions {
   fromManifestPath: string;
@@ -10,8 +10,8 @@ export interface DiffOptions {
 }
 
 export interface DiffResult {
-  added: ManifestFileEntry[];
-  removed: ManifestFileEntry[];
+  added: ManifestFile[];
+  removed: ManifestFile[];
   modified: Array<{
     path: string;
     oldSize: number;
@@ -39,11 +39,11 @@ export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
   const manifestA = readJsonFile<PackManifest>(options.fromManifestPath);
   const manifestB = readJsonFile<PackManifest>(options.toManifestPath);
 
-  const filesA = new Map<string, ManifestFileEntry>(manifestA.files.map((f) => [f.path, f]));
-  const filesB = new Map<string, ManifestFileEntry>(manifestB.files.map((f) => [f.path, f]));
+  const filesA = new Map<string, ManifestFile>(manifestA.files.map((f) => [f.path, f]));
+  const filesB = new Map<string, ManifestFile>(manifestB.files.map((f) => [f.path, f]));
 
-  const added: ManifestFileEntry[] = [];
-  const removed: ManifestFileEntry[] = [];
+  const added: ManifestFile[] = [];
+  const removed: ManifestFile[] = [];
   const modified: DiffResult["modified"] = [];
 
   let totalSizeDelta = 0;

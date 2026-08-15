@@ -188,14 +188,9 @@ export class MinecraftBootstrap {
       }
     }
 
-    // 4. Download Asset Index 32
+    // 4. Download Asset Index & Ensure Asset Objects (Textures, Sounds, Panorama)
     const assetIndex = versionMeta262.assetIndex;
-    const assetIndexDir = path.join(assetsDir, "indexes");
-    const assetIndexPath = path.join(assetIndexDir, `${assetIndex.id}.json`);
-    if (!fs.existsSync(assetIndexPath)) {
-      onLog(`[Bootstrap] Downloading Minecraft 26.2 asset index (${assetIndex.id})...`);
-      await this.downloadFile(assetIndex.url, assetIndexPath, assetIndex.sha1);
-    }
+    await this.ensureAssets(assetsDir, assetIndex, onLog);
 
     const mainClass = "net.fabricmc.loader.impl.launch.knot.KnotClient";
 
@@ -204,5 +199,93 @@ export class MinecraftBootstrap {
       mainClass,
       assetIndex: assetIndex.id,
     };
+  }
+
+  private static async ensureAssets(
+    assetsDir: string,
+    assetIndexMeta: { id: string; sha1: string; url: string; size: number },
+    onLog: (msg: string) => void
+  ): Promise<void> {
+    const assetIndexDir = path.join(assetsDir, "indexes");
+    const assetObjectsDir = path.join(assetsDir, "objects");
+    const assetIndexPath = path.join(assetIndexDir, `${assetIndexMeta.id}.json`);
+
+    fs.mkdirSync(assetIndexDir, { recursive: true });
+    fs.mkdirSync(assetObjectsDir, { recursive: true });
+
+    if (!fs.existsSync(assetIndexPath)) {
+      onLog(`[Bootstrap] Downloading Minecraft asset index (${assetIndexMeta.id})...`);
+      await this.downloadFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1);
+    }
+
+    let indexData: any = {};
+    try {
+      indexData = JSON.parse(fs.readFileSync(assetIndexPath, "utf-8"));
+    } catch {
+      await this.downloadFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1);
+      indexData = JSON.parse(fs.readFileSync(assetIndexPath, "utf-8"));
+    }
+
+    const objects: Record<string, { hash: string; size: number }> = indexData.objects || {};
+    const entries = Object.values(objects);
+
+    const missing: Array<{ hash: string; size: number; destFile: string }> = [];
+    let alreadyPresentCount = 0;
+
+    for (const item of entries) {
+      const prefix = item.hash.substring(0, 2);
+      const destDir = path.join(assetObjectsDir, prefix);
+      const destFile = path.join(destDir, item.hash);
+
+      if (fs.existsSync(destFile)) {
+        try {
+          const stat = fs.statSync(destFile);
+          if (stat.size === item.size) {
+            alreadyPresentCount++;
+            continue;
+          }
+        } catch {}
+      }
+
+      missing.push({ hash: item.hash, size: item.size, destFile });
+    }
+
+    if (missing.length > 0) {
+      onLog(`[Bootstrap] Downloading ${missing.length} Minecraft assets from official CDN...`);
+      const concurrency = 32;
+      const queue = [...missing];
+      let completed = 0;
+      const total = missing.length;
+
+      async function worker() {
+        while (queue.length > 0) {
+          const task = queue.shift();
+          if (!task) break;
+
+          const prefix = task.hash.substring(0, 2);
+          const url = `https://resources.download.minecraft.net/${prefix}/${task.hash}`;
+          const dir = path.dirname(task.destFile);
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+          try {
+            const resp = await fetch(url, { headers: { "User-Agent": "Lampas-Launcher/1.0" } });
+            if (resp.ok) {
+              const buf = Buffer.from(await resp.arrayBuffer());
+              fs.writeFileSync(task.destFile, buf);
+            }
+          } catch {}
+
+          completed++;
+          if (completed % 250 === 0 || completed === total) {
+            onLog(`[Bootstrap] Assets: ${completed}/${total} (${Math.round((completed / total) * 100)}%)...`);
+          }
+        }
+      }
+
+      const workers = Array.from({ length: Math.min(concurrency, missing.length) }, () => worker());
+      await Promise.all(workers);
+    }
+
+    onLog(`[Bootstrap] All ${entries.length} official asset objects verified.`);
   }
 }

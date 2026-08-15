@@ -1,0 +1,44 @@
+name: Deploy Dedicated Server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pack/**'
+      - 'manifest/server-manifest.json'
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Target release channel"
+        required: true
+        default: "stable"
+        type: choice
+        options:
+          - stable
+          - beta
+          - dev
+
+jobs:
+  deploy:
+    name: Deploy to Production Dedicated Server
+    runs-on: ubuntu-latest
+    if: env.SERVER_HOST != '' && env.SERVER_SSH_KEY != ''
+    env:
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Execute Server Deployment over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /opt/minecraft/lampas-server
+            python3 deploy_pack.py --portal-url ${{ secrets.PORTAL_URL || 'https://portal.lampas.gg' }} --channel ${{ github.event.inputs.channel || 'stable' }}
+            sudo systemctl restart lampas-server
