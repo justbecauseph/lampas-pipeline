@@ -59,50 +59,66 @@ export class LauncherSync {
       totalBytes: 0,
     });
 
-    // 1. Fetch channel pointer
-    const channelHeaders: Record<string, string> = { "User-Agent": "Lampas-Launcher/1.0" };
-    if (config.token) {
-      channelHeaders["Authorization"] = `Bearer ${config.token}`;
-    }
+    let targetVersion = "2.0.0";
+    let manifest: any;
+    let releaseData: any = { pack: "Lampas 2" };
 
-    const channelResp = await fetch(`${portalUrl}/api/v1/channels/${channel}`, { headers: channelHeaders });
-    if (!channelResp.ok) {
-      throw new Error(`Failed to query channel '${channel}': ${channelResp.statusText}`);
-    }
-
-    const channelData = await channelResp.json();
-    const targetVersion = channelData.version;
-
-    // 2. Fetch release descriptor
-    const releaseResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}`, { headers: channelHeaders });
-    if (!releaseResp.ok) {
-      if (releaseResp.status === 410) {
-        throw new Error(`Release v${targetVersion} has been REVOKED due to critical issues. Please select another channel.`);
+    try {
+      // 1. Fetch channel pointer
+      const channelHeaders: Record<string, string> = { "User-Agent": "Lampas-Launcher/1.0" };
+      if (config.token) {
+        channelHeaders["Authorization"] = `Bearer ${config.token}`;
       }
-      throw new Error(`Failed to fetch release descriptor: ${releaseResp.statusText}`);
+
+      const channelResp = await fetch(`${portalUrl}/api/v1/channels/${channel}`, { headers: channelHeaders });
+      if (!channelResp.ok) {
+        throw new Error(`Failed to query channel '${channel}': ${channelResp.statusText}`);
+      }
+
+      const channelData = await channelResp.json();
+      targetVersion = channelData.version;
+
+      // 2. Fetch release descriptor
+      const releaseResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}`, { headers: channelHeaders });
+      if (!releaseResp.ok) {
+        if (releaseResp.status === 410) {
+          throw new Error(`Release v${targetVersion} has been REVOKED due to critical issues. Please select another channel.`);
+        }
+        throw new Error(`Failed to fetch release descriptor: ${releaseResp.statusText}`);
+      }
+
+      releaseData = await releaseResp.json();
+
+      // 3. Fetch client manifest
+      onProgress({
+        status: "checking",
+        message: `Fetching client manifest v${targetVersion}...`,
+        filesCompleted: 0,
+        totalFiles: 0,
+        percent: 15,
+        bytesDownloaded: 0,
+        totalBytes: 0,
+      });
+
+      const manifestResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}/client-manifest`, {
+        headers: channelHeaders,
+      });
+      if (!manifestResp.ok) {
+        throw new Error(`Failed to fetch client manifest: ${manifestResp.statusText}`);
+      }
+
+      manifest = await manifestResp.json();
+    } catch (portalErr: any) {
+      // Offline / Local pipeline fallback
+      const localManifestPath = path.join(__dirname, "../../manifest/client-manifest.json");
+      if (fs.existsSync(localManifestPath)) {
+        manifest = JSON.parse(fs.readFileSync(localManifestPath, "utf-8"));
+        targetVersion = manifest.version || "2.0.0";
+      } else {
+        throw new Error(`Portal unavailable (${portalErr.message}) and no local manifest found.`);
+      }
     }
 
-    const releaseData = await releaseResp.json();
-
-    // 3. Fetch client manifest
-    onProgress({
-      status: "checking",
-      message: `Fetching client manifest v${targetVersion}...`,
-      filesCompleted: 0,
-      totalFiles: 0,
-      percent: 15,
-      bytesDownloaded: 0,
-      totalBytes: 0,
-    });
-
-    const manifestResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}/client-manifest`, {
-      headers: channelHeaders,
-    });
-    if (!manifestResp.ok) {
-      throw new Error(`Failed to fetch client manifest: ${manifestResp.statusText}`);
-    }
-
-    const manifest = await manifestResp.json();
     const manifestFiles: any[] = manifest.files || [];
 
     // 4. Reconcile with local files
@@ -183,11 +199,11 @@ export class LauncherSync {
             if (computeBufferSha256(cachedBuf) === file.hashes.sha256) {
               buf = cachedBuf;
             } else {
-              buf = await downloadBinary(downloadUrl, file.hashes.sha256);
+              buf = await downloadBinary(file);
               fs.writeFileSync(cachePath, buf);
             }
           } else {
-            buf = await downloadBinary(downloadUrl, file.hashes.sha256);
+            buf = await downloadBinary(file);
             if (!fs.existsSync(path.dirname(cachePath))) {
               fs.mkdirSync(path.dirname(cachePath), { recursive: true });
             }
@@ -212,7 +228,27 @@ export class LauncherSync {
         }
       }
 
-      async function downloadBinary(url: string, expectedSha256: string): Promise<Buffer> {
+      async function downloadBinary(fileEntry: any): Promise<Buffer> {
+        let url = fileEntry.download.url;
+        const expectedSha256 = fileEntry.hashes.sha256;
+
+        if (url.startsWith("/")) {
+          const candidates = [
+            path.join(__dirname, "../../pack/common", fileEntry.path),
+            path.join(__dirname, "../../pack/client", fileEntry.path),
+            path.join(__dirname, "../../pack/custom", path.basename(fileEntry.path)),
+          ];
+          for (const c of candidates) {
+            if (fs.existsSync(c)) {
+              const buf = fs.readFileSync(c);
+              if (computeBufferSha256(buf) === expectedSha256) {
+                return buf;
+              }
+            }
+          }
+          url = `${portalUrl}${url}`;
+        }
+
         const resp = await fetch(url, { headers: { "User-Agent": "Lampas-Launcher/1.0" } });
         if (!resp.ok) {
           throw new Error(`Failed to download ${url}: ${resp.statusText}`);

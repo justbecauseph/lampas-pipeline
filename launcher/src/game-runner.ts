@@ -11,6 +11,47 @@ export class GameRunner {
     return this.runningProcess !== null && !this.runningProcess.killed;
   }
 
+  private static findPrismLauncher(): string | null {
+    const candidates = [
+      path.join(process.env.LOCALAPPDATA || "", "Programs", "PrismLauncher", "prismlauncher.exe"),
+      "C:\\Program Files\\PrismLauncher\\prismlauncher.exe",
+    ];
+
+    for (const c of candidates) {
+      if (fs.existsSync(c)) return c;
+    }
+    return null;
+  }
+
+  private static findJavaExecutable(): string {
+    const config = ConfigManager.get();
+    if (config.javaPath && fs.existsSync(config.javaPath)) {
+      return config.javaPath;
+    }
+
+    // Common Java 21 / 25 runtimes installed by Prism or Mojang
+    const prismJava = path.join(
+      process.env.APPDATA || "",
+      "PrismLauncher",
+      "java",
+      "java-runtime-epsilon",
+      "bin",
+      process.platform === "win32" ? "java.exe" : "java"
+    );
+    if (fs.existsSync(prismJava)) return prismJava;
+
+    if (process.env.JAVA_HOME) {
+      const homeJava = path.join(
+        process.env.JAVA_HOME,
+        "bin",
+        process.platform === "win32" ? "java.exe" : "java"
+      );
+      if (fs.existsSync(homeJava)) return homeJava;
+    }
+
+    return "java";
+  }
+
   static async launchGame(
     user: UserProfile | null,
     onLog: (entry: GameLogEntry) => void,
@@ -23,25 +64,75 @@ export class GameRunner {
     const config = ConfigManager.get();
     const gameDir = config.gameDir;
     const ramGb = config.allocatedRamGb || 4;
-    const javaPath = config.javaPath || "java";
-
     const username = user?.name || user?.minecraftUsername || "LampasPlayer";
-    const uuid = user?.minecraftUuid || "00000000-0000-0000-0000-000000000000";
 
     onLog({
       timestamp: new Date().toLocaleTimeString(),
       level: "INFO",
-      message: `Preparing to launch Minecraft for player '${username}' with ${ramGb}GB RAM...`,
+      message: `Starting Lampas 2 for player '${username}' (${ramGb} GB RAM)...`,
     });
 
+    const prismExe = this.findPrismLauncher();
+    const prismInstanceDir = path.join(
+      process.env.APPDATA || "",
+      "PrismLauncher",
+      "instances",
+      "26.2-fabric"
+    );
+
+    // If PrismLauncher is available and 26.2-fabric instance exists, launch via Prism CLI
+    if (prismExe && fs.existsSync(prismInstanceDir)) {
+      onLog({
+        timestamp: new Date().toLocaleTimeString(),
+        level: "INFO",
+        message: `Found PrismLauncher: ${prismExe} -> Launching instance '26.2-fabric'...`,
+      });
+
+      const args = ["--launch", "26.2-fabric"];
+      if (username) {
+        args.push("--offline", username);
+      }
+
+      const proc = spawn(prismExe, args, { cwd: gameDir, detached: false });
+      this.runningProcess = proc;
+
+      proc.stdout?.on("data", (data) => {
+        onLog({
+          timestamp: new Date().toLocaleTimeString(),
+          level: "INFO",
+          message: data.toString().trim(),
+        });
+      });
+
+      proc.stderr?.on("data", (data) => {
+        onLog({
+          timestamp: new Date().toLocaleTimeString(),
+          level: "WARN",
+          message: data.toString().trim(),
+        });
+      });
+
+      proc.on("exit", (code) => {
+        this.runningProcess = null;
+        onLog({
+          timestamp: new Date().toLocaleTimeString(),
+          level: code === 0 ? "INFO" : "ERROR",
+          message: `PrismLauncher session exited with code ${code}`,
+        });
+        onExit(code);
+      });
+
+      return true;
+    }
+
+    // Direct Java fallback
+    const javaExe = this.findJavaExecutable();
     onLog({
       timestamp: new Date().toLocaleTimeString(),
       level: "INFO",
-      message: `Game Directory: ${gameDir}`,
+      message: `Using Java Runtime: ${javaExe}`,
     });
 
-    // Check if Prism instance or Fabric installation exists in game directory or if launching direct JVM
-    // For direct launch, look for fabric loader / client jars in game directory or launch via knot/fabric
     const jvmArgs = [
       `-Xmx${ramGb}G`,
       `-Xms${Math.min(2, ramGb)}G`,
@@ -52,20 +143,12 @@ export class GameRunner {
       "-XX:+DisableExplicitGC",
       "-XX:+AlwaysPreTouch",
       `-Dminecraft.applet.TargetDirectory=${gameDir}`,
-      `-Djava.library.path=${path.join(gameDir, "natives")}`,
     ];
 
-    onLog({
-      timestamp: new Date().toLocaleTimeString(),
-      level: "INFO",
-      message: `Launching JVM with args: ${jvmArgs.join(" ")}`,
-    });
-
     try {
-      // Spawn Java process
-      const proc = spawn(javaPath, ["-version"], { cwd: gameDir });
+      const proc = spawn(javaExe, ["-version"], { cwd: gameDir });
 
-      proc.stderr.on("data", (data) => {
+      proc.stderr?.on("data", (data) => {
         onLog({
           timestamp: new Date().toLocaleTimeString(),
           level: "INFO",
@@ -80,7 +163,7 @@ export class GameRunner {
         onLog({
           timestamp: new Date().toLocaleTimeString(),
           level: code === 0 ? "INFO" : "ERROR",
-          message: `Minecraft process exited with code ${code}`,
+          message: `Game process exited with code ${code}`,
         });
         onExit(code);
       });
@@ -90,7 +173,7 @@ export class GameRunner {
       onLog({
         timestamp: new Date().toLocaleTimeString(),
         level: "ERROR",
-        message: `Failed to spawn Java runtime: ${err.message}`,
+        message: `Failed to launch Java process: ${err.message}`,
       });
       throw err;
     }
