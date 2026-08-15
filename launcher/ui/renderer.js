@@ -3,6 +3,7 @@
 let currentUser = null;
 let currentConfig = null;
 let isLaunching = false;
+let currentMsaPrompt = null;
 
 // DOM Elements
 const btnMinimize = document.getElementById("btn-minimize");
@@ -20,11 +21,18 @@ const tabConsole = document.getElementById("tab-console");
 const tabSettings = document.getElementById("tab-settings");
 
 const btnLogin = document.getElementById("btn-login");
+const btnMsaLogin = document.getElementById("btn-msa-login");
 const btnLogout = document.getElementById("btn-logout");
 const userCard = document.getElementById("user-card");
 const userName = document.getElementById("user-name");
 const userRole = document.getElementById("user-role");
 const userAvatar = document.getElementById("user-avatar");
+
+const modalMsa = document.getElementById("modal-msa");
+const btnCloseMsa = document.getElementById("btn-close-msa");
+const msaCodeDisplay = document.getElementById("msa-code-display");
+const btnCopyMsaCode = document.getElementById("btn-copy-msa-code");
+const btnOpenMsaUrl = document.getElementById("btn-open-msa-url");
 
 const btnPlay = document.getElementById("btn-play");
 const btnPlayText = document.getElementById("btn-play-text");
@@ -105,12 +113,14 @@ window.lampas.game.onExit((code) => {
 // Auth & Profile Management
 function updateUserUI(user) {
   currentUser = user;
+  const authButtons = document.getElementById("auth-buttons");
+
   if (user) {
-    btnLogin.classList.add("hidden");
+    authButtons?.classList.add("hidden");
     userCard.classList.remove("hidden");
-    userName.innerText = user.name || user.discordTag || "Player";
-    userRole.innerText = user.isTech ? "Tech Staff" : user.isAdmin ? "Admin" : "Player";
-    userAvatar.innerText = (user.name || "U")[0].toUpperCase();
+    userName.innerText = user.minecraftUsername || user.name || user.discordTag || "Player";
+    userRole.innerText = user.isTech ? "Tech Staff" : user.isAdmin ? "Admin" : "Online MSA";
+    userAvatar.innerText = (user.minecraftUsername || user.name || "U")[0].toUpperCase();
 
     // Channel gating
     const allowed = user.allowedChannels || ["stable"];
@@ -119,7 +129,7 @@ function updateUserUI(user) {
       btn.disabled = !allowed.includes(ch);
     });
   } else {
-    btnLogin.classList.remove("hidden");
+    authButtons?.classList.remove("hidden");
     userCard.classList.add("hidden");
     channelBtns.forEach((btn) => {
       btn.disabled = btn.dataset.channel !== "stable";
@@ -127,6 +137,7 @@ function updateUserUI(user) {
   }
 }
 
+// Portal OAuth Login
 btnLogin.onclick = async () => {
   try {
     btnLogin.disabled = true;
@@ -138,6 +149,57 @@ btnLogin.onclick = async () => {
   } finally {
     btnLogin.disabled = false;
     btnLogin.innerText = "Log In with Portal";
+  }
+};
+
+// Microsoft Account (MSA) Device Code Login
+window.lampas.msa.onPrompt((prompt) => {
+  currentMsaPrompt = prompt;
+  msaCodeDisplay.innerText = prompt.userCode;
+  modalMsa.classList.remove("hidden");
+});
+
+btnCopyMsaCode.onclick = () => {
+  if (currentMsaPrompt?.userCode) {
+    navigator.clipboard.writeText(currentMsaPrompt.userCode);
+    btnCopyMsaCode.innerText = "✓ Copied!";
+    setTimeout(() => {
+      btnCopyMsaCode.innerText = "Copy Code";
+    }, 2000);
+  }
+};
+
+btnOpenMsaUrl.onclick = () => {
+  if (currentMsaPrompt?.verificationUri) {
+    window.open(currentMsaPrompt.verificationUri, "_blank");
+  }
+};
+
+btnCloseMsa.onclick = () => {
+  modalMsa.classList.add("hidden");
+};
+
+btnMsaLogin.onclick = async () => {
+  try {
+    btnMsaLogin.disabled = true;
+    btnMsaLogin.innerText = "Waiting for Code...";
+    const account = await window.lampas.msa.login();
+    modalMsa.classList.add("hidden");
+
+    updateUserUI({
+      name: account.username,
+      minecraftUsername: account.username,
+      minecraftUuid: account.uuid,
+      allowedChannels: ["stable", "beta", "dev"],
+    });
+
+    appendLog("INFO", `Logged into Microsoft Account: ${account.username} (${account.uuid})`);
+  } catch (err) {
+    modalMsa.classList.add("hidden");
+    alert(`Microsoft Login Failed: ${err.message}`);
+  } finally {
+    btnMsaLogin.disabled = false;
+    btnMsaLogin.innerText = "Microsoft Account (MSA)";
   }
 };
 
@@ -222,16 +284,30 @@ async function init() {
     }
   });
 
-  // Verify session
+  // Verify portal session or offline profile
   try {
     const authCheck = await window.lampas.auth.verify(currentConfig.portalUrl);
     if (authCheck.valid && authCheck.user) {
       updateUserUI(authCheck.user);
+    } else if (currentConfig.offlineUsername) {
+      updateUserUI({
+        name: currentConfig.offlineUsername,
+        minecraftUsername: currentConfig.offlineUsername,
+        allowedChannels: ["stable"],
+      });
     } else {
       updateUserUI(null);
     }
   } catch {
-    updateUserUI(null);
+    if (currentConfig.offlineUsername) {
+      updateUserUI({
+        name: currentConfig.offlineUsername,
+        minecraftUsername: currentConfig.offlineUsername,
+        allowedChannels: ["stable"],
+      });
+    } else {
+      updateUserUI(null);
+    }
   }
 }
 

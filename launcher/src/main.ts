@@ -4,6 +4,7 @@ import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
 import { LauncherSync } from "./sync";
 import { GameRunner } from "./game-runner";
+import { MsaAuth } from "./msa-auth";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
@@ -58,6 +59,11 @@ app.whenReady().then(() => {
   ipcMain.handle("auth:login", (_, portalUrl) => LauncherAuth.loginWithPortal(portalUrl));
   ipcMain.handle("auth:logout", () => LauncherAuth.logout());
   ipcMain.handle("auth:verify", (_, portalUrl) => LauncherAuth.verifySession(portalUrl));
+  ipcMain.handle("msa:login", async () => {
+    return MsaAuth.loginWithDeviceCode((prompt) => {
+      mainWindow?.webContents.send("msa:prompt", prompt);
+    });
+  });
 
   // IPC Handlers: Sync
   ipcMain.handle("sync:start", async () => {

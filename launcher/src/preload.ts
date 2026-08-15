@@ -9,6 +9,14 @@ contextBridge.exposeInMainWorld("lampas", {
     verify: (portalUrl?: string): Promise<{ valid: boolean; user?: UserProfile }> =>
       ipcRenderer.invoke("auth:verify", portalUrl),
   },
+  msa: {
+    login: (): Promise<any> => ipcRenderer.invoke("msa:login"),
+    onPrompt: (callback: (prompt: { userCode: string; verificationUri: string }) => void) => {
+      const handler = (_: any, data: any) => callback(data);
+      ipcRenderer.on("msa:prompt", handler);
+      return () => ipcRenderer.removeListener("msa:prompt", handler);
+    },
+  },
   sync: {
     start: (): Promise<{ success: boolean; version: string; packName: string }> =>
       ipcRenderer.invoke("sync:start"),
