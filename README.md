@@ -14,41 +14,54 @@ It guarantees **zero drift between clients and dedicated servers** by managing b
 
 ## 🌟 Key Architecture & Tenets
 
-```
-                             ┌───────────────────────────────┐
-                             │     lampas-pipeline (Git)     │
-                             │                               │
-                             │  pack.toml, mods/*.toml       │
-                             │  client/, server/, common/    │
-                             └───────────────┬───────────────┘
-                                             │
-                                   lampasctl manifest
-                                             │
-                                             ▼
-                             ┌───────────────────────────────┐
-                             │     lampas2-portal Backend    │
-                             │     (Next.js + PostgreSQL)    │
-                             │                               │
-                             │  /api/v1/channels/* (Routing) │
-                             │  /api/v1/releases/* (Manifest)│
-                             │  /api/v1/blobs/*    (CDN)     │
-                             │  /auth/launcher     (PKCE)    │
-                             └───────┬───────────────┬───────┘
-                                     │               │
-                 ┌───────────────────┘               └───────────────────┐
-                 ▼                                                       ▼
-      ┌─────────────────────┐                                 ┌─────────────────────┐
-      │   Lampas Launcher   │                                 │ lampas-server-fabric│
-      │                     │                                 │                     │
-      │ Standalone Desktop  │                                 │ deploy_pack.py      │
-      │ OpenJDK 25 Runtime  │                                 │ World Backup Engine │
-      │ Web OAuth PKCE Auth │                                 │ Dual SHA-256 Check  │
-      └──────────┬──────────┘                                 └──────────┬──────────┘
-                 │                                                       │
-                 ▼                                                       ▼
-          Minecraft Client ═══════════════════════════════════════ Dedicated Server
-                                 Fabric Handshake
-                                (lampas-core.jar)
+```mermaid
+graph TD
+    subgraph Git ["1. Authoritative Source of Truth"]
+        Pipeline["lampas-pipeline (Git)<br/>• pack.toml<br/>• mods/*.toml<br/>• client/ & server/ configs"]
+    end
+
+    subgraph CI ["2. CI & Manifest Build"]
+        Lampasctl["lampasctl manifest<br/>• SHA-256 Checksums<br/>• JiJ Validation<br/>• File Policy Engine"]
+    end
+
+    subgraph Portal ["3. Lampas Portal Backend (lampas2-portal)"]
+        PortalAPI["Portal APIs & CDN<br/>• /api/v1/channels/* (Routing)<br/>• /api/v1/releases/* (Manifests)<br/>• /api/v1/blobs/* (CDN)<br/>• /auth/launcher (OAuth PKCE)"]
+    end
+
+    subgraph ClientLayer ["4. Client Ecosystem"]
+        Launcher["Lampas Launcher (Desktop)<br/>• OpenJDK 25 Auto-Discovery<br/>• Web OAuth PKCE Login<br/>• Direct KnotClient JVM Spawner"]
+        ClientMC["Minecraft 26.2 Client<br/>• Fabric Loader 0.19.3<br/>• 156 Synchronized Mods"]
+    end
+
+    subgraph ServerLayer ["5. Dedicated Server Ecosystem"]
+        ServerScript["deploy_pack.py<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
+        ServerMC["lampas-server-fabric<br/>• Fabric Dedicated Server<br/>• OpenJDK 25 JVM"]
+    end
+
+    subgraph CDNs ["6. Decentralized Byte Delivery"]
+        Modrinth["Modrinth CDN<br/>(3rd-party mods)"]
+        CurseForge["CurseForge CDN<br/>(3rd-party mods)"]
+        PortalBlobs["Portal Blob Storage<br/>(configs & custom JARs)"]
+    end
+
+    Pipeline -->|Pull Request / Tag| Lampasctl
+    Lampasctl -->|lampasctl publish| PortalAPI
+
+    PortalAPI -->|Channel Pointers & Manifests| Launcher
+    PortalAPI -->|Server Manifests| ServerScript
+
+    Launcher -.->|Download| Modrinth
+    Launcher -.->|Download| CurseForge
+    Launcher -.->|Download| PortalBlobs
+
+    ServerScript -.->|Download| Modrinth
+    ServerScript -.->|Download| CurseForge
+    ServerScript -.->|Download| PortalBlobs
+
+    Launcher -->|Spawns JVM| ClientMC
+    ServerScript -->|Deploys & Starts| ServerMC
+
+    ClientMC <===>|"Fabric Handshake & Protocol Verification (lampas-core)"| ServerMC
 ```
 
 1. **Deterministic Single Source of Truth**: Every client and server release is strictly generated from declarative TOML descriptors committed to Git.

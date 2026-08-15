@@ -32,62 +32,51 @@ The Lampas ecosystem spans three primary repositories and reference client insta
 
 ## 3. High-Level Architecture
 
-```text
-                               ┌──────────────────────────┐
-                               │   lampas-pipeline (Git)  │
-                               │                          │
-                               │ pack.toml, mods/*.toml   │
-                               │ client/, server/, common/│
-                               └────────────┬─────────────┘
-                                            │
-                                       Pull Request
-                                            │
-                                            ▼
-                               ┌──────────────────────────┐
-                               │       CI Validate        │
-                               │       (lampasctl)        │
-                               │                          │
-                               │ resolve providers        │
-                               │ validate dependencies    │
-                               │ calculate sha256 hashes  │
-                               │ build & sign manifests   │
-                               └────────────┬─────────────┘
-                                            │
-                                     Tag / Release
-                                            │
-                                            ▼
-                               ┌──────────────────────────┐
-                               │  lampas2-portal Backend  │
-                               │  (Next.js + PostgreSQL)  │
-                               │                          │
-                               │  /api/v1/channels/*      │
-                               │  /api/v1/releases/*      │
-                               │  /api/v1/blobs/*         │
-                               │  /api/v1/auth/* (OAuth)  │
-                               │  /tech/pack (Dashboard)  │
-                               └───────┬──────────┬───────┘
-                                       │          │
-                     ┌─────────────────┘          └────────────────┐
-                     ▼                                             ▼
-          ┌─────────────────────┐                       ┌─────────────────────┐
-          │   Lampas Launcher   │                       │ lampas-server-fabric│
-          │                     │                       │                     │
-          │ OAuth2 PKCE Auth    │                       │ pulls server-       │
-          │ queries channels    │                       │ manifest.json       │
-          │ pulls manifests     │                       │ deploys matched JARs│
-          │ verifies & launches │                       │ runs SMP gameplay   │
-          └──────────┬──────────┘                       └──────────┬──────────┘
-                     │                                             │
-      ┌──────────────┴──────────────┐                              │
-      ▼              ▼              ▼                              │
-Modrinth CDN   CurseForge CDN  Portal CDN                          │
- (3rd-party)    (3rd-party)   (blobs/configs)                      │
-      │              │              │                              │
-      └──────────────┼──────────────┘                              │
-                     ▼                                             │
-              Minecraft Client ════════════════════════════════════╝
-                                  Fabric Handshake
-                                  (lampas-core.jar)
+```mermaid
+graph TD
+    subgraph Git ["1. Authoritative Source of Truth"]
+        Pipeline["lampas-pipeline (Git)<br/>• pack.toml, mods/*.toml<br/>• client/, server/, common/"]
+    end
+
+    subgraph CI ["2. CI & Manifest Build"]
+        Lampasctl["lampasctl manifest<br/>• resolve providers<br/>• validate dependencies<br/>• calculate sha256 hashes<br/>• build & sign manifests"]
+    end
+
+    subgraph Portal ["3. Lampas Portal Backend (lampas2-portal)"]
+        PortalAPI["lampas2-portal Backend (Next.js + PostgreSQL)<br/>• /api/v1/channels/*<br/>• /api/v1/releases/*<br/>• /api/v1/blobs/*<br/>• /api/v1/auth/* (OAuth)<br/>• /tech/pack (Dashboard)"]
+    end
+
+    subgraph ClientLayer ["4. Client Ecosystem"]
+        Launcher["Lampas Launcher<br/>• OAuth2 PKCE Auth<br/>• queries channels<br/>• pulls manifests<br/>• verifies & launches"]
+        ClientMC["Minecraft Client"]
+    end
+
+    subgraph ServerLayer ["5. Dedicated Server Ecosystem"]
+        ServerScript["lampas-server-fabric<br/>• pulls server-manifest.json<br/>• deploys matched JARs<br/>• runs SMP gameplay"]
+    end
+
+    subgraph CDNs ["6. Decentralized Byte Delivery"]
+        Modrinth["Modrinth CDN<br/>(3rd-party)"]
+        CurseForge["CurseForge CDN<br/>(3rd-party)"]
+        PortalBlobs["Portal CDN<br/>(blobs/configs)"]
+    end
+
+    Pipeline -->|Pull Request| Lampasctl
+    Lampasctl -->|Tag / Release| PortalAPI
+
+    PortalAPI --> Launcher
+    PortalAPI --> ServerScript
+
+    Launcher -.-> Modrinth
+    Launcher -.-> CurseForge
+    Launcher -.-> PortalBlobs
+
+    ServerScript -.-> Modrinth
+    ServerScript -.-> CurseForge
+    ServerScript -.-> PortalBlobs
+
+    Launcher --> ClientMC
+    ClientMC <===>|"Fabric Handshake (lampas-core.jar)"| ServerScript
 ```
 
 ---
@@ -206,12 +195,33 @@ file = "custom/lampas-core-1.0.0.jar"
 
 The resolver abstracts provider details through a common provider interface:
 
-```text
-Provider
-├── ModrinthProvider       (Direct CDN metadata, hashes, and downloads)
-├── CurseForgeProvider     (API metadata & CDN file links; checks distribution flags)
-├── LampasProvider         (Content-addressed blobs from portal CDN)
-└── DirectHttpProvider     (Self-hosted direct URL fallback with static hash)
+```mermaid
+classDiagram
+    class Provider {
+        <<interface>>
+        +resolve()
+        +download()
+    }
+    class ModrinthProvider {
+        +Direct CDN metadata
+        +Hashes & downloads
+    }
+    class CurseForgeProvider {
+        +API metadata & CDN links
+        +Distribution flags check
+    }
+    class LampasProvider {
+        +Content-addressed blobs
+        +Portal CDN
+    }
+    class DirectHttpProvider {
+        +Self-hosted direct URL
+        +Static hash
+    }
+    Provider <|-- ModrinthProvider
+    Provider <|-- CurseForgeProvider
+    Provider <|-- LampasProvider
+    Provider <|-- DirectHttpProvider
 ```
 
 ### CurseForge 3rd-Party Distribution Handling
@@ -509,29 +519,15 @@ The Lampas Launcher is **100% standalone and self-sufficient**. It does **NOT** 
 
 The dedicated server at [`C:\Users\markj\source\repos\lampas-server-fabric`](file:///C:/Users/markj/source/repos/lampas-server-fabric) uses `server-manifest.json`:
 
-```text
-CI / Deploy Trigger
-    │
-    ▼
-Fetch server-manifest.json (matching Git release tag)
-    │
-    ▼
-Download server & common mods + configs
-    │
-    ▼
-Verify SHA-256 hashes against lockfile
-    │
-    ▼
-Stop Minecraft server process
-    │
-    ▼
-Create timestamped world backup (/backup/YYYY-MM-DD_v2.14.0/)
-    │
-    ▼
-Apply staged update atomically
-    │
-    ▼
-Start server with OpenJDK 25 (java-runtime-epsilon / Temurin 25) JVM
+```mermaid
+flowchart TD
+    A[CI / Deploy Trigger] --> B[Fetch server-manifest.json matching Git release tag]
+    B --> C[Download server & common mods + configs]
+    C --> D[Verify SHA-256 hashes against lockfile]
+    D --> E[Stop Minecraft server process]
+    E --> F[Create timestamped world backup]
+    F --> G[Apply staged update atomically]
+    G --> H[Start server with OpenJDK 25 JVM]
 ```
 
 ---
