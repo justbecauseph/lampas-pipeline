@@ -41,6 +41,24 @@ function getExistingModIdentifiers(modsDir: string): Set<string> {
   return ids;
 }
 
+function detectModSide(
+  projData: { client_side?: string; server_side?: string },
+  explicitSide?: "client" | "server" | "both"
+): "client" | "server" | "both" {
+  if (explicitSide) return explicitSide;
+
+  const client = (projData.client_side || "").toLowerCase();
+  const server = (projData.server_side || "").toLowerCase();
+
+  if (server === "unsupported") {
+    return "client";
+  }
+  if (client === "unsupported") {
+    return "server";
+  }
+  return "both";
+}
+
 export async function addMod(options: AddModOptions) {
   const packConfigFile = path.join(options.packDir, "pack.toml");
   const modsDir = path.join(options.packDir, "mods");
@@ -109,6 +127,9 @@ export async function addMod(options: AddModOptions) {
       const slug = projData.slug;
       const modName = projData.title;
 
+      // Automatically determine target side if not explicitly specified
+      const targetSide = detectModSide(projData, options.side);
+
       // 2. Query matching versions
       let versionId = options.versionId;
       let versionName = "";
@@ -149,7 +170,7 @@ export async function addMod(options: AddModOptions) {
       const tomlPath = path.join(modsDir, `${slug}.toml`);
       const def: ModDefinition = {
         name: modName,
-        side,
+        side: targetSide,
         provider: {
           type: "modrinth",
           project_id: projectId,
@@ -161,7 +182,7 @@ export async function addMod(options: AddModOptions) {
       console.log(`\n${indent}✓ [Added Mod] ${modName} (${slug})`);
       console.log(`${indent}   Provider: Modrinth (${projectId})`);
       console.log(`${indent}   Version:  ${versionId} ${versionName ? `(${versionName})` : ""}`);
-      console.log(`${indent}   Side:     ${side}`);
+      console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(auto-detected)"}`);
       console.log(`${indent}   File:     ${filename}`);
       console.log(`${indent}   Saved to: ${tomlPath}\n`);
 
@@ -190,7 +211,7 @@ export async function addMod(options: AddModOptions) {
             await addMod({
               packDir: options.packDir,
               query: depTarget,
-              side, // Inherit same side (client/server/both)
+              side: targetSide, // Inherit same side (client/server/both)
               versionId: dep.version_id || undefined,
               depth: depth + 1,
             });
