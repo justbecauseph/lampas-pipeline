@@ -3,7 +3,6 @@
 let currentUser = null;
 let currentConfig = null;
 let isLaunching = false;
-let currentMsaPrompt = null;
 
 // DOM Elements
 const btnMinimize = document.getElementById("btn-minimize");
@@ -21,18 +20,11 @@ const tabConsole = document.getElementById("tab-console");
 const tabSettings = document.getElementById("tab-settings");
 
 const btnLogin = document.getElementById("btn-login");
-const btnMsaLogin = document.getElementById("btn-msa-login");
 const btnLogout = document.getElementById("btn-logout");
 const userCard = document.getElementById("user-card");
 const userName = document.getElementById("user-name");
 const userRole = document.getElementById("user-role");
 const userAvatar = document.getElementById("user-avatar");
-
-const modalMsa = document.getElementById("modal-msa");
-const btnCloseMsa = document.getElementById("btn-close-msa");
-const msaCodeDisplay = document.getElementById("msa-code-display");
-const btnCopyMsaCode = document.getElementById("btn-copy-msa-code");
-const btnOpenMsaUrl = document.getElementById("btn-open-msa-url");
 
 const btnPlay = document.getElementById("btn-play");
 const btnPlayText = document.getElementById("btn-play-text");
@@ -148,57 +140,6 @@ btnLogin.onclick = async () => {
   } finally {
     btnLogin.disabled = false;
     btnLogin.innerText = "Log In with Portal";
-  }
-};
-
-// Microsoft Account (MSA) Device Code Login
-window.lampas.msa.onPrompt((prompt) => {
-  currentMsaPrompt = prompt;
-  msaCodeDisplay.innerText = prompt.userCode;
-  modalMsa.classList.remove("hidden");
-});
-
-btnCopyMsaCode.onclick = () => {
-  if (currentMsaPrompt?.userCode) {
-    navigator.clipboard.writeText(currentMsaPrompt.userCode);
-    btnCopyMsaCode.innerText = "✓ Copied!";
-    setTimeout(() => {
-      btnCopyMsaCode.innerText = "Copy Code";
-    }, 2000);
-  }
-};
-
-btnOpenMsaUrl.onclick = () => {
-  if (currentMsaPrompt?.verificationUri) {
-    window.open(currentMsaPrompt.verificationUri, "_blank");
-  }
-};
-
-btnCloseMsa.onclick = () => {
-  modalMsa.classList.add("hidden");
-};
-
-btnMsaLogin.onclick = async () => {
-  try {
-    btnMsaLogin.disabled = true;
-    btnMsaLogin.innerText = "Waiting for Code...";
-    const account = await window.lampas.msa.login();
-    modalMsa.classList.add("hidden");
-
-    updateUserUI({
-      name: account.username,
-      minecraftUsername: account.username,
-      minecraftUuid: account.uuid,
-      allowedChannels: ["stable", "beta", "dev"],
-    });
-
-    appendLog("INFO", `Logged into Microsoft Account: ${account.username} (${account.uuid})`);
-  } catch (err) {
-    modalMsa.classList.add("hidden");
-    alert(`Microsoft Login Failed: ${err.message}`);
-  } finally {
-    btnMsaLogin.disabled = false;
-    btnMsaLogin.innerText = "Microsoft Account (MSA)";
   }
 };
 

@@ -91,36 +91,6 @@
       </div>
     </aside>
 
-    <!-- Microsoft Device Code Modal -->
-    <div id="modal-msa" class="modal-backdrop hidden">
-      <div class="modal-card">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <span class="text-emerald-400">Microsoft</span> Device Login
-          </h3>
-          <button id="btn-close-msa" class="icon-btn text-slate-400 hover:text-white">✕</button>
-        </div>
-        <p class="text-xs text-slate-400 mb-4">
-          Enter this code at Microsoft Device Login to link your Minecraft Java Edition account:
-        </p>
-        <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl text-center mb-4">
-          <span id="msa-code-display" class="text-2xl font-black font-mono text-emerald-400 tracking-widest">LOADING...</span>
-        </div>
-        <div class="flex items-center justify-center gap-2 text-xs text-slate-400 mb-6">
-          <div class="spinner"></div>
-          <span>Waiting for browser authorization...</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <button id="btn-copy-msa-code" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-4 rounded-2xl text-xs">
-            Copy Code
-          </button>
-          <button id="btn-open-msa-url" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-2xl text-xs">
-            Open Microsoft Login
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Main Content Area -->
     <main class="flex-1 p-8 relative flex flex-col justify-between">
       <!-- TAB 1: PLAY SCREEN -->
@@ -244,17 +214,6 @@
 
           <button id="btn-save-settings" class="rounded-xl bg-cyan-600 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-500 cursor-pointer">
             Save Settings
-          </button>
-        </div>
-
-        <!-- Alternative Direct MSA Auth -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 space-y-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Direct Microsoft Account Authentication</h3>
-          <p class="text-xs text-slate-400">
-            Link a standalone Microsoft account directly without going through the web portal:
-          </p>
-          <button id="btn-msa-login" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 px-3 rounded-xl text-xs cursor-pointer border border-slate-700">
-            Sign In with Microsoft Device Code
           </button>
         </div>
       </section>
