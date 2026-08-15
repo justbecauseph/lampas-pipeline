@@ -11,11 +11,34 @@ export interface AddModOptions {
   side?: "client" | "server" | "both";
   provider?: "modrinth" | "curseforge" | "lampas";
   versionId?: string;
+  depth?: number;
 }
 
 export interface RemoveModOptions {
   packDir: string;
   modId: string;
+}
+
+/**
+ * Returns a map of all project IDs and slugs currently defined in pack/mods/
+ */
+function getExistingModIdentifiers(modsDir: string): Set<string> {
+  const ids = new Set<string>();
+  if (!fs.existsSync(modsDir)) return ids;
+
+  const files = fs.readdirSync(modsDir).filter((f) => f.endsWith(".toml"));
+  for (const file of files) {
+    const slug = path.basename(file, ".toml");
+    ids.add(slug.toLowerCase());
+
+    try {
+      const def = parseTomlFile<ModDefinition>(path.join(modsDir, file));
+      if (def.provider?.type === "modrinth") {
+        if (def.provider.project_id) ids.add(def.provider.project_id.toLowerCase());
+      }
+    } catch {}
+  }
+  return ids;
 }
 
 export async function addMod(options: AddModOptions) {
@@ -31,6 +54,7 @@ export async function addMod(options: AddModOptions) {
   const targetMc = packConfig.pack.minecraft;
   const targetLoader = packConfig.loader.type;
   const side = options.side || "both";
+  const depth = options.depth || 0;
 
   os_ensure_dir(modsDir);
   os_ensure_dir(customDir);
@@ -68,7 +92,8 @@ export async function addMod(options: AddModOptions) {
     const providerType = options.provider || "modrinth";
 
     if (providerType === "modrinth") {
-      console.log(`[Mod Manager] Querying Modrinth for '${query}' (MC ${targetMc}, ${targetLoader})...`);
+      const indent = "  ".repeat(depth);
+      console.log(`${indent}[Mod Manager] Querying Modrinth for '${query}' (MC ${targetMc}, ${targetLoader})...`);
 
       // 1. Query project metadata
       const projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
@@ -88,6 +113,7 @@ export async function addMod(options: AddModOptions) {
       let versionId = options.versionId;
       let versionName = "";
       let filename = "";
+      let dependencies: Array<{ project_id: string | null; version_id: string | null; dependency_type: string }> = [];
 
       if (!versionId) {
         const verUrl = `https://api.modrinth.com/v2/project/${projectId}/version?game_versions=[%22${targetMc}%22]&loaders=[%22${targetLoader}%22]`;
@@ -108,6 +134,16 @@ export async function addMod(options: AddModOptions) {
         versionId = latest.id;
         versionName = latest.name;
         filename = (latest.files.find((f: any) => f.primary) || latest.files[0])?.filename || latest.name;
+        dependencies = latest.dependencies || [];
+      } else {
+        // Query specific version for dependencies
+        const verRes = await fetch(`https://api.modrinth.com/v2/version/${versionId}`, {
+          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+        });
+        if (verRes.ok) {
+          const verData = await verRes.json();
+          dependencies = verData.dependencies || [];
+        }
       }
 
       const tomlPath = path.join(modsDir, `${slug}.toml`);
@@ -122,26 +158,64 @@ export async function addMod(options: AddModOptions) {
       };
 
       writeTomlFile(tomlPath, def);
-      console.log(`\n✓ [Added Mod] ${modName} (${slug})`);
-      console.log(`   Provider: Modrinth (${projectId})`);
-      console.log(`   Version:  ${versionId} ${versionName ? `(${versionName})` : ""}`);
-      console.log(`   Side:     ${side}`);
-      console.log(`   File:     ${filename}`);
-      console.log(`   Saved to: ${tomlPath}\n`);
+      console.log(`\n${indent}✓ [Added Mod] ${modName} (${slug})`);
+      console.log(`${indent}   Provider: Modrinth (${projectId})`);
+      console.log(`${indent}   Version:  ${versionId} ${versionName ? `(${versionName})` : ""}`);
+      console.log(`${indent}   Side:     ${side}`);
+      console.log(`${indent}   File:     ${filename}`);
+      console.log(`${indent}   Saved to: ${tomlPath}\n`);
+
+      // 3. Intelligent Recursive Dependency Resolution
+      const existingIds = getExistingModIdentifiers(modsDir);
+
+      const requiredDeps = dependencies.filter(
+        (d) => d.dependency_type === "required" && (d.project_id || d.version_id)
+      );
+
+      if (requiredDeps.length > 0) {
+        console.log(`${indent}🔍 [Dependency Checker] Inspecting ${requiredDeps.length} required dependencies for ${modName}...`);
+
+        for (const dep of requiredDeps) {
+          const depTarget = dep.project_id || dep.version_id;
+          if (!depTarget) continue;
+
+          // Check if already in pack
+          if (existingIds.has(depTarget.toLowerCase())) {
+            console.log(`${indent}   ✓ [Satisfied] Required dependency '${depTarget}' is already installed.`);
+            continue;
+          }
+
+          console.log(`\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${depTarget}...`);
+          try {
+            await addMod({
+              packDir: options.packDir,
+              query: depTarget,
+              side, // Inherit same side (client/server/both)
+              versionId: dep.version_id || undefined,
+              depth: depth + 1,
+            });
+            existingIds.add(depTarget.toLowerCase());
+          } catch (depErr: any) {
+            console.warn(`${indent}   ⚠️ Could not automatically install dependency '${depTarget}': ${depErr.message}`);
+          }
+        }
+      }
     } else {
       throw new Error(`Provider '${providerType}' not supported for automatic resolution yet.`);
     }
   }
 
-  // Automatically update lockfile and manifests
-  console.log("[Mod Manager] Updating pack.lock.json and manifests...");
-  const lockFile = path.join(options.packDir, "pack.lock.json");
-  const manifestDir = path.resolve(path.join(options.packDir, "..", "manifest"));
+  // Only perform root-level lockfile and manifest builds
+  if (depth === 0) {
+    console.log("[Mod Manager] Updating pack.lock.json and manifests...");
+    const lockFile = path.join(options.packDir, "pack.lock.json");
+    const manifestDir = path.resolve(path.join(options.packDir, "..", "manifest"));
 
-  await resolvePack({ packDir: options.packDir, lockFile });
-  await buildManifests({ packDir: options.packDir, lockFile, outDir: manifestDir });
+    await resolvePack({ packDir: options.packDir, lockFile });
+    await buildManifests({ packDir: options.packDir, lockFile, outDir: manifestDir });
 
-  console.log(`\n🎉 Mod added and manifests synchronized successfully!`);
+    console.log(`\n🎉 Mod and all required dependencies added and synchronized successfully!`);
+  }
 }
 
 export async function removeMod(options: RemoveModOptions) {
