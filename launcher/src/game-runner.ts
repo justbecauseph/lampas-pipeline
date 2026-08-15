@@ -27,7 +27,10 @@ export class GameRunner {
     const ramGb = config.allocatedRamGb || 4;
     const username = user?.minecraftUsername || user?.name || "LampasPlayer";
     const uuid = user?.minecraftUuid || "00000000-0000-0000-0000-000000000000";
-    const token = config.token || "0";
+    const mcToken = user?.minecraftAccessToken || config.minecraftAccessToken;
+    const isRealMsa = !!(mcToken && mcToken.startsWith("ey") && mcToken.length > 50);
+    const token = isRealMsa ? mcToken : "0";
+    const userType = isRealMsa ? "msa" : "mojang";
 
     const log = (level: "INFO" | "WARN" | "ERROR", message: string) => {
       onLog({
@@ -39,7 +42,7 @@ export class GameRunner {
 
     log("INFO", `Preparing Standalone Minecraft + Fabric Environment (Java 25)...`);
     log("INFO", `Game Directory: ${gameDir}`);
-    log("INFO", `Player: ${username} (UUID: ${uuid})`);
+    log("INFO", `Player: ${username} (UUID: ${uuid}, Auth: ${isRealMsa ? "Microsoft Services" : "Lampas Protocol / Offline"})`);
 
     // 1. Ensure OpenJDK 25 Runtime
     const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg));
@@ -85,7 +88,7 @@ export class GameRunner {
       "--accessToken",
       token,
       "--userType",
-      "msa",
+      userType,
       "--versionType",
       "release",
     ];

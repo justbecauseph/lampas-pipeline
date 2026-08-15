@@ -5,6 +5,7 @@ export interface UserProfile {
   discordTag?: string;
   minecraftUuid?: string;
   minecraftUsername?: string;
+  minecraftAccessToken?: string;
   isAdmin: boolean;
   isTech: boolean;
   roles: string[];
@@ -18,6 +19,7 @@ export interface LauncherConfig {
   gameDir: string;
   javaPath?: string;
   token?: string;
+  minecraftAccessToken?: string;
   offlineUsername?: string;
 }
 
