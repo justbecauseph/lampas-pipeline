@@ -10,6 +10,9 @@ const btnMinimize = document.getElementById("btn-minimize");
 const btnMaximize = document.getElementById("btn-maximize");
 const btnClose = document.getElementById("btn-close");
 const titlebarChannelBadge = document.getElementById("titlebar-channel-badge");
+const titlebarGameStatus = document.getElementById("titlebar-game-status");
+const titlebarStatusDot = document.getElementById("titlebar-status-dot");
+const titlebarStatusText = document.getElementById("titlebar-status-text");
 
 // DOM Elements: Navigation
 const navPlay = document.getElementById("nav-play");
@@ -57,6 +60,49 @@ const consoleCount = document.getElementById("console-count");
 const consoleAutoscroll = document.getElementById("console-autoscroll");
 const btnCopyLogs = document.getElementById("btn-copy-logs");
 const btnClearLogs = document.getElementById("btn-clear-logs");
+const consoleGameStatus = document.getElementById("console-game-status");
+const consoleStatusDot = document.getElementById("console-status-dot");
+const consoleStatusText = document.getElementById("console-status-text");
+const btnConsoleStop = document.getElementById("btn-console-stop");
+
+function setConsoleStatus(status, textOverride) {
+  // Update Console Indicator
+  if (consoleGameStatus && consoleStatusDot && consoleStatusText) {
+    if (status === "running") {
+      consoleStatusDot.className = "status-dot status-dot-running";
+      consoleStatusText.innerText = textOverride || "GAME RUNNING";
+      consoleGameStatus.className = "badge flex items-center gap-1.5 text-emerald-400 border-emerald-500/40 bg-emerald-950/50";
+      if (btnConsoleStop) btnConsoleStop.classList.remove("hidden");
+    } else if (status === "syncing" || status === "launching" || status === "repairing") {
+      consoleStatusDot.className = "status-dot status-dot-launching";
+      consoleStatusText.innerText = textOverride || (status === "syncing" ? "SYNCING..." : status === "repairing" ? "REPAIRING..." : "LAUNCHING...");
+      consoleGameStatus.className = "badge flex items-center gap-1.5 text-amber-400 border-amber-500/40 bg-amber-950/50";
+      if (btnConsoleStop) btnConsoleStop.classList.remove("hidden");
+    } else {
+      consoleStatusDot.className = "status-dot status-dot-idle";
+      consoleStatusText.innerText = textOverride || "IDLE";
+      consoleGameStatus.className = "badge flex items-center gap-1.5 text-slate-400";
+      if (btnConsoleStop) btnConsoleStop.classList.add("hidden");
+    }
+  }
+
+  // Update Titlebar Indicator
+  if (titlebarGameStatus && titlebarStatusDot && titlebarStatusText) {
+    if (status === "running") {
+      titlebarStatusDot.className = "status-dot status-dot-running";
+      titlebarStatusText.innerText = textOverride || "RUNNING";
+      titlebarGameStatus.className = "badge flex items-center gap-1.5 text-emerald-400 border-emerald-500/40 bg-emerald-950/50";
+    } else if (status === "syncing" || status === "launching" || status === "repairing") {
+      titlebarStatusDot.className = "status-dot status-dot-launching";
+      titlebarStatusText.innerText = textOverride || (status === "syncing" ? "SYNCING" : status === "repairing" ? "REPAIRING" : "LAUNCHING");
+      titlebarGameStatus.className = "badge flex items-center gap-1.5 text-amber-400 border-amber-500/40 bg-amber-950/50";
+    } else {
+      titlebarStatusDot.className = "status-dot status-dot-idle";
+      titlebarStatusText.innerText = textOverride || "IDLE";
+      titlebarGameStatus.className = "badge flex items-center gap-1.5 text-slate-400";
+    }
+  }
+}
 
 // DOM Elements: Settings Tab
 const ramSlider = document.getElementById("ram-slider");
@@ -204,6 +250,7 @@ window.lampas.game.onLog((entry) => {
 // Subscribe to Game Exit
 window.lampas.game.onExit((code) => {
   isLaunching = false;
+  setConsoleStatus("idle", "IDLE");
   if (btnPlay) {
     btnPlay.disabled = false;
   }
@@ -392,6 +439,7 @@ async function handleRepair() {
 
   try {
     isLaunching = true;
+    setConsoleStatus("repairing", "REPAIRING...");
     if (btnRepairPack) btnRepairPack.disabled = true;
     if (btnRepairSettings) btnRepairSettings.disabled = true;
     if (btnPlay) btnPlay.disabled = true;
@@ -424,6 +472,7 @@ async function handleRepair() {
     showToast(`Repair Error: ${err.message}`, "error", 6000);
   } finally {
     isLaunching = false;
+    setConsoleStatus("idle", "IDLE");
     if (btnRepairPack) btnRepairPack.disabled = false;
     if (btnRepairSettings) btnRepairSettings.disabled = false;
     if (btnPlay) btnPlay.disabled = false;
@@ -450,19 +499,22 @@ if (btnVerifyPack) {
 // ========================================================
 // Game Stop / Kill Button
 // ========================================================
-if (btnStop) {
-  btnStop.onclick = async () => {
-    try {
-      btnStop.disabled = true;
-      showToast("Terminating Minecraft process...", "info");
-      await window.lampas.game.kill();
-    } catch (err) {
-      showToast(`Failed to terminate game: ${err.message}`, "error");
-    } finally {
-      btnStop.disabled = false;
-    }
-  };
+async function handleStopGame() {
+  try {
+    if (btnStop) btnStop.disabled = true;
+    if (btnConsoleStop) btnConsoleStop.disabled = true;
+    showToast("Terminating Minecraft process...", "info");
+    await window.lampas.game.kill();
+  } catch (err) {
+    showToast(`Failed to terminate game: ${err.message}`, "error");
+  } finally {
+    if (btnStop) btnStop.disabled = false;
+    if (btnConsoleStop) btnConsoleStop.disabled = false;
+  }
 }
+
+if (btnStop) btnStop.onclick = handleStopGame;
+if (btnConsoleStop) btnConsoleStop.onclick = handleStopGame;
 
 // ========================================================
 // Sync & Play Launch Flow
@@ -475,9 +527,13 @@ if (btnPlay) {
       return;
     }
 
+    // Navigate to Console and Logs tab on play
+    switchTab(navConsole, tabConsole);
+
     try {
       isLaunching = true;
       btnPlay.disabled = true;
+      setConsoleStatus("syncing", "CONNECTING...");
       if (btnPlayText) btnPlayText.innerText = "CHECKING...";
       if (btnPlaySpinner) btnPlaySpinner.classList.remove("hidden");
       if (btnStop) btnStop.classList.remove("hidden");
@@ -497,8 +553,10 @@ if (btnPlay) {
 
         if (progress.status === "downloading") {
           if (btnPlayText) btnPlayText.innerText = "DOWNLOADING...";
+          setConsoleStatus("syncing", "DOWNLOADING...");
         } else if (progress.status === "staging") {
           if (btnPlayText) btnPlayText.innerText = "STAGING...";
+          setConsoleStatus("syncing", "STAGING...");
         }
       });
 
@@ -507,6 +565,7 @@ if (btnPlay) {
       removeListener();
 
       if (btnPlayText) btnPlayText.innerText = "LAUNCHING...";
+      setConsoleStatus("launching", "STARTING JVM...");
       if (progressMsg) progressMsg.innerText = "Starting Minecraft JVM...";
       if (progressFill) progressFill.style.width = "100%";
       if (progressPercent) progressPercent.innerText = "100%";
@@ -517,10 +576,12 @@ if (btnPlay) {
       await window.lampas.game.launch(currentUser);
 
       if (btnPlayText) btnPlayText.innerText = "RUNNING";
+      setConsoleStatus("running", "GAME RUNNING");
       if (btnPlaySpinner) btnPlaySpinner.classList.add("hidden");
       if (btnPlay) btnPlay.disabled = false; // allow clicking to switch to console
     } catch (err) {
       isLaunching = false;
+      setConsoleStatus("idle", "ERROR");
       if (btnPlay) btnPlay.disabled = false;
       if (btnPlayText) btnPlayText.innerText = "PLAY";
       if (btnPlaySpinner) btnPlaySpinner.classList.add("hidden");

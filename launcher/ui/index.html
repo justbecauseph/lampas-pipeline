@@ -19,6 +19,10 @@
       </span>
       <span class="badge">Fabric 26.2</span>
       <span id="titlebar-channel-badge" class="badge text-cyan-400">STABLE</span>
+      <div id="titlebar-game-status" class="badge flex items-center gap-1.5 text-slate-400">
+        <span id="titlebar-status-dot" class="status-dot status-dot-idle"></span>
+        <span id="titlebar-status-text" class="font-mono text-[10px] font-bold">IDLE</span>
+      </div>
     </div>
 
     <!-- Window Controls -->
@@ -323,9 +327,19 @@
         <div class="flex items-center justify-between flex-shrink-0">
           <div class="flex items-center gap-3">
             <h2 class="text-xl font-extrabold text-white tracking-tight">Live Game Console</h2>
+            <div id="console-game-status" class="badge flex items-center gap-1.5 text-slate-400">
+              <span id="console-status-dot" class="status-dot status-dot-idle"></span>
+              <span id="console-status-text" class="font-mono text-[11px] font-bold">IDLE</span>
+            </div>
             <span id="console-count" class="badge">0 lines</span>
           </div>
           <div class="flex items-center gap-3">
+            <button id="btn-console-stop" class="btn-stop hidden" title="Force Terminate Game">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>STOP GAME</span>
+            </button>
             <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
               <input id="console-autoscroll" type="checkbox" checked class="accent-cyan-500 cursor-pointer">
               <span>Auto-scroll</span>
