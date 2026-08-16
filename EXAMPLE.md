@@ -16,21 +16,22 @@ Practical, step-by-step recipes and workflows for maintaining the modpack, manag
 
 1. [Modpack Maintenance Workflows](#1-modpack-maintenance-workflows)
    - [Workflow A: Adding a Mod with Version Pinning](#workflow-a-adding-a-mod-with-version-pinning)
-   - [Workflow B: Adding a Client-Only or Server-Only Mod](#workflow-b-adding-a-client-only-or-server-only-mod)
+   - [Workflow B: Adding & Changing Mod Distribution Sides (Client vs Server)](#workflow-b-adding--changing-mod-distribution-sides-client-vs-server)
    - [Workflow C: Adding In-House Custom Override JARs](#workflow-c-adding-in-house-custom-override-jars)
    - [Workflow D: Removing a Mod and Re-synchronizing](#workflow-d-removing-a-mod-and-re-synchronizing)
+   - [Workflow E: Updating Client, Server, or Shared Configurations](#workflow-e-updating-client-server-or-shared-configurations)
 2. [Upstream Update & Audit Workflows](#2-upstream-update--audit-workflows)
-   - [Workflow E: Checking & Applying Mod Updates](#workflow-e-checking--applying-mod-updates)
-   - [Workflow F: Visualizing Changes with Manifest Diff](#workflow-f-visualizing-changes-with-manifest-diff)
+   - [Workflow F: Checking & Applying Mod Updates](#workflow-f-checking--applying-mod-updates)
+   - [Workflow G: Visualizing Changes with Manifest Diff](#workflow-g-visualizing-changes-with-manifest-diff)
 3. [Release & Channel Promotion Workflows](#3-release--channel-promotion-workflows)
-   - [Workflow G: Publishing a Staging / Dev Release](#workflow-g-publishing-a-staging--dev-release)
-   - [Workflow H: Promoting Dev to Beta or Stable](#workflow-h-promoting-dev-to-beta-or-stable)
+   - [Workflow H: Publishing a Staging / Dev Release](#workflow-h-publishing-a-staging--dev-release)
+   - [Workflow I: Promoting Dev to Beta or Stable](#workflow-i-promoting-dev-to-beta-or-stable)
 4. [Dedicated Server Deployment Workflows](#4-dedicated-server-deployment-workflows)
-   - [Workflow I: Live Server Deployment with World Backup](#workflow-i-live-server-deployment-with-world-backup)
-   - [Workflow J: Headless Sync to a Local Test Instance](#workflow-j-headless-sync-to-a-local-test-instance)
+   - [Workflow J: Live Server Deployment with World Backup](#workflow-j-live-server-deployment-with-world-backup)
+   - [Workflow K: Headless Sync to a Local Test Instance](#workflow-k-headless-sync-to-a-local-test-instance)
 5. [Desktop Launcher Workflows](#5-desktop-launcher-workflows)
-   - [Workflow K: Running the Launcher in Development](#workflow-k-running-the-launcher-in-development)
-   - [Workflow L: Packaging Windows & Linux Binaries](#workflow-l-packaging-windows--linux-binaries)
+   - [Workflow L: Running the Launcher in Development](#workflow-l-running-the-launcher-in-development)
+   - [Workflow M: Packaging Windows & Linux Binaries](#workflow-m-packaging-windows--linux-binaries)
 
 ---
 
@@ -67,20 +68,52 @@ bun run lampasctl add cloth-config
 
 ---
 
-### Workflow B: Adding a Client-Only or Server-Only Mod
+### Workflow B: Adding & Changing Mod Distribution Sides (Client vs Server)
 
-Control distribution target using the `-s` / `--side` flag:
+Control mod distribution target using the `-s` / `--side` CLI flag, or by updating `side` in `pack/mods/<slug>.toml`:
+
+| Target Side | Client Manifest | Server Manifest | Behavior & Purpose |
+| :--- | :---: | :---: | :--- |
+| `side = "client"` | ✅ Included | ❌ Excluded | Client-only HUD, rendering, GUI, or audio mods. Prevents server startup crashes. |
+| `side = "server"` | ❌ Excluded | ✅ Included | Server-only worldgen, admin tools, performance mods. Saves player RAM & disk space. |
+| `side = "both"` | ✅ Included | ✅ Included | Shared gameplay mods, entities, blocks, and synced network protocols. |
+
+#### 1. Setting or Changing Side via CLI (Recommended)
+`lampasctl add` updates the TOML descriptor, lockfile, and rebuilds manifests automatically:
 
 ```bash
-# Client-only HUD / Rendering mod (excluded from dedicated server manifest)
+# Set as client-only (excluded from dedicated server manifest)
 bun run lampasctl add xaeros-minimap --side client
+bun run lampasctl add lambdynamiclights --side client
 
-# Server-only administration or performance mod (excluded from client manifest)
+# Set as server-only (excluded from client manifest)
 bun run lampasctl add chunky --side server
+bun run lampasctl add tectonic --side server
 
-# Explicitly mark as needed on both sides
+# Set as synchronized on both sides
 bun run lampasctl add voicechat --side both
 ```
+
+#### 2. Changing Side Manually in `pack/mods/*.toml`
+If you edit `side = "client" | "server" | "both"` directly in `pack/mods/*.toml`, you **must run `resolve` before `manifest`** so `pack.lock.json` reflects the change:
+
+```bash
+# 1. Update pack.lock.json with the new side definitions from TOML files
+bun run lampasctl resolve
+
+# 2. Re-generate client-manifest.json and server-manifest.json
+bun run lampasctl manifest
+
+# 3. (Optional) Validate integrity and publish
+bun run lampasctl validate
+bun run lampasctl publish --channel dev
+```
+
+#### 3. Automatic Obsolete File Cleanup During Sync
+The sync engines on both the desktop launcher and dedicated server automatically prune obsolete files:
+- **Changed to `client`**: On the dedicated server, the next `deploy_pack.py` detects the mod is missing from `server-manifest.json` and **automatically deletes the old `.jar`** from `mods/`, preventing server crashes.
+- **Changed to `server`**: On the client launcher, the next sync detects the mod is missing from `client-manifest.json` and **automatically deletes the `.jar`** from `.minecraft/mods/`.
+- **Changed to `both`**: The missing side will download and install the `.jar` on its next sync.
 
 ---
 
@@ -107,9 +140,40 @@ bun run lampasctl rm appleskin
 
 ---
 
+### Workflow E: Updating Client, Server, or Shared Configurations
+
+Static configuration files (`.json`, `.json5`, `.toml`, `.properties`) and custom assets are declarative files tracked in Git and distributed as content-addressed SHA-256 blobs:
+
+| Directory | Scope | Purpose |
+| :--- | :--- | :--- |
+| [`pack/common/config/`](file:///pack/common/config) | **Both Sides** | Shared configs, datapacks, and scripts synced to both clients and dedicated servers. |
+| `pack/client/config/` | **Client Only** | HUD, visual, or keybinding configs (e.g. `options.txt`, minimap) excluded from servers. |
+| `pack/server/config/` | **Server Only** | Server-specific rules, optimization, and admin configs excluded from clients. |
+
+```bash
+# 1. Edit, add, or delete configuration files in the target directory
+# (e.g. pack/common/config/Adorn.json5 or pack/client/config/custom-hud.json)
+
+# 2. (Optional) Validate pack dependencies and TOML schemas
+bun run lampasctl validate
+
+# 3. Rebuild client and server manifests with updated SHA-256 checksums and sizes
+bun run lampasctl manifest
+
+# 4. (Optional) Test synchronization against local client or server test instances
+bun run lampasctl install --manifest ./manifest/client-manifest.json --target ./test-instance/minecraft
+bun run lampasctl install --manifest ./manifest/server-manifest.json --target ./test-instance/server
+
+# 5. Commit modified configs and generated manifests to Git
+git add pack/ manifest/
+git commit -m "chore(config): update mod configurations"
+```
+
+---
+
 ## 2. Upstream Update & Audit Workflows
 
-### Workflow E: Checking & Applying Mod Updates
+### Workflow F: Checking & Applying Mod Updates
 
 Scan all 150+ pack mods concurrently for newer upstream releases:
 
@@ -131,7 +195,7 @@ bun run lampasctl check-updates --markdown update_summary.md
 
 ---
 
-### Workflow F: Visualizing Changes with Manifest Diff
+### Workflow G: Visualizing Changes with Manifest Diff
 
 Compare two manifests before promoting a release to verify size deltas and mod changes:
 
@@ -147,7 +211,7 @@ bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server
 
 ## 3. Release & Channel Promotion Workflows
 
-### Workflow G: Publishing a Staging / Dev Release
+### Workflow H: Publishing a Staging / Dev Release
 
 Publish your local manifests and upload config/custom blobs to the Lampas Portal API:
 
@@ -160,7 +224,7 @@ bun run lampasctl publish \
 
 ---
 
-### Workflow H: Promoting Dev to Beta or Stable
+### Workflow I: Promoting Dev to Beta or Stable
 
 Once verified by testing, promote the channel pointer instantaneously without re-uploading blobs:
 
@@ -182,7 +246,7 @@ bun run lampasctl publish \
 
 ## 4. Dedicated Server Deployment Workflows
 
-### Workflow I: Live Server Deployment with World Backup
+### Workflow J: Live Server Deployment with World Backup
 
 Run the self-contained deployment engine on the dedicated server host:
 
@@ -199,7 +263,7 @@ python deploy_pack.py --portal-url https://portal.lampas.gg --channel stable
 
 ---
 
-### Workflow J: Headless Sync to a Local Test Instance
+### Workflow K: Headless Sync to a Local Test Instance
 
 ```bash
 # Synchronize a client test folder directly against a manifest
@@ -217,7 +281,7 @@ bun run lampasctl install \
 
 ## 5. Desktop Launcher Workflows
 
-### Workflow K: Running the Launcher in Development
+### Workflow L: Running the Launcher in Development
 
 ```bash
 cd launcher
@@ -231,7 +295,7 @@ bun run start
 
 ---
 
-### Workflow L: Packaging Windows & Linux Binaries
+### Workflow M: Packaging Windows & Linux Binaries
 
 ```bash
 cd launcher

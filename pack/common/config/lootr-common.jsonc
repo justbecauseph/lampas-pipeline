@@ -68,7 +68,7 @@
          * Determines how Lootr containers react to explosions. 'NONE' uses the default blast resistance. 'RESISTANT' makes containers blast resistant, while 'IMMUNE' makes them blast immune. [default: DEFAULT]
          * Valid Values: NONE, RESISTANT, IMMUNE
          */
-        "blast_resistance": "NONE",
+        "blast_resistance": "RESISTANT",
         // If true, Lootr's brushable blocks do not act as 'falling' blocks and instead stay stationary when their supporting block is broken. [default: false]
         "brushables_self_support": false,
         // If true, Lootr's item frames do not break when their supporting blocks are broken. [default: false]
@@ -104,7 +104,7 @@
          * The length of time in ticks (20 per second) that it takes for a container marked to decay to actually decay. [default: 5 * 60 * 20 (5 minutes)]
          * Range: 0 - 2147483647
          */
-        "decay_value": 6000,
+        "decay_value": 0,
         /*
          * List of loot tables that, if matching that of a container, will cause that container to decay after being opened.
          * List Type: String
@@ -134,7 +134,7 @@
          * The length of time in ticks (20 per second) that it takes for a container marked to refresh to actually refresh. [default: 5 * 60 * 20 (5 minutes)]
          * Range: 0 - 2147483647
          */
-        "refresh_value": 6000,
+        "refresh_value": 0,
         /*
          * List of loot tables that, if matching that of a container, will cause that container to refresh after being opened.
          * List Type: String
@@ -151,7 +151,7 @@
          */
         "refresh_dimensions": [],
         // If true, refreshing occurs during the world tick, meaning that containers will refresh if they are loaded. If false, containers will only be checked for refreshing when they are next opened. [default: true]
-        "perform_refresh_while_ticking": true,
+        "perform_refresh_while_ticking": false,
         // If true, containers that are eligible to refresh and have previously been opened by another player, will start refreshing during the world tick. [default: true]
         "start_refresh_while_ticking": false,
         // If true, all containers will refresh after being opened for the first time. [default: false]

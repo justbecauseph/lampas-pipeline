@@ -7,7 +7,7 @@
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-08-15T07:47:18.093Z",
+  "updated": "2026-08-16T00:52:22.863Z",
   "artifacts": {
     "badoptimizations": {
       "id": "badoptimizations",
@@ -36,6 +36,34 @@
         "serverSide": "unsupported"
       }
     },
+    "architectury": {
+      "id": "architectury",
+      "name": "Architectury API",
+      "side": "both",
+      "filename": "architectury-fabric-21.0.7.jar",
+      "size": 587038,
+      "sha256": "0f57afbd3dcddd0b7304c22d712ccf5437e2c41270ec08bd2d8c4e1df0a6d627",
+      "sha512": "deffcad73b8f73d611d8e43ddad3b380e7896ba53e4b4f3660ab877b9c4ba20561e498888b17456b2b8819fb902e2070760613ce6fec9e1f1082990014e92dd4",
+      "sha1": "7c00161fc93303ba504f02f6bf3e3f42b99e1d84",
+      "downloadUrl": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1yQC4VvP/architectury-fabric-21.0.7.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "lhGA9TYQ",
+        "versionId": "1yQC4VvP"
+      },
+      "metadata": {
+        "description": "An intermediary api aimed to ease developing multiplatform mods.",
+        "iconUrl": "https://cdn.modrinth.com/data/lhGA9TYQ/05fe3a61c28faaccaec3533b92e1b321edde7bf6_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/architectury-api",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "adorabuild_structures": {
       "id": "adorabuild_structures",
       "name": "AdoraBuild: Structures",
@@ -62,6 +90,34 @@
           "worldgen"
         ],
         "sourceUrl": "https://modrinth.com/mod/adorabuild-structures",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "bclib": {
+      "id": "bclib",
+      "name": "BCLib",
+      "side": "both",
+      "filename": "bclib-26.201.2.jar",
+      "size": 1294450,
+      "sha256": "797bb8dbde0c28265d08cc31581587e2c6eb2f344a20cde1654fb819cda1193d",
+      "sha512": "e222fd5b0339d19292e99df9c48c5536062c538e414cd8948f4adba33ef8b412c259774b1371d9bda2e2231bd5f1832c1cbb3fb4da8d93124e9d322801ddd10d",
+      "sha1": "2b7020c8690f4314551fe2505acb267965ac9551",
+      "downloadUrl": "https://cdn.modrinth.com/data/BgNRHReB/versions/7BfGRji6/bclib-26.201.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "BgNRHReB",
+        "versionId": "7BfGRji6"
+      },
+      "metadata": {
+        "description": "A Library Mod for the BetterX Team",
+        "iconUrl": "https://cdn.modrinth.com/data/BgNRHReB/9cbe79c9f1f12fd9696ba81e54d7ddd42476e777_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/bclib",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -95,58 +151,32 @@
         "serverSide": "unsupported"
       }
     },
-    "architectury": {
-      "id": "architectury",
-      "name": "Architectury API",
+    "beb": {
+      "id": "beb",
+      "name": "Beautiful Enchanted Books [MOD EDITION]",
       "side": "both",
-      "filename": "architectury-fabric-21.0.7.jar",
-      "size": 587038,
-      "sha256": "0f57afbd3dcddd0b7304c22d712ccf5437e2c41270ec08bd2d8c4e1df0a6d627",
-      "sha512": "deffcad73b8f73d611d8e43ddad3b380e7896ba53e4b4f3660ab877b9c4ba20561e498888b17456b2b8819fb902e2070760613ce6fec9e1f1082990014e92dd4",
-      "sha1": "7c00161fc93303ba504f02f6bf3e3f42b99e1d84",
-      "downloadUrl": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1yQC4VvP/architectury-fabric-21.0.7.jar",
+      "filename": "BEB-Fabric-26.1.2-6.0.0.jar",
+      "size": 1617542,
+      "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
+      "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6",
+      "sha1": "2bf5b3079110e9e26bb1059d1381273ddf972bdc",
+      "downloadUrl": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "lhGA9TYQ",
-        "versionId": "1yQC4VvP"
+        "projectId": "pcqEicMM",
+        "versionId": "jBOCNqVv"
       },
       "metadata": {
-        "description": "An intermediary api aimed to ease developing multiplatform mods.",
-        "iconUrl": "https://cdn.modrinth.com/data/lhGA9TYQ/05fe3a61c28faaccaec3533b92e1b321edde7bf6_96.webp",
+        "description": "Forget about the boring aspects of enchanted books! Now they will have new aspects that are much more beautiful and characteristic of their theme.",
+        "iconUrl": "https://cdn.modrinth.com/data/pcqEicMM/633fe2daa2937ef7f6591d2770cabdac8b1578eb_96.webp",
         "categories": [
-          "library"
+          "decoration",
+          "equipment",
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/architectury-api",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "additionallanterns": {
-      "id": "additionallanterns",
-      "name": "Additional Lanterns",
-      "side": "both",
-      "filename": "additionallanterns-1.1.2-fabric-mc26.2.jar",
-      "size": 3806731,
-      "sha256": "6a05239546f320bffcfd957427f5f778347809dd2ed137f8f89b10a8c8d53cc3",
-      "sha512": "9f177f8bc4f970a56a66453d41a8711165afddff83829319e259fff19289c901a2bd565a6338bb024de27f1a2e64d6eb76e796e921aaaa6d83b204c8771114c2",
-      "sha1": "20b75f35e48f5c4df9fd6b8eb6ff509f57a83b98",
-      "downloadUrl": "https://cdn.modrinth.com/data/jXNvTKds/versions/LlSWK1oA/additionallanterns-1.1.2-fabric-mc26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "jXNvTKds",
-        "versionId": "LlSWK1oA"
-      },
-      "metadata": {
-        "description": "Additional Lanterns adds many new lanterns with different colors and materials!",
-        "iconUrl": "https://cdn.modrinth.com/data/jXNvTKds/400f77a5ca85e92ed113babc8693c457bde90685_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/additional-lanterns",
+        "sourceUrl": "https://modrinth.com/mod/beautiful-enchanted-books-mod-edition",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -168,30 +198,32 @@
         "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
-    "bclib": {
-      "id": "bclib",
-      "name": "BCLib",
+    "beautiful_potions": {
+      "id": "beautiful_potions",
+      "name": "Beautiful Potions [MOD EDITION]",
       "side": "both",
-      "filename": "bclib-26.201.2.jar",
-      "size": 1294450,
-      "sha256": "797bb8dbde0c28265d08cc31581587e2c6eb2f344a20cde1654fb819cda1193d",
-      "sha512": "e222fd5b0339d19292e99df9c48c5536062c538e414cd8948f4adba33ef8b412c259774b1371d9bda2e2231bd5f1832c1cbb3fb4da8d93124e9d322801ddd10d",
-      "sha1": "2b7020c8690f4314551fe2505acb267965ac9551",
-      "downloadUrl": "https://cdn.modrinth.com/data/BgNRHReB/versions/7BfGRji6/bclib-26.201.2.jar",
+      "filename": "BTP-Fabric-26.1.2-2.0.1.jar",
+      "size": 1860484,
+      "sha256": "53d132f68b9c97105699e3de3542ad9f3ef5ec4e4df5e147f00e5f8510e33a82",
+      "sha512": "8431a97edebccd4f52457ca91a5b647295600aec1aab039435128a6f38112cf7022eb5cfcb28de8d26360e18affe9530e825d60016a03289e3bc71c9f72eca02",
+      "sha1": "278435d16d1b33927ebc306aabf21a830a0371c8",
+      "downloadUrl": "https://cdn.modrinth.com/data/H3a6cFKr/versions/qVFXJDqx/BTP-Fabric-26.1.2-2.0.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "BgNRHReB",
-        "versionId": "7BfGRji6"
+        "projectId": "H3a6cFKr",
+        "versionId": "qVFXJDqx"
       },
       "metadata": {
-        "description": "A Library Mod for the BetterX Team",
-        "iconUrl": "https://cdn.modrinth.com/data/BgNRHReB/9cbe79c9f1f12fd9696ba81e54d7ddd42476e777_96.webp",
+        "description": "This mod transforms the visual experience of potions, enhancing every detail with vibrant textures and unique designs!",
+        "iconUrl": "https://cdn.modrinth.com/data/H3a6cFKr/08328a9745cea0c1ea3298368ffa4f7cf43b7ad5_96.webp",
         "categories": [
-          "library"
+          "decoration",
+          "game-mechanics",
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/bclib",
+        "sourceUrl": "https://modrinth.com/mod/beautiful-potions-mod-edition",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -220,62 +252,30 @@
         ]
       }
     },
-    "beb": {
-      "id": "beb",
-      "name": "Beautiful Enchanted Books [MOD EDITION]",
-      "side": "server",
-      "filename": "BEB-Fabric-26.1.2-6.0.0.jar",
-      "size": 1617542,
-      "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
-      "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6",
-      "sha1": "2bf5b3079110e9e26bb1059d1381273ddf972bdc",
-      "downloadUrl": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
+    "additionallanterns": {
+      "id": "additionallanterns",
+      "name": "Additional Lanterns",
+      "side": "both",
+      "filename": "additionallanterns-1.1.2-fabric-mc26.2.jar",
+      "size": 3806731,
+      "sha256": "6a05239546f320bffcfd957427f5f778347809dd2ed137f8f89b10a8c8d53cc3",
+      "sha512": "9f177f8bc4f970a56a66453d41a8711165afddff83829319e259fff19289c901a2bd565a6338bb024de27f1a2e64d6eb76e796e921aaaa6d83b204c8771114c2",
+      "sha1": "20b75f35e48f5c4df9fd6b8eb6ff509f57a83b98",
+      "downloadUrl": "https://cdn.modrinth.com/data/jXNvTKds/versions/LlSWK1oA/additionallanterns-1.1.2-fabric-mc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "pcqEicMM",
-        "versionId": "jBOCNqVv"
+        "projectId": "jXNvTKds",
+        "versionId": "LlSWK1oA"
       },
       "metadata": {
-        "description": "Forget about the boring aspects of enchanted books! Now they will have new aspects that are much more beautiful and characteristic of their theme.",
-        "iconUrl": "https://cdn.modrinth.com/data/pcqEicMM/633fe2daa2937ef7f6591d2770cabdac8b1578eb_96.webp",
+        "description": "Additional Lanterns adds many new lanterns with different colors and materials!",
+        "iconUrl": "https://cdn.modrinth.com/data/jXNvTKds/400f77a5ca85e92ed113babc8693c457bde90685_96.webp",
         "categories": [
-          "decoration",
-          "equipment",
-          "utility"
+          "decoration"
         ],
-        "sourceUrl": "https://modrinth.com/mod/beautiful-enchanted-books-mod-edition",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "beautiful_potions": {
-      "id": "beautiful_potions",
-      "name": "Beautiful Potions [MOD EDITION]",
-      "side": "server",
-      "filename": "BTP-Fabric-26.1.2-2.0.1.jar",
-      "size": 1860484,
-      "sha256": "53d132f68b9c97105699e3de3542ad9f3ef5ec4e4df5e147f00e5f8510e33a82",
-      "sha512": "8431a97edebccd4f52457ca91a5b647295600aec1aab039435128a6f38112cf7022eb5cfcb28de8d26360e18affe9530e825d60016a03289e3bc71c9f72eca02",
-      "sha1": "278435d16d1b33927ebc306aabf21a830a0371c8",
-      "downloadUrl": "https://cdn.modrinth.com/data/H3a6cFKr/versions/qVFXJDqx/BTP-Fabric-26.1.2-2.0.1.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "H3a6cFKr",
-        "versionId": "qVFXJDqx"
-      },
-      "metadata": {
-        "description": "This mod transforms the visual experience of potions, enhancing every detail with vibrant textures and unique designs!",
-        "iconUrl": "https://cdn.modrinth.com/data/H3a6cFKr/08328a9745cea0c1ea3298368ffa4f7cf43b7ad5_96.webp",
-        "categories": [
-          "decoration",
-          "game-mechanics",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/beautiful-potions-mod-edition",
+        "sourceUrl": "https://modrinth.com/mod/additional-lanterns",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -337,34 +337,6 @@
         "serverSide": "required"
       }
     },
-    "chatting": {
-      "id": "chatting",
-      "name": "Chatting",
-      "side": "both",
-      "filename": "chatting-3.1.3+26.2.jar",
-      "size": 216091,
-      "sha256": "efd3bd7b0af6cfd9128da21cc92739e65f648ff4b1f70ce28b5281c2404df943",
-      "sha512": "bbd699d88c0362ce99f74ce7eb624b211b1a5419389a394e229ef1c3c668b3c03a7d81aa5d512804bb647c85e3bcb29a50052c7340891072373baef1eb39d40c",
-      "sha1": "012af1928c67ee379c8b522cbd2771f7a999fae2",
-      "downloadUrl": "https://cdn.modrinth.com/data/8pJYUDNi/versions/ayFEIJv0/chatting-3.1.3%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8pJYUDNi",
-        "versionId": "ayFEIJv0"
-      },
-      "metadata": {
-        "description": "Chatting is a chat mod adding utilities such as extremely customizable chat tabs, chat shortcuts, chat screenshots, and message copying.",
-        "iconUrl": "https://cdn.modrinth.com/data/8pJYUDNi/790dfffda5974fccda843477cfe8ed19b1347ea3_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/chatting",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "boids": {
       "id": "boids",
       "name": "Boids",
@@ -391,36 +363,6 @@
         "sourceUrl": "https://modrinth.com/mod/boids",
         "clientSide": "unsupported",
         "serverSide": "required"
-      }
-    },
-    "chunky": {
-      "id": "chunky",
-      "name": "Chunky",
-      "side": "server",
-      "filename": "Chunky-Fabric-1.5.3.jar",
-      "size": 354095,
-      "sha256": "ecdfc55a0f67f3ec6f40850687615c941ae226bd88f4e06188a7b268fd3da942",
-      "sha512": "b83bfe7b218d0aa6232af977ae741dc1f82b10e50cd12bb759f65cf416b8b62beccb543e587ef0b9670abe03815660f8e091bc6823624d65cf07300571573516",
-      "sha1": "fc1f2f374c5c82117599071ed18b6ef9bba2c7fb",
-      "downloadUrl": "https://cdn.modrinth.com/data/fALzjamp/versions/4Eotm6ov/Chunky-Fabric-1.5.3.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "fALzjamp",
-        "versionId": "4Eotm6ov"
-      },
-      "metadata": {
-        "description": "Pre-generates chunks, quickly and efficiently",
-        "iconUrl": "https://cdn.modrinth.com/data/fALzjamp/e1954413665e57b7bae1feef44eda530270c7d47_96.webp",
-        "categories": [
-          "optimization",
-          "utility",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/chunky",
-        "clientSide": "optional",
-        "serverSide": "optional"
       }
     },
     "bettercombat": {
@@ -453,6 +395,36 @@
         "serverSide": "required"
       }
     },
+    "ati_structuresvanillaedition": {
+      "id": "ati_structuresvanillaedition",
+      "name": "ATi Structures - Vanilla Edition",
+      "side": "server",
+      "filename": "ATi Structures Vanilla V1.4.5.jar",
+      "size": 14745887,
+      "sha256": "cc64b50e80c03bf5e0abd1c6ba76c87397b972adcf678de87d81d85dd7244098",
+      "sha512": "beadaa36c9916455be8c79c398e341590f7c0750a1cdc99eeb70f4efdeb284b6a203d6b7bc3245955eac055d47ed12f05026e8398728ef2ef2a4bf2fe41cf0f8",
+      "sha1": "2358023c06528b4f1c555c47f71cc3e3efcd60db",
+      "downloadUrl": "https://cdn.modrinth.com/data/YWVAO3wq/versions/hHw6n2T7/ATi%20Structures%20Vanilla%20V1.4.5.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "YWVAO3wq",
+        "versionId": "hHw6n2T7"
+      },
+      "metadata": {
+        "description": "A collection of custom structures and dungeons!",
+        "iconUrl": "https://cdn.modrinth.com/data/YWVAO3wq/c6b4a29fadf875517e9d9c71c3775e2b7ba4ffee_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/ati-structures-vanilla-edition",
+        "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
     "chattweaks": {
       "id": "chattweaks",
       "name": "ChatTweaks",
@@ -481,6 +453,110 @@
         "serverSide": "unsupported"
       }
     },
+    "chatting": {
+      "id": "chatting",
+      "name": "Chatting",
+      "side": "client",
+      "filename": "chatting-3.1.3+26.2.jar",
+      "size": 216091,
+      "sha256": "efd3bd7b0af6cfd9128da21cc92739e65f648ff4b1f70ce28b5281c2404df943",
+      "sha512": "bbd699d88c0362ce99f74ce7eb624b211b1a5419389a394e229ef1c3c668b3c03a7d81aa5d512804bb647c85e3bcb29a50052c7340891072373baef1eb39d40c",
+      "sha1": "012af1928c67ee379c8b522cbd2771f7a999fae2",
+      "downloadUrl": "https://cdn.modrinth.com/data/8pJYUDNi/versions/ayFEIJv0/chatting-3.1.3%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "8pJYUDNi",
+        "versionId": "ayFEIJv0"
+      },
+      "metadata": {
+        "description": "Chatting is a chat mod adding utilities such as extremely customizable chat tabs, chat shortcuts, chat screenshots, and message copying.",
+        "iconUrl": "https://cdn.modrinth.com/data/8pJYUDNi/790dfffda5974fccda843477cfe8ed19b1347ea3_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/chatting",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "chunky": {
+      "id": "chunky",
+      "name": "Chunky",
+      "side": "server",
+      "filename": "Chunky-Fabric-1.5.3.jar",
+      "size": 354095,
+      "sha256": "ecdfc55a0f67f3ec6f40850687615c941ae226bd88f4e06188a7b268fd3da942",
+      "sha512": "b83bfe7b218d0aa6232af977ae741dc1f82b10e50cd12bb759f65cf416b8b62beccb543e587ef0b9670abe03815660f8e091bc6823624d65cf07300571573516",
+      "sha1": "fc1f2f374c5c82117599071ed18b6ef9bba2c7fb",
+      "downloadUrl": "https://cdn.modrinth.com/data/fALzjamp/versions/4Eotm6ov/Chunky-Fabric-1.5.3.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "fALzjamp",
+        "versionId": "4Eotm6ov"
+      },
+      "metadata": {
+        "description": "Pre-generates chunks, quickly and efficiently",
+        "iconUrl": "https://cdn.modrinth.com/data/fALzjamp/e1954413665e57b7bae1feef44eda530270c7d47_96.webp",
+        "categories": [
+          "optimization",
+          "utility",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/chunky",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
+      "side": "both",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1906805,
+      "sha256": "a4ac8ec5012dfcc3a32d2d8cf5287bb78d97b5ca7a7bad30d9dba94beb69835a",
+      "sha512": "dbc6de44fed52763a056a79214fd51df572f0b11fb0e4035673766629d3ed9ddc7398a06c925d97e1e2d7282656e2ceebbb7576273157cbd546861c36de48f38",
+      "sha1": "0990d77266083ed95dec5167dac7460e68ff6d02",
+      "downloadUrl": "/api/v1/blobs/a4ac8ec5012dfcc3a32d2d8cf5287bb78d97b5ca7a7bad30d9dba94beb69835a",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+      }
+    },
+    "axiom": {
+      "id": "axiom",
+      "name": "Axiom",
+      "side": "both",
+      "filename": "Axiom-5.5.0-for-MC26.2.jar",
+      "size": 46887814,
+      "sha256": "c51f985511d39da725620b28b2c273de07736ae65d6b46418a5fe43ef605a64b",
+      "sha512": "fc6681cfe613a1d97346dacbe71b8a6df770cb86fc0424ee9f4abcb4eedc23a3754d7def1d36995f782e167bb29d15a31a99a35c662fc14278d020eba272b530",
+      "sha1": "6fe1591a7f1d08acd976d72a4b29472d9e630125",
+      "downloadUrl": "https://cdn.modrinth.com/data/N6n5dqoA/versions/QO99kC52/Axiom-5.5.0-for-MC26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "N6n5dqoA",
+        "versionId": "QO99kC52"
+      },
+      "metadata": {
+        "description": "The all-in-one tool for editing Minecraft Worlds.",
+        "iconUrl": "https://cdn.modrinth.com/data/N6n5dqoA/dd175669d5ac228dc00453d13528ad26c1f056ac.png",
+        "categories": [
+          "management",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/axiom",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
     "cloth-config": {
       "id": "cloth-config",
       "name": "Cloth Config API",
@@ -507,6 +583,35 @@
         "sourceUrl": "https://modrinth.com/mod/cloth-config",
         "clientSide": "optional",
         "serverSide": "optional"
+      }
+    },
+    "continuity": {
+      "id": "continuity",
+      "name": "Continuity",
+      "side": "client",
+      "filename": "continuity-3.0.1+26.2.jar",
+      "size": 1040013,
+      "sha256": "2094a52b98e247f664ef2ecdbb41d7dcad7779cc7a8fb87f0ed8a4f8196c0446",
+      "sha512": "3436b39fcdddce87f8eda0f35095067477636df2667195df3cb8eae2d002d3ff8ac44de97332668ee50e13ad91be5c532cbc6121878f1e6c904c98c1c9c67c0b",
+      "sha1": "8fa8bc108e84158b0828a4aa59bf906d31676eec",
+      "downloadUrl": "https://cdn.modrinth.com/data/1IjD5062/versions/mgUN5Xz2/continuity-3.0.1%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "1IjD5062",
+        "versionId": "mgUN5Xz2"
+      },
+      "metadata": {
+        "description": "A Minecraft mod that allows for efficient connected textures",
+        "iconUrl": "https://cdn.modrinth.com/data/1IjD5062/icon.png",
+        "categories": [
+          "decoration",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/continuity",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "cratedelight": {
@@ -539,32 +644,64 @@
         "serverSide": "required"
       }
     },
-    "cutthrough": {
-      "id": "cutthrough",
-      "name": "Cut Through",
-      "side": "both",
-      "filename": "CutThrough-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 26127,
-      "sha256": "b79b5467dd80a40ff7987693c807f10e708d979ef9b61b847511e3d9bb3c9235",
-      "sha512": "73988cdd77699e01d1f6a844f97c9882b462e88cb5a221e9aecedee7a0776070f90b6ab95d9cfe44f74c9b93bb49c5170caf10630409a3aaacdc2d2972fbc8b8",
-      "sha1": "fa4ca6a3945d23bd1bb98dde10db5e9b002974df",
-      "downloadUrl": "https://cdn.modrinth.com/data/Dk6su9JN/versions/WhJ0S6SM/CutThrough-v26.2.0-mc26.2.x-Fabric.jar",
+    "coolrain": {
+      "id": "coolrain",
+      "name": "Cool Rain",
+      "side": "client",
+      "filename": "coolrain-1.4.0-26.2.jar",
+      "size": 4139861,
+      "sha256": "b7ec31587d29e194f8aa4eea39b253a8e2a3ef86965c20f605604d5b9755f50b",
+      "sha512": "02c709c3a6983f38cc5b4fca92b238ebf61c5f5c1c4ae86458905f8e2d2e7064a83786db22d8fb97162ecf3e0646d896e4d6060f77f6356427bb44e17a97f6c5",
+      "sha1": "afa1d97a1b942148b300ce8f1e668cd357bdebb6",
+      "downloadUrl": "https://cdn.modrinth.com/data/iDyqnQLT/versions/zc88gNk3/coolrain-1.4.0-26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "Dk6su9JN",
-        "versionId": "WhJ0S6SM"
+        "projectId": "iDyqnQLT",
+        "versionId": "zc88gNk3"
       },
       "metadata": {
-        "description": "Cleanly swing through transparent blocks like tall grass to hit mobs without breaking said block.",
-        "iconUrl": "https://cdn.modrinth.com/data/Dk6su9JN/7d3394c6c15bf9bdfe04fd25b317e237feac6c55_96.webp",
+        "description": "Creates ambient sounds for certain blocks during rain",
+        "iconUrl": "https://cdn.modrinth.com/data/iDyqnQLT/a252e26685c30f1ae82a47b087b01fa6b968a6f1_96.webp",
         "categories": [
+          "adventure",
+          "decoration",
           "game-mechanics"
         ],
-        "sourceUrl": "https://modrinth.com/mod/cut-through",
+        "sourceUrl": "https://modrinth.com/mod/coolrain",
         "clientSide": "required",
-        "serverSide": "unsupported"
+        "serverSide": "optional"
+      }
+    },
+    "betternether": {
+      "id": "betternether",
+      "name": "BetterNether",
+      "side": "both",
+      "filename": "better-nether-26.201.2.jar",
+      "size": 27875658,
+      "sha256": "ab8b71f3ff49dd5676351d336dc76bdb10ea39ca2101fc963f676bf1988f1a3a",
+      "sha512": "8efcab3e8a00c628fffadb14878b8a3a5755a5f5104b2d67c755af5bb1996a3b0cf54061a320b34dad9c3db327f73e7e9f9bb6bb85ad31674345d53a48f29307",
+      "sha1": "991d7766489336d65b739bbdc1a3938c2cd07225",
+      "downloadUrl": "https://cdn.modrinth.com/data/MpzVLzy5/versions/iBR9QMPF/better-nether-26.201.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "MpzVLzy5",
+        "versionId": "iBR9QMPF"
+      },
+      "metadata": {
+        "description": "More Biomes, More Mobs, More Tools for the fiery Dimension",
+        "iconUrl": "https://cdn.modrinth.com/data/MpzVLzy5/82b6331f54a6ba1cdc8124fc79395df18421efca_96.webp",
+        "categories": [
+          "equipment",
+          "mobs",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/betternether",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "crashpatch": {
@@ -596,31 +733,30 @@
         "serverSide": "unsupported"
       }
     },
-    "continuity": {
-      "id": "continuity",
-      "name": "Continuity",
-      "side": "client",
-      "filename": "continuity-3.0.1+26.2.jar",
-      "size": 1040013,
-      "sha256": "2094a52b98e247f664ef2ecdbb41d7dcad7779cc7a8fb87f0ed8a4f8196c0446",
-      "sha512": "3436b39fcdddce87f8eda0f35095067477636df2667195df3cb8eae2d002d3ff8ac44de97332668ee50e13ad91be5c532cbc6121878f1e6c904c98c1c9c67c0b",
-      "sha1": "8fa8bc108e84158b0828a4aa59bf906d31676eec",
-      "downloadUrl": "https://cdn.modrinth.com/data/1IjD5062/versions/mgUN5Xz2/continuity-3.0.1%2B26.2.jar",
+    "cutthrough": {
+      "id": "cutthrough",
+      "name": "Cut Through",
+      "side": "both",
+      "filename": "CutThrough-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 26127,
+      "sha256": "b79b5467dd80a40ff7987693c807f10e708d979ef9b61b847511e3d9bb3c9235",
+      "sha512": "73988cdd77699e01d1f6a844f97c9882b462e88cb5a221e9aecedee7a0776070f90b6ab95d9cfe44f74c9b93bb49c5170caf10630409a3aaacdc2d2972fbc8b8",
+      "sha1": "fa4ca6a3945d23bd1bb98dde10db5e9b002974df",
+      "downloadUrl": "https://cdn.modrinth.com/data/Dk6su9JN/versions/WhJ0S6SM/CutThrough-v26.2.0-mc26.2.x-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "1IjD5062",
-        "versionId": "mgUN5Xz2"
+        "projectId": "Dk6su9JN",
+        "versionId": "WhJ0S6SM"
       },
       "metadata": {
-        "description": "A Minecraft mod that allows for efficient connected textures",
-        "iconUrl": "https://cdn.modrinth.com/data/1IjD5062/icon.png",
+        "description": "Cleanly swing through transparent blocks like tall grass to hit mobs without breaking said block.",
+        "iconUrl": "https://cdn.modrinth.com/data/Dk6su9JN/7d3394c6c15bf9bdfe04fd25b317e237feac6c55_96.webp",
         "categories": [
-          "decoration",
-          "utility"
+          "game-mechanics"
         ],
-        "sourceUrl": "https://modrinth.com/mod/continuity",
+        "sourceUrl": "https://modrinth.com/mod/cut-through",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -652,93 +788,6 @@
         "sourceUrl": "https://modrinth.com/mod/dark-loading-screen",
         "clientSide": "required",
         "serverSide": "unsupported"
-      }
-    },
-    "coolrain": {
-      "id": "coolrain",
-      "name": "Cool Rain",
-      "side": "client",
-      "filename": "coolrain-1.4.0-26.2.jar",
-      "size": 4139861,
-      "sha256": "b7ec31587d29e194f8aa4eea39b253a8e2a3ef86965c20f605604d5b9755f50b",
-      "sha512": "02c709c3a6983f38cc5b4fca92b238ebf61c5f5c1c4ae86458905f8e2d2e7064a83786db22d8fb97162ecf3e0646d896e4d6060f77f6356427bb44e17a97f6c5",
-      "sha1": "afa1d97a1b942148b300ce8f1e668cd357bdebb6",
-      "downloadUrl": "https://cdn.modrinth.com/data/iDyqnQLT/versions/zc88gNk3/coolrain-1.4.0-26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "iDyqnQLT",
-        "versionId": "zc88gNk3"
-      },
-      "metadata": {
-        "description": "Creates ambient sounds for certain blocks during rain",
-        "iconUrl": "https://cdn.modrinth.com/data/iDyqnQLT/a252e26685c30f1ae82a47b087b01fa6b968a6f1_96.webp",
-        "categories": [
-          "adventure",
-          "decoration",
-          "game-mechanics"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/coolrain",
-        "clientSide": "required",
-        "serverSide": "optional"
-      }
-    },
-    "delightlib": {
-      "id": "delightlib",
-      "name": "Delight Lib",
-      "side": "both",
-      "filename": "delightlib-26.06.23-26.2-fabric.jar",
-      "size": 61225,
-      "sha256": "4cce6ddd8e28e60b2e3058073c3aab9baaedd1524eea6ee89fa94de19e220a16",
-      "sha512": "5cd018acdf3eb5a4a4a3caaba74bc93343437fc372fed8b5294f2cc0141dff3ad85bd4833faaa67a6ea008fad9563adab84ff8c25997b8d15f49286437a19d6c",
-      "sha1": "d71935025e9ca9fd085c5153dce51880bb98a240",
-      "downloadUrl": "https://cdn.modrinth.com/data/rmDY6fYt/versions/SjphfJS9/delightlib-26.06.23-26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "rmDY6fYt",
-        "versionId": "SjphfJS9"
-      },
-      "metadata": {
-        "description": "Create Farmer's Delight add-ons for many mod loaders and versions easily.",
-        "iconUrl": "https://cdn.modrinth.com/data/rmDY6fYt/3f8cf9b61d0353d810dd89520c45c19642b33674.png",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/delight-lib",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "axiom": {
-      "id": "axiom",
-      "name": "Axiom",
-      "side": "both",
-      "filename": "Axiom-5.5.0-for-MC26.2.jar",
-      "size": 46887814,
-      "sha256": "c51f985511d39da725620b28b2c273de07736ae65d6b46418a5fe43ef605a64b",
-      "sha512": "fc6681cfe613a1d97346dacbe71b8a6df770cb86fc0424ee9f4abcb4eedc23a3754d7def1d36995f782e167bb29d15a31a99a35c662fc14278d020eba272b530",
-      "sha1": "6fe1591a7f1d08acd976d72a4b29472d9e630125",
-      "downloadUrl": "https://cdn.modrinth.com/data/N6n5dqoA/versions/QO99kC52/Axiom-5.5.0-for-MC26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "N6n5dqoA",
-        "versionId": "QO99kC52"
-      },
-      "metadata": {
-        "description": "The all-in-one tool for editing Minecraft Worlds.",
-        "iconUrl": "https://cdn.modrinth.com/data/N6n5dqoA/dd175669d5ac228dc00453d13528ad26c1f056ac.png",
-        "categories": [
-          "management",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/axiom",
-        "clientSide": "optional",
-        "serverSide": "optional"
       }
     },
     "decorativelamps": {
@@ -799,6 +848,34 @@
         "serverSide": "required"
       }
     },
+    "delightlib": {
+      "id": "delightlib",
+      "name": "Delight Lib",
+      "side": "both",
+      "filename": "delightlib-26.06.23-26.2-fabric.jar",
+      "size": 61225,
+      "sha256": "4cce6ddd8e28e60b2e3058073c3aab9baaedd1524eea6ee89fa94de19e220a16",
+      "sha512": "5cd018acdf3eb5a4a4a3caaba74bc93343437fc372fed8b5294f2cc0141dff3ad85bd4833faaa67a6ea008fad9563adab84ff8c25997b8d15f49286437a19d6c",
+      "sha1": "d71935025e9ca9fd085c5153dce51880bb98a240",
+      "downloadUrl": "https://cdn.modrinth.com/data/rmDY6fYt/versions/SjphfJS9/delightlib-26.06.23-26.2-fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "rmDY6fYt",
+        "versionId": "SjphfJS9"
+      },
+      "metadata": {
+        "description": "Create Farmer's Delight add-ons for many mod loaders and versions easily.",
+        "iconUrl": "https://cdn.modrinth.com/data/rmDY6fYt/3f8cf9b61d0353d810dd89520c45c19642b33674.png",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/delight-lib",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "diagonalwalls": {
       "id": "diagonalwalls",
       "name": "Diagonal Walls",
@@ -824,6 +901,35 @@
         ],
         "sourceUrl": "https://modrinth.com/mod/diagonal-walls",
         "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "dungeons-plus": {
+      "id": "dungeons-plus",
+      "name": "Dungeons+",
+      "side": "server",
+      "filename": "dungeons+-1.12.0.jar",
+      "size": 353652,
+      "sha256": "6a996bfeb972e1a23b250af552df83a7b8008deee15c195d4e609ce4a24a2718",
+      "sha512": "168fb45f3cde22bb7e5fbbd0c6981d5acfc2cb1f9118b79a5bf75441c0f8ac82fd2cf8f001ce460b323046a33a43039c0cd38f74778db40738d97f14387a231e",
+      "sha1": "ad9bf1a35050e057eb055db345246b9128ffefce",
+      "downloadUrl": "https://cdn.modrinth.com/data/nHORcEHd/versions/VT75yixL/dungeons%2B-1.12.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "nHORcEHd",
+        "versionId": "VT75yixL"
+      },
+      "metadata": {
+        "description": "Brand new vanilla dungeons remade with biome specific designs and new mob spawner types",
+        "iconUrl": "https://cdn.modrinth.com/data/nHORcEHd/1b5d79c6ec1b033725352efbb83bac451efaba85.png",
+        "categories": [
+          "adventure",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/dungeons+",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -885,34 +991,33 @@
         "serverSide": "required"
       }
     },
-    "betternether": {
-      "id": "betternether",
-      "name": "BetterNether",
-      "side": "both",
-      "filename": "better-nether-26.201.2.jar",
-      "size": 27875658,
-      "sha256": "ab8b71f3ff49dd5676351d336dc76bdb10ea39ca2101fc963f676bf1988f1a3a",
-      "sha512": "8efcab3e8a00c628fffadb14878b8a3a5755a5f5104b2d67c755af5bb1996a3b0cf54061a320b34dad9c3db327f73e7e9f9bb6bb85ad31674345d53a48f29307",
-      "sha1": "991d7766489336d65b739bbdc1a3938c2cd07225",
-      "downloadUrl": "https://cdn.modrinth.com/data/MpzVLzy5/versions/iBR9QMPF/better-nether-26.201.2.jar",
+    "emf": {
+      "id": "emf",
+      "name": "[EMF] Entity Model Features",
+      "side": "client",
+      "filename": "entity_model_features-3.2.6-26.2-fabric.jar",
+      "size": 587342,
+      "sha256": "876a3e4ffda021a6266df87208f2d9980322cf86223d4fe1e313ca996631f115",
+      "sha512": "9296b5755839062067c9e5e561b8248709c5f9aade53a9eb0c87e0d0dc743f83f1a6b5776dbe1c33c85b0b1a3355544b0da53b0bcdcee5dccc02d6576cb9ef31",
+      "sha1": "47862c653e419aa6741338b795db841f1086a643",
+      "downloadUrl": "https://cdn.modrinth.com/data/4I1XuqiY/versions/xQeW3qQB/entity_model_features-3.2.6-26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "MpzVLzy5",
-        "versionId": "iBR9QMPF"
+        "projectId": "4I1XuqiY",
+        "versionId": "xQeW3qQB"
       },
       "metadata": {
-        "description": "More Biomes, More Mobs, More Tools for the fiery Dimension",
-        "iconUrl": "https://cdn.modrinth.com/data/MpzVLzy5/82b6331f54a6ba1cdc8124fc79395df18421efca_96.webp",
+        "description": "EMF is an, OptiFine format, Custom Entity Model replacement mod available for Fabric and Forge.",
+        "iconUrl": "https://cdn.modrinth.com/data/4I1XuqiY/6e5bbd0d06b1741bfdab6c0cfab6de8fdaf0064c_96.webp",
         "categories": [
-          "equipment",
           "mobs",
-          "worldgen"
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/betternether",
+        "sourceUrl": "https://modrinth.com/mod/entity-model-features",
         "clientSide": "required",
-        "serverSide": "required"
+        "serverSide": "unsupported"
       }
     },
     "elytratrims": {
@@ -944,36 +1049,6 @@
         "serverSide": "optional"
       }
     },
-    "better-end": {
-      "id": "better-end",
-      "name": "BetterEnd",
-      "side": "both",
-      "filename": "better-end-26.201.2.jar",
-      "size": 99356745,
-      "sha256": "97dac860402e781ee50a5e10e1c3d299f9c84873e7426f53fab76918c1559425",
-      "sha512": "f6ec87159bb36dc848ad7fd170e643170fd9e36811d91c22278d6d256e320b0cc28a1fa69de680fefe07652a39b67ccf0d84d5d037d2a8f00f148ee0ae35c94a",
-      "sha1": "20f745e9bb7fbf442c53c57bf87f7d2d153ca454",
-      "downloadUrl": "https://cdn.modrinth.com/data/gc8OEnCC/versions/VD4qwVUF/better-end-26.201.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "gc8OEnCC",
-        "versionId": "VD4qwVUF"
-      },
-      "metadata": {
-        "description": "New Biomes, mysterious rituals and Mobs for your End",
-        "iconUrl": "https://cdn.modrinth.com/data/gc8OEnCC/3afe2f097e9deff31158da380647fdc47131756f_96.webp",
-        "categories": [
-          "decoration",
-          "mobs",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/betterend",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
     "etf": {
       "id": "etf",
       "name": "[ETF] Entity Texture Features",
@@ -999,6 +1074,35 @@
           "utility"
         ],
         "sourceUrl": "https://modrinth.com/mod/entitytexturefeatures",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "explosiveenhancement": {
+      "id": "explosiveenhancement",
+      "name": "Explosive Enhancement",
+      "side": "client",
+      "filename": "explosive-enhancement-1.4.2-26.2.jar",
+      "size": 118316,
+      "sha256": "8d1031d1599384f114a2ed0e40a7d64ee1913df2933a00f4cc1c18a6ce7cdd1f",
+      "sha512": "c500699ec9b9059b2e7a40f216694dadd9d7d54cf7cb7b556e9cdc650cd842ee61bcef462cc31fc5884261ae64976dde13c57588938666cbc2caf8c3af9f9f3a",
+      "sha1": "18214af634d37a211c5dd1c2d2136ee9cd2a7df7",
+      "downloadUrl": "https://cdn.modrinth.com/data/OSQ8mw2r/versions/q9vZmPqg/explosive-enhancement-1.4.2-26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "OSQ8mw2r",
+        "versionId": "q9vZmPqg"
+      },
+      "metadata": {
+        "description": "Makes the explosion animation look cooler.",
+        "iconUrl": "https://cdn.modrinth.com/data/OSQ8mw2r/88f44e9ed022061b1eb865996b2f98fe01937de6.png",
+        "categories": [
+          "adventure",
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/explosive-enhancement",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -1055,90 +1159,33 @@
         "serverSide": "unsupported"
       }
     },
-    "explosiveenhancement": {
-      "id": "explosiveenhancement",
-      "name": "Explosive Enhancement",
-      "side": "client",
-      "filename": "explosive-enhancement-1.4.2-26.2.jar",
-      "size": 118316,
-      "sha256": "8d1031d1599384f114a2ed0e40a7d64ee1913df2933a00f4cc1c18a6ce7cdd1f",
-      "sha512": "c500699ec9b9059b2e7a40f216694dadd9d7d54cf7cb7b556e9cdc650cd842ee61bcef462cc31fc5884261ae64976dde13c57588938666cbc2caf8c3af9f9f3a",
-      "sha1": "18214af634d37a211c5dd1c2d2136ee9cd2a7df7",
-      "downloadUrl": "https://cdn.modrinth.com/data/OSQ8mw2r/versions/q9vZmPqg/explosive-enhancement-1.4.2-26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "OSQ8mw2r",
-        "versionId": "q9vZmPqg"
-      },
-      "metadata": {
-        "description": "Makes the explosion animation look cooler.",
-        "iconUrl": "https://cdn.modrinth.com/data/OSQ8mw2r/88f44e9ed022061b1eb865996b2f98fe01937de6.png",
-        "categories": [
-          "adventure",
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/explosive-enhancement",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "fastitemframes": {
-      "id": "fastitemframes",
-      "name": "Fast Item Frames",
+    "ferritecore": {
+      "id": "ferritecore",
+      "name": "FerriteCore",
       "side": "both",
-      "filename": "FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 99762,
-      "sha256": "47c87d4e1df6bdcd61c56ac380da880ee2bdb60611da36c454915a8ff86aaa42",
-      "sha512": "db19f887d64920023650129b8199a7d8e13201a082b2f65b6e5e722b71f5ae8c747ca893bfbd29b58521d241768e55311e122c8981434d905b22a6d51b7913ca",
-      "sha1": "a65ee50476df52c8ba8444559602a789ff03f2b3",
-      "downloadUrl": "https://cdn.modrinth.com/data/FsoeTIV0/versions/lVThjvK5/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
+      "filename": "ferritecore-9.0.0-fabric.jar",
+      "size": 72677,
+      "sha256": "213966c72ed967acc7392beb28a866fba301ff56b9976c2e7801c2db7de6bf22",
+      "sha512": "d81fa97e11784c19d42f89c2f433831d007603dd7193cee45fa177e4a6a9c52b384b198586e04a0f7f63cd996fed713322578bde9a8db57e1188854ae5cbe584",
+      "sha1": "eac76ff0f3753422c61b2c44487d0d195d88d4bc",
+      "downloadUrl": "https://cdn.modrinth.com/data/uXXizFIs/versions/d5ddUdiB/ferritecore-9.0.0-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "FsoeTIV0",
-        "versionId": "lVThjvK5"
+        "projectId": "uXXizFIs",
+        "versionId": "d5ddUdiB"
       },
       "metadata": {
-        "description": "Supercharged item frames! Less lag, better performance, and now they can change color and vanish!",
-        "iconUrl": "https://cdn.modrinth.com/data/FsoeTIV0/61ec84b804647ef0c09ea49995f86aaec2f28fc8_96.webp",
+        "description": "Memory usage optimizations",
+        "iconUrl": "https://cdn.modrinth.com/data/uXXizFIs/222a126f26f8f9ae1eb339f3b767677f18bff31f_96.webp",
         "categories": [
-          "optimization"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/fast-item-frames",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "emf": {
-      "id": "emf",
-      "name": "[EMF] Entity Model Features",
-      "side": "client",
-      "filename": "entity_model_features-3.2.6-26.2-fabric.jar",
-      "size": 587342,
-      "sha256": "876a3e4ffda021a6266df87208f2d9980322cf86223d4fe1e313ca996631f115",
-      "sha512": "9296b5755839062067c9e5e561b8248709c5f9aade53a9eb0c87e0d0dc743f83f1a6b5776dbe1c33c85b0b1a3355544b0da53b0bcdcee5dccc02d6576cb9ef31",
-      "sha1": "47862c653e419aa6741338b795db841f1086a643",
-      "downloadUrl": "https://cdn.modrinth.com/data/4I1XuqiY/versions/xQeW3qQB/entity_model_features-3.2.6-26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "4I1XuqiY",
-        "versionId": "xQeW3qQB"
-      },
-      "metadata": {
-        "description": "EMF is an, OptiFine format, Custom Entity Model replacement mod available for Fabric and Forge.",
-        "iconUrl": "https://cdn.modrinth.com/data/4I1XuqiY/6e5bbd0d06b1741bfdab6c0cfab6de8fdaf0064c_96.webp",
-        "categories": [
-          "mobs",
+          "optimization",
           "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/entity-model-features",
-        "clientSide": "required",
-        "serverSide": "unsupported"
+        "sourceUrl": "https://modrinth.com/mod/ferrite-core",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "fabric-api": {
@@ -1165,6 +1212,34 @@
           "library"
         ],
         "sourceUrl": "https://modrinth.com/mod/fabric-api",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
+    "forgeconfigapiport": {
+      "id": "forgeconfigapiport",
+      "name": "Forge Config API Port",
+      "side": "both",
+      "filename": "ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+      "size": 609550,
+      "sha256": "1b4b17fc4150481447201152604688c74726d6631c9a626dd21f2c5e2b3df1ac",
+      "sha512": "948b8d83de61a11aad2fc0bb0744a8b4848c9b2f0663c9aa015389d9560b3fa78518e609c44ec90278de0e159a92ebd721ccbdebb453aa455c353e5cd19413bf",
+      "sha1": "a4083de0d8e0c19b993d21f7a576216efb5ceb23",
+      "downloadUrl": "https://cdn.modrinth.com/data/ohNO6lps/versions/rSd3GiG8/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "ohNO6lps",
+        "versionId": "rSd3GiG8"
+      },
+      "metadata": {
+        "description": "NeoForge's & Forge's config systems provided to other modding ecosystems. Designed for a multiloader architecture.",
+        "iconUrl": "https://cdn.modrinth.com/data/ohNO6lps/cb3b942cc18a66a0f35f802e004713f134e46cc2_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/forge-config-api-port",
         "clientSide": "optional",
         "serverSide": "optional"
       }
@@ -1199,35 +1274,6 @@
         "serverSide": "required"
       }
     },
-    "ferritecore": {
-      "id": "ferritecore",
-      "name": "FerriteCore",
-      "side": "both",
-      "filename": "ferritecore-9.0.0-fabric.jar",
-      "size": 72677,
-      "sha256": "213966c72ed967acc7392beb28a866fba301ff56b9976c2e7801c2db7de6bf22",
-      "sha512": "d81fa97e11784c19d42f89c2f433831d007603dd7193cee45fa177e4a6a9c52b384b198586e04a0f7f63cd996fed713322578bde9a8db57e1188854ae5cbe584",
-      "sha1": "eac76ff0f3753422c61b2c44487d0d195d88d4bc",
-      "downloadUrl": "https://cdn.modrinth.com/data/uXXizFIs/versions/d5ddUdiB/ferritecore-9.0.0-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "uXXizFIs",
-        "versionId": "d5ddUdiB"
-      },
-      "metadata": {
-        "description": "Memory usage optimizations",
-        "iconUrl": "https://cdn.modrinth.com/data/uXXizFIs/222a126f26f8f9ae1eb339f3b767677f18bff31f_96.webp",
-        "categories": [
-          "optimization",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/ferrite-core",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
     "frozenlib": {
       "id": "frozenlib",
       "name": "FrozenLib",
@@ -1256,60 +1302,33 @@
         "serverSide": "required"
       }
     },
-    "forgeconfigapiport": {
-      "id": "forgeconfigapiport",
-      "name": "Forge Config API Port",
-      "side": "both",
-      "filename": "ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
-      "size": 609550,
-      "sha256": "1b4b17fc4150481447201152604688c74726d6631c9a626dd21f2c5e2b3df1ac",
-      "sha512": "948b8d83de61a11aad2fc0bb0744a8b4848c9b2f0663c9aa015389d9560b3fa78518e609c44ec90278de0e159a92ebd721ccbdebb453aa455c353e5cd19413bf",
-      "sha1": "a4083de0d8e0c19b993d21f7a576216efb5ceb23",
-      "downloadUrl": "https://cdn.modrinth.com/data/ohNO6lps/versions/rSd3GiG8/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+    "dungeons_and_taverns": {
+      "id": "dungeons_and_taverns",
+      "name": "Dungeons and Taverns",
+      "side": "server",
+      "filename": "dungeons-and-taverns-5.3.0.jar",
+      "size": 39639975,
+      "sha256": "a62d84df3111d9c876ace4f18fc93e239d66b1d077e9604e250c10fda42591bd",
+      "sha512": "04a435e483d8c0204a49769cc749b1ec4d34a005b4a266cf0b3a62f6cc3d7c28bbbf50f5e2b684ab70b617d98e2bbe9e1e98e0a237564c572f1d6391afa66d5e",
+      "sha1": "f276dc97ac57ce41b327e5272f5f8474e4ef94d9",
+      "downloadUrl": "https://cdn.modrinth.com/data/tpehi7ww/versions/kejPgknA/dungeons-and-taverns-5.3.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "ohNO6lps",
-        "versionId": "rSd3GiG8"
+        "projectId": "tpehi7ww",
+        "versionId": "kejPgknA"
       },
       "metadata": {
-        "description": "NeoForge's & Forge's config systems provided to other modding ecosystems. Designed for a multiloader architecture.",
-        "iconUrl": "https://cdn.modrinth.com/data/ohNO6lps/cb3b942cc18a66a0f35f802e004713f134e46cc2_96.webp",
+        "description": "A Structure Datapack adding dungeons, taverns and other structures to find while you explore the world.",
+        "iconUrl": "https://cdn.modrinth.com/data/tpehi7ww/429ba22d212868940cdd82465df949ac51c9791e_96.webp",
         "categories": [
-          "library"
+          "adventure",
+          "worldgen"
         ],
-        "sourceUrl": "https://modrinth.com/mod/forge-config-api-port",
+        "sourceUrl": "https://modrinth.com/mod/dungeons-and-taverns",
         "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
-    "fabric-language-kotlin": {
-      "id": "fabric-language-kotlin",
-      "name": "Fabric Language Kotlin",
-      "side": "both",
-      "filename": "fabric-language-kotlin-1.13.13+kotlin.2.4.10.jar",
-      "size": 8076363,
-      "sha256": "34ccdacf13bb9351fe43ce61912c2e09b72364e43e787d36ba3d2d04dec75a52",
-      "sha512": "9a63c35a550b0362b7b25ff045d93709c7b0dae08c89076cba422813fdfb9e5f5dd021ed3afac9f82e74e95b88c249e8f68b240717151540ca3e88cc27fb9c77",
-      "sha1": "620cb137a9dc69ce86f3114f19d9eedab16366f5",
-      "downloadUrl": "https://cdn.modrinth.com/data/Ha28R6CL/versions/bdhiINYC/fabric-language-kotlin-1.13.13%2Bkotlin.2.4.10.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "Ha28R6CL",
-        "versionId": "bdhiINYC"
-      },
-      "metadata": {
-        "description": "This is a mod that enables usage of the Kotlin programming language for Fabric mods.",
-        "iconUrl": "https://cdn.modrinth.com/data/Ha28R6CL/72c3d74aeb665e45aea93a945a01474cbce3b7da_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/fabric-language-kotlin",
-        "clientSide": "optional",
-        "serverSide": "optional"
+        "serverSide": "required"
       }
     },
     "fusion": {
@@ -1398,31 +1417,32 @@
         "serverSide": "optional"
       }
     },
-    "compose-multiplatform": {
-      "id": "compose-multiplatform",
-      "name": "Compose Multiplatform",
-      "side": "client",
-      "filename": "compose-bundle-1.0.2+compose.1.12.0-alpha01.jar",
-      "size": 68012877,
-      "sha256": "301e212392266e5e85ca5ef5a4c66fe0c61d29c810cc6b48860522dd8060c555",
-      "sha512": "1d54840b8eb0b2901f9c32cca49c461f7bfbad276c5fd4156b7ad1e2758bce9e7c815a918e6c7d339e3cc6ba3bafc52282a8fe141158e71399ba0a5ba6156097",
-      "sha1": "d10372771aefb5dd1e9d89c5d43108ecbc4d35c5",
-      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/7dEwiSeB/compose-bundle-1.0.2%2Bcompose.1.12.0-alpha01.jar",
+    "fastitemframes": {
+      "id": "fastitemframes",
+      "name": "Fast Item Frames",
+      "side": "both",
+      "filename": "FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 99762,
+      "sha256": "47c87d4e1df6bdcd61c56ac380da880ee2bdb60611da36c454915a8ff86aaa42",
+      "sha512": "db19f887d64920023650129b8199a7d8e13201a082b2f65b6e5e722b71f5ae8c747ca893bfbd29b58521d241768e55311e122c8981434d905b22a6d51b7913ca",
+      "sha1": "a65ee50476df52c8ba8444559602a789ff03f2b3",
+      "downloadUrl": "https://cdn.modrinth.com/data/FsoeTIV0/versions/lVThjvK5/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "eHe8QhtD",
-        "versionId": "7dEwiSeB"
+        "projectId": "FsoeTIV0",
+        "versionId": "lVThjvK5"
       },
       "metadata": {
-        "description": "Library mod bundling JetBrains' Compose Multiplatform libs",
+        "description": "Supercharged item frames! Less lag, better performance, and now they can change color and vanish!",
+        "iconUrl": "https://cdn.modrinth.com/data/FsoeTIV0/61ec84b804647ef0c09ea49995f86aaec2f28fc8_96.webp",
         "categories": [
-          "utility"
+          "optimization"
         ],
-        "sourceUrl": "https://modrinth.com/mod/compose-multiplatform",
+        "sourceUrl": "https://modrinth.com/mod/fast-item-frames",
         "clientSide": "required",
-        "serverSide": "unsupported"
+        "serverSide": "required"
       }
     },
     "geophilic": {
@@ -1454,88 +1474,57 @@
         "serverSide": "required"
       }
     },
-    "lampas2-overrides": {
-      "id": "lampas2-overrides",
-      "name": "Lampas2 Overrides",
+    "fabric-language-kotlin": {
+      "id": "fabric-language-kotlin",
+      "name": "Fabric Language Kotlin",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 104124,
-      "sha256": "081168328f311d8ca05857b5b5ad44d3f2c0e097cb49e618c30ffedf7ca4d8ea",
-      "sha512": "788457a1c2ea50aa540cc28e61d82118c63451501ad1fd983c14a736ac0bd2a7426a025e6aba4c8692a7f391bd9ed1e97e3463cae16a490d0205799dce95af42",
-      "sha1": "2c2813a1bbf25355d797fd18c46e75e78b71c8af",
-      "downloadUrl": "/api/v1/blobs/081168328f311d8ca05857b5b5ad44d3f2c0e097cb49e618c30ffedf7ca4d8ea",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
-      }
-    },
-    "illagerinvasion": {
-      "id": "illagerinvasion",
-      "name": "Illager Invasion",
-      "side": "both",
-      "filename": "IllagerInvasion-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 2193249,
-      "sha256": "03938ff551de675c36402bae792b1077fa1a6d076929b2c6c609e8735a999b34",
-      "sha512": "3e2e5c3d07ae8afaa226b09c9ff44662753f39a18a75fa17492dd5db2f44fdbf14110ca9a79086ab93a0cbc1b7f4015f1a1b0a88a0a378ebe9dd1d133c4f243b",
-      "sha1": "d7dab841e7cfa9cdb02980e158a5809b2d5b11db",
-      "downloadUrl": "https://cdn.modrinth.com/data/jSV9w0J5/versions/1EML9Osa/IllagerInvasion-v26.2.0-mc26.2.x-Fabric.jar",
+      "filename": "fabric-language-kotlin-1.13.13+kotlin.2.4.10.jar",
+      "size": 8076363,
+      "sha256": "34ccdacf13bb9351fe43ce61912c2e09b72364e43e787d36ba3d2d04dec75a52",
+      "sha512": "9a63c35a550b0362b7b25ff045d93709c7b0dae08c89076cba422813fdfb9e5f5dd021ed3afac9f82e74e95b88c249e8f68b240717151540ca3e88cc27fb9c77",
+      "sha1": "620cb137a9dc69ce86f3114f19d9eedab16366f5",
+      "downloadUrl": "https://cdn.modrinth.com/data/Ha28R6CL/versions/bdhiINYC/fabric-language-kotlin-1.13.13%2Bkotlin.2.4.10.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "jSV9w0J5",
-        "versionId": "1EML9Osa"
+        "projectId": "Ha28R6CL",
+        "versionId": "bdhiINYC"
       },
       "metadata": {
-        "description": "The illagers are back! Be ready to fight new foes. A port of Illager Expansion.",
-        "iconUrl": "https://cdn.modrinth.com/data/jSV9w0J5/03f8cea7f5184d88454f7bf63f2b3c3a85577b1e_96.webp",
+        "description": "This is a mod that enables usage of the Kotlin programming language for Fabric mods.",
+        "iconUrl": "https://cdn.modrinth.com/data/Ha28R6CL/72c3d74aeb665e45aea93a945a01474cbce3b7da_96.webp",
         "categories": [
-          "adventure",
-          "mobs",
-          "worldgen"
+          "library"
         ],
-        "sourceUrl": "https://modrinth.com/mod/illager-invasion",
-        "clientSide": "required",
-        "serverSide": "required"
+        "sourceUrl": "https://modrinth.com/mod/fabric-language-kotlin",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
-    "imageframeclient": {
-      "id": "imageframeclient",
-      "name": "ImageFrame Client",
+    "compose-multiplatform": {
+      "id": "compose-multiplatform",
+      "name": "Compose Multiplatform",
       "side": "client",
-      "filename": "ImageFrameClient-26.2-fabric-1.2.0.jar",
-      "size": 269433,
-      "sha256": "ff16f15268f98900565c35756787cf7e5d6266e0d8ed0f211c4f2192a24e5105",
-      "sha512": "3c3c94090c59916b531e969ed9c7de2362eabfed28969005fad92261418dc94434843458185e4622e75e5b7007cfc983a256670fa23200554fe039ebca140b3f",
-      "sha1": "d4c2611a9b4791f99d69232358df622604f06681",
-      "downloadUrl": "https://cdn.modrinth.com/data/7JSyQd4e/versions/emb64mKA/ImageFrameClient-26.2-fabric-1.2.0.jar",
+      "filename": "compose-bundle-1.0.2+compose.1.12.0-alpha01.jar",
+      "size": 68012877,
+      "sha256": "301e212392266e5e85ca5ef5a4c66fe0c61d29c810cc6b48860522dd8060c555",
+      "sha512": "1d54840b8eb0b2901f9c32cca49c461f7bfbad276c5fd4156b7ad1e2758bce9e7c815a918e6c7d339e3cc6ba3bafc52282a8fe141158e71399ba0a5ba6156097",
+      "sha1": "d10372771aefb5dd1e9d89c5d43108ecbc4d35c5",
+      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/7dEwiSeB/compose-bundle-1.0.2%2Bcompose.1.12.0-alpha01.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "7JSyQd4e",
-        "versionId": "emb64mKA"
+        "projectId": "eHe8QhtD",
+        "versionId": "7dEwiSeB"
       },
       "metadata": {
-        "description": "Complementary client mod for servers with ImageFrame to display HD and full color images!",
-        "iconUrl": "https://cdn.modrinth.com/data/7JSyQd4e/1b9c80b99ee79cad6f5a697792fa063bc139c9a5_96.webp",
+        "description": "Library mod bundling JetBrains' Compose Multiplatform libs",
         "categories": [
-          "decoration",
-          "game-mechanics",
           "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/imageframeclient",
+        "sourceUrl": "https://modrinth.com/mod/compose-multiplatform",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -1569,33 +1558,147 @@
         "serverSide": "required"
       }
     },
-    "hopobettermineshaft": {
-      "id": "hopobettermineshaft",
-      "name": "Hopo Better Mineshaft",
-      "side": "server",
-      "filename": "HopoBetterMineshaft-[26.2]-1.3.7.jar",
-      "size": 4656205,
-      "sha256": "aaa380042fd76c725f3df01996a0324220fb40a41be21c2eb8867fd977324a73",
-      "sha512": "90bd66e485902a4fddf13d925fa2c6ddcf698e9d947bd31ed7c394d291accccceb7928d6b885bec8af26b5a4cc520033ebc78291fc7291f65dc7bbe79f4dc2d7",
-      "sha1": "ba800e1565ef3da4123b3b5a204790bd6a7e8705",
-      "downloadUrl": "https://cdn.modrinth.com/data/9IxCUYAP/versions/N5xm7QNb/HopoBetterMineshaft-%5B26.2%5D-1.3.7.jar",
+    "lampas2-overrides": {
+      "id": "lampas2-overrides",
+      "name": "Lampas2 Overrides",
+      "side": "both",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 104124,
+      "sha256": "081168328f311d8ca05857b5b5ad44d3f2c0e097cb49e618c30ffedf7ca4d8ea",
+      "sha512": "788457a1c2ea50aa540cc28e61d82118c63451501ad1fd983c14a736ac0bd2a7426a025e6aba4c8692a7f391bd9ed1e97e3463cae16a490d0205799dce95af42",
+      "sha1": "2c2813a1bbf25355d797fd18c46e75e78b71c8af",
+      "downloadUrl": "/api/v1/blobs/081168328f311d8ca05857b5b5ad44d3f2c0e097cb49e618c30ffedf7ca4d8ea",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas2-overrides-1.0.0.jar"
+      },
+      "metadata": {
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+        "categories": [
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+      }
+    },
+    "better-end": {
+      "id": "better-end",
+      "name": "BetterEnd",
+      "side": "both",
+      "filename": "better-end-26.201.2.jar",
+      "size": 99356745,
+      "sha256": "97dac860402e781ee50a5e10e1c3d299f9c84873e7426f53fab76918c1559425",
+      "sha512": "f6ec87159bb36dc848ad7fd170e643170fd9e36811d91c22278d6d256e320b0cc28a1fa69de680fefe07652a39b67ccf0d84d5d037d2a8f00f148ee0ae35c94a",
+      "sha1": "20f745e9bb7fbf442c53c57bf87f7d2d153ca454",
+      "downloadUrl": "https://cdn.modrinth.com/data/gc8OEnCC/versions/VD4qwVUF/better-end-26.201.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "9IxCUYAP",
-        "versionId": "N5xm7QNb"
+        "projectId": "gc8OEnCC",
+        "versionId": "VD4qwVUF"
       },
       "metadata": {
-        "description": "More and better mineshafts to explore",
-        "iconUrl": "https://cdn.modrinth.com/data/9IxCUYAP/cec74a303219fe436b0d4a43242186e598d1fadd_96.webp",
+        "description": "New Biomes, mysterious rituals and Mobs for your End",
+        "iconUrl": "https://cdn.modrinth.com/data/gc8OEnCC/3afe2f097e9deff31158da380647fdc47131756f_96.webp",
         "categories": [
-          "adventure",
           "decoration",
+          "mobs",
           "worldgen"
         ],
-        "sourceUrl": "https://modrinth.com/mod/hopo-better-mineshaft",
-        "clientSide": "optional",
+        "sourceUrl": "https://modrinth.com/mod/betterend",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "inventoryprofilesnext": {
+      "id": "inventoryprofilesnext",
+      "name": "Inventory Profiles Next",
+      "side": "client",
+      "filename": "InventoryProfilesNext-fabric-26.2-2.3.6.jar",
+      "size": 1456049,
+      "sha256": "d597394abddb06dda1b964748458c68efa5d36ecda1c3af9f33a86078bea95a9",
+      "sha512": "cce66c87fd08bf80f22fea8e1d28b4162a681bf0c0c1eb1cf4ecd4bd4cb4a18e8d3fa4c6c3c575f5377335e4354fdaee76ccc9ce29fa384a32c29b1d9eddfedf",
+      "sha1": "a86acd8abb264316595738cdc19d23abdc54022f",
+      "downloadUrl": "https://cdn.modrinth.com/data/O7RBXm3n/versions/Dj7UGR23/InventoryProfilesNext-fabric-26.2-2.3.6.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "O7RBXm3n",
+        "versionId": "Dj7UGR23"
+      },
+      "metadata": {
+        "description": "Take control over your inventory. Sort. Move matching Items. Throw all. Locked slots. Gear sets! And much more.",
+        "iconUrl": "https://cdn.modrinth.com/data/O7RBXm3n/04cdecd37b4c7409f70d36fcdc85722ebf14aab8_96.webp",
+        "categories": [
+          "storage",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/inventory-profiles-next",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "iris": {
+      "id": "iris",
+      "name": "Iris Shaders",
+      "side": "client",
+      "filename": "iris-fabric-1.11.2+mc26.2.jar",
+      "size": 2820763,
+      "sha256": "df0e2ccddaea17b191eda32b21c979e131bc9d4ef4f831113b50b461fc4a3804",
+      "sha512": "c1b46bcd1a0068deab3ae364a7229d31e27b7d45aea960e47503b8514354426badf83f354529db35d83e6b55727a53895fb9f13085e51d8148ee6765affac924",
+      "sha1": "f7d526b1062c4bfe2567113cf933d1de26eddd3f",
+      "downloadUrl": "https://cdn.modrinth.com/data/YL57xq9U/versions/oaD6KQls/iris-fabric-1.11.2%2Bmc26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "YL57xq9U",
+        "versionId": "oaD6KQls"
+      },
+      "metadata": {
+        "description": "A modern shader pack loader for Minecraft intended to be compatible with existing OptiFine shader packs",
+        "iconUrl": "https://cdn.modrinth.com/data/YL57xq9U/18d0e7f076d3d6ed5bedd472b853909aac5da202_96.webp",
+        "categories": [
+          "decoration",
+          "optimization"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/iris",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "illagerinvasion": {
+      "id": "illagerinvasion",
+      "name": "Illager Invasion",
+      "side": "both",
+      "filename": "IllagerInvasion-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 2193249,
+      "sha256": "03938ff551de675c36402bae792b1077fa1a6d076929b2c6c609e8735a999b34",
+      "sha512": "3e2e5c3d07ae8afaa226b09c9ff44662753f39a18a75fa17492dd5db2f44fdbf14110ca9a79086ab93a0cbc1b7f4015f1a1b0a88a0a378ebe9dd1d133c4f243b",
+      "sha1": "d7dab841e7cfa9cdb02980e158a5809b2d5b11db",
+      "downloadUrl": "https://cdn.modrinth.com/data/jSV9w0J5/versions/1EML9Osa/IllagerInvasion-v26.2.0-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "jSV9w0J5",
+        "versionId": "1EML9Osa"
+      },
+      "metadata": {
+        "description": "The illagers are back! Be ready to fight new foes. A port of Illager Expansion.",
+        "iconUrl": "https://cdn.modrinth.com/data/jSV9w0J5/03f8cea7f5184d88454f7bf63f2b3c3a85577b1e_96.webp",
+        "categories": [
+          "adventure",
+          "mobs",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/illager-invasion",
+        "clientSide": "required",
         "serverSide": "required"
       }
     },
@@ -1628,64 +1731,6 @@
         "serverSide": "optional"
       }
     },
-    "iris": {
-      "id": "iris",
-      "name": "Iris Shaders",
-      "side": "client",
-      "filename": "iris-fabric-1.11.2+mc26.2.jar",
-      "size": 2820763,
-      "sha256": "df0e2ccddaea17b191eda32b21c979e131bc9d4ef4f831113b50b461fc4a3804",
-      "sha512": "c1b46bcd1a0068deab3ae364a7229d31e27b7d45aea960e47503b8514354426badf83f354529db35d83e6b55727a53895fb9f13085e51d8148ee6765affac924",
-      "sha1": "f7d526b1062c4bfe2567113cf933d1de26eddd3f",
-      "downloadUrl": "https://cdn.modrinth.com/data/YL57xq9U/versions/oaD6KQls/iris-fabric-1.11.2%2Bmc26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "YL57xq9U",
-        "versionId": "oaD6KQls"
-      },
-      "metadata": {
-        "description": "A modern shader pack loader for Minecraft intended to be compatible with existing OptiFine shader packs",
-        "iconUrl": "https://cdn.modrinth.com/data/YL57xq9U/18d0e7f076d3d6ed5bedd472b853909aac5da202_96.webp",
-        "categories": [
-          "decoration",
-          "optimization"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/iris",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "inventoryprofilesnext": {
-      "id": "inventoryprofilesnext",
-      "name": "Inventory Profiles Next",
-      "side": "client",
-      "filename": "InventoryProfilesNext-fabric-26.2-2.3.6.jar",
-      "size": 1456049,
-      "sha256": "d597394abddb06dda1b964748458c68efa5d36ecda1c3af9f33a86078bea95a9",
-      "sha512": "cce66c87fd08bf80f22fea8e1d28b4162a681bf0c0c1eb1cf4ecd4bd4cb4a18e8d3fa4c6c3c575f5377335e4354fdaee76ccc9ce29fa384a32c29b1d9eddfedf",
-      "sha1": "a86acd8abb264316595738cdc19d23abdc54022f",
-      "downloadUrl": "https://cdn.modrinth.com/data/O7RBXm3n/versions/Dj7UGR23/InventoryProfilesNext-fabric-26.2-2.3.6.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "O7RBXm3n",
-        "versionId": "Dj7UGR23"
-      },
-      "metadata": {
-        "description": "Take control over your inventory. Sort. Move matching Items. Throw all. Locked slots. Gear sets! And much more.",
-        "iconUrl": "https://cdn.modrinth.com/data/O7RBXm3n/04cdecd37b4c7409f70d36fcdc85722ebf14aab8_96.webp",
-        "categories": [
-          "storage",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/inventory-profiles-next",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "lambdabettergrass": {
       "id": "lambdabettergrass",
       "name": "LambdaBetterGrass",
@@ -1714,22 +1759,22 @@
         "serverSide": "unsupported"
       }
     },
-    "lambdynlights": {
-      "id": "lambdynlights",
+    "lambdynamiclights": {
+      "id": "lambdynamiclights",
       "name": "LambDynamicLights - Dynamic Lights",
       "side": "client",
-      "filename": "lambdynamiclights-4.12.2+26.2.jar",
-      "size": 1348440,
-      "sha256": "d46d2ae5f1f0a97ca7ead891706759ed1d959279ebb11df45b71b6b4034a38d7",
-      "sha512": "3c2ab4028e47da4155e860c9449231d7b17e10dc6d9d110ab58dc621ab806fcc0b21741c73a671c0d72fb9ae5021792cea18f09b515180ae33e86c4008c3d139",
-      "sha1": "0667b3e1d203a54a0fcede02d97fc3b9f384711c",
-      "downloadUrl": "https://cdn.modrinth.com/data/yBW8D80W/versions/jBLH7Qy8/lambdynamiclights-4.12.2%2B26.2.jar",
+      "filename": "lambdynamiclights-4.12.3+26.2.jar",
+      "size": 1344044,
+      "sha256": "6a806306fcf60e4697a350cbcbe27fb28739c6b6aeabe152cbac9d47ea3e8995",
+      "sha512": "73ede5f2f9bfe86941615540357e4f40773cef4a76f850d158cf7895f9b67b93c7327566e1fbc1e3b03de0a41c18cb9970bd395e4883c113cae90350251fb742",
+      "sha1": "8ed8a01b56a93432affcdaed30f9517051274f6a",
+      "downloadUrl": "https://cdn.modrinth.com/data/yBW8D80W/versions/LCAMVAqE/lambdynamiclights-4.12.3%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "yBW8D80W",
-        "versionId": "jBLH7Qy8"
+        "versionId": "LCAMVAqE"
       },
       "metadata": {
         "description": "Adds dynamic lights to Minecraft as the most feature-complete and optimized dynamic lighting mod.",
@@ -1772,61 +1817,33 @@
         "serverSide": "required"
       }
     },
-    "libipn": {
-      "id": "libipn",
-      "name": "libIPN",
-      "side": "client",
-      "filename": "libIPN-fabric-26.2-6.8.3.jar",
-      "size": 637800,
-      "sha256": "46ee9e464c41a5641e89835782f0bec5ba93efb9d0010d0fcc3fda22e472f976",
-      "sha512": "bd4bd3c3c3c4d98932fa526dc42cc7071bab3717849a3a1de808e6ef1ad3b2f3f24f201854c2485bec3b31dece24d190441d0f7db32e81216cddf005ec474fb6",
-      "sha1": "356e9327929c8559f48cd151bbe7ece38d83d82a",
-      "downloadUrl": "https://cdn.modrinth.com/data/onSQdWhM/versions/SkvWSBFK/libIPN-fabric-26.2-6.8.3.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "onSQdWhM",
-        "versionId": "SkvWSBFK"
-      },
-      "metadata": {
-        "description": "Inventory Profiles Next GUI/Config library",
-        "iconUrl": "https://cdn.modrinth.com/data/onSQdWhM/feb2d62d9f150539bfd2a69d373866b1e643545c_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/libipn",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "lithostitched": {
-      "id": "lithostitched",
-      "name": "Lithostitched",
+    "leveled_mobs": {
+      "id": "leveled_mobs",
+      "name": "Leveled Mobs",
       "side": "server",
-      "filename": "lithostitched-1.8.0+beta2-fabric-26.2.jar",
-      "size": 962156,
-      "sha256": "6932cacdfd929375e8d1b1d9e44ab2c0d35573c5cc29af37de9dfaf681c6497b",
-      "sha512": "85f8c1e8ed1a2d85ab480304f7670ecd5d71960b7e4cf993c481bf5917305f707c097e8701dc099c4074754d18d197875a54f8a408290578bf1eaf52ee213114",
-      "sha1": "08e65d8435611b1cccd663a8b6a01c7e95f53e27",
-      "downloadUrl": "https://cdn.modrinth.com/data/XaDC71GB/versions/szXJ4ACg/lithostitched-1.8.0%2Bbeta2-fabric-26.2.jar",
+      "filename": "leveled-mobs-1.0.3.jar",
+      "size": 189742,
+      "sha256": "676e6815106166168823b6dd520bc5be898a17c4adf9ddf3aba96aed53f1ccde",
+      "sha512": "bf270476557c6ac98b174ed79bf6fe1958186d273e2f884786f06cd85571677c55e39c15c097b59c9847b12511fb010bfcd1a3e2bde94272e47ab5422e1a560b",
+      "sha1": "2e3a90f493b5c0918a432e4e96a8a773e4b06078",
+      "downloadUrl": "https://cdn.modrinth.com/data/9Z7h7R3n/versions/FVB189o7/leveled-mobs-1.0.3.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "XaDC71GB",
-        "versionId": "szXJ4ACg"
+        "projectId": "9Z7h7R3n",
+        "versionId": "FVB189o7"
       },
       "metadata": {
-        "description": "Library mod with new configurability and compatibility enhancements for worldgen",
-        "iconUrl": "https://cdn.modrinth.com/data/XaDC71GB/bc3425bcb318176adc7da99b6eec48787eed98d3.png",
+        "description": "The farther you go, the stronger the enemies!",
+        "iconUrl": "https://cdn.modrinth.com/data/9Z7h7R3n/28ac828dfb32685964a0c05edda55c034a2c076b_96.webp",
         "categories": [
-          "library",
-          "utility",
-          "worldgen"
+          "adventure",
+          "game-mechanics",
+          "mobs"
         ],
-        "sourceUrl": "https://modrinth.com/mod/lithostitched",
-        "clientSide": "unsupported",
+        "sourceUrl": "https://modrinth.com/mod/leveled-mobs",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -1859,6 +1876,64 @@
         "serverSide": "required"
       }
     },
+    "lithostitched": {
+      "id": "lithostitched",
+      "name": "Lithostitched",
+      "side": "server",
+      "filename": "lithostitched-1.8.0+beta2-fabric-26.2.jar",
+      "size": 962156,
+      "sha256": "6932cacdfd929375e8d1b1d9e44ab2c0d35573c5cc29af37de9dfaf681c6497b",
+      "sha512": "85f8c1e8ed1a2d85ab480304f7670ecd5d71960b7e4cf993c481bf5917305f707c097e8701dc099c4074754d18d197875a54f8a408290578bf1eaf52ee213114",
+      "sha1": "08e65d8435611b1cccd663a8b6a01c7e95f53e27",
+      "downloadUrl": "https://cdn.modrinth.com/data/XaDC71GB/versions/szXJ4ACg/lithostitched-1.8.0%2Bbeta2-fabric-26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "XaDC71GB",
+        "versionId": "szXJ4ACg"
+      },
+      "metadata": {
+        "description": "Library mod with new configurability and compatibility enhancements for worldgen",
+        "iconUrl": "https://cdn.modrinth.com/data/XaDC71GB/bc3425bcb318176adc7da99b6eec48787eed98d3.png",
+        "categories": [
+          "library",
+          "utility",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/lithostitched",
+        "clientSide": "unsupported",
+        "serverSide": "required"
+      }
+    },
+    "libipn": {
+      "id": "libipn",
+      "name": "libIPN",
+      "side": "client",
+      "filename": "libIPN-fabric-26.2-6.8.3.jar",
+      "size": 637800,
+      "sha256": "46ee9e464c41a5641e89835782f0bec5ba93efb9d0010d0fcc3fda22e472f976",
+      "sha512": "bd4bd3c3c3c4d98932fa526dc42cc7071bab3717849a3a1de808e6ef1ad3b2f3f24f201854c2485bec3b31dece24d190441d0f7db32e81216cddf005ec474fb6",
+      "sha1": "356e9327929c8559f48cd151bbe7ece38d83d82a",
+      "downloadUrl": "https://cdn.modrinth.com/data/onSQdWhM/versions/SkvWSBFK/libIPN-fabric-26.2-6.8.3.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "onSQdWhM",
+        "versionId": "SkvWSBFK"
+      },
+      "metadata": {
+        "description": "Inventory Profiles Next GUI/Config library",
+        "iconUrl": "https://cdn.modrinth.com/data/onSQdWhM/feb2d62d9f150539bfd2a69d373866b1e643545c_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/libipn",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "lolmcv": {
       "id": "lolmcv",
       "name": "More Chests Variants (MCV)",
@@ -1888,6 +1963,66 @@
         "serverSide": "required"
       }
     },
+    "grim-kingdoms-lost-structures-ruins": {
+      "id": "grim-kingdoms-lost-structures-ruins",
+      "name": "Grim kingdoms: structures & ruins",
+      "side": "server",
+      "filename": "grim-kingdoms-lost-structures-ruins-2.0.3.jar",
+      "size": 10281208,
+      "sha256": "d5f4af9dca99b6df9ad7db214df69d7ea63fb0e601eeabdcd73c304ddc9f7601",
+      "sha512": "441e23bac567a6af3051bb97029c775646bf7c1f3b31741975bb4e25abfa488a6271e3036d6d0f3921ce7c92461e2cfd9afc74a0d9fd1a93d86d816b326e2f00",
+      "sha1": "54d6fa1040cfca3f0ea9d1766b7ed63864ee660c",
+      "downloadUrl": "https://cdn.modrinth.com/data/f4d4E9De/versions/2HwCrjkl/grim-kingdoms-lost-structures-ruins-2.0.3.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "f4d4E9De",
+        "versionId": "2HwCrjkl"
+      },
+      "metadata": {
+        "description": "Adds forts, citadels, castles, with unique vanilla mobs/ hidden items",
+        "iconUrl": "https://cdn.modrinth.com/data/f4d4E9De/5dfa0f6a0fb794a0c5c74296b45842587990dee3_96.webp",
+        "categories": [
+          "adventure",
+          "decoration",
+          "equipment"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/grim-kingdoms-lost-structures-ruins",
+        "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
+    "hopobettermineshaft": {
+      "id": "hopobettermineshaft",
+      "name": "Hopo Better Mineshaft",
+      "side": "server",
+      "filename": "HopoBetterMineshaft-[26.2]-1.3.7.jar",
+      "size": 4656205,
+      "sha256": "aaa380042fd76c725f3df01996a0324220fb40a41be21c2eb8867fd977324a73",
+      "sha512": "90bd66e485902a4fddf13d925fa2c6ddcf698e9d947bd31ed7c394d291accccceb7928d6b885bec8af26b5a4cc520033ebc78291fc7291f65dc7bbe79f4dc2d7",
+      "sha1": "ba800e1565ef3da4123b3b5a204790bd6a7e8705",
+      "downloadUrl": "https://cdn.modrinth.com/data/9IxCUYAP/versions/N5xm7QNb/HopoBetterMineshaft-%5B26.2%5D-1.3.7.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "9IxCUYAP",
+        "versionId": "N5xm7QNb"
+      },
+      "metadata": {
+        "description": "More and better mineshafts to explore",
+        "iconUrl": "https://cdn.modrinth.com/data/9IxCUYAP/cec74a303219fe436b0d4a43242186e598d1fadd_96.webp",
+        "categories": [
+          "adventure",
+          "decoration",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/hopo-better-mineshaft",
+        "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
     "lolmlv": {
       "id": "lolmlv",
       "name": "More Lectern Variants",
@@ -1912,6 +2047,34 @@
           "decoration"
         ],
         "sourceUrl": "https://modrinth.com/mod/more-lectern-variants",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "lolmst": {
+      "id": "lolmst",
+      "name": "More Smithing Tables",
+      "side": "both",
+      "filename": "MoreSmithingTables-1.3.4+26.1-Fabric.jar",
+      "size": 86868,
+      "sha256": "29e06d47692801947da43ab58e037d3a20040292914179f5e3fed0cf37199ecf",
+      "sha512": "68eec563b2c5d8dee9be074d051c5c7c027d9a6d1d1dd7062c702fc1dc981c5b2d5f0b066134d2817860d8f3089e58a5e3b54fe232cb09b0de97ba99878cdc1f",
+      "sha1": "edf5ebdade82fc6f7539a35574a6e853711c8da6",
+      "downloadUrl": "https://cdn.modrinth.com/data/t3iWfx17/versions/M2qG7d5o/MoreSmithingTables-1.3.4%2B26.1-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "t3iWfx17",
+        "versionId": "M2qG7d5o"
+      },
+      "metadata": {
+        "description": "Smithing Tables for every kind of wood",
+        "iconUrl": "https://cdn.modrinth.com/data/t3iWfx17/c06eead1226961a4ed583924ef7785564d418bc2.gif",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/more-smithing-tables",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -1945,58 +2108,30 @@
         "serverSide": "required"
       }
     },
-    "lolmst": {
-      "id": "lolmst",
-      "name": "More Smithing Tables",
+    "mcwfences": {
+      "id": "mcwfences",
+      "name": "Macaw's Fences and Walls",
       "side": "both",
-      "filename": "MoreSmithingTables-1.3.4+26.1-Fabric.jar",
-      "size": 86868,
-      "sha256": "29e06d47692801947da43ab58e037d3a20040292914179f5e3fed0cf37199ecf",
-      "sha512": "68eec563b2c5d8dee9be074d051c5c7c027d9a6d1d1dd7062c702fc1dc981c5b2d5f0b066134d2817860d8f3089e58a5e3b54fe232cb09b0de97ba99878cdc1f",
-      "sha1": "edf5ebdade82fc6f7539a35574a6e853711c8da6",
-      "downloadUrl": "https://cdn.modrinth.com/data/t3iWfx17/versions/M2qG7d5o/MoreSmithingTables-1.3.4%2B26.1-Fabric.jar",
+      "filename": "mcw-fences-1.2.1-mc26.2fabric.jar",
+      "size": 705102,
+      "sha256": "d21843f9195f20e50bd4e938b00a94107c98adabc62fb5b1e6f431a2560a4dad",
+      "sha512": "ab0f4828d98b99f045a415e164d6471fe47bbc5d4f01ca1442c0144be9f89e35db4e6b30ff847ec919409e040d63904f54f3f113898a9155fd32e579f46d776a",
+      "sha1": "9b9a41ef67ea7f9f198b4d9f398d11282e13fe23",
+      "downloadUrl": "https://cdn.modrinth.com/data/GmwLse2I/versions/95mwakGs/mcw-fences-1.2.1-mc26.2fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "t3iWfx17",
-        "versionId": "M2qG7d5o"
+        "projectId": "GmwLse2I",
+        "versionId": "95mwakGs"
       },
       "metadata": {
-        "description": "Smithing Tables for every kind of wood",
-        "iconUrl": "https://cdn.modrinth.com/data/t3iWfx17/c06eead1226961a4ed583924ef7785564d418bc2.gif",
+        "description": "Adds new vanilla styled fences, walls and gates!",
+        "iconUrl": "https://cdn.modrinth.com/data/GmwLse2I/ebe4d2375e0a402e5587665ba9da5eb50f37422a_96.webp",
         "categories": [
           "decoration"
         ],
-        "sourceUrl": "https://modrinth.com/mod/more-smithing-tables",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "lootr": {
-      "id": "lootr",
-      "name": "Lootr",
-      "side": "both",
-      "filename": "lootr-fabric-26.2-1.24.39.121.jar",
-      "size": 1497014,
-      "sha256": "3bff544567fd88571df89332876168b6d35b32f668c7e9b0c2591c2bbd8a54e3",
-      "sha512": "7763f8ba03978f9e967980f4f35deba13cb90348a2a0e8cad3145a7ab1cf2fad6349784f0647aeadb4ffa56ee222aca415008e2751ab913b35c0d302002e4375",
-      "sha1": "5e576afc84b8c08f2c32e617fcf7c4d50830e947",
-      "downloadUrl": "https://cdn.modrinth.com/data/EltpO5cN/versions/k00AgeE7/lootr-fabric-26.2-1.24.39.121.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "EltpO5cN",
-        "versionId": "k00AgeE7"
-      },
-      "metadata": {
-        "description": "A mod that makes it so nobody misses out on Loot! All loot chests are instanced per player and visually unique.",
-        "iconUrl": "https://cdn.modrinth.com/data/EltpO5cN/3dc915eb1bbcd65654c17eb3870de4aba055d0c6_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/lootr",
+        "sourceUrl": "https://modrinth.com/mod/macaws-fences-and-walls",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -2025,62 +2160,6 @@
           "decoration"
         ],
         "sourceUrl": "https://modrinth.com/mod/macaws-bridges",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "mcwdoors": {
-      "id": "mcwdoors",
-      "name": "Macaw's Doors",
-      "side": "both",
-      "filename": "mcw-doors-1.1.5-mc26.2fabric.jar",
-      "size": 1451361,
-      "sha256": "00e431d662489fe4a145f0e471837e1cd2bc9bcce5abe3f9f9941230765b2ded",
-      "sha512": "c64c0caa32fd0125f212554b63ace62996e6a0d2e51b8ab1dd1d9cf09b5fdd6a956fdf2e9d59e857dc075a69b066317cb33e0b8d61a2359e2e049a0795ef9cf5",
-      "sha1": "344f66ac453e88db87bbb9a1e8ddb0b7a5e90593",
-      "downloadUrl": "https://cdn.modrinth.com/data/kNxa8z3e/versions/XxNfkmgt/mcw-doors-1.1.5-mc26.2fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "kNxa8z3e",
-        "versionId": "XxNfkmgt"
-      },
-      "metadata": {
-        "description": "Adds vanilla doors with every wood color and new unique doors!\nSuch as western, garage, shoji and more...!",
-        "iconUrl": "https://cdn.modrinth.com/data/kNxa8z3e/ced8fa00264400cbe06d622b92a6d1106cedc65d_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/macaws-doors",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "mcwfences": {
-      "id": "mcwfences",
-      "name": "Macaw's Fences and Walls",
-      "side": "both",
-      "filename": "mcw-fences-1.2.1-mc26.2fabric.jar",
-      "size": 705102,
-      "sha256": "d21843f9195f20e50bd4e938b00a94107c98adabc62fb5b1e6f431a2560a4dad",
-      "sha512": "ab0f4828d98b99f045a415e164d6471fe47bbc5d4f01ca1442c0144be9f89e35db4e6b30ff847ec919409e040d63904f54f3f113898a9155fd32e579f46d776a",
-      "sha1": "9b9a41ef67ea7f9f198b4d9f398d11282e13fe23",
-      "downloadUrl": "https://cdn.modrinth.com/data/GmwLse2I/versions/95mwakGs/mcw-fences-1.2.1-mc26.2fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "GmwLse2I",
-        "versionId": "95mwakGs"
-      },
-      "metadata": {
-        "description": "Adds new vanilla styled fences, walls and gates!",
-        "iconUrl": "https://cdn.modrinth.com/data/GmwLse2I/ebe4d2375e0a402e5587665ba9da5eb50f37422a_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/macaws-fences-and-walls",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -2114,30 +2193,58 @@
         "serverSide": "required"
       }
     },
-    "mcwpaintings": {
-      "id": "mcwpaintings",
-      "name": "Macaw's Paintings",
+    "mcwdoors": {
+      "id": "mcwdoors",
+      "name": "Macaw's Doors",
       "side": "both",
-      "filename": "mcw-paintings-1.1.0-mc26.2fabric.jar",
-      "size": 186776,
-      "sha256": "d6a85ebbcf6c0bed788af494d32ec71fec43d5a9b4c1d90f3b1ac80a6d4f080d",
-      "sha512": "f4bcb06c6979ea7bb7706f43b2435d04c00b93f67bf6dc047136225f34b9306e65677906b94b8e49f27db7b7982afaa0212cceadf895ea7a57394fc09f897fd9",
-      "sha1": "69007605ebc2563c2410cffa8c7efd4e3a36905f",
-      "downloadUrl": "https://cdn.modrinth.com/data/okE6QVAY/versions/IYqbBWnh/mcw-paintings-1.1.0-mc26.2fabric.jar",
+      "filename": "mcw-doors-1.1.5-mc26.2fabric.jar",
+      "size": 1451361,
+      "sha256": "00e431d662489fe4a145f0e471837e1cd2bc9bcce5abe3f9f9941230765b2ded",
+      "sha512": "c64c0caa32fd0125f212554b63ace62996e6a0d2e51b8ab1dd1d9cf09b5fdd6a956fdf2e9d59e857dc075a69b066317cb33e0b8d61a2359e2e049a0795ef9cf5",
+      "sha1": "344f66ac453e88db87bbb9a1e8ddb0b7a5e90593",
+      "downloadUrl": "https://cdn.modrinth.com/data/kNxa8z3e/versions/XxNfkmgt/mcw-doors-1.1.5-mc26.2fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "okE6QVAY",
-        "versionId": "IYqbBWnh"
+        "projectId": "kNxa8z3e",
+        "versionId": "XxNfkmgt"
       },
       "metadata": {
-        "description": "Adds custom drawn paintings to fit in your world!",
-        "iconUrl": "https://cdn.modrinth.com/data/okE6QVAY/c3899cf3bd5b780839e98257492a6b68372eca3d_96.webp",
+        "description": "Adds vanilla doors with every wood color and new unique doors!\nSuch as western, garage, shoji and more...!",
+        "iconUrl": "https://cdn.modrinth.com/data/kNxa8z3e/ced8fa00264400cbe06d622b92a6d1106cedc65d_96.webp",
         "categories": [
           "decoration"
         ],
-        "sourceUrl": "https://modrinth.com/mod/macaws-paintings",
+        "sourceUrl": "https://modrinth.com/mod/macaws-doors",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "lootr": {
+      "id": "lootr",
+      "name": "Lootr",
+      "side": "both",
+      "filename": "lootr-fabric-26.2-1.24.39.121.jar",
+      "size": 1497014,
+      "sha256": "3bff544567fd88571df89332876168b6d35b32f668c7e9b0c2591c2bbd8a54e3",
+      "sha512": "7763f8ba03978f9e967980f4f35deba13cb90348a2a0e8cad3145a7ab1cf2fad6349784f0647aeadb4ffa56ee222aca415008e2751ab913b35c0d302002e4375",
+      "sha1": "5e576afc84b8c08f2c32e617fcf7c4d50830e947",
+      "downloadUrl": "https://cdn.modrinth.com/data/EltpO5cN/versions/k00AgeE7/lootr-fabric-26.2-1.24.39.121.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "EltpO5cN",
+        "versionId": "k00AgeE7"
+      },
+      "metadata": {
+        "description": "A mod that makes it so nobody misses out on Loot! All loot chests are instanced per player and visually unique.",
+        "iconUrl": "https://cdn.modrinth.com/data/EltpO5cN/3dc915eb1bbcd65654c17eb3870de4aba055d0c6_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/lootr",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -2166,6 +2273,62 @@
           "decoration"
         ],
         "sourceUrl": "https://modrinth.com/mod/macaws-lights-and-lamps",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "mcwpaintings": {
+      "id": "mcwpaintings",
+      "name": "Macaw's Paintings",
+      "side": "both",
+      "filename": "mcw-paintings-1.1.0-mc26.2fabric.jar",
+      "size": 186776,
+      "sha256": "d6a85ebbcf6c0bed788af494d32ec71fec43d5a9b4c1d90f3b1ac80a6d4f080d",
+      "sha512": "f4bcb06c6979ea7bb7706f43b2435d04c00b93f67bf6dc047136225f34b9306e65677906b94b8e49f27db7b7982afaa0212cceadf895ea7a57394fc09f897fd9",
+      "sha1": "69007605ebc2563c2410cffa8c7efd4e3a36905f",
+      "downloadUrl": "https://cdn.modrinth.com/data/okE6QVAY/versions/IYqbBWnh/mcw-paintings-1.1.0-mc26.2fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "okE6QVAY",
+        "versionId": "IYqbBWnh"
+      },
+      "metadata": {
+        "description": "Adds custom drawn paintings to fit in your world!",
+        "iconUrl": "https://cdn.modrinth.com/data/okE6QVAY/c3899cf3bd5b780839e98257492a6b68372eca3d_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/macaws-paintings",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "mcwstairs": {
+      "id": "mcwstairs",
+      "name": "Macaw's Stairs",
+      "side": "both",
+      "filename": "mcw-stairs-1.0.2-mc26.2fabric.jar",
+      "size": 568242,
+      "sha256": "6c3166b325af8898a1a4b9be59cd28dbe9c787a88797304cfdab464ee84e6622",
+      "sha512": "76e6ba779eeacd7a47335bb3160e3bf39b0c570128b93c2975c06e1ef00aa0493da0d411ecb44fe55786f7edfb7f5fe95b3b2e398b1984a15708f4718ceec329",
+      "sha1": "e5c4e14c9f3bf75e3d3bf8150247ae5adb9a737b",
+      "downloadUrl": "https://cdn.modrinth.com/data/iP3wH1ha/versions/ovx0xlK3/mcw-stairs-1.0.2-mc26.2fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "iP3wH1ha",
+        "versionId": "ovx0xlK3"
+      },
+      "metadata": {
+        "description": "Adds new Vanilla styled Stairs, Handrails for Stairs and Balconies!",
+        "iconUrl": "https://cdn.modrinth.com/data/iP3wH1ha/7760df8839c395ee42099387cd9cb0fe34b2626e_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/macaws-stairs",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -2226,34 +2389,6 @@
         "serverSide": "required"
       }
     },
-    "mcwstairs": {
-      "id": "mcwstairs",
-      "name": "Macaw's Stairs",
-      "side": "both",
-      "filename": "mcw-stairs-1.0.2-mc26.2fabric.jar",
-      "size": 568242,
-      "sha256": "6c3166b325af8898a1a4b9be59cd28dbe9c787a88797304cfdab464ee84e6622",
-      "sha512": "76e6ba779eeacd7a47335bb3160e3bf39b0c570128b93c2975c06e1ef00aa0493da0d411ecb44fe55786f7edfb7f5fe95b3b2e398b1984a15708f4718ceec329",
-      "sha1": "e5c4e14c9f3bf75e3d3bf8150247ae5adb9a737b",
-      "downloadUrl": "https://cdn.modrinth.com/data/iP3wH1ha/versions/ovx0xlK3/mcw-stairs-1.0.2-mc26.2fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "iP3wH1ha",
-        "versionId": "ovx0xlK3"
-      },
-      "metadata": {
-        "description": "Adds new Vanilla styled Stairs, Handrails for Stairs and Balconies!",
-        "iconUrl": "https://cdn.modrinth.com/data/iP3wH1ha/7760df8839c395ee42099387cd9cb0fe34b2626e_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/macaws-stairs",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
     "mcwtrpdoors": {
       "id": "mcwtrpdoors",
       "name": "Macaw's Trapdoors",
@@ -2280,6 +2415,34 @@
         "sourceUrl": "https://modrinth.com/mod/macaws-trapdoors",
         "clientSide": "required",
         "serverSide": "required"
+      }
+    },
+    "modmenu": {
+      "id": "modmenu",
+      "name": "Mod Menu",
+      "side": "both",
+      "filename": "modmenu-20.0.1.jar",
+      "size": 614002,
+      "sha256": "81bfbca06012c57c74949072f2ffaad06360badee4d00dc59bfaeac80dd24bd8",
+      "sha512": "1aa297ab5e6fac71ad6af750fe6f8cd25281bd00c0340e5fe1c1e9d153d1198df03be1df55727a4a2116db97dcaad541d41754f3fc0063abfe4345b60f193fb4",
+      "sha1": "8562dee49eae1a6bdd14b026be1b300aedb5ce0f",
+      "downloadUrl": "https://cdn.modrinth.com/data/mOgUt4GM/versions/njXb639R/modmenu-20.0.1.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "mOgUt4GM",
+        "versionId": "njXb639R"
+      },
+      "metadata": {
+        "description": "Adds a mod menu to view the list of mods you have installed.",
+        "iconUrl": "https://cdn.modrinth.com/data/mOgUt4GM/5a20ed1450a0e1e79a1fe04e61bb4e5878bf1d20.png",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/modmenu",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "mcwwindows": {
@@ -2340,32 +2503,33 @@
         "serverSide": "required"
       }
     },
-    "modmenu": {
-      "id": "modmenu",
-      "name": "Mod Menu",
+    "more-barrel-variants": {
+      "id": "more-barrel-variants",
+      "name": "More Barrel Variants",
       "side": "both",
-      "filename": "modmenu-20.0.1.jar",
-      "size": 614002,
-      "sha256": "81bfbca06012c57c74949072f2ffaad06360badee4d00dc59bfaeac80dd24bd8",
-      "sha512": "1aa297ab5e6fac71ad6af750fe6f8cd25281bd00c0340e5fe1c1e9d153d1198df03be1df55727a4a2116db97dcaad541d41754f3fc0063abfe4345b60f193fb4",
-      "sha1": "8562dee49eae1a6bdd14b026be1b300aedb5ce0f",
-      "downloadUrl": "https://cdn.modrinth.com/data/mOgUt4GM/versions/njXb639R/modmenu-20.0.1.jar",
+      "filename": "MoreBarrelVariants-2.0.5+26.1(2)-Fabric.jar",
+      "size": 145981,
+      "sha256": "246fad506979c06c89571cd9d8905f1bac8c58368844d3e49c1042c3f3eab6f5",
+      "sha512": "8bd279420c5f7002bdc78590ff73bd55243ed71d4d8f22c1bb733a7e5a6a0fe88a8208274521f4a431a2feb3c9106800f0f37c6d3a1a1ac542726cbafa4d07db",
+      "sha1": "73424499ec1767a9706124703fdbb95c957833b3",
+      "downloadUrl": "https://cdn.modrinth.com/data/g4AhyGgi/versions/xSukzynN/MoreBarrelVariants-2.0.5%2B26.1%282%29-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "mOgUt4GM",
-        "versionId": "njXb639R"
+        "projectId": "g4AhyGgi",
+        "versionId": "xSukzynN"
       },
       "metadata": {
-        "description": "Adds a mod menu to view the list of mods you have installed.",
-        "iconUrl": "https://cdn.modrinth.com/data/mOgUt4GM/5a20ed1450a0e1e79a1fe04e61bb4e5878bf1d20.png",
+        "description": "Barrels for every kind of wood",
+        "iconUrl": "https://cdn.modrinth.com/data/g4AhyGgi/d4a0aa746c9a6dde19fe18d005bf763e2ec8b878.gif",
         "categories": [
-          "utility"
+          "decoration",
+          "storage"
         ],
-        "sourceUrl": "https://modrinth.com/mod/modmenu",
+        "sourceUrl": "https://modrinth.com/mod/more-barrel-variants",
         "clientSide": "required",
-        "serverSide": "unsupported"
+        "serverSide": "required"
       }
     },
     "moogs_structures": {
@@ -2397,33 +2561,108 @@
         "serverSide": "required"
       }
     },
-    "more_barrel_variants": {
-      "id": "more_barrel_variants",
-      "name": "More Barrel Variants",
-      "side": "both",
-      "filename": "MoreBarrelVariants-2.0.5+26.1(2)-Fabric.jar",
-      "size": 145981,
-      "sha256": "246fad506979c06c89571cd9d8905f1bac8c58368844d3e49c1042c3f3eab6f5",
-      "sha512": "8bd279420c5f7002bdc78590ff73bd55243ed71d4d8f22c1bb733a7e5a6a0fe88a8208274521f4a431a2feb3c9106800f0f37c6d3a1a1ac542726cbafa4d07db",
-      "sha1": "73424499ec1767a9706124703fdbb95c957833b3",
-      "downloadUrl": "https://cdn.modrinth.com/data/g4AhyGgi/versions/xSukzynN/MoreBarrelVariants-2.0.5%2B26.1%282%29-Fabric.jar",
+    "mingen": {
+      "id": "mingen",
+      "name": "Minimal Structures (Mingen)",
+      "side": "server",
+      "filename": "mingen-v7.2.1.jar",
+      "size": 1688664,
+      "sha256": "bc9c7490429fbbf200d45da303896342843256996b1e24cb7b284d36f18ad731",
+      "sha512": "94cc5ef4448d807fb9a437d7d1d1ddd80374aa6001b30d3afef5b1abf194a0f63fb3d64f6fa8b595ae8181286722c1289adeb79c2fc99e6f724f4ecd1de23516",
+      "sha1": "a05fc778046d67e525025f98455c2e14bbb037fd",
+      "downloadUrl": "https://cdn.modrinth.com/data/FyLFHdlz/versions/davtldc3/mingen-v7.2.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "g4AhyGgi",
-        "versionId": "xSukzynN"
+        "projectId": "FyLFHdlz",
+        "versionId": "davtldc3"
       },
       "metadata": {
-        "description": "Barrels for every kind of wood",
-        "iconUrl": "https://cdn.modrinth.com/data/g4AhyGgi/d4a0aa746c9a6dde19fe18d005bf763e2ec8b878.gif",
+        "description": "Adds new structures to your world",
+        "iconUrl": "https://cdn.modrinth.com/data/FyLFHdlz/e3c6cb602e2a74e42606134533001f9e3641a7b8_96.webp",
+        "categories": [
+          "adventure",
+          "decoration",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/mingen",
+        "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
+      "side": "both",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+      }
+    },
+    "more-smoker-variants": {
+      "id": "more-smoker-variants",
+      "name": "More Smoker Variants",
+      "side": "both",
+      "filename": "MoreSmokerVariants-1.3.5+26.1-Fabric.jar",
+      "size": 325079,
+      "sha256": "bbe72b0edcf5d4e546c381c8c34cb70f9e855c3e535c2bfc5ca1b9be06b074cf",
+      "sha512": "11d7f636b499597707f565e14228f6b98809a74e07c29cefeaf899db5b52c11e3d9e8e95fa3a909fad42a317c202a20f2d2654b6e3797e7a293f8049fe4ddd46",
+      "sha1": "6727268fe98078ca1bbaa830265bc1f77fd4e6ee",
+      "downloadUrl": "https://cdn.modrinth.com/data/8HxZnUY7/versions/vnQCiwUu/MoreSmokerVariants-1.3.5%2B26.1-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "8HxZnUY7",
+        "versionId": "vnQCiwUu"
+      },
+      "metadata": {
+        "description": "Smokers for every kind of wood and two more stone types",
+        "iconUrl": "https://cdn.modrinth.com/data/8HxZnUY7/58efe284a5577a28c86faa73318a50d39bd97c32.gif",
         "categories": [
           "decoration",
-          "storage"
+          "food"
         ],
-        "sourceUrl": "https://modrinth.com/mod/more-barrel-variants",
+        "sourceUrl": "https://modrinth.com/mod/more-smoker-variants",
         "clientSide": "required",
         "serverSide": "required"
+      }
+    },
+    "mru": {
+      "id": "mru",
+      "name": "MRU",
+      "side": "client",
+      "filename": "mru-1.0.33+26.2-fabric.jar",
+      "size": 122808,
+      "sha256": "e6bd3b6a2be100fbe96fb44f528bfae913d79b24537e95fc4899c99f75fa88cc",
+      "sha512": "857c571d6e347fe520f07da36f8901a06b3a1f56e62ba11f1f5fd3af100ca261566cae88cfc08a5a6a56cce34cf4dac63a91325e0c84730d9eca02bcecf11c62",
+      "sha1": "e5c3477d3997153c2dfb5f82683ad1eee0731af7",
+      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/zCkjKVHx/mru-1.0.33%2B26.2-fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "SNVQ2c0g",
+        "versionId": "zCkjKVHx"
+      },
+      "metadata": {
+        "description": "A library mod used by Cassian and IMB11's mods to function.",
+        "iconUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/82339bfc8a0a3a6a3c376f5c29555a378379cfa0_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/mru",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "moredelight": {
@@ -2456,284 +2695,32 @@
         "serverSide": "required"
       }
     },
-    "mr_dungeons": {
-      "id": "mr_dungeons",
-      "name": "Dungeons+",
-      "side": "server",
-      "filename": "dungeons+-1.12.0.jar",
-      "size": 353652,
-      "sha256": "6a996bfeb972e1a23b250af552df83a7b8008deee15c195d4e609ce4a24a2718",
-      "sha512": "168fb45f3cde22bb7e5fbbd0c6981d5acfc2cb1f9118b79a5bf75441c0f8ac82fd2cf8f001ce460b323046a33a43039c0cd38f74778db40738d97f14387a231e",
-      "sha1": "ad9bf1a35050e057eb055db345246b9128ffefce",
-      "downloadUrl": "https://cdn.modrinth.com/data/nHORcEHd/versions/VT75yixL/dungeons%2B-1.12.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "nHORcEHd",
-        "versionId": "VT75yixL"
-      },
-      "metadata": {
-        "description": "Brand new vanilla dungeons remade with biome specific designs and new mob spawner types",
-        "iconUrl": "https://cdn.modrinth.com/data/nHORcEHd/1b5d79c6ec1b033725352efbb83bac451efaba85.png",
-        "categories": [
-          "adventure",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/dungeons+",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mr_ati_structuresvanillaedition": {
-      "id": "mr_ati_structuresvanillaedition",
-      "name": "ATi Structures - Vanilla Edition",
-      "side": "server",
-      "filename": "ATi Structures Vanilla V1.4.5.jar",
-      "size": 14745887,
-      "sha256": "cc64b50e80c03bf5e0abd1c6ba76c87397b972adcf678de87d81d85dd7244098",
-      "sha512": "beadaa36c9916455be8c79c398e341590f7c0750a1cdc99eeb70f4efdeb284b6a203d6b7bc3245955eac055d47ed12f05026e8398728ef2ef2a4bf2fe41cf0f8",
-      "sha1": "2358023c06528b4f1c555c47f71cc3e3efcd60db",
-      "downloadUrl": "https://cdn.modrinth.com/data/YWVAO3wq/versions/hHw6n2T7/ATi%20Structures%20Vanilla%20V1.4.5.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "YWVAO3wq",
-        "versionId": "hHw6n2T7"
-      },
-      "metadata": {
-        "description": "A collection of custom structures and dungeons!",
-        "iconUrl": "https://cdn.modrinth.com/data/YWVAO3wq/c6b4a29fadf875517e9d9c71c3775e2b7ba4ffee_96.webp",
-        "categories": [
-          "adventure",
-          "equipment",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/ati-structures-vanilla-edition",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mr_leveled_mobs": {
-      "id": "mr_leveled_mobs",
-      "name": "Leveled Mobs",
-      "side": "server",
-      "filename": "leveled-mobs-1.0.3.jar",
-      "size": 189742,
-      "sha256": "676e6815106166168823b6dd520bc5be898a17c4adf9ddf3aba96aed53f1ccde",
-      "sha512": "bf270476557c6ac98b174ed79bf6fe1958186d273e2f884786f06cd85571677c55e39c15c097b59c9847b12511fb010bfcd1a3e2bde94272e47ab5422e1a560b",
-      "sha1": "2e3a90f493b5c0918a432e4e96a8a773e4b06078",
-      "downloadUrl": "https://cdn.modrinth.com/data/9Z7h7R3n/versions/FVB189o7/leveled-mobs-1.0.3.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "9Z7h7R3n",
-        "versionId": "FVB189o7"
-      },
-      "metadata": {
-        "description": "The farther you go, the stronger the enemies!",
-        "iconUrl": "https://cdn.modrinth.com/data/9Z7h7R3n/28ac828dfb32685964a0c05edda55c034a2c076b_96.webp",
-        "categories": [
-          "adventure",
-          "game-mechanics",
-          "mobs"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/leveled-mobs",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mru": {
-      "id": "mru",
-      "name": "MRU",
-      "side": "client",
-      "filename": "mru-1.0.33+26.2-fabric.jar",
-      "size": 122808,
-      "sha256": "e6bd3b6a2be100fbe96fb44f528bfae913d79b24537e95fc4899c99f75fa88cc",
-      "sha512": "857c571d6e347fe520f07da36f8901a06b3a1f56e62ba11f1f5fd3af100ca261566cae88cfc08a5a6a56cce34cf4dac63a91325e0c84730d9eca02bcecf11c62",
-      "sha1": "e5c3477d3997153c2dfb5f82683ad1eee0731af7",
-      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/zCkjKVHx/mru-1.0.33%2B26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "SNVQ2c0g",
-        "versionId": "zCkjKVHx"
-      },
-      "metadata": {
-        "description": "A library mod used by Cassian and IMB11's mods to function.",
-        "iconUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/82339bfc8a0a3a6a3c376f5c29555a378379cfa0_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/mru",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "more-bed-variants": {
+      "id": "more-bed-variants",
+      "name": "More Bed Variants",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
-      }
-    },
-    "naturalwaters": {
-      "id": "naturalwaters",
-      "name": "Natural Waters",
-      "side": "client",
-      "filename": "NaturalWaters-v26.2.1-mc26.2.x-Fabric.jar",
-      "size": 72306,
-      "sha256": "0ecfbbf4e59b817168d3b99799f6a52ba4ea4d697a20c0de2c4e2ff25347ec1e",
-      "sha512": "6303b9fc5616df2e5757a579ee70ce769ef8de802c83e763295df728bbd691c9c6cca71c91c03ec0a8e7ecf33ce714f1982a85861ef6f68290ed63ba91028450",
-      "sha1": "e8369531ffd89c6781ad465fbc83dd4a9b349014",
-      "downloadUrl": "https://cdn.modrinth.com/data/aYttCyCw/versions/PueB0trs/NaturalWaters-v26.2.1-mc26.2.x-Fabric.jar",
+      "filename": "MoreBedVariants-2.1.9+26.2-Fabric.jar",
+      "size": 1770832,
+      "sha256": "909886e93b545ec6c01468801d59c743662662136b634d50280d69da66a22f5a",
+      "sha512": "d16205188eb1179d997e7590e556c8e5766e83a30216fb1a4f231d3618262d3f7db7445da681617d0197a904b30873bb328eff8d8450d86895a0a4d5f2eb4e6e",
+      "sha1": "8afa7a7c599ed09f9bd71ab17d459d7ef281c522",
+      "downloadUrl": "https://cdn.modrinth.com/data/nKaiA11S/versions/RepA5IBL/MoreBedVariants-2.1.9%2B26.2-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "aYttCyCw",
-        "versionId": "PueB0trs"
+        "projectId": "nKaiA11S",
+        "versionId": "RepA5IBL"
       },
       "metadata": {
-        "description": "Bring bright, colorful waters from Bedrock to Java. Easy to tweak and enjoy!",
-        "iconUrl": "https://cdn.modrinth.com/data/aYttCyCw/e863c7958c428b3ef8d5bd8e9516bcbe1ad2e5d8_96.webp",
+        "description": "All Beds for every kind of wood (incl. improved Bed Block Rendering)",
+        "iconUrl": "https://cdn.modrinth.com/data/nKaiA11S/77db3aebfa281a67c2466d6d09300e184c0448f6.gif",
         "categories": [
-          "decoration"
+          "decoration",
+          "optimization"
         ],
-        "sourceUrl": "https://modrinth.com/mod/natural-waters",
+        "sourceUrl": "https://modrinth.com/mod/more-bed-variants",
         "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "mr_grim_kingdomsloststructuresruins": {
-      "id": "mr_grim_kingdomsloststructuresruins",
-      "name": "Grim kingdoms: structures & ruins",
-      "side": "server",
-      "filename": "grim-kingdoms-lost-structures-ruins-2.0.2.jar",
-      "size": 10280486,
-      "sha256": "5e435c516f171806a917f82e42dcfae9d614ed6c2188f0718fc5be6cd25d7723",
-      "sha512": "729d299e930d603e11b7e53b68c12d877e870da585daa9e2f64f1e18640ca8b029ca50b224211b8498c6fcec15cb3f7474dae1fd789f8443b944ab6761ddfd5a",
-      "sha1": "ec2204fa8a43516ad6d0689c8215dcc509ea680e",
-      "downloadUrl": "https://cdn.modrinth.com/data/f4d4E9De/versions/7XkoC8I2/grim-kingdoms-lost-structures-ruins-2.0.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "f4d4E9De",
-        "versionId": "7XkoC8I2"
-      },
-      "metadata": {
-        "description": "Adds forts, citadels, castles, with unique vanilla mobs/ hidden items",
-        "iconUrl": "https://cdn.modrinth.com/data/f4d4E9De/5dfa0f6a0fb794a0c5c74296b45842587990dee3_96.webp",
-        "categories": [
-          "adventure",
-          "decoration",
-          "equipment"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/grim-kingdoms-lost-structures-ruins",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mr_mingen": {
-      "id": "mr_mingen",
-      "name": "Minimal Structures (Mingen)",
-      "side": "server",
-      "filename": "mingen-v7.2.1.jar",
-      "size": 1688664,
-      "sha256": "bc9c7490429fbbf200d45da303896342843256996b1e24cb7b284d36f18ad731",
-      "sha512": "94cc5ef4448d807fb9a437d7d1d1ddd80374aa6001b30d3afef5b1abf194a0f63fb3d64f6fa8b595ae8181286722c1289adeb79c2fc99e6f724f4ecd1de23516",
-      "sha1": "a05fc778046d67e525025f98455c2e14bbb037fd",
-      "downloadUrl": "https://cdn.modrinth.com/data/FyLFHdlz/versions/davtldc3/mingen-v7.2.1.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "FyLFHdlz",
-        "versionId": "davtldc3"
-      },
-      "metadata": {
-        "description": "Adds new structures to your world",
-        "iconUrl": "https://cdn.modrinth.com/data/FyLFHdlz/e3c6cb602e2a74e42606134533001f9e3641a7b8_96.webp",
-        "categories": [
-          "adventure",
-          "decoration",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/mingen",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mr_trek": {
-      "id": "mr_trek",
-      "name": "Trek",
-      "side": "server",
-      "filename": "trek-B0.6.2.jar",
-      "size": 12461621,
-      "sha256": "5ea0837a4b1ef02cc702d7e7e49a245f4857591696183b9d2fe56c574cbfc022",
-      "sha512": "17f35802c2f8dbae026153718b6d40a2b4c3ae1558e6e87500ecffe859fe2e607e00b3be76b8c8cbee7da932a042ebe5a279df9929fb7b51000ea1af49fcc1c9",
-      "sha1": "e83cbdbe987129cb039ead47d11994d8cbdb1ade",
-      "downloadUrl": "https://cdn.modrinth.com/data/h2jngREY/versions/OYbFzi8L/trek-B0.6.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "h2jngREY",
-        "versionId": "OYbFzi8L"
-      },
-      "metadata": {
-        "description": "Bored of vanilla structure generation? This pack is for you!",
-        "iconUrl": "https://cdn.modrinth.com/data/h2jngREY/e4d877248cf243e4e99cd71464417388ea332835_96.webp",
-        "categories": [
-          "adventure",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/trek",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "mvs": {
-      "id": "mvs",
-      "name": "MVS - Moog's Voyager Structures",
-      "side": "server",
-      "filename": "MoogsVoyagerStructures-1.21-5.0.11.jar",
-      "size": 1919526,
-      "sha256": "49b27053dbe89d85a092a5d1fdf6123b19c464bfc7ff5007027041010141bcf6",
-      "sha512": "e20a72cd1cea21470ca3107df8a5686c5820a8a57e631d34d35fcde30c256c10a00d2b7e3ad7c29a933f5e51cbaad7157fa166ca3730f94a6febf62b5f91ac26",
-      "sha1": "b76969dccad434b7a3576da608651ea4b7708064",
-      "downloadUrl": "https://cdn.modrinth.com/data/OQAgZMH1/versions/cvepxaBC/MoogsVoyagerStructures-1.21-5.0.11.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "OQAgZMH1",
-        "versionId": "cvepxaBC"
-      },
-      "metadata": {
-        "description": "adds 130+ vanilla style structures to your world to bring it alive, using vanilla blocks. Includes dungeons and enemies to fight!",
-        "iconUrl": "https://cdn.modrinth.com/data/OQAgZMH1/2935e7445501b0b2bda81c97cff448a88345078d_96.webp",
-        "categories": [
-          "adventure",
-          "decoration",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/moogs-voyager-structures",
-        "clientSide": "unsupported",
         "serverSide": "required"
       }
     },
@@ -2766,32 +2753,62 @@
         "serverSide": "unsupported"
       }
     },
-    "notenoughcrashes": {
-      "id": "notenoughcrashes",
-      "name": "Not Enough Crashes",
-      "side": "both",
-      "filename": "notenoughcrashes-fabric-4.4.9+26.2.jar",
-      "size": 605655,
-      "sha256": "5c5ff6bd5a72fe63ed8c7b53d0ccc388f83231007098c266ed3e6c1e25b8c505",
-      "sha512": "06c9c4046bb935ad0423bf327c6d8cb292295dc19d884a56571d317eb027de31ccf84bff9cb3dd22340f70a2cebd5f4d17a5eb887a16dad4cd84a5273b0a50dc",
-      "sha1": "18cdf7a4a325f943113c84a2ae37f743b6db3445",
-      "downloadUrl": "https://cdn.modrinth.com/data/yM94ont6/versions/3oHxOFPT/notenoughcrashes-fabric-4.4.9%2B26.2.jar",
+    "mvs": {
+      "id": "mvs",
+      "name": "MVS - Moog's Voyager Structures",
+      "side": "server",
+      "filename": "MoogsVoyagerStructures-1.21-5.0.11.jar",
+      "size": 1919526,
+      "sha256": "49b27053dbe89d85a092a5d1fdf6123b19c464bfc7ff5007027041010141bcf6",
+      "sha512": "e20a72cd1cea21470ca3107df8a5686c5820a8a57e631d34d35fcde30c256c10a00d2b7e3ad7c29a933f5e51cbaad7157fa166ca3730f94a6febf62b5f91ac26",
+      "sha1": "b76969dccad434b7a3576da608651ea4b7708064",
+      "downloadUrl": "https://cdn.modrinth.com/data/OQAgZMH1/versions/cvepxaBC/MoogsVoyagerStructures-1.21-5.0.11.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "yM94ont6",
-        "versionId": "3oHxOFPT"
+        "projectId": "OQAgZMH1",
+        "versionId": "cvepxaBC"
       },
       "metadata": {
-        "description": "When crashing, you can go back to the title screen and keep playing, without needing to restart, alongside other things to make crashes more pleasant.",
-        "iconUrl": "https://cdn.modrinth.com/data/yM94ont6/0bd6cd7608cde62529c05ed19626029c062107ed_96.webp",
+        "description": "adds 130+ vanilla style structures to your world to bring it alive, using vanilla blocks. Includes dungeons and enemies to fight!",
+        "iconUrl": "https://cdn.modrinth.com/data/OQAgZMH1/2935e7445501b0b2bda81c97cff448a88345078d_96.webp",
         "categories": [
-          "utility"
+          "adventure",
+          "decoration",
+          "worldgen"
         ],
-        "sourceUrl": "https://modrinth.com/mod/notenoughcrashes",
-        "clientSide": "optional",
-        "serverSide": "optional"
+        "sourceUrl": "https://modrinth.com/mod/moogs-voyager-structures",
+        "clientSide": "unsupported",
+        "serverSide": "required"
+      }
+    },
+    "naturalwaters": {
+      "id": "naturalwaters",
+      "name": "Natural Waters",
+      "side": "client",
+      "filename": "NaturalWaters-v26.2.1-mc26.2.x-Fabric.jar",
+      "size": 72306,
+      "sha256": "0ecfbbf4e59b817168d3b99799f6a52ba4ea4d697a20c0de2c4e2ff25347ec1e",
+      "sha512": "6303b9fc5616df2e5757a579ee70ce769ef8de802c83e763295df728bbd691c9c6cca71c91c03ec0a8e7ecf33ce714f1982a85861ef6f68290ed63ba91028450",
+      "sha1": "e8369531ffd89c6781ad465fbc83dd4a9b349014",
+      "downloadUrl": "https://cdn.modrinth.com/data/aYttCyCw/versions/PueB0trs/NaturalWaters-v26.2.1-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "aYttCyCw",
+        "versionId": "PueB0trs"
+      },
+      "metadata": {
+        "description": "Bring bright, colorful waters from Bedrock to Java. Easy to tweak and enjoy!",
+        "iconUrl": "https://cdn.modrinth.com/data/aYttCyCw/e863c7958c428b3ef8d5bd8e9516bcbe1ad2e5d8_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/natural-waters",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "placeholder-api": {
@@ -2822,32 +2839,32 @@
         "serverSide": "optional"
       }
     },
-    "pneumonocore": {
-      "id": "pneumonocore",
-      "name": "PneumonoCore",
+    "notenoughcrashes": {
+      "id": "notenoughcrashes",
+      "name": "Not Enough Crashes",
       "side": "both",
-      "filename": "pneumonocore-1.3.1+26.2+A.jar",
-      "size": 163068,
-      "sha256": "8740f3698563f35ade639a3e98eda22537e259f339abb629803b358d30e55ccd",
-      "sha512": "3bc87eefa6c50cc70e4f429ea505533639e3ae653ebca9205adeede3895a543f52ec0c758a98e1e9cc0e9628218107c9541dd47fcf87b1d15b62fe250eef1606",
-      "sha1": "b720fd5fa0f9e57c825bd76f7c46c84a2e6947d2",
-      "downloadUrl": "https://cdn.modrinth.com/data/ZLKQjA7t/versions/904miTgt/pneumonocore-1.3.1%2B26.2%2BA.jar",
+      "filename": "notenoughcrashes-fabric-4.4.9+26.2.jar",
+      "size": 605655,
+      "sha256": "5c5ff6bd5a72fe63ed8c7b53d0ccc388f83231007098c266ed3e6c1e25b8c505",
+      "sha512": "06c9c4046bb935ad0423bf327c6d8cb292295dc19d884a56571d317eb027de31ccf84bff9cb3dd22340f70a2cebd5f4d17a5eb887a16dad4cd84a5273b0a50dc",
+      "sha1": "18cdf7a4a325f943113c84a2ae37f743b6db3445",
+      "downloadUrl": "https://cdn.modrinth.com/data/yM94ont6/versions/3oHxOFPT/notenoughcrashes-fabric-4.4.9%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "ZLKQjA7t",
-        "versionId": "904miTgt"
+        "projectId": "yM94ont6",
+        "versionId": "3oHxOFPT"
       },
       "metadata": {
-        "description": "Core mod my other mods depend on",
-        "iconUrl": "https://cdn.modrinth.com/data/ZLKQjA7t/199da8b16a46d6c527e2ee17077036d4eb2f1588.png",
+        "description": "When crashing, you can go back to the title screen and keep playing, without needing to restart, alongside other things to make crashes more pleasant.",
+        "iconUrl": "https://cdn.modrinth.com/data/yM94ont6/0bd6cd7608cde62529c05ed19626029c062107ed_96.webp",
         "categories": [
-          "library"
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/pneumono_core",
-        "clientSide": "required",
-        "serverSide": "required"
+        "sourceUrl": "https://modrinth.com/mod/notenoughcrashes",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "player_animation_library": {
@@ -2933,6 +2950,34 @@
         "sourceUrl": "https://modrinth.com/mod/puddles-floods",
         "clientSide": "required",
         "serverSide": "optional"
+      }
+    },
+    "pneumonocore": {
+      "id": "pneumonocore",
+      "name": "PneumonoCore",
+      "side": "both",
+      "filename": "pneumonocore-1.3.1+26.2+A.jar",
+      "size": 163068,
+      "sha256": "8740f3698563f35ade639a3e98eda22537e259f339abb629803b358d30e55ccd",
+      "sha512": "3bc87eefa6c50cc70e4f429ea505533639e3ae653ebca9205adeede3895a543f52ec0c758a98e1e9cc0e9628218107c9541dd47fcf87b1d15b62fe250eef1606",
+      "sha1": "b720fd5fa0f9e57c825bd76f7c46c84a2e6947d2",
+      "downloadUrl": "https://cdn.modrinth.com/data/ZLKQjA7t/versions/904miTgt/pneumonocore-1.3.1%2B26.2%2BA.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "ZLKQjA7t",
+        "versionId": "904miTgt"
+      },
+      "metadata": {
+        "description": "Core mod my other mods depend on",
+        "iconUrl": "https://cdn.modrinth.com/data/ZLKQjA7t/199da8b16a46d6c527e2ee17077036d4eb2f1588.png",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/pneumono_core",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "puzzleslib": {
@@ -3021,62 +3066,32 @@
         "serverSide": "required"
       }
     },
-    "mr_dungeons_andtaverns": {
-      "id": "mr_dungeons_andtaverns",
-      "name": "Dungeons and Taverns",
-      "side": "server",
-      "filename": "dungeons-and-taverns-5.3.0.jar",
-      "size": 39639975,
-      "sha256": "a62d84df3111d9c876ace4f18fc93e239d66b1d077e9604e250c10fda42591bd",
-      "sha512": "04a435e483d8c0204a49769cc749b1ec4d34a005b4a266cf0b3a62f6cc3d7c28bbbf50f5e2b684ab70b617d98e2bbe9e1e98e0a237564c572f1d6391afa66d5e",
-      "sha1": "f276dc97ac57ce41b327e5272f5f8474e4ef94d9",
-      "downloadUrl": "https://cdn.modrinth.com/data/tpehi7ww/versions/kejPgknA/dungeons-and-taverns-5.3.0.jar",
+    "pv-addon-replaymod": {
+      "id": "pv-addon-replaymod",
+      "name": "pv-addon-replaymod",
+      "side": "client",
+      "filename": "pv-addon-replaymod-26.1.2-2.1.5.jar",
+      "size": 62760,
+      "sha256": "fd6990e34fafc8a5438a992bbefc580e7d3ddfde7701dd77ac9147ca9590a17f",
+      "sha512": "7f1e52caa66a9e5611cfd7b1cd302f27c03fb68f0a510c66c6475e7e7bd1c66fa1fef0cc8424731afaafa955066f50bd1e624073da047634bc679360c73d854d",
+      "sha1": "8f9e0a62d2144cb215fe7d29534da2733b7fc5e7",
+      "downloadUrl": "https://cdn.modrinth.com/data/4iTfB0AP/versions/hObOcTVx/pv-addon-replaymod-26.1.2-2.1.5.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "tpehi7ww",
-        "versionId": "kejPgknA"
+        "projectId": "4iTfB0AP",
+        "versionId": "hObOcTVx"
       },
       "metadata": {
-        "description": "A Structure Datapack adding dungeons, taverns and other structures to find while you explore the world.",
-        "iconUrl": "https://cdn.modrinth.com/data/tpehi7ww/429ba22d212868940cdd82465df949ac51c9791e_96.webp",
+        "description": "A fork of Replay Voice Chat that works with Plasmo Voice allowing you to record voice chat with ReplayMod.",
+        "iconUrl": "https://cdn.modrinth.com/data/4iTfB0AP/eb89d044b8f9de31f049ca213a45363a096f5a45.png",
         "categories": [
-          "adventure",
-          "worldgen"
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/dungeons-and-taverns",
-        "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "pv-addon-sculk": {
-      "id": "pv-addon-sculk",
-      "name": "pv-addon-sculk",
-      "side": "server",
-      "filename": "pv-addon-sculk-1.1.0.jar",
-      "size": 14035,
-      "sha256": "6e3c195c976be29d20e37ea3e8dcb489342c813e84e9c3561b39cfe0a543228f",
-      "sha512": "24d5ed01c28590a1700979741c98eef98e65062ca2df28052578eee5bddb7d4c61b75345e54c0f872788c2f7f99e3f713894df845479ffcc7fc429283c179852",
-      "sha1": "832f1b54ee05fa44ec79383a94bad008c0c54601",
-      "downloadUrl": "https://cdn.modrinth.com/data/7dI2zrDy/versions/HmseAzbt/pv-addon-sculk-1.1.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "7dI2zrDy",
-        "versionId": "HmseAzbt"
-      },
-      "metadata": {
-        "description": "With this add-on warder and skulk sensors are triggered by proximity voice chat.",
-        "iconUrl": "https://cdn.modrinth.com/data/7dI2zrDy/949c554995b01d25a73b49c388e0aa69e3972a2d.png",
-        "categories": [
-          "game-mechanics",
-          "mobs"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/pv-addon-sculk",
-        "clientSide": "unsupported",
-        "serverSide": "required"
+        "sourceUrl": "https://modrinth.com/mod/pv-addon-replaymod",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "plasmovoice": {
@@ -3109,32 +3124,33 @@
         "serverSide": "required"
       }
     },
-    "pv-addon-replaymod": {
-      "id": "pv-addon-replaymod",
-      "name": "pv-addon-replaymod",
-      "side": "client",
-      "filename": "pv-addon-replaymod-26.1.2-2.1.5.jar",
-      "size": 62760,
-      "sha256": "fd6990e34fafc8a5438a992bbefc580e7d3ddfde7701dd77ac9147ca9590a17f",
-      "sha512": "7f1e52caa66a9e5611cfd7b1cd302f27c03fb68f0a510c66c6475e7e7bd1c66fa1fef0cc8424731afaafa955066f50bd1e624073da047634bc679360c73d854d",
-      "sha1": "8f9e0a62d2144cb215fe7d29534da2733b7fc5e7",
-      "downloadUrl": "https://cdn.modrinth.com/data/4iTfB0AP/versions/hObOcTVx/pv-addon-replaymod-26.1.2-2.1.5.jar",
+    "pv-addon-sculk": {
+      "id": "pv-addon-sculk",
+      "name": "pv-addon-sculk",
+      "side": "server",
+      "filename": "pv-addon-sculk-1.1.0.jar",
+      "size": 14035,
+      "sha256": "6e3c195c976be29d20e37ea3e8dcb489342c813e84e9c3561b39cfe0a543228f",
+      "sha512": "24d5ed01c28590a1700979741c98eef98e65062ca2df28052578eee5bddb7d4c61b75345e54c0f872788c2f7f99e3f713894df845479ffcc7fc429283c179852",
+      "sha1": "832f1b54ee05fa44ec79383a94bad008c0c54601",
+      "downloadUrl": "https://cdn.modrinth.com/data/7dI2zrDy/versions/HmseAzbt/pv-addon-sculk-1.1.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "4iTfB0AP",
-        "versionId": "hObOcTVx"
+        "projectId": "7dI2zrDy",
+        "versionId": "HmseAzbt"
       },
       "metadata": {
-        "description": "A fork of Replay Voice Chat that works with Plasmo Voice allowing you to record voice chat with ReplayMod.",
-        "iconUrl": "https://cdn.modrinth.com/data/4iTfB0AP/eb89d044b8f9de31f049ca213a45363a096f5a45.png",
+        "description": "With this add-on warder and skulk sensors are triggered by proximity voice chat.",
+        "iconUrl": "https://cdn.modrinth.com/data/7dI2zrDy/949c554995b01d25a73b49c388e0aa69e3972a2d.png",
         "categories": [
-          "utility"
+          "game-mechanics",
+          "mobs"
         ],
-        "sourceUrl": "https://modrinth.com/mod/pv-addon-replaymod",
-        "clientSide": "required",
-        "serverSide": "unsupported"
+        "sourceUrl": "https://modrinth.com/mod/pv-addon-sculk",
+        "clientSide": "unsupported",
+        "serverSide": "required"
       }
     },
     "pv-addon-whisper": {
@@ -3166,6 +3182,34 @@
         "serverSide": "required"
       }
     },
+    "reeses-sodium-options": {
+      "id": "reeses-sodium-options",
+      "name": "Reese's Sodium Options",
+      "side": "client",
+      "filename": "reeses-sodium-options-fabric-2.2.3+mc26.2.jar",
+      "size": 259465,
+      "sha256": "49b68a887f5691b805efbe73c4e6e622cda5c322431ef68f81c8953de4041911",
+      "sha512": "2dbd97ca7013c6e88a475a55b828c50234c6060cc7a20843c9aadecdd561e1a690d7d0ba0ddb9dce30f8ebfdc02e113ffce7c9067ab63cf5c780a2e1d4139aa7",
+      "sha1": "111c74b99d265d0b378ad842dfafdd7c4d6d5445",
+      "downloadUrl": "https://cdn.modrinth.com/data/Bh37bMuy/versions/PH4SPorH/reeses-sodium-options-fabric-2.2.3%2Bmc26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "Bh37bMuy",
+        "versionId": "PH4SPorH"
+      },
+      "metadata": {
+        "description": "Alternative Options Menu for Sodium",
+        "iconUrl": "https://cdn.modrinth.com/data/Bh37bMuy/icon.png",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/reeses-sodium-options",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "pv-addon-soundphysics": {
       "id": "pv-addon-soundphysics",
       "name": "pv-addon-soundphysics",
@@ -3193,64 +3237,6 @@
         "sourceUrl": "https://modrinth.com/mod/pv-addon-soundphysics",
         "clientSide": "required",
         "serverSide": "unsupported"
-      }
-    },
-    "quad-lolmbdv": {
-      "id": "quad-lolmbdv",
-      "name": "More Bed Variants",
-      "side": "both",
-      "filename": "MoreBedVariants-2.1.8+26.2-Fabric.jar",
-      "size": 1743448,
-      "sha256": "316f2c0d3dbe57ab0e236bfc483c835027ee113d03e5424ccf71d821bc3a1db4",
-      "sha512": "dbb0e1f8da45cff817fe8bdb0b8c71ba348ca89bfefd8a5dc14d07bcfc88d1d9ad5e0212e7b32ad642decc0179c0d2da164f6a42a0c5e6de57557a27dc52aed3",
-      "sha1": "b66c1cf33e54257d27fc53624be473f811ed9490",
-      "downloadUrl": "https://cdn.modrinth.com/data/nKaiA11S/versions/Feslx7eo/MoreBedVariants-2.1.8%2B26.2-Fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "nKaiA11S",
-        "versionId": "Feslx7eo"
-      },
-      "metadata": {
-        "description": "All Beds for every kind of wood (incl. improved Bed Block Rendering)",
-        "iconUrl": "https://cdn.modrinth.com/data/nKaiA11S/77db3aebfa281a67c2466d6d09300e184c0448f6.gif",
-        "categories": [
-          "decoration",
-          "optimization"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/more-bed-variants",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "quad-lolmsmv": {
-      "id": "quad-lolmsmv",
-      "name": "More Smoker Variants",
-      "side": "both",
-      "filename": "MoreSmokerVariants-1.3.5+26.1-Fabric.jar",
-      "size": 325079,
-      "sha256": "bbe72b0edcf5d4e546c381c8c34cb70f9e855c3e535c2bfc5ca1b9be06b074cf",
-      "sha512": "11d7f636b499597707f565e14228f6b98809a74e07c29cefeaf899db5b52c11e3d9e8e95fa3a909fad42a317c202a20f2d2654b6e3797e7a293f8049fe4ddd46",
-      "sha1": "6727268fe98078ca1bbaa830265bc1f77fd4e6ee",
-      "downloadUrl": "https://cdn.modrinth.com/data/8HxZnUY7/versions/vnQCiwUu/MoreSmokerVariants-1.3.5%2B26.1-Fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8HxZnUY7",
-        "versionId": "vnQCiwUu"
-      },
-      "metadata": {
-        "description": "Smokers for every kind of wood and two more stone types",
-        "iconUrl": "https://cdn.modrinth.com/data/8HxZnUY7/58efe284a5577a28c86faa73318a50d39bd97c32.gif",
-        "categories": [
-          "decoration",
-          "food"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/more-smoker-variants",
-        "clientSide": "required",
-        "serverSide": "required"
       }
     },
     "pv-addon-lavaplayer-lib": {
@@ -3281,62 +3267,6 @@
         "serverSide": "required"
       }
     },
-    "pyrite": {
-      "id": "pyrite",
-      "name": "Pyrite",
-      "side": "both",
-      "filename": "pyrite-0.18.3+26.2-fabric.jar",
-      "size": 7470822,
-      "sha256": "6c378632fcadd0501a41bd4af90aec58b8cf03a065f69cd9837160c97ed81831",
-      "sha512": "fefa4849b22ea429ee36f955a54063690e2633ccb3e7436acc77f6604f02ef36b554a6d90dccb9a108cfe39ae847949724b73e88ea6844ee647043cb0e5d3d35",
-      "sha1": "99482cbd6f07ef9343b81977e5ed9bbe0549e93a",
-      "downloadUrl": "https://cdn.modrinth.com/data/qO4ozPoe/versions/mav9tmY0/pyrite-0.18.3%2B26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "qO4ozPoe",
-        "versionId": "mav9tmY0"
-      },
-      "metadata": {
-        "description": "Variations of Vanilla blocks, including dyed wood planks and bricks, new material blocks and more to complete your colourful builds.",
-        "iconUrl": "https://cdn.modrinth.com/data/qO4ozPoe/a22e57256a6d3f73fb6db3c978cc9d38a6cba1de_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/pyrite",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "reeses-sodium-options": {
-      "id": "reeses-sodium-options",
-      "name": "Reese's Sodium Options",
-      "side": "client",
-      "filename": "reeses-sodium-options-fabric-2.2.3+mc26.2.jar",
-      "size": 259465,
-      "sha256": "49b68a887f5691b805efbe73c4e6e622cda5c322431ef68f81c8953de4041911",
-      "sha512": "2dbd97ca7013c6e88a475a55b828c50234c6060cc7a20843c9aadecdd561e1a690d7d0ba0ddb9dce30f8ebfdc02e113ffce7c9067ab63cf5c780a2e1d4139aa7",
-      "sha1": "111c74b99d265d0b378ad842dfafdd7c4d6d5445",
-      "downloadUrl": "https://cdn.modrinth.com/data/Bh37bMuy/versions/PH4SPorH/reeses-sodium-options-fabric-2.2.3%2Bmc26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "Bh37bMuy",
-        "versionId": "PH4SPorH"
-      },
-      "metadata": {
-        "description": "Alternative Options Menu for Sodium",
-        "iconUrl": "https://cdn.modrinth.com/data/Bh37bMuy/icon.png",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/reeses-sodium-options",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "replaymodaudiorender": {
       "id": "replaymodaudiorender",
       "name": "ReplayMod Audio Render",
@@ -3363,60 +3293,6 @@
         "sourceUrl": "https://modrinth.com/mod/replaymod-audio-render",
         "clientSide": "required",
         "serverSide": "unsupported"
-      }
-    },
-    "rsls": {
-      "id": "rsls",
-      "name": "Raise Sound Limit Simplified",
-      "side": "client",
-      "filename": "rsls-1.2.2.jar",
-      "size": 51268,
-      "sha256": "65b832080a8f1a2e96f4ef616f41d4493423abf5b9634ae1def8be2d6bee4c93",
-      "sha512": "1b415ebbc18d8ebd35563f85bc722b22ab5b7d46bc945fdb1d6e92d13944a5996ceafde2fe3344cd10c1fd72ec6bcd88776d589254a15246275c4814fc863e73",
-      "sha1": "f42ff41676fd1c091e6dbac6eb7a60f6c5c17a56",
-      "downloadUrl": "https://cdn.modrinth.com/data/SKW62Pht/versions/sjeLtBce/rsls-1.2.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "SKW62Pht",
-        "versionId": "sjeLtBce"
-      },
-      "metadata": {
-        "description": "A mod that improves sound engine performance and raises Minecraft sound sources limit in a simple way",
-        "iconUrl": "https://cdn.modrinth.com/data/SKW62Pht/icon.png",
-        "categories": [],
-        "sourceUrl": "https://modrinth.com/mod/rsls",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "roomfortwo": {
-      "id": "roomfortwo",
-      "name": "Room For Two",
-      "side": "server",
-      "filename": "roomfortwo-fabric-26.2-0.2.0.jar",
-      "size": 29671,
-      "sha256": "7e01cdccb05d6270f0e0e495b8850514417ba3537a924dbb713ee1719c8d13fb",
-      "sha512": "096f1743203c326010f6b2ab4888f2e4657426060b32ba0e57c444f0f6650a49935f5dde3783dcd856e192927ebe3217460f7af24f7d4b7952aaea4877c6da21",
-      "sha1": "842cd53ac568bc16daf3e3d5fe01d74d87c6eefd",
-      "downloadUrl": "https://cdn.modrinth.com/data/YZlvzIFq/versions/2djTe67a/roomfortwo-fabric-26.2-0.2.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "YZlvzIFq",
-        "versionId": "2djTe67a"
-      },
-      "metadata": {
-        "description": "Lets you share a bed with a villager or another player.",
-        "iconUrl": "https://cdn.modrinth.com/data/YZlvzIFq/c34d5cac906429f46a40e6be57a11feb6a5499b7.png",
-        "categories": [
-          "social"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/room-for-two",
-        "clientSide": "required",
-        "serverSide": "required"
       }
     },
     "rechiseled": {
@@ -3447,59 +3323,30 @@
         "serverSide": "required"
       }
     },
-    "replaymod": {
-      "id": "replaymod",
-      "name": "ReplayMod",
-      "side": "client",
-      "filename": "replaymod-26.2-2.6.27.jar",
-      "size": 15716381,
-      "sha256": "68a18bb725ea65cba6217a6a93afd8551b969c36c878d45febfe454d24586999",
-      "sha512": "5e81e8b29be94d21f8512dbcb8b91943d1e09e042821843199298df7fa61503a1e3162c8ab2dde8a3953339c525cd4f9a25874971bf53486459c720ee8544472",
-      "sha1": "2845cc50f31f78e0e07a50ecb7b8603c6d1a52e5",
-      "downloadUrl": "https://cdn.modrinth.com/data/Nv2fQJo5/versions/5YS1OgDP/replaymod-26.2-2.6.27.jar",
+    "roomfortwo": {
+      "id": "roomfortwo",
+      "name": "Room For Two",
+      "side": "server",
+      "filename": "roomfortwo-fabric-26.2-0.2.0.jar",
+      "size": 29671,
+      "sha256": "7e01cdccb05d6270f0e0e495b8850514417ba3537a924dbb713ee1719c8d13fb",
+      "sha512": "096f1743203c326010f6b2ab4888f2e4657426060b32ba0e57c444f0f6650a49935f5dde3783dcd856e192927ebe3217460f7af24f7d4b7952aaea4877c6da21",
+      "sha1": "842cd53ac568bc16daf3e3d5fe01d74d87c6eefd",
+      "downloadUrl": "https://cdn.modrinth.com/data/YZlvzIFq/versions/2djTe67a/roomfortwo-fabric-26.2-0.2.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "Nv2fQJo5",
-        "versionId": "5YS1OgDP"
+        "projectId": "YZlvzIFq",
+        "versionId": "2djTe67a"
       },
       "metadata": {
-        "description": "A Minecraft Mod to record, relive and share your experience.",
-        "iconUrl": "https://cdn.modrinth.com/data/Nv2fQJo5/icon.png",
+        "description": "Lets you share a bed with a villager or another player.",
+        "iconUrl": "https://cdn.modrinth.com/data/YZlvzIFq/c34d5cac906429f46a40e6be57a11feb6a5499b7.png",
         "categories": [
-          "utility"
+          "social"
         ],
-        "sourceUrl": "https://modrinth.com/mod/replaymod",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "rusticdelight": {
-      "id": "rusticdelight",
-      "name": "Rustic Delight",
-      "side": "both",
-      "filename": "rusticdelight-fabric-26.2-1.7.0.jar",
-      "size": 1053173,
-      "sha256": "e84490ae693dd61932bac5bf67377fea78d0a4086ff638a4a7fc7dd16987e01c",
-      "sha512": "8240f74b0276d6fbfb8aa3e0ebd320a8668a7f297918ef0dbd6dc6b8c42726aecf1dd80ad5c0dea7d54b0cb836192e57c7f60fb903a416220be7c84ca7ef4e23",
-      "sha1": "399ca1f20c32b1b2849bcdfbaad410e75bd2afdd",
-      "downloadUrl": "https://cdn.modrinth.com/data/foa4fGIH/versions/Ioo3Id1t/rusticdelight-fabric-26.2-1.7.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "foa4fGIH",
-        "versionId": "Ioo3Id1t"
-      },
-      "metadata": {
-        "description": "An add-on for Farmer's Delight that adds Pancakes, Cotton, Coffee, Bell Peppers, fried foods and more!",
-        "iconUrl": "https://cdn.modrinth.com/data/foa4fGIH/eecc99e281522f2291081c48176f0faa84c107bc.png",
-        "categories": [
-          "food",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/rustic-delight",
+        "sourceUrl": "https://modrinth.com/mod/room-for-two",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -3532,6 +3379,61 @@
         "serverSide": "optional"
       }
     },
+    "rusticdelight": {
+      "id": "rusticdelight",
+      "name": "Rustic Delight",
+      "side": "both",
+      "filename": "rusticdelight-fabric-26.2-1.7.0.jar",
+      "size": 1053173,
+      "sha256": "e84490ae693dd61932bac5bf67377fea78d0a4086ff638a4a7fc7dd16987e01c",
+      "sha512": "8240f74b0276d6fbfb8aa3e0ebd320a8668a7f297918ef0dbd6dc6b8c42726aecf1dd80ad5c0dea7d54b0cb836192e57c7f60fb903a416220be7c84ca7ef4e23",
+      "sha1": "399ca1f20c32b1b2849bcdfbaad410e75bd2afdd",
+      "downloadUrl": "https://cdn.modrinth.com/data/foa4fGIH/versions/Ioo3Id1t/rusticdelight-fabric-26.2-1.7.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "foa4fGIH",
+        "versionId": "Ioo3Id1t"
+      },
+      "metadata": {
+        "description": "An add-on for Farmer's Delight that adds Pancakes, Cotton, Coffee, Bell Peppers, fried foods and more!",
+        "iconUrl": "https://cdn.modrinth.com/data/foa4fGIH/eecc99e281522f2291081c48176f0faa84c107bc.png",
+        "categories": [
+          "food",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/rustic-delight",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "rsls": {
+      "id": "rsls",
+      "name": "Raise Sound Limit Simplified",
+      "side": "client",
+      "filename": "rsls-1.2.2.jar",
+      "size": 51268,
+      "sha256": "65b832080a8f1a2e96f4ef616f41d4493423abf5b9634ae1def8be2d6bee4c93",
+      "sha512": "1b415ebbc18d8ebd35563f85bc722b22ab5b7d46bc945fdb1d6e92d13944a5996ceafde2fe3344cd10c1fd72ec6bcd88776d589254a15246275c4814fc863e73",
+      "sha1": "f42ff41676fd1c091e6dbac6eb7a60f6c5c17a56",
+      "downloadUrl": "https://cdn.modrinth.com/data/SKW62Pht/versions/sjeLtBce/rsls-1.2.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "SKW62Pht",
+        "versionId": "sjeLtBce"
+      },
+      "metadata": {
+        "description": "A mod that improves sound engine performance and raises Minecraft sound sources limit in a simple way",
+        "iconUrl": "https://cdn.modrinth.com/data/SKW62Pht/icon.png",
+        "categories": [],
+        "sourceUrl": "https://modrinth.com/mod/rsls",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "searchables": {
       "id": "searchables",
       "name": "Searchables",
@@ -3559,6 +3461,62 @@
         "sourceUrl": "https://modrinth.com/mod/searchables",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "slotcycler": {
+      "id": "slotcycler",
+      "name": "Slot Cycler",
+      "side": "both",
+      "filename": "SlotCycler-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 64391,
+      "sha256": "81948c10500e6eaa7a3ff64d35b75cb629250dc11fff59f2b2c4924215061693",
+      "sha512": "d7356f13355f4a1f7fd9ca7f5079df5a7a86817e32326b16b0e1c71b46a3c8a1c65f2209f51f22995e0e312d2cabfc459b0f4639ed5a597a950dbb91de6f8fdd",
+      "sha1": "b40a9435ced6e1bc5149887a8c5f329c2a88b82d",
+      "downloadUrl": "https://cdn.modrinth.com/data/3kl8Lmm9/versions/2GskNnlJ/SlotCycler-v26.2.0-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "3kl8Lmm9",
+        "versionId": "2GskNnlJ"
+      },
+      "metadata": {
+        "description": "Nine hotbar slots aren't enough for you? Now you can cycle your whole inventory!",
+        "iconUrl": "https://cdn.modrinth.com/data/3kl8Lmm9/e4fa083bb7b18dda525ac515b14497da7bb210ff_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/slot-cycler",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "pyrite": {
+      "id": "pyrite",
+      "name": "Pyrite",
+      "side": "both",
+      "filename": "pyrite-0.18.3+26.2-fabric.jar",
+      "size": 7470822,
+      "sha256": "6c378632fcadd0501a41bd4af90aec58b8cf03a065f69cd9837160c97ed81831",
+      "sha512": "fefa4849b22ea429ee36f955a54063690e2633ccb3e7436acc77f6604f02ef36b554a6d90dccb9a108cfe39ae847949724b73e88ea6844ee647043cb0e5d3d35",
+      "sha1": "99482cbd6f07ef9343b81977e5ed9bbe0549e93a",
+      "downloadUrl": "https://cdn.modrinth.com/data/qO4ozPoe/versions/mav9tmY0/pyrite-0.18.3%2B26.2-fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "qO4ozPoe",
+        "versionId": "mav9tmY0"
+      },
+      "metadata": {
+        "description": "Variations of Vanilla blocks, including dyed wood planks and bricks, new material blocks and more to complete your colourful builds.",
+        "iconUrl": "https://cdn.modrinth.com/data/qO4ozPoe/a22e57256a6d3f73fb6db3c978cc9d38a6cba1de_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/pyrite",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "skinlayers3d": {
@@ -3590,30 +3548,30 @@
         "serverSide": "unsupported"
       }
     },
-    "slotcycler": {
-      "id": "slotcycler",
-      "name": "Slot Cycler",
-      "side": "both",
-      "filename": "SlotCycler-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 64391,
-      "sha256": "81948c10500e6eaa7a3ff64d35b75cb629250dc11fff59f2b2c4924215061693",
-      "sha512": "d7356f13355f4a1f7fd9ca7f5079df5a7a86817e32326b16b0e1c71b46a3c8a1c65f2209f51f22995e0e312d2cabfc459b0f4639ed5a597a950dbb91de6f8fdd",
-      "sha1": "b40a9435ced6e1bc5149887a8c5f329c2a88b82d",
-      "downloadUrl": "https://cdn.modrinth.com/data/3kl8Lmm9/versions/2GskNnlJ/SlotCycler-v26.2.0-mc26.2.x-Fabric.jar",
+    "replaymod": {
+      "id": "replaymod",
+      "name": "ReplayMod",
+      "side": "client",
+      "filename": "replaymod-26.2-2.6.27.jar",
+      "size": 15716381,
+      "sha256": "68a18bb725ea65cba6217a6a93afd8551b969c36c878d45febfe454d24586999",
+      "sha512": "5e81e8b29be94d21f8512dbcb8b91943d1e09e042821843199298df7fa61503a1e3162c8ab2dde8a3953339c525cd4f9a25874971bf53486459c720ee8544472",
+      "sha1": "2845cc50f31f78e0e07a50ecb7b8603c6d1a52e5",
+      "downloadUrl": "https://cdn.modrinth.com/data/Nv2fQJo5/versions/5YS1OgDP/replaymod-26.2-2.6.27.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "3kl8Lmm9",
-        "versionId": "2GskNnlJ"
+        "projectId": "Nv2fQJo5",
+        "versionId": "5YS1OgDP"
       },
       "metadata": {
-        "description": "Nine hotbar slots aren't enough for you? Now you can cycle your whole inventory!",
-        "iconUrl": "https://cdn.modrinth.com/data/3kl8Lmm9/e4fa083bb7b18dda525ac515b14497da7bb210ff_96.webp",
+        "description": "A Minecraft Mod to record, relive and share your experience.",
+        "iconUrl": "https://cdn.modrinth.com/data/Nv2fQJo5/icon.png",
         "categories": [
           "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/slot-cycler",
+        "sourceUrl": "https://modrinth.com/mod/replaymod",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -3648,35 +3606,6 @@
         "serverSide": "unsupported"
       }
     },
-    "sound_physics_remastered": {
-      "id": "sound_physics_remastered",
-      "name": "Sound Physics Remastered",
-      "side": "client",
-      "filename": "sound-physics-remastered-fabric-1.5.1+26.2.jar",
-      "size": 201669,
-      "sha256": "5bf577901123044337070fee36c1731c86e2fc12923bbb6a1c4b49c3423adcd9",
-      "sha512": "5c3d11462848c15ddfd4b854c998ed55c13e4bcd033a9f01acbea56d55079f4795c67321af803cc1b1b0e0d81dfd6750532294c932e921288858c0d9ea06f97e",
-      "sha1": "63657ef05768d2a7a102549bc8ef5f5fc04e2fc4",
-      "downloadUrl": "https://cdn.modrinth.com/data/qyVF9oeo/versions/d8iioMMp/sound-physics-remastered-fabric-1.5.1%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "qyVF9oeo",
-        "versionId": "d8iioMMp"
-      },
-      "metadata": {
-        "description": "A Minecraft mod that provides realistic sound attenuation, reverberation, and absorption through blocks.",
-        "iconUrl": "https://cdn.modrinth.com/data/qyVF9oeo/798fbfae58ec95ad51f3e1d522b43227306c326c.png",
-        "categories": [
-          "adventure",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/sound-physics-remastered",
-        "clientSide": "required",
-        "serverSide": "optional"
-      }
-    },
     "sodium": {
       "id": "sodium",
       "name": "Sodium",
@@ -3703,6 +3632,34 @@
         "sourceUrl": "https://modrinth.com/mod/sodium",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "spark": {
+      "id": "spark",
+      "name": "spark",
+      "side": "both",
+      "filename": "spark-1.10.173-fabric.jar",
+      "size": 3887184,
+      "sha256": "076ed2288db2a05ca6e8061615e1a31d1912cf1b10665e4f09a1794d5db99433",
+      "sha512": "1dcbf2b76ceacf07523afaeaf63d3625b0318077cc6ce588bb701aea4a494bc2a5179fd2ca5aeda9513c6a2248c2ec590387e8aec6ac9fd8e3d01760bbc3dbfb",
+      "sha1": "fab7a3fec7dd01936fa21c88af40f8093b714dd2",
+      "downloadUrl": "https://cdn.modrinth.com/data/l6YH9Als/versions/iYFOl6lQ/spark-1.10.173-fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "l6YH9Als",
+        "versionId": "iYFOl6lQ"
+      },
+      "metadata": {
+        "description": "spark is a performance profiler for Minecraft clients, servers and proxies.",
+        "iconUrl": "https://cdn.modrinth.com/data/l6YH9Als/61a777dd08a8447ac93e8b6372e6d27d48cd1e1a_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/spark",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "storagedelight": {
@@ -3735,119 +3692,6 @@
         "serverSide": "required"
       }
     },
-    "spark": {
-      "id": "spark",
-      "name": "spark",
-      "side": "both",
-      "filename": "spark-1.10.173-fabric.jar",
-      "size": 3887184,
-      "sha256": "076ed2288db2a05ca6e8061615e1a31d1912cf1b10665e4f09a1794d5db99433",
-      "sha512": "1dcbf2b76ceacf07523afaeaf63d3625b0318077cc6ce588bb701aea4a494bc2a5179fd2ca5aeda9513c6a2248c2ec590387e8aec6ac9fd8e3d01760bbc3dbfb",
-      "sha1": "fab7a3fec7dd01936fa21c88af40f8093b714dd2",
-      "downloadUrl": "https://cdn.modrinth.com/data/l6YH9Als/versions/iYFOl6lQ/spark-1.10.173-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "l6YH9Als",
-        "versionId": "iYFOl6lQ"
-      },
-      "metadata": {
-        "description": "spark is a performance profiler for Minecraft clients, servers and proxies.",
-        "iconUrl": "https://cdn.modrinth.com/data/l6YH9Als/61a777dd08a8447ac93e8b6372e6d27d48cd1e1a_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/spark",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
-    "stoneworks": {
-      "id": "stoneworks",
-      "name": "Stoneworks",
-      "side": "both",
-      "filename": "Stoneworks-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 2398861,
-      "sha256": "32f71e4ad6d92c0a0cae665717d99c636f04965ac7ec271f91f10e0d1b832c26",
-      "sha512": "64dc20c2243ce6b067cec7e8d098220693217ae8d12c50f7e4a122febff9f0b187e5996f6bfcc82d3f35842ccd7e6823bdb64a0b479b49c3607df06fdd395fff",
-      "sha1": "35ce35ddc61aa2da86f527101a5f2dbbda3a1dd0",
-      "downloadUrl": "https://cdn.modrinth.com/data/FzyTKtVF/versions/c9YWwjPp/Stoneworks-v26.2.0-mc26.2.x-Fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "FzyTKtVF",
-        "versionId": "c9YWwjPp"
-      },
-      "metadata": {
-        "description": "Vanilla stone types in plenty of variations for all your building needs.",
-        "iconUrl": "https://cdn.modrinth.com/data/FzyTKtVF/c18c5fb3daa800d5d612efac7d658eafdcf51129_96.webp",
-        "categories": [
-          "decoration"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/stoneworks",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "sounds": {
-      "id": "sounds",
-      "name": "Sounds",
-      "side": "client",
-      "filename": "sounds-2.5.1+edge+26.2-fabric.jar",
-      "size": 8140184,
-      "sha256": "1d1aa6d959c3ac9b04d675f1452241dc9517e0958dbd759b79f500a50c1b825f",
-      "sha512": "7563d48eea3c195b516130359199ec981826bf1c1aa757b23f5e6f1aca7afb27a5992ac2f37231f9101c5ccb0d13b737a9af37c47169846f826e0b0243188311",
-      "sha1": "557183656b2a09545c7348507880c5f59293d16b",
-      "downloadUrl": "https://cdn.modrinth.com/data/ZouiUX7t/versions/kv2RxMQu/sounds-2.5.1%2Bedge%2B26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "ZouiUX7t",
-        "versionId": "kv2RxMQu"
-      },
-      "metadata": {
-        "description": "It's what it says on the tin. A complete upgrade to Minecraft's SFX with over 170 new sound effects for UIs, items, blocks and more.",
-        "iconUrl": "https://cdn.modrinth.com/data/ZouiUX7t/b6ae84ea14654245f58856722473afeddf72360c_96.webp",
-        "categories": [
-          "game-mechanics",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/sound",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "supermartijn642configlib": {
-      "id": "supermartijn642configlib",
-      "name": "SuperMartijn642's Config Lib",
-      "side": "both",
-      "filename": "supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
-      "size": 206149,
-      "sha256": "3546d8d49ac587aa3aed70b0cd68461366a6f78b9575b8f7ba757866905aca6f",
-      "sha512": "415c6ce953ccc618a98653c08eb36bfa1344227ef9e17c4c7603a07882f71e29266091e67b391dde59f76836b7d7d783342c65e75b6c4cffaaf31d0d929dacef",
-      "sha1": "56c3d9cb1c5b7d6a1f6eef525ef0487e79503ada",
-      "downloadUrl": "https://cdn.modrinth.com/data/LN9BxssP/versions/tg619S8t/supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "LN9BxssP",
-        "versionId": "tg619S8t"
-      },
-      "metadata": {
-        "description": "Config Lib makes dealing with config files just a bit easier.",
-        "iconUrl": "https://cdn.modrinth.com/data/LN9BxssP/ad25597dd1b10b49cdfbc97c70d401e3158000f7_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/supermartijn642s-config-lib",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
     "structory": {
       "id": "structory",
       "name": "Structory",
@@ -3875,34 +3719,6 @@
         ],
         "sourceUrl": "https://modrinth.com/mod/structory",
         "clientSide": "optional",
-        "serverSide": "required"
-      }
-    },
-    "supermartijn642corelib": {
-      "id": "supermartijn642corelib",
-      "name": "SuperMartijn642's Core Lib",
-      "side": "both",
-      "filename": "supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
-      "size": 686523,
-      "sha256": "bfdcbb7d9cc40d467743912a79555d0ab1774a899e5b82af7346f0f2658828d2",
-      "sha512": "c08c1226ad2a96d96d00b03b3fd7d6e593d01ec49db0687fe97c07bf396510b4759d57636b12d7e0cd0ffaf4eefa36d453bf31b66b031abd262ebe214cc2b50e",
-      "sha1": "df317e3285eea75b4d40c2df909110d6127588cd",
-      "downloadUrl": "https://cdn.modrinth.com/data/rOUBggPv/versions/o1h83Sfl/supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "rOUBggPv",
-        "versionId": "o1h83Sfl"
-      },
-      "metadata": {
-        "description": "SuperMartijn642's Core Lib adds lots of basic implementations that allow for similar code between different Minecraft versions!",
-        "iconUrl": "https://cdn.modrinth.com/data/rOUBggPv/e745e719d7fe2aa0335d819ca9c97defbf2e0bcb_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/supermartijn642s-core-lib",
-        "clientSide": "required",
         "serverSide": "required"
       }
     },
@@ -3936,6 +3752,90 @@
         "serverSide": "required"
       }
     },
+    "stoneworks": {
+      "id": "stoneworks",
+      "name": "Stoneworks",
+      "side": "both",
+      "filename": "Stoneworks-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 2398861,
+      "sha256": "32f71e4ad6d92c0a0cae665717d99c636f04965ac7ec271f91f10e0d1b832c26",
+      "sha512": "64dc20c2243ce6b067cec7e8d098220693217ae8d12c50f7e4a122febff9f0b187e5996f6bfcc82d3f35842ccd7e6823bdb64a0b479b49c3607df06fdd395fff",
+      "sha1": "35ce35ddc61aa2da86f527101a5f2dbbda3a1dd0",
+      "downloadUrl": "https://cdn.modrinth.com/data/FzyTKtVF/versions/c9YWwjPp/Stoneworks-v26.2.0-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "FzyTKtVF",
+        "versionId": "c9YWwjPp"
+      },
+      "metadata": {
+        "description": "Vanilla stone types in plenty of variations for all your building needs.",
+        "iconUrl": "https://cdn.modrinth.com/data/FzyTKtVF/c18c5fb3daa800d5d612efac7d658eafdcf51129_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/stoneworks",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "supermartijn642configlib": {
+      "id": "supermartijn642configlib",
+      "name": "SuperMartijn642's Config Lib",
+      "side": "both",
+      "filename": "supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
+      "size": 206149,
+      "sha256": "3546d8d49ac587aa3aed70b0cd68461366a6f78b9575b8f7ba757866905aca6f",
+      "sha512": "415c6ce953ccc618a98653c08eb36bfa1344227ef9e17c4c7603a07882f71e29266091e67b391dde59f76836b7d7d783342c65e75b6c4cffaaf31d0d929dacef",
+      "sha1": "56c3d9cb1c5b7d6a1f6eef525ef0487e79503ada",
+      "downloadUrl": "https://cdn.modrinth.com/data/LN9BxssP/versions/tg619S8t/supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "LN9BxssP",
+        "versionId": "tg619S8t"
+      },
+      "metadata": {
+        "description": "Config Lib makes dealing with config files just a bit easier.",
+        "iconUrl": "https://cdn.modrinth.com/data/LN9BxssP/ad25597dd1b10b49cdfbc97c70d401e3158000f7_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/supermartijn642s-config-lib",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
+    "supermartijn642corelib": {
+      "id": "supermartijn642corelib",
+      "name": "SuperMartijn642's Core Lib",
+      "side": "both",
+      "filename": "supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
+      "size": 686523,
+      "sha256": "bfdcbb7d9cc40d467743912a79555d0ab1774a899e5b82af7346f0f2658828d2",
+      "sha512": "c08c1226ad2a96d96d00b03b3fd7d6e593d01ec49db0687fe97c07bf396510b4759d57636b12d7e0cd0ffaf4eefa36d453bf31b66b031abd262ebe214cc2b50e",
+      "sha1": "df317e3285eea75b4d40c2df909110d6127588cd",
+      "downloadUrl": "https://cdn.modrinth.com/data/rOUBggPv/versions/o1h83Sfl/supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "rOUBggPv",
+        "versionId": "o1h83Sfl"
+      },
+      "metadata": {
+        "description": "SuperMartijn642's Core Lib adds lots of basic implementations that allow for similar code between different Minecraft versions!",
+        "iconUrl": "https://cdn.modrinth.com/data/rOUBggPv/e745e719d7fe2aa0335d819ca9c97defbf2e0bcb_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/supermartijn642s-core-lib",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "styled-nicknames": {
       "id": "styled-nicknames",
       "name": "Styled Nicknames",
@@ -3965,32 +3865,90 @@
         "serverSide": "required"
       }
     },
-    "tooltrims": {
-      "id": "tooltrims",
-      "name": "Tool Trims Mod",
-      "side": "both",
-      "filename": "tooltrims-2.0.10+tt3.0.x+mc26.2.jar",
-      "size": 400033,
-      "sha256": "a7c68ce43e5cee10ccf42dcea0429eb3e89b82207584caa23b49f58b247ef1db",
-      "sha512": "30188a7182868873b9b580d1aac3d09c206f2b4edb1d609ea12dd98de738a8bcd9f7acf43ed3fb159470fea46752c4d2b3f443747c8dd18198d9c61905a71208",
-      "sha1": "0f79dcf0761840b0776b3f6e8e813ddf1767afe6",
-      "downloadUrl": "https://cdn.modrinth.com/data/GqdixiwC/versions/Hbyk0zuB/tooltrims-2.0.10%2Btt3.0.x%2Bmc26.2.jar",
+    "sounds": {
+      "id": "sounds",
+      "name": "Sounds",
+      "side": "client",
+      "filename": "sounds-2.5.1+edge+26.2-fabric.jar",
+      "size": 8140184,
+      "sha256": "1d1aa6d959c3ac9b04d675f1452241dc9517e0958dbd759b79f500a50c1b825f",
+      "sha512": "7563d48eea3c195b516130359199ec981826bf1c1aa757b23f5e6f1aca7afb27a5992ac2f37231f9101c5ccb0d13b737a9af37c47169846f826e0b0243188311",
+      "sha1": "557183656b2a09545c7348507880c5f59293d16b",
+      "downloadUrl": "https://cdn.modrinth.com/data/ZouiUX7t/versions/kv2RxMQu/sounds-2.5.1%2Bedge%2B26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "GqdixiwC",
-        "versionId": "Hbyk0zuB"
+        "projectId": "ZouiUX7t",
+        "versionId": "kv2RxMQu"
       },
       "metadata": {
-        "description": "Fabric port of JoeFly's Tool Trims",
-        "iconUrl": "https://cdn.modrinth.com/data/GqdixiwC/c3685121bd145cc5579a8cc32df7b816402b9c32.png",
+        "description": "It's what it says on the tin. A complete upgrade to Minecraft's SFX with over 170 new sound effects for UIs, items, blocks and more.",
+        "iconUrl": "https://cdn.modrinth.com/data/ZouiUX7t/b6ae84ea14654245f58856722473afeddf72360c_96.webp",
         "categories": [
-          "decoration",
-          "equipment"
+          "game-mechanics",
+          "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/tool-trims-mod",
+        "sourceUrl": "https://modrinth.com/mod/sound",
         "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "sound_physics_remastered": {
+      "id": "sound_physics_remastered",
+      "name": "Sound Physics Remastered",
+      "side": "client",
+      "filename": "sound-physics-remastered-fabric-1.5.1+26.2.jar",
+      "size": 201669,
+      "sha256": "5bf577901123044337070fee36c1731c86e2fc12923bbb6a1c4b49c3423adcd9",
+      "sha512": "5c3d11462848c15ddfd4b854c998ed55c13e4bcd033a9f01acbea56d55079f4795c67321af803cc1b1b0e0d81dfd6750532294c932e921288858c0d9ea06f97e",
+      "sha1": "63657ef05768d2a7a102549bc8ef5f5fc04e2fc4",
+      "downloadUrl": "https://cdn.modrinth.com/data/qyVF9oeo/versions/d8iioMMp/sound-physics-remastered-fabric-1.5.1%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "qyVF9oeo",
+        "versionId": "d8iioMMp"
+      },
+      "metadata": {
+        "description": "A Minecraft mod that provides realistic sound attenuation, reverberation, and absorption through blocks.",
+        "iconUrl": "https://cdn.modrinth.com/data/qyVF9oeo/798fbfae58ec95ad51f3e1d522b43227306c326c.png",
+        "categories": [
+          "adventure",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/sound-physics-remastered",
+        "clientSide": "required",
+        "serverSide": "optional"
+      }
+    },
+    "tectonic": {
+      "id": "tectonic",
+      "name": "Tectonic",
+      "side": "server",
+      "filename": "tectonic-3.0.26-fabric-26.2.jar",
+      "size": 461405,
+      "sha256": "4fa2b27fdccb60da9942af70b2d157feea4609049ad80950ec4c33db36502168",
+      "sha512": "6ca2ac61ce7fa9e8758bdf83bff99c97d39a300efbec12db2714557aef420739b46a68aa62ee93cdd6339f8f7ad8cbbeca59f5be3c6361b8d0ea09e34a45864c",
+      "sha1": "93b62a1e7646f76088cdf38838837dc5c1efd387",
+      "downloadUrl": "https://cdn.modrinth.com/data/lWDHr9jE/versions/rc4JXlpP/tectonic-3.0.26-fabric-26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "lWDHr9jE",
+        "versionId": "rc4JXlpP"
+      },
+      "metadata": {
+        "description": "Terrain shaping brought to new heights, grander and more varied than ever before!",
+        "iconUrl": "https://cdn.modrinth.com/data/lWDHr9jE/d8b3413f797479dcc0d8764756613e449a358a2e_96.webp",
+        "categories": [
+          "adventure",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/tectonic",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -4051,36 +4009,6 @@
         "serverSide": "unsupported"
       }
     },
-    "travelersbackpack": {
-      "id": "travelersbackpack",
-      "name": "Traveler's Backpack",
-      "side": "both",
-      "filename": "travelersbackpack-fabric-26.2-11.3.1.jar",
-      "size": 1496106,
-      "sha256": "9b63544d3415699566222a940bb5971d88416fd10dcb53bf60e888328a4ce173",
-      "sha512": "5e064ed50ae303f982466a4ac0a1198355adc65005723dfea403acc01fd2aa0b307867c7d5511394e83c515d413c834890b51e3c71e40cea97f7c747be635be7",
-      "sha1": "1d95a2b0c3a68a3deb2b3a58b8e61cff80f532d0",
-      "downloadUrl": "https://cdn.modrinth.com/data/rlloIFEV/versions/mjQY8slD/travelersbackpack-fabric-26.2-11.3.1.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "rlloIFEV",
-        "versionId": "mjQY8slD"
-      },
-      "metadata": {
-        "description": "Unique and upgradeable backpacks with customisation, Curios API/Trinkets integration and more!",
-        "iconUrl": "https://cdn.modrinth.com/data/rlloIFEV/271b2133a315ee3d864ea5a429472f0e71591fe3_96.webp",
-        "categories": [
-          "adventure",
-          "equipment",
-          "storage"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/travelersbackpack",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
     "umbrellas": {
       "id": "umbrellas",
       "name": "Umbrellas",
@@ -4107,6 +4035,66 @@
           "utility"
         ],
         "sourceUrl": "https://modrinth.com/mod/pneumono_umbrellas",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "ubesdelight": {
+      "id": "ubesdelight",
+      "name": "Ube's Delight",
+      "side": "both",
+      "filename": "ubesdelight-fabric-26.2-0.4.14.jar",
+      "size": 989041,
+      "sha256": "712f95af9ff149fb5d5a5c825f59a73fee909dbea7466fc807ef38b600fc2220",
+      "sha512": "ff7df5ff48c9a2605a8beaedf00ce59c426dd8e39e7f85135a534627c25248850f5a6217df34a72606052be64fc7217c017688871e4019f468010941e2051800",
+      "sha1": "e557f086ebdb2000199f49f88bed04f214daf369",
+      "downloadUrl": "https://cdn.modrinth.com/data/PYjpoAys/versions/Roe7K8pA/ubesdelight-fabric-26.2-0.4.14.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "PYjpoAys",
+        "versionId": "Roe7K8pA"
+      },
+      "metadata": {
+        "description": "A Farmer’s Delight addon that adds Filipino inspired crops and food.",
+        "iconUrl": "https://cdn.modrinth.com/data/PYjpoAys/747de679aefe6e668c153745f441ff1e16597907.png",
+        "categories": [
+          "decoration",
+          "food",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/ubes-delight",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "travelersbackpack": {
+      "id": "travelersbackpack",
+      "name": "Traveler's Backpack",
+      "side": "both",
+      "filename": "travelersbackpack-fabric-26.2-11.3.1.jar",
+      "size": 1496106,
+      "sha256": "9b63544d3415699566222a940bb5971d88416fd10dcb53bf60e888328a4ce173",
+      "sha512": "5e064ed50ae303f982466a4ac0a1198355adc65005723dfea403acc01fd2aa0b307867c7d5511394e83c515d413c834890b51e3c71e40cea97f7c747be635be7",
+      "sha1": "1d95a2b0c3a68a3deb2b3a58b8e61cff80f532d0",
+      "downloadUrl": "https://cdn.modrinth.com/data/rlloIFEV/versions/mjQY8slD/travelersbackpack-fabric-26.2-11.3.1.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "rlloIFEV",
+        "versionId": "mjQY8slD"
+      },
+      "metadata": {
+        "description": "Unique and upgradeable backpacks with customisation, Curios API/Trinkets integration and more!",
+        "iconUrl": "https://cdn.modrinth.com/data/rlloIFEV/271b2133a315ee3d864ea5a429472f0e71591fe3_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "storage"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/travelersbackpack",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -4141,32 +4129,61 @@
         "serverSide": "required"
       }
     },
-    "ubesdelight": {
-      "id": "ubesdelight",
-      "name": "Ube's Delight",
+    "tooltrims": {
+      "id": "tooltrims",
+      "name": "Tool Trims Mod",
       "side": "both",
-      "filename": "ubesdelight-fabric-26.2-0.4.14.jar",
-      "size": 989041,
-      "sha256": "712f95af9ff149fb5d5a5c825f59a73fee909dbea7466fc807ef38b600fc2220",
-      "sha512": "ff7df5ff48c9a2605a8beaedf00ce59c426dd8e39e7f85135a534627c25248850f5a6217df34a72606052be64fc7217c017688871e4019f468010941e2051800",
-      "sha1": "e557f086ebdb2000199f49f88bed04f214daf369",
-      "downloadUrl": "https://cdn.modrinth.com/data/PYjpoAys/versions/Roe7K8pA/ubesdelight-fabric-26.2-0.4.14.jar",
+      "filename": "tooltrims-2.0.10+tt3.0.x+mc26.2.jar",
+      "size": 400033,
+      "sha256": "a7c68ce43e5cee10ccf42dcea0429eb3e89b82207584caa23b49f58b247ef1db",
+      "sha512": "30188a7182868873b9b580d1aac3d09c206f2b4edb1d609ea12dd98de738a8bcd9f7acf43ed3fb159470fea46752c4d2b3f443747c8dd18198d9c61905a71208",
+      "sha1": "0f79dcf0761840b0776b3f6e8e813ddf1767afe6",
+      "downloadUrl": "https://cdn.modrinth.com/data/GqdixiwC/versions/Hbyk0zuB/tooltrims-2.0.10%2Btt3.0.x%2Bmc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "PYjpoAys",
-        "versionId": "Roe7K8pA"
+        "projectId": "GqdixiwC",
+        "versionId": "Hbyk0zuB"
       },
       "metadata": {
-        "description": "A Farmer’s Delight addon that adds Filipino inspired crops and food.",
-        "iconUrl": "https://cdn.modrinth.com/data/PYjpoAys/747de679aefe6e668c153745f441ff1e16597907.png",
+        "description": "Fabric port of JoeFly's Tool Trims",
+        "iconUrl": "https://cdn.modrinth.com/data/GqdixiwC/c3685121bd145cc5579a8cc32df7b816402b9c32.png",
         "categories": [
           "decoration",
-          "food",
-          "worldgen"
+          "equipment"
         ],
-        "sourceUrl": "https://modrinth.com/mod/ubes-delight",
+        "sourceUrl": "https://modrinth.com/mod/tool-trims-mod",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "underlay": {
+      "id": "underlay",
+      "name": "Underlay",
+      "side": "server",
+      "filename": "underlay-1.0.3-fabric-mc26.2.jar",
+      "size": 296439,
+      "sha256": "9494404624b548296086eb2526cdd99884557861bb390848db8654c954b630ea",
+      "sha512": "b7f262e68c7f0482b912e99a9e60cdb0a32780cc0fcf8b3aa0f3c3a59d34d97a09e511c6e1972c10ed4f07a7ffb68d9b3f02a2367a6acd6748a14b2ecfbe40c5",
+      "sha1": "4d3909e35c5040d157a8ccfc15e34379a60c178b",
+      "downloadUrl": "https://cdn.modrinth.com/data/iltKD9qU/versions/TX238IXv/underlay-1.0.3-fabric-mc26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "iltKD9qU",
+        "versionId": "TX238IXv"
+      },
+      "metadata": {
+        "description": "Place any block (such as carpets) inside anything!",
+        "iconUrl": "https://cdn.modrinth.com/data/iltKD9qU/f2d808810e8deadda9badb51026a8f95350e6689_96.webp",
+        "categories": [
+          "decoration",
+          "game-mechanics",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/underlay",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -4203,18 +4220,18 @@
       "id": "vanillahud",
       "name": "VanillaHUD",
       "side": "client",
-      "filename": "vanillahud-3.4.5+26.2.jar",
-      "size": 148753,
-      "sha256": "fc7b73ab39f5054ef2d5dba3a4b54d3945149dd065a10ee9c26b38934e9a5f0f",
-      "sha512": "13460616f5d4682d219403e28d562c86efc83fc3d2bf85ceebf99dced024524d92c6ab583bc92825b4034c0a8a1166e5d54b6860d343a721fa3652b4fced5cb3",
-      "sha1": "be6d422947b029884340c31d362d343ba6aaae4b",
-      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/JamHt7lA/vanillahud-3.4.5%2B26.2.jar",
+      "filename": "vanillahud-3.4.6+26.2.jar",
+      "size": 163434,
+      "sha256": "aa3cfa7a5c4645c31fc48c08143b85f007e2264de3d1e60b23f74697a2ed5274",
+      "sha512": "11766b26a082a5c11ebc0202e8888f217f7a40c8ba15dd01041e249a50f4a054e03551ff4322a0752b89e97ef5ade8604782b5db43639731e94093a84c888cfc",
+      "sha1": "2596efb7867205f191c0bbb8481928f25fb62478",
+      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/ltieGrbR/vanillahud-3.4.6%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "pWXJaKrX",
-        "versionId": "JamHt7lA"
+        "versionId": "ltieGrbR"
       },
       "metadata": {
         "description": "A mod that modifies various vanilla HUD elements, such as the bossbar, action bar, and sidebar.",
@@ -4227,33 +4244,32 @@
         "serverSide": "unsupported"
       }
     },
-    "underlay": {
-      "id": "underlay",
-      "name": "Underlay",
+    "trek": {
+      "id": "trek",
+      "name": "Trek",
       "side": "server",
-      "filename": "underlay-1.0.3-fabric-mc26.2.jar",
-      "size": 296439,
-      "sha256": "9494404624b548296086eb2526cdd99884557861bb390848db8654c954b630ea",
-      "sha512": "b7f262e68c7f0482b912e99a9e60cdb0a32780cc0fcf8b3aa0f3c3a59d34d97a09e511c6e1972c10ed4f07a7ffb68d9b3f02a2367a6acd6748a14b2ecfbe40c5",
-      "sha1": "4d3909e35c5040d157a8ccfc15e34379a60c178b",
-      "downloadUrl": "https://cdn.modrinth.com/data/iltKD9qU/versions/TX238IXv/underlay-1.0.3-fabric-mc26.2.jar",
+      "filename": "trek-B0.6.2.jar",
+      "size": 12461621,
+      "sha256": "5ea0837a4b1ef02cc702d7e7e49a245f4857591696183b9d2fe56c574cbfc022",
+      "sha512": "17f35802c2f8dbae026153718b6d40a2b4c3ae1558e6e87500ecffe859fe2e607e00b3be76b8c8cbee7da932a042ebe5a279df9929fb7b51000ea1af49fcc1c9",
+      "sha1": "e83cbdbe987129cb039ead47d11994d8cbdb1ade",
+      "downloadUrl": "https://cdn.modrinth.com/data/h2jngREY/versions/OYbFzi8L/trek-B0.6.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "iltKD9qU",
-        "versionId": "TX238IXv"
+        "projectId": "h2jngREY",
+        "versionId": "OYbFzi8L"
       },
       "metadata": {
-        "description": "Place any block (such as carpets) inside anything!",
-        "iconUrl": "https://cdn.modrinth.com/data/iltKD9qU/f2d808810e8deadda9badb51026a8f95350e6689_96.webp",
+        "description": "Bored of vanilla structure generation? This pack is for you!",
+        "iconUrl": "https://cdn.modrinth.com/data/h2jngREY/e4d877248cf243e4e99cd71464417388ea332835_96.webp",
         "categories": [
-          "decoration",
-          "game-mechanics",
-          "utility"
+          "adventure",
+          "worldgen"
         ],
-        "sourceUrl": "https://modrinth.com/mod/underlay",
-        "clientSide": "required",
+        "sourceUrl": "https://modrinth.com/mod/trek",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -4283,65 +4299,6 @@
         "sourceUrl": "https://modrinth.com/mod/wunderlib",
         "clientSide": "required",
         "serverSide": "required"
-      }
-    },
-    "complementary-reimagined": {
-      "id": "complementary-reimagined",
-      "name": "Complementary Shaders - Reimagined",
-      "side": "client",
-      "filename": "ComplementaryReimagined_r5.8.1.zip",
-      "size": 546925,
-      "sha256": "3f1cd389e717b2e62f58edff222059b9c60de71b14bb49b517eb58318ce35b15",
-      "sha512": "6bd95215755d25812556ce790d976221f7d677d63112e3e4d3e70b08a62ed41348fa3792dd31bbe720d1e46fe2d525cadb4f66e6358118e1f4aa8e0d11f25c39",
-      "sha1": "5a021081f0178ed91dd911194071465ab0a4348b",
-      "downloadUrl": "https://cdn.modrinth.com/data/HVnmMxH1/versions/yCCduG44/ComplementaryReimagined_r5.8.1.zip",
-      "artifactType": "shader",
-      "targetDir": "shaderpacks",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "HVnmMxH1",
-        "versionId": "yCCduG44"
-      },
-      "metadata": {
-        "description": "Preserving the elements of Minecraft with exceptional quality, detail, and performance.",
-        "iconUrl": "https://cdn.modrinth.com/data/HVnmMxH1/79cb7c8123bbc54945305b2ebad6b8881efdf5f8_96.webp",
-        "categories": [
-          "colored-lighting",
-          "vanilla-like"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/complementary-reimagined",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "yacl": {
-      "id": "yacl",
-      "name": "YetAnotherConfigLib (YACL)",
-      "side": "both",
-      "filename": "yet_another_config_lib_v3-3.9.6+26.2-fabric.jar",
-      "size": 1121529,
-      "sha256": "829396c3b3e7d1801ae0e9e2921d0454c5a3078afdb6c6dda6b3d1819dfa0e3f",
-      "sha512": "b3a58e4a5ef54647569282b8b2e9630389b3568f0abecb9c168daaa815477cbf961e79de28081cac551b69b810f561f043d669d1034aec80f12153a53dff53ef",
-      "sha1": "40887775504751acd752545e6370a76ca3b5bda9",
-      "downloadUrl": "https://cdn.modrinth.com/data/1eAoo2KR/versions/cnfPzuFU/yet_another_config_lib_v3-3.9.6%2B26.2-fabric.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "1eAoo2KR",
-        "versionId": "cnfPzuFU"
-      },
-      "metadata": {
-        "description": "A builder-based configuration library for Minecraft!",
-        "iconUrl": "https://cdn.modrinth.com/data/1eAoo2KR/08c0cd32515e260f4bb20bbc0696510041523f9a_96.webp",
-        "categories": [
-          "library",
-          "management",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/yacl",
-        "clientSide": "optional",
-        "serverSide": "optional"
       }
     },
     "wover": {
@@ -4374,35 +4331,6 @@
         "serverSide": "required"
       }
     },
-    "complementary-unbound": {
-      "id": "complementary-unbound",
-      "name": "Complementary Shaders - Unbound",
-      "side": "client",
-      "filename": "ComplementaryUnbound_r5.8.1.zip",
-      "size": 546928,
-      "sha256": "bb89b1fc54687d4147a837fb2e3c3f7261a13bee51819761e9b6a91cb7915965",
-      "sha512": "9098dd9e0c18b80f7aba2839cea33ce9a614d97665bbfcac87ccce6e4771667c41602d99088852cb1642ccab20b2ceff9b98af8f2e795bd0d3b90b7c9cbab914",
-      "sha1": "af656a33be2cbd217ea08986ad2cdd76f6bbfe1c",
-      "downloadUrl": "https://cdn.modrinth.com/data/R6NEzAwj/versions/VMHXIk50/ComplementaryUnbound_r5.8.1.zip",
-      "artifactType": "shader",
-      "targetDir": "shaderpacks",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "R6NEzAwj",
-        "versionId": "VMHXIk50"
-      },
-      "metadata": {
-        "description": "Transforming the visuals of Minecraft with exceptional quality, detail, and performance.",
-        "iconUrl": "https://cdn.modrinth.com/data/R6NEzAwj/c85ce4049aac76360d2cd24fd9a7003de01ef312_96.webp",
-        "categories": [
-          "colored-lighting",
-          "fantasy"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/complementary-unbound",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "xaeroworldmap": {
       "id": "xaeroworldmap",
       "name": "Xaero's World Map",
@@ -4433,31 +4361,90 @@
         "serverSide": "optional"
       }
     },
-    "voxy": {
-      "id": "voxy",
-      "name": "voxy",
-      "side": "client",
-      "filename": "voxy-0.2.18-beta.jar",
-      "size": 12657845,
-      "sha256": "dd9e10d2110879f07c1ce9bdf1945f3470b32e83977f094005ee8c642e8128d5",
-      "sha512": "2605d9255cc4e72e401cf8de299ad01c21a9a4828d4f8d2b6ec4f63ea59fd21c4d29c92255c50979f848cccb4057f0b687fb3c9c87fa4c0dd62f68540e4d84bb",
-      "sha1": "34206446f7625782b04382256083f44fe9551b83",
-      "downloadUrl": "https://cdn.modrinth.com/data/fxxUqruK/versions/zZX86mbc/voxy-0.2.18-beta.jar",
+    "yacl": {
+      "id": "yacl",
+      "name": "YetAnotherConfigLib (YACL)",
+      "side": "both",
+      "filename": "yet_another_config_lib_v3-3.9.6+26.2-fabric.jar",
+      "size": 1121529,
+      "sha256": "829396c3b3e7d1801ae0e9e2921d0454c5a3078afdb6c6dda6b3d1819dfa0e3f",
+      "sha512": "b3a58e4a5ef54647569282b8b2e9630389b3568f0abecb9c168daaa815477cbf961e79de28081cac551b69b810f561f043d669d1034aec80f12153a53dff53ef",
+      "sha1": "40887775504751acd752545e6370a76ca3b5bda9",
+      "downloadUrl": "https://cdn.modrinth.com/data/1eAoo2KR/versions/cnfPzuFU/yet_another_config_lib_v3-3.9.6%2B26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "fxxUqruK",
-        "versionId": "zZX86mbc"
+        "projectId": "1eAoo2KR",
+        "versionId": "cnfPzuFU"
       },
       "metadata": {
-        "description": "A Level of Detail rendering mod",
-        "iconUrl": "https://cdn.modrinth.com/data/fxxUqruK/2a4159b1ff6ecba43bf895d6abee6f724a0e03c0_96.webp",
+        "description": "A builder-based configuration library for Minecraft!",
+        "iconUrl": "https://cdn.modrinth.com/data/1eAoo2KR/08c0cd32515e260f4bb20bbc0696510041523f9a_96.webp",
         "categories": [
-          "optimization",
+          "library",
+          "management",
           "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/voxy",
+        "sourceUrl": "https://modrinth.com/mod/yacl",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
+    "complementary-reimagined": {
+      "id": "complementary-reimagined",
+      "name": "Complementary Shaders - Reimagined",
+      "side": "client",
+      "filename": "ComplementaryReimagined_r5.8.1.zip",
+      "size": 546925,
+      "sha256": "3f1cd389e717b2e62f58edff222059b9c60de71b14bb49b517eb58318ce35b15",
+      "sha512": "6bd95215755d25812556ce790d976221f7d677d63112e3e4d3e70b08a62ed41348fa3792dd31bbe720d1e46fe2d525cadb4f66e6358118e1f4aa8e0d11f25c39",
+      "sha1": "5a021081f0178ed91dd911194071465ab0a4348b",
+      "downloadUrl": "https://cdn.modrinth.com/data/HVnmMxH1/versions/yCCduG44/ComplementaryReimagined_r5.8.1.zip",
+      "artifactType": "shader",
+      "targetDir": "shaderpacks",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "HVnmMxH1",
+        "versionId": "yCCduG44"
+      },
+      "metadata": {
+        "description": "Preserving the elements of Minecraft with exceptional quality, detail, and performance.",
+        "iconUrl": "https://cdn.modrinth.com/data/HVnmMxH1/79cb7c8123bbc54945305b2ebad6b8881efdf5f8_96.webp",
+        "categories": [
+          "colored-lighting",
+          "vanilla-like"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/complementary-reimagined",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "complementary-unbound": {
+      "id": "complementary-unbound",
+      "name": "Complementary Shaders - Unbound",
+      "side": "client",
+      "filename": "ComplementaryUnbound_r5.8.1.zip",
+      "size": 546928,
+      "sha256": "bb89b1fc54687d4147a837fb2e3c3f7261a13bee51819761e9b6a91cb7915965",
+      "sha512": "9098dd9e0c18b80f7aba2839cea33ce9a614d97665bbfcac87ccce6e4771667c41602d99088852cb1642ccab20b2ceff9b98af8f2e795bd0d3b90b7c9cbab914",
+      "sha1": "af656a33be2cbd217ea08986ad2cdd76f6bbfe1c",
+      "downloadUrl": "https://cdn.modrinth.com/data/R6NEzAwj/versions/VMHXIk50/ComplementaryUnbound_r5.8.1.zip",
+      "artifactType": "shader",
+      "targetDir": "shaderpacks",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "R6NEzAwj",
+        "versionId": "VMHXIk50"
+      },
+      "metadata": {
+        "description": "Transforming the visuals of Minecraft with exceptional quality, detail, and performance.",
+        "iconUrl": "https://cdn.modrinth.com/data/R6NEzAwj/c85ce4049aac76360d2cd24fd9a7003de01ef312_96.webp",
+        "categories": [
+          "colored-lighting",
+          "fantasy"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/complementary-unbound",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -4520,6 +4507,35 @@
         "sourceUrl": "https://modrinth.com/mod/wilder-wild",
         "clientSide": "required",
         "serverSide": "required"
+      }
+    },
+    "voxy": {
+      "id": "voxy",
+      "name": "voxy",
+      "side": "client",
+      "filename": "voxy-0.2.18-beta.jar",
+      "size": 12657845,
+      "sha256": "dd9e10d2110879f07c1ce9bdf1945f3470b32e83977f094005ee8c642e8128d5",
+      "sha512": "2605d9255cc4e72e401cf8de299ad01c21a9a4828d4f8d2b6ec4f63ea59fd21c4d29c92255c50979f848cccb4057f0b687fb3c9c87fa4c0dd62f68540e4d84bb",
+      "sha1": "34206446f7625782b04382256083f44fe9551b83",
+      "downloadUrl": "https://cdn.modrinth.com/data/fxxUqruK/versions/zZX86mbc/voxy-0.2.18-beta.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "fxxUqruK",
+        "versionId": "zZX86mbc"
+      },
+      "metadata": {
+        "description": "A Level of Detail rendering mod",
+        "iconUrl": "https://cdn.modrinth.com/data/fxxUqruK/2a4159b1ff6ecba43bf895d6abee6f724a0e03c0_96.webp",
+        "categories": [
+          "optimization",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/voxy",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     }
   }

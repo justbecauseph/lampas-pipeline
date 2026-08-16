@@ -81,13 +81,33 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     toDownload.push(file);
   }
 
-  // Identify obsolete managed files from previous installation
-  const toDelete: string[] = [];
+  // Identify obsolete managed files from previous installation AND unmanifested mods on disk
+  const toDeleteSet = new Set<string>();
   for (const [prevPath, info] of Object.entries(prevState.files)) {
     if (info.policy === "MANAGED" && !desiredFilesMap.has(prevPath) && !isPathProtected(prevPath)) {
-      toDelete.push(prevPath);
+      toDeleteSet.add(prevPath);
     }
   }
+
+  // Direct disk reconciliation: scan mods/ directory for any unmanifested JAR files
+  const modsDir = path.join(targetDir, "mods");
+  if (fs.existsSync(modsDir)) {
+    try {
+      const diskFiles = fs.readdirSync(modsDir);
+      for (const file of diskFiles) {
+        if (file.endsWith(".jar")) {
+          const relModPath = `mods/${file}`;
+          if (!desiredFilesMap.has(relModPath) && !isPathProtected(relModPath)) {
+            toDeleteSet.add(relModPath);
+          }
+        }
+      }
+    } catch {
+      // ignore read error
+    }
+  }
+
+  const toDelete = Array.from(toDeleteSet);
 
   console.log(`[Sync] Plan: ${toDownload.length} to download, ${toKeep.length} already up-to-date, ${toDelete.length} obsolete to remove.`);
 
