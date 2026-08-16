@@ -38,6 +38,12 @@
   -webkit-font-smoothing: antialiased;
 }
 
+button {
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
 html, body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -86,12 +92,16 @@ html, body {
 .h-4 { height: 16px; }
 .w-5 { width: 20px; }
 .h-5 { height: 20px; }
+.w-6 { width: 24px; }
+.h-6 { height: 24px; }
 .w-8 { width: 32px; }
 .h-8 { height: 32px; }
 .w-9 { width: 36px; }
 .h-9 { height: 36px; }
 .w-10 { width: 40px; }
 .h-10 { height: 40px; }
+.h-12 { height: 48px; }
+.h-16 { height: 64px; }
 .w-64 { width: 256px; }
 .max-h-96 { max-height: 24rem; }
 .overflow-y-auto { overflow-y: auto; }
@@ -139,12 +149,36 @@ html, body {
 .py-3\.5 { padding-top: 14px; padding-bottom: 14px; }
 .py-12 { padding-top: 48px; padding-bottom: 48px; }
 
+.pt-1 { padding-top: 4px; }
+.pt-2 { padding-top: 8px; }
+.pt-3 { padding-top: 12px; }
+.pt-4 { padding-top: 16px; }
+.pt-5 { padding-top: 20px; }
+.pt-6 { padding-top: 24px; }
+.pt-8 { padding-top: 32px; }
+.pt-10 { padding-top: 40px; }
+.pt-12 { padding-top: 48px; }
+
+.pb-1 { padding-bottom: 4px; }
+.pb-2 { padding-bottom: 8px; }
+.pb-3 { padding-bottom: 12px; }
+.pb-4 { padding-bottom: 16px; }
+.pb-5 { padding-bottom: 20px; }
+.pb-6 { padding-bottom: 24px; }
+.pb-8 { padding-bottom: 32px; }
+.pb-10 { padding-bottom: 40px; }
+.pb-12 { padding-bottom: 48px; }
+.pb-16 { padding-bottom: 64px; }
+
 .mt-0\.5 { margin-top: 2px; }
 .mt-1 { margin-top: 4px; }
 .mt-2 { margin-top: 8px; }
 .mt-4 { margin-top: 16px; }
 .mb-2 { margin-bottom: 8px; }
 .mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.mb-12 { margin-bottom: 48px; }
 .ml-auto { margin-left: auto; }
 .space-y-1\.5 > * + * { margin-top: 6px; }
 .space-y-2 > * + * { margin-top: 8px; }
@@ -382,18 +416,21 @@ html, body {
 .main-viewport {
   flex: 1;
   height: calc(100vh - var(--titlebar-h));
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 0;
+  overflow: hidden;
   padding: 24px 32px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .tab-content {
   flex: 1;
   min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* ========================================================
@@ -730,4 +767,98 @@ input[type="range"] {
   border-color: #06b6d4;
   color: #22d3ee;
 }
+
+/* Mod Icon & Card Styling */
+.mod-card {
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.7);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mod-card:hover {
+  border-color: rgba(51, 65, 85, 0.9);
+  background: rgba(15, 23, 42, 0.5);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.4);
+}
+
+.mod-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  border-radius: 10px;
+  background-color: #090d16;
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.mod-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+}
+
+.mod-icon-fallback {
+  width: 100%;
+  height: 100%;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 13px;
+  color: #818cf8;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.mod-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  color: #94a3b8;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all 0.15s ease;
+  margin-left: auto;
+  text-decoration: none;
+}
+
+.mod-link-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.6);
+  color: #c7d2fe;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
+}
+
+.mod-link-btn:active {
+  transform: scale(0.95);
+}
+
 

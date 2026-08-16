@@ -162,7 +162,7 @@
           </div>
 
           <!-- Bottom Controls Bar -->
-          <div class="flex items-center justify-between gap-4 border-t border-slate-900 pt-5">
+          <div class="flex items-center justify-between gap-4 border-t border-slate-900 pt-5 pb-4">
             <!-- Memory & Settings Quick View -->
             <div class="flex items-center gap-6">
               <div class="flex flex-col">
@@ -201,8 +201,8 @@
       </section>
 
       <!-- TAB 2: MODPACK INFO -->
-      <section id="tab-mods" class="tab-content hidden space-y-6">
-        <div class="flex items-center justify-between">
+      <section id="tab-mods" class="tab-content hidden flex-col flex-1 min-h-0 space-y-4">
+        <div class="flex items-center justify-between flex-shrink-0">
           <div>
             <h2 class="text-xl font-extrabold text-white tracking-tight">Modpack Information</h2>
             <p class="text-xs text-slate-400 mt-1">Deterministic release manifest and synchronized client pipeline.</p>
@@ -230,11 +230,11 @@
           </div>
         </div>
 
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-5">
-          <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 flex flex-col flex-1 min-h-0 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-shrink-0">
             <div>
-              <h3 class="font-bold text-white text-base">Lampas 2 Official Modpack</h3>
-              <p id="mods-pack-version" class="text-xs text-slate-400 mt-0.5">Version 2.0.0 (Release Channel: Stable)</p>
+              <h3 class="font-bold text-white text-sm">Lampas 2 Official Modpack</h3>
+              <p id="mods-pack-version" class="text-[11px] text-slate-400 mt-0.5">Version 2.0.0 (Release Channel: Stable)</p>
             </div>
             <div class="flex items-center gap-2">
               <span id="mods-channel-badge" class="badge text-cyan-400">STABLE</span>
@@ -242,37 +242,37 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-4 text-center">
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-2xl font-black text-cyan-400 font-mono">156</div>
-              <span class="text-xs text-slate-400 font-medium">Managed Mods</span>
+          <div class="grid grid-cols-3 gap-3 text-center flex-shrink-0">
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+              <div class="text-xl font-black text-cyan-400 font-mono">156</div>
+              <span class="text-[11px] text-slate-400 font-medium">Managed Mods</span>
             </div>
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-2xl font-black text-indigo-400 font-mono">423</div>
-              <span class="text-xs text-slate-400 font-medium">Synchronized Files</span>
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+              <div class="text-xl font-black text-indigo-400 font-mono">423</div>
+              <span class="text-[11px] text-slate-400 font-medium">Synchronized Files</span>
             </div>
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-2xl font-black text-emerald-400 font-mono">SHA-256</div>
-              <span class="text-xs text-slate-400 font-medium">Verified Checksums</span>
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+              <div class="text-xl font-black text-emerald-400 font-mono">SHA-256</div>
+              <span class="text-[11px] text-slate-400 font-medium">Verified Checksums</span>
             </div>
           </div>
 
-          <div class="rounded-xl bg-slate-950/60 border border-slate-800/80 p-4 space-y-2">
-            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Pipeline Specifications</h4>
-            <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-              <div class="flex justify-between border-b border-slate-900 pb-1.5">
+          <div class="rounded-xl bg-slate-950/60 border border-slate-800/80 p-3 space-y-1.5 flex-shrink-0">
+            <h4 class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Pipeline Specifications</h4>
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">Minecraft Base:</span>
                 <span class="text-slate-200">26.2</span>
               </div>
-              <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">Fabric Loader:</span>
                 <span class="text-slate-200">0.19.3</span>
               </div>
-              <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">Java Runtime:</span>
                 <span class="text-slate-200">OpenJDK 25 (Temurin)</span>
               </div>
-              <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">State Tracking:</span>
                 <span class="text-slate-200">installation.json</span>
               </div>
@@ -280,9 +280,9 @@
           </div>
 
           <!-- Interactive Mod Explorer & Catalog -->
-          <div class="space-y-4 pt-2">
-            <div class="flex items-center justify-between">
-              <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <div class="flex-1 min-h-0 flex flex-col space-y-3 pt-1">
+            <div class="flex items-center justify-between flex-shrink-0">
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
                 <span>Installed Mods & Features</span>
                 <span id="mods-filtered-count" class="badge text-cyan-400">0</span>
               </h4>
@@ -297,7 +297,7 @@
             </div>
 
             <!-- Filter Pills -->
-            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs flex-shrink-0">
               <button class="mod-filter-pill active" data-filter="all">All</button>
               <button class="mod-filter-pill" data-filter="shader">Shaders</button>
               <button class="mod-filter-pill" data-filter="client">Client-Only</button>
@@ -310,8 +310,8 @@
               <button class="mod-filter-pill" data-filter="utility">Utility</button>
             </div>
 
-            <!-- Mod List Grid -->
-            <div id="mods-grid" class="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+            <!-- Mod List Grid: flex-1 fills remaining height cleanly! -->
+            <div id="mods-grid" class="grid grid-cols-2 gap-3 flex-1 min-h-0 overflow-y-auto pr-1 pb-4">
               <!-- Rendered dynamically -->
             </div>
           </div>
@@ -319,8 +319,8 @@
       </section>
 
       <!-- TAB 3: CONSOLE & LOGS -->
-      <section id="tab-console" class="tab-content hidden space-y-4">
-        <div class="flex items-center justify-between">
+      <section id="tab-console" class="tab-content hidden flex-col flex-1 min-h-0 space-y-4">
+        <div class="flex items-center justify-between flex-shrink-0">
           <div class="flex items-center gap-3">
             <h2 class="text-xl font-extrabold text-white tracking-tight">Live Game Console</h2>
             <span id="console-count" class="badge">0 lines</span>
@@ -345,19 +345,19 @@
           </div>
         </div>
 
-        <div id="console-output" class="console-box">
+        <div id="console-output" class="console-box flex-1 min-h-0">
           <div class="console-line text-slate-500 italic">[System] Console ready. Logs will stream in real-time when launching.</div>
         </div>
       </section>
 
       <!-- TAB 4: SETTINGS -->
-      <section id="tab-settings" class="tab-content hidden space-y-6">
-        <div>
+      <section id="tab-settings" class="tab-content hidden flex-col flex-1 min-h-0 space-y-4">
+        <div class="flex-shrink-0">
           <h2 class="text-xl font-extrabold text-white tracking-tight">Launcher Settings</h2>
           <p class="text-xs text-slate-400 mt-1">Configure memory allocation, portal network endpoints, and directories.</p>
         </div>
 
-        <div class="space-y-6">
+        <div class="flex-1 min-h-0 overflow-y-auto space-y-5 pr-1 pb-6">
           <!-- Game & Performance Settings -->
           <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-5">
             <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-3">Performance & Directory</h3>
@@ -422,7 +422,7 @@
             </div>
           </div>
 
-          <div class="flex justify-end pt-2">
+          <div class="flex justify-end pt-2 pb-6">
             <button id="btn-save-settings" class="btn-primary">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />

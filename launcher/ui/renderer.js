@@ -675,9 +675,15 @@ function renderMods() {
           ? '<span class="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-1.5 py-0.5 rounded-md">SERVER ONLY</span>'
           : '<span class="text-[9px] font-bold text-indigo-400 bg-indigo-950/80 border border-indigo-800/60 px-1.5 py-0.5 rounded-md">DUAL-SIDED</span>';
 
+      const fallbackText = (mod.name || mod.id || "M")[0].toUpperCase();
       const iconHtml = mod.iconUrl
-        ? `<img src="${mod.iconUrl}" class="w-8 h-8 rounded-lg object-contain bg-slate-900 border border-slate-800 flex-shrink-0" loading="lazy" />`
-        : `<div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-black text-xs text-indigo-400 flex-shrink-0">${(mod.name || "M")[0].toUpperCase()}</div>`;
+        ? `<div class="mod-icon-wrapper">
+            <img src="${mod.iconUrl}" alt="${mod.name || 'Mod'}" class="mod-icon-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="mod-icon-fallback" style="display: none;">${fallbackText}</div>
+          </div>`
+        : `<div class="mod-icon-wrapper">
+            <div class="mod-icon-fallback">${fallbackText}</div>
+          </div>`;
 
       const catsHtml = (mod.categories || [])
         .slice(0, 3)
@@ -685,11 +691,11 @@ function renderMods() {
         .join(" ");
 
       const linkBtn = mod.sourceUrl
-        ? `<button onclick="window.lampas.utils.openPath('${mod.sourceUrl}')" class="text-[10px] text-slate-400 hover:text-indigo-400 transition-colors ml-auto">View ↗</button>`
+        ? `<button onclick="window.lampas.utils.openPath('${mod.sourceUrl}')" class="mod-link-btn" title="Open source page">View ↗</button>`
         : "";
 
       return `
-        <div class="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700/80 transition-all flex flex-col justify-between space-y-2">
+        <div class="mod-card">
           <div class="flex items-start gap-3">
             ${iconHtml}
             <div class="min-w-0 flex-1">
