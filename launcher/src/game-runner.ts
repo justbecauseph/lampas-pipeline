@@ -1,10 +1,19 @@
 import { spawn, ChildProcess } from "node:child_process";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import { createHash } from "node:crypto";
 import { ConfigManager } from "./config";
+import { LauncherAuth } from "./auth";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
 import type { GameLogEntry, UserProfile } from "./types";
+
+function generateOfflineUuid(username: string): string {
+  const md5 = createHash("md5").update(`OfflinePlayer:${username}`).digest();
+  md5[6] = (md5[6] & 0x0f) | 0x30; // Version 3
+  md5[8] = (md5[8] & 0x3f) | 0x80; // Variant RFC 4122
+  return md5.toString("hex");
+}
 
 export class GameRunner {
   private static runningProcess: ChildProcess | null = null;
@@ -23,14 +32,9 @@ export class GameRunner {
     }
 
     const config = ConfigManager.get();
-    const gameDir = config.gameDir;
-    const ramGb = config.allocatedRamGb || 4;
-    const username = user?.minecraftUsername || user?.name || "LampasPlayer";
-    const uuid = user?.minecraftUuid || "00000000-0000-0000-0000-000000000000";
-    const mcToken = user?.minecraftAccessToken || config.minecraftAccessToken;
-    const isRealMsa = !!(mcToken && mcToken.startsWith("ey") && mcToken.length > 50);
-    const token = isRealMsa ? mcToken : "0";
-    const userType = isRealMsa ? "msa" : "mojang";
+    if (!user || (!config.token && !config.refreshToken)) {
+      throw new Error("Authentication required: Please log in with your Lampas Portal account before playing.");
+    }
 
     const log = (level: "INFO" | "WARN" | "ERROR", message: string) => {
       onLog({
@@ -40,9 +44,32 @@ export class GameRunner {
       });
     };
 
+    log("INFO", "Refreshing authentication tokens via Lampas Portal...");
+    const refreshed = await LauncherAuth.refreshSession(config.portalUrl);
+    if (!refreshed.valid || !refreshed.user) {
+      throw new Error("Session expired or invalid: Please log in with your Lampas Portal account.");
+    }
+
+    const activeUser = refreshed.user;
+    const activeConfig = ConfigManager.get();
+    const username = activeUser.minecraftUsername || activeUser.name;
+    if (!username) {
+      throw new Error("Authentication error: No Minecraft username found in your profile.");
+    }
+
+    const gameDir = activeConfig.gameDir;
+    const ramGb = activeConfig.allocatedRamGb || 4;
+    const rawUuid = activeUser.minecraftUuid && activeUser.minecraftUuid !== "00000000-0000-0000-0000-000000000000"
+      ? activeUser.minecraftUuid.replace(/-/g, "")
+      : generateOfflineUuid(username);
+    const mcToken = activeUser.minecraftAccessToken || activeConfig.minecraftAccessToken;
+    const isRealMsa = !!(mcToken && mcToken.startsWith("ey") && mcToken.length > 50);
+    const token = isRealMsa ? mcToken : "0";
+    const userType = isRealMsa ? "msa" : "legacy";
+
     log("INFO", `Preparing Standalone Minecraft + Fabric Environment (Java 25)...`);
     log("INFO", `Game Directory: ${gameDir}`);
-    log("INFO", `Player: ${username} (UUID: ${uuid}, Auth: ${isRealMsa ? "Microsoft Services" : "Lampas Protocol / Offline"})`);
+    log("INFO", `Player: ${username} (UUID: ${rawUuid}, Auth: ${isRealMsa ? "Microsoft Services" : "Lampas Protocol"})`);
 
     // 1. Ensure OpenJDK 25 Runtime
     const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg));
@@ -68,6 +95,7 @@ export class GameRunner {
       "-XX:+UnlockExperimentalVMOptions",
       "-XX:+DisableExplicitGC",
       "-XX:+AlwaysPreTouch",
+      "-Dfabric.disableTelemetry=true",
       `-Djava.library.path=${path.join(gameDir, "natives")}`,
       `-Dminecraft.applet.TargetDirectory=${gameDir}`,
       "-cp",
@@ -84,13 +112,15 @@ export class GameRunner {
       "--assetIndex",
       assetIndex,
       "--uuid",
-      uuid.replace(/-/g, ""),
+      rawUuid,
       "--accessToken",
       token,
       "--userType",
       userType,
       "--versionType",
       "release",
+      "--userProperties",
+      "{}",
     ];
 
     log("INFO", `Starting Minecraft client via KnotClient (${mainClass})...`);

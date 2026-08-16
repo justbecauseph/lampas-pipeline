@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld("lampas", {
     logout: (): Promise<void> => ipcRenderer.invoke("auth:logout"),
     verify: (portalUrl?: string): Promise<{ valid: boolean; user?: UserProfile }> =>
       ipcRenderer.invoke("auth:verify", portalUrl),
+    refresh: (portalUrl?: string): Promise<{ valid: boolean; user?: UserProfile; token?: string }> =>
+      ipcRenderer.invoke("auth:refresh", portalUrl),
   },
   sync: {
     start: (): Promise<{ success: boolean; version: string; packName: string }> =>

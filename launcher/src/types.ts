@@ -19,8 +19,8 @@ export interface LauncherConfig {
   gameDir: string;
   javaPath?: string;
   token?: string;
+  refreshToken?: string;
   minecraftAccessToken?: string;
-  offlineUsername?: string;
 }
 
 export interface SyncProgress {

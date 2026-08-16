@@ -36,6 +36,9 @@ export class LauncherSync {
     onProgress: (progress: SyncProgress) => void
   ): Promise<{ success: boolean; version: string; packName: string }> {
     const config = ConfigManager.get();
+    if (!config.token) {
+      throw new Error("Authentication required: Please log in with your Lampas Portal account.");
+    }
     const portalUrl = (config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
     const channel = config.selectedChannel || "stable";
     const gameDir = config.gameDir;

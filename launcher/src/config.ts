@@ -56,7 +56,13 @@ export class ConfigManager {
   static set(newConfig: Partial<LauncherConfig>): LauncherConfig {
     this.initPath();
     const current = this.get();
-    this.cachedConfig = { ...current, ...newConfig };
+    const updated = { ...current, ...newConfig };
+    for (const key of Object.keys(updated) as Array<keyof LauncherConfig>) {
+      if (updated[key] === undefined) {
+        delete updated[key];
+      }
+    }
+    this.cachedConfig = updated;
     fs.writeFileSync(this.configPath, JSON.stringify(this.cachedConfig, null, 2), "utf-8");
     return this.cachedConfig;
   }

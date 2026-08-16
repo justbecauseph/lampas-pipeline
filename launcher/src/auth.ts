@@ -82,8 +82,8 @@ export class LauncherAuth {
             const json = await resp.json();
             ConfigManager.set({
               token: json.token,
-              minecraftAccessToken: json.user?.minecraftAccessToken,
-              offlineUsername: json.user?.minecraftUsername || json.user?.name,
+              refreshToken: json.refreshToken || undefined,
+              minecraftAccessToken: json.user?.minecraftAccessToken || json.minecraftAccessToken,
             });
 
             resolve({
@@ -112,9 +112,58 @@ export class LauncherAuth {
     });
   }
 
+  static async refreshSession(portalUrlOverride?: string): Promise<{ valid: boolean; user?: UserProfile; token?: string }> {
+    const config = ConfigManager.get();
+    if (!config.token && !config.refreshToken) {
+      return { valid: false };
+    }
+
+    const portalUrl = (portalUrlOverride || config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+
+    // 1. Attempt token refresh via /api/v1/auth/refresh
+    try {
+      const refreshUrl = `${portalUrl}/api/v1/auth/refresh`;
+      const resp = await fetch(refreshUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}),
+        },
+        body: JSON.stringify({
+          refreshToken: config.refreshToken,
+          token: config.token,
+        }),
+      });
+
+      if (resp.ok) {
+        const json = await resp.json();
+        const newToken = json.token || config.token;
+        const newRefreshToken = json.refreshToken || config.refreshToken;
+        const newMcToken = json.user?.minecraftAccessToken || json.minecraftAccessToken || config.minecraftAccessToken;
+
+        ConfigManager.set({
+          token: newToken,
+          refreshToken: newRefreshToken,
+          minecraftAccessToken: newMcToken,
+        });
+
+        return {
+          valid: true,
+          token: newToken,
+          user: json.user,
+        };
+      }
+    } catch {
+      // Fall through to verifySession
+    }
+
+    // 2. Fallback to /api/v1/auth/verify
+    return this.verifySession(portalUrl);
+  }
+
   static async verifySession(portalUrlOverride?: string): Promise<{ valid: boolean; user?: UserProfile }> {
     const config = ConfigManager.get();
-    if (!config.token) {
+    if (!config.token && !config.refreshToken) {
       return { valid: false };
     }
 
@@ -130,7 +179,28 @@ export class LauncherAuth {
       });
 
       if (!resp.ok) {
-        ConfigManager.set({ token: undefined });
+        // If 401 and refresh token exists, attempt refresh
+        if (resp.status === 401 && config.refreshToken) {
+          try {
+            const refreshUrl = `${portalUrl}/api/v1/auth/refresh`;
+            const refreshResp = await fetch(refreshUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ refreshToken: config.refreshToken }),
+            });
+            if (refreshResp.ok) {
+              const json = await refreshResp.json();
+              ConfigManager.set({
+                token: json.token,
+                refreshToken: json.refreshToken || config.refreshToken,
+                minecraftAccessToken: json.user?.minecraftAccessToken || json.minecraftAccessToken,
+              });
+              return { valid: true, user: json.user };
+            }
+          } catch {}
+        }
+
+        ConfigManager.set({ token: undefined, refreshToken: undefined, minecraftAccessToken: undefined });
         return { valid: false };
       }
 
@@ -138,7 +208,6 @@ export class LauncherAuth {
       if (json.user?.minecraftAccessToken) {
         ConfigManager.set({
           minecraftAccessToken: json.user.minecraftAccessToken,
-          offlineUsername: json.user.minecraftUsername || json.user.name,
         });
       }
       return {
@@ -146,12 +215,11 @@ export class LauncherAuth {
         user: json.user,
       };
     } catch {
-      // In offline mode, keep token if exists
-      return { valid: true };
+      return { valid: false };
     }
   }
 
   static logout() {
-    ConfigManager.set({ token: undefined });
+    ConfigManager.set({ token: undefined, refreshToken: undefined, minecraftAccessToken: undefined });
   }
 }

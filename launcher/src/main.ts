@@ -66,6 +66,7 @@ app.whenReady().then(() => {
   ipcMain.handle("auth:login", (_, portalUrl) => LauncherAuth.loginWithPortal(portalUrl));
   ipcMain.handle("auth:logout", () => LauncherAuth.logout());
   ipcMain.handle("auth:verify", (_, portalUrl) => LauncherAuth.verifySession(portalUrl));
+  ipcMain.handle("auth:refresh", (_, portalUrl) => LauncherAuth.refreshSession(portalUrl));
 
   // IPC Handlers: Sync & Repair
   ipcMain.handle("sync:start", async () => {

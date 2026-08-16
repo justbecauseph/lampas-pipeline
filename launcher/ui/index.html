@@ -334,11 +334,11 @@
             <span id="console-count" class="badge">0 lines</span>
           </div>
           <div class="flex items-center gap-3">
-            <button id="btn-console-stop" class="btn-stop hidden" title="Force Terminate Game">
+            <button id="btn-console-stop" class="btn-danger-sm hidden" title="Force Terminate Game">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-              <span>STOP GAME</span>
+              <span>Stop Game</span>
             </button>
             <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
               <input id="console-autoscroll" type="checkbox" checked class="accent-cyan-500 cursor-pointer">
@@ -410,12 +410,6 @@
               <label for="setting-portal" class="text-xs font-bold text-slate-300">Portal API Endpoint</label>
               <input id="setting-portal" type="text" placeholder="http://localhost:3000" class="input-field">
               <p class="text-[11px] text-slate-500">The remote portal URL for channel pointer queries and OAuth authentication.</p>
-            </div>
-
-            <div class="space-y-2 pt-2 border-t border-slate-800/80">
-              <label for="setting-offline-user" class="text-xs font-bold text-slate-300">Offline Player Username</label>
-              <input id="setting-offline-user" type="text" placeholder="LampasPlayer" class="input-field">
-              <p class="text-[11px] text-slate-500">Used when launching in offline or local mode without Portal session.</p>
             </div>
           </div>
 

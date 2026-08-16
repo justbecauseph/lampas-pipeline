@@ -110,7 +110,6 @@ const settingRamVal = document.getElementById("setting-ram-val");
 const settingGamedirInput = document.getElementById("setting-gamedir-input");
 const btnSettingsOpenDir = document.getElementById("btn-settings-open-dir");
 const settingPortal = document.getElementById("setting-portal");
-const settingOfflineUser = document.getElementById("setting-offline-user");
 const btnRepairSettings = document.getElementById("btn-repair-settings");
 const btnSaveSettings = document.getElementById("btn-save-settings");
 
@@ -254,7 +253,7 @@ window.lampas.game.onExit((code) => {
   if (btnPlay) {
     btnPlay.disabled = false;
   }
-  if (btnPlayText) btnPlayText.innerText = "PLAY";
+  if (btnPlayText) btnPlayText.innerText = currentUser ? "PLAY" : "LOG IN TO PLAY";
   if (btnPlaySpinner) btnPlaySpinner.classList.add("hidden");
   if (btnStop) btnStop.classList.add("hidden");
   if (progressContainer) progressContainer.classList.add("hidden");
@@ -287,6 +286,10 @@ function updateUserUI(user) {
       userAvatar.innerText = displayName[0]?.toUpperCase() || "P";
     }
 
+    if (btnPlayText && !isLaunching) {
+      btnPlayText.innerText = "PLAY";
+    }
+
     // Channel gating based on user permissions
     const allowed = user.allowedChannels || ["stable"];
     channelBtns.forEach((btn) => {
@@ -297,9 +300,18 @@ function updateUserUI(user) {
     if (btnLogin) btnLogin.classList.remove("hidden");
     if (userCard) userCard.classList.add("hidden");
 
+    if (btnPlayText && !isLaunching) {
+      btnPlayText.innerText = "LOG IN TO PLAY";
+    }
+
     channelBtns.forEach((btn) => {
       btn.disabled = btn.dataset.channel !== "stable";
     });
+
+    const activeChannelBtn = document.querySelector(".channel-btn.active");
+    if (activeChannelBtn && activeChannelBtn.dataset.channel !== "stable") {
+      applyChannel("stable");
+    }
   }
 }
 
@@ -335,21 +347,14 @@ if (btnLogin) {
 
 if (btnLogout) {
   btnLogout.onclick = async () => {
-    await window.lampas.auth.logout();
-    if (currentConfig?.offlineUsername) {
-      updateUserUI({
-        id: "offline",
-        name: currentConfig.offlineUsername,
-        minecraftUsername: currentConfig.offlineUsername,
-        isAdmin: false,
-        isTech: false,
-        roles: ["player"],
-        allowedChannels: ["stable"],
-      });
-    } else {
+    try {
+      await window.lampas.auth.logout();
+      currentConfig = await window.lampas.config.get();
       updateUserUI(null);
+      showToast("Logged out successfully.", "info");
+    } catch (err) {
+      showToast(`Logout failed: ${err.message}`, "error");
     }
-    showToast("Logged out successfully.", "info");
   };
 }
 
@@ -401,25 +406,11 @@ if (btnSaveSettings) {
     try {
       const ram = parseInt(ramSlider?.value || "4", 10);
       const portalUrl = settingPortal?.value?.trim() || "http://localhost:3000";
-      const offlineUsername = settingOfflineUser?.value?.trim() || undefined;
 
       currentConfig = await window.lampas.config.set({
         allocatedRamGb: ram,
         portalUrl,
-        offlineUsername,
       });
-
-      if (!currentUser && offlineUsername) {
-        updateUserUI({
-          id: "offline",
-          name: offlineUsername,
-          minecraftUsername: offlineUsername,
-          isAdmin: false,
-          isTech: false,
-          roles: ["player"],
-          allowedChannels: ["stable"],
-        });
-      }
 
       showToast("Settings saved successfully!", "success");
     } catch (err) {
@@ -437,12 +428,28 @@ async function handleRepair() {
     return;
   }
 
+  if (!currentUser) {
+    showToast("Authentication required: Please log in with Lampas Portal before repairing files.", "warning", 4000);
+    if (btnLogin) btnLogin.click();
+    return;
+  }
+
   try {
     isLaunching = true;
     setConsoleStatus("repairing", "REPAIRING...");
     if (btnRepairPack) btnRepairPack.disabled = true;
     if (btnRepairSettings) btnRepairSettings.disabled = true;
     if (btnPlay) btnPlay.disabled = true;
+
+    // Refresh token with portal
+    const session = await window.lampas.auth.refresh(currentConfig?.portalUrl);
+    if (!session?.valid || !session?.user) {
+      updateUserUI(null);
+      showToast("Portal session expired. Please log in again.", "warning", 4000);
+      if (btnLogin) btnLogin.click();
+      return;
+    }
+    updateUserUI(session.user);
 
     if (progressContainer) progressContainer.classList.remove("hidden");
     if (progressFill) progressFill.style.width = "0%";
@@ -503,7 +510,8 @@ async function handleStopGame() {
   try {
     if (btnStop) btnStop.disabled = true;
     if (btnConsoleStop) btnConsoleStop.disabled = true;
-    showToast("Terminating Minecraft process...", "info");
+    appendLog("WARN", "Termination signal sent to Minecraft process...");
+    showToast("Terminating Minecraft process...", "info", 2000);
     await window.lampas.game.kill();
   } catch (err) {
     showToast(`Failed to terminate game: ${err.message}`, "error");
@@ -527,16 +535,36 @@ if (btnPlay) {
       return;
     }
 
+    // Require authentication before playing
+    if (!currentUser) {
+      showToast("Authentication required: Please log in with Lampas Portal to play.", "warning", 4000);
+      if (btnLogin) {
+        btnLogin.click();
+      }
+      return;
+    }
+
     // Navigate to Console and Logs tab on play
     switchTab(navConsole, tabConsole);
 
     try {
       isLaunching = true;
       btnPlay.disabled = true;
-      setConsoleStatus("syncing", "CONNECTING...");
-      if (btnPlayText) btnPlayText.innerText = "CHECKING...";
+      setConsoleStatus("syncing", "VERIFYING TOKEN...");
+      if (btnPlayText) btnPlayText.innerText = "VERIFYING...";
       if (btnPlaySpinner) btnPlaySpinner.classList.remove("hidden");
       if (btnStop) btnStop.classList.remove("hidden");
+
+      // 1. Refresh & ensure fresh token from Portal
+      const session = await window.lampas.auth.refresh(currentConfig?.portalUrl);
+      if (!session?.valid || !session?.user) {
+        isLaunching = false;
+        updateUserUI(null);
+        showToast("Portal session expired. Please log in again.", "warning", 5000);
+        if (btnLogin) btnLogin.click();
+        return;
+      }
+      updateUserUI(session.user);
 
       if (progressContainer) {
         progressContainer.classList.remove("hidden");
@@ -583,7 +611,7 @@ if (btnPlay) {
       isLaunching = false;
       setConsoleStatus("idle", "ERROR");
       if (btnPlay) btnPlay.disabled = false;
-      if (btnPlayText) btnPlayText.innerText = "PLAY";
+      if (btnPlayText) btnPlayText.innerText = currentUser ? "PLAY" : "LOG IN TO PLAY";
       if (btnPlaySpinner) btnPlaySpinner.classList.add("hidden");
       if (btnStop) btnStop.classList.add("hidden");
       if (progressContainer) progressContainer.classList.add("hidden");
@@ -617,47 +645,20 @@ async function init() {
       settingPortal.value = currentConfig.portalUrl || "http://localhost:3000";
     }
 
-    // Offline username setting
-    if (settingOfflineUser && currentConfig.offlineUsername) {
-      settingOfflineUser.value = currentConfig.offlineUsername;
-    }
-
     // Selected Channel
     const selChannel = currentConfig.selectedChannel || "stable";
     applyChannel(selChannel);
 
-    // Verify session
+    // Verify & refresh session
     try {
-      const authCheck = await window.lampas.auth.verify(currentConfig.portalUrl);
-      if (authCheck.valid && authCheck.user) {
+      const authCheck = await window.lampas.auth.refresh(currentConfig.portalUrl);
+      if (authCheck?.valid && authCheck?.user) {
         updateUserUI(authCheck.user);
-      } else if (currentConfig.offlineUsername) {
-        updateUserUI({
-          id: "offline",
-          name: currentConfig.offlineUsername,
-          minecraftUsername: currentConfig.offlineUsername,
-          isAdmin: false,
-          isTech: false,
-          roles: ["player"],
-          allowedChannels: ["stable"],
-        });
       } else {
         updateUserUI(null);
       }
     } catch {
-      if (currentConfig.offlineUsername) {
-        updateUserUI({
-          id: "offline",
-          name: currentConfig.offlineUsername,
-          minecraftUsername: currentConfig.offlineUsername,
-          isAdmin: false,
-          isTech: false,
-          roles: ["player"],
-          allowedChannels: ["stable"],
-        });
-      } else {
-        updateUserUI(null);
-      }
+      updateUserUI(null);
     }
 
     // Load rich mod catalog
