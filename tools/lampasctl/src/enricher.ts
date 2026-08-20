@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { readJsonFile, writeJsonFile } from "./utils";
+import { readJsonFile, withAbortTimeout, writeJsonFile } from "./utils";
 import type { PackLock, ResolvedArtifact } from "./types";
 
 export interface EnrichOptions {
@@ -41,19 +41,21 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
     const chunk = projectIds.slice(i, i + chunkSize);
     try {
       const url = `https://api.modrinth.com/v2/projects?ids=${encodeURIComponent(JSON.stringify(chunk))}`;
-      const res = await fetch(url, {
-        headers: {
-          "User-Agent": "Lampas-Pipeline/2.0 (enricher)",
-          Accept: "application/json",
-        },
+      const projects = await withAbortTimeout(`fetching metadata for Modrinth project batch`, async (signal) => {
+        const res = await fetch(url, {
+          signal,
+          headers: {
+            "User-Agent": "Lampas-Pipeline/2.0 (enricher)",
+            Accept: "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`Batch query returned status ${res.status}`);
+        }
+
+        return await res.json();
       });
-
-      if (!res.ok) {
-        console.warn(`[Enricher] Warning: Batch query returned status ${res.status}`);
-        continue;
-      }
-
-      const projects = await res.json();
       if (Array.isArray(projects)) {
         for (const proj of projects) {
           const keys = modrinthMap[proj.id] || modrinthMap[proj.slug] || [];

@@ -1,10 +1,11 @@
-import { computeBufferHashes, computeFileHashes, type FileHashes } from "./utils";
+import { computeBufferHashes, computeFileHashes, withAbortTimeout, type FileHashes } from "./utils";
 import type { ModDefinition, ResolvedArtifact, Side } from "./types";
 import * as path from "node:path";
 import * as fs from "node:fs";
 
 const MODRINTH_API = "https://api.modrinth.com/v2";
 const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.gg)";
+const FETCH_ATTEMPTS = 2;
 
 export interface ModrinthVersionFile {
   hashes: {
@@ -38,29 +39,35 @@ export interface ModrinthProject {
 
 export class ModrinthClient {
   private static async fetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
-    try {
-      const res = await fetch(url, {
-        ...init,
-        headers: {
-          "User-Agent": USER_AGENT,
-          Accept: "application/json",
-          ...(init?.headers || {}),
-        },
-      });
+    for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
+      try {
+        return await withAbortTimeout(`fetching Modrinth metadata from ${url}`, async (signal) => {
+          const res = await fetch(url, {
+            ...init,
+            signal,
+            headers: {
+              "User-Agent": USER_AGENT,
+              Accept: "application/json",
+              ...(init?.headers || {}),
+            },
+          });
 
-      if (res.status === 404) {
-        return null;
+          if (res.status === 404) {
+            return null;
+          }
+
+          if (!res.ok) {
+            throw new Error(`Modrinth API error ${res.status}: ${res.statusText} at ${url}`);
+          }
+
+          return (await res.json()) as T;
+        });
+      } catch (err: any) {
+        console.warn(`[Modrinth] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${err.message}`);
       }
-
-      if (!res.ok) {
-        throw new Error(`Modrinth API error ${res.status}: ${res.statusText} at ${url}`);
-      }
-
-      return (await res.json()) as T;
-    } catch (err: any) {
-      console.warn(`[Modrinth] fetch error for ${url}: ${err.message}`);
-      return null;
     }
+
+    return null;
   }
 
   static async getVersionByHash(hash: string, algorithm: "sha1" | "sha512" = "sha512"): Promise<ModrinthVersion | null> {
@@ -116,12 +123,38 @@ export class ArtifactResolver {
       // Compute sha256 if missing from response
       let sha256 = primaryFile.hashes.sha256;
       if (!sha256) {
-        // If Modrinth didn't supply sha256, download header or calculate during resolve
-        const resp = await fetch(primaryFile.url, { headers: { "User-Agent": USER_AGENT } });
-        if (!resp.ok) {
-          throw new Error(`Failed to download binary to calculate sha256 for ${modId}`);
+        // Modrinth does not always supply sha256, so download and hash the complete artifact.
+        let buf: Buffer | undefined;
+        let lastError: unknown;
+
+        for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
+          try {
+            buf = await withAbortTimeout(`downloading '${modId}' to calculate sha256`, async (signal) => {
+              const resp = await fetch(primaryFile.url, {
+                signal,
+                headers: { "User-Agent": USER_AGENT },
+              });
+              if (!resp.ok) {
+                throw new Error(`Artifact download returned ${resp.status}: ${resp.statusText}`);
+              }
+              return Buffer.from(await resp.arrayBuffer());
+            });
+            break;
+          } catch (err: any) {
+            lastError = err;
+            console.warn(
+              `[Resolver] Download attempt ${attempt}/${FETCH_ATTEMPTS} failed for '${modId}': ${err.message}`
+            );
+          }
         }
-        const buf = Buffer.from(await resp.arrayBuffer());
+
+        if (!buf) {
+          throw new Error(
+            `Failed to download binary to calculate sha256 for '${modId}' after ${FETCH_ATTEMPTS} attempts`,
+            { cause: lastError }
+          );
+        }
+
         const hashes = computeBufferHashes(buf);
         sha256 = hashes.sha256;
       }

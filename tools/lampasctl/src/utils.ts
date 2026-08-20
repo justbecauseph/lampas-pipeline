@@ -4,6 +4,28 @@ import * as path from "node:path";
 import * as fflate from "fflate";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
+export const DEFAULT_OPERATION_TIMEOUT_MS = 30_000;
+
+export async function withAbortTimeout<T>(
+  description: string,
+  operation: (signal: AbortSignal) => Promise<T>,
+  timeoutMs = DEFAULT_OPERATION_TIMEOUT_MS
+): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await operation(controller.signal);
+  } catch (err) {
+    if (controller.signal.aborted) {
+      throw new Error(`Timed out after ${timeoutMs}ms while ${description}`, { cause: err });
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export interface FileHashes {
   sha1: string;
   sha256: string;
