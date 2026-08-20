@@ -53,9 +53,10 @@ describe("update checker output", () => {
 
       expect(updates).toHaveLength(1);
       expect(logs).toContain("     Mod ID: example-mod");
+      expect(logs).toContain("     Project ID: example-project");
       expect(logs).toContain("     Version: 1.0.0 -> 2.0.0");
       expect(logs).toContain("     Updated version: https://modrinth.com/mod/example-project/version/new-version-id");
-      expect(markdown).toContain("| **Example Mod** | `example-mod` | **1.0.0** → [**2.0.0**](https://modrinth.com/mod/example-project/version/new-version-id) |");
+      expect(markdown).toContain("| **Example Mod** | `example-mod` | `example-project` | **1.0.0** → [**2.0.0**](https://modrinth.com/mod/example-project/version/new-version-id) |");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
