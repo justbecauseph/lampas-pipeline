@@ -210,8 +210,8 @@ async function main() {
       }
 
       case "publish": {
-        const portalUrl = flags.portal || "http://localhost:3000";
-        const publishSecret = flags.secret || process.env.PACK_PUBLISH_SECRET || "lampas-secret-key";
+        const portalUrl = flags.portal || process.env.PACK_PORTAL_URL || "";
+        const publishSecret = flags.secret || process.env.PACK_PUBLISH_SECRET || "";
         const manifestDir = path.resolve(flags.manifest || path.join(rootDir, "manifest"));
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
         const channel = (flags.channel as "dev" | "beta" | "stable") || "stable";
