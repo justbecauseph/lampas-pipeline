@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseTomlFile, writeJsonFile } from "./utils";
-import { ArtifactResolver } from "./providers";
+import { ArtifactResolver, ModrinthClient } from "./providers";
 import { enrichPackLock } from "./enricher";
 import type { ModDefinition, PackConfig, PackLock, ResolvedArtifact } from "./types";
 
@@ -73,25 +73,37 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   const artifacts: Record<string, ResolvedArtifact> = {};
   const baseDir = path.dirname(options.packDir);
 
+  const parsedDefinitions = allDefinitions.map((item) => {
+    const def = parseTomlFile<ModDefinition>(item.filePath);
+    if (!def.type) def.type = item.defaultType;
+    if ((item.defaultType === "shader" || item.defaultType === "resourcepack") && !def.side) def.side = "client";
+    return { item, def };
+  });
+
+  const versionIds = [...new Set(parsedDefinitions.flatMap(({ def }) =>
+    def.provider.type === "modrinth" ? [def.provider.version_id] : []
+  ))];
+  const versionChunks: string[][] = [];
+  for (let i = 0; i < versionIds.length; i += 80) versionChunks.push(versionIds.slice(i, i + 80));
+  const versionResponses = await Promise.all(versionChunks.map((chunk) => ModrinthClient.getVersions(chunk)));
+  const versionsById = new Map(versionResponses.flat().map((version) => [version.id, version]));
+
   // Parallel resolution with concurrency limit
   const concurrency = 10;
-  const queue = [...allDefinitions];
+  let nextDefinition = 0;
 
   async function worker() {
-    while (queue.length > 0) {
-      const item = queue.shift();
-      if (!item) break;
-
-      const def = parseTomlFile<ModDefinition>(item.filePath);
-      if (!def.type) {
-        def.type = item.defaultType;
-      }
-      if (item.defaultType === "shader" || item.defaultType === "resourcepack") {
-        if (!def.side) def.side = "client";
-      }
+    while (nextDefinition < parsedDefinitions.length) {
+      const { item, def } = parsedDefinitions[nextDefinition++];
 
       try {
-        const artifact = await ArtifactResolver.resolveModDefinition(item.id, def, baseDir);
+        const prefetchedVersion = def.provider.type === "modrinth"
+          ? versionsById.get(def.provider.version_id)
+          : undefined;
+        if (def.provider.type === "modrinth" && !prefetchedVersion) {
+          throw new Error(`Modrinth version '${def.provider.version_id}' was not returned by the bulk API.`);
+        }
+        const artifact = await ArtifactResolver.resolveModDefinition(item.id, def, baseDir, prefetchedVersion);
         artifacts[item.id] = artifact;
         console.log(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);
       } catch (err: any) {

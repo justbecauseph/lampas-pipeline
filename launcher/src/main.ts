@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
 import * as path from "node:path";
 import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
 import { LauncherSync } from "./sync";
-import { GameRunner } from "./game-runner";
+import { GameRunner, parseJavaArgs } from "./game-runner";
+import { ClientModManager } from "./client-mods";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
@@ -16,7 +17,7 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     titleBarStyle: "hidden",
-    backgroundColor: "#030712",
+    backgroundColor: "#0b0f0e",
     show: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -54,13 +55,17 @@ app.whenReady().then(() => {
   // IPC Handlers: Utils
   ipcMain.handle("utils:openPath", async (_, targetPath: string) => {
     if (targetPath) {
-      await shell.openPath(targetPath);
+      if (/^https?:\/\//i.test(targetPath)) await shell.openExternal(targetPath);
+      else await shell.openPath(targetPath);
     }
   });
 
   // IPC Handlers: Config
   ipcMain.handle("config:get", () => ConfigManager.get());
-  ipcMain.handle("config:set", (_, newConfig) => ConfigManager.set(newConfig));
+  ipcMain.handle("config:set", (_, newConfig) => {
+    if (typeof newConfig?.javaArgs === "string") parseJavaArgs(newConfig.javaArgs);
+    return ConfigManager.set(newConfig);
+  });
 
   // IPC Handlers: Auth
   ipcMain.handle("auth:login", (_, portalUrl) => LauncherAuth.loginWithPortal(portalUrl));
@@ -81,6 +86,21 @@ app.whenReady().then(() => {
     );
   });
   ipcMain.handle("sync:getModCatalog", () => LauncherSync.getModCatalog());
+
+  ipcMain.handle("mods:browseAndAdd", async () => {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      title: "Add local client mods",
+      filters: [{ name: "Minecraft mods", extensions: ["jar"] }],
+      properties: ["openFile", "multiSelections"],
+    });
+    return result.canceled ? ClientModManager.list() : ClientModManager.add(result.filePaths);
+  });
+  ipcMain.handle("mods:addPaths", (_, paths: string[]) => ClientModManager.add(paths));
+  ipcMain.handle("mods:setOfficialEnabled", (_, id: string, enabled: boolean) =>
+    ClientModManager.setOfficialEnabled(id, enabled));
+  ipcMain.handle("mods:setCustomEnabled", (_, filename: string, enabled: boolean) =>
+    ClientModManager.setEnabled(filename, enabled));
+  ipcMain.handle("mods:removeCustom", (_, filename: string) => ClientModManager.remove(filename));
 
   // IPC Handlers: Game
   ipcMain.handle("game:launch", async (_, user: UserProfile | null) => {

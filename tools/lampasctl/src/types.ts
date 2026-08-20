@@ -165,6 +165,8 @@ export interface InstallationState {
       sha256: string;
       size: number;
       policy: FilePolicy;
+      mtimeMs?: number;
+      verifiedAt?: string;
     }
   >;
 }

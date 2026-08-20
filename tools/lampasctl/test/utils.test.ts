@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { withAbortTimeout } from "../src/utils";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { createHash } from "node:crypto";
+import { computeFileHashesStreaming, downloadFileVerified, withAbortTimeout } from "../src/utils";
 
 describe("withAbortTimeout", () => {
   test("aborts an operation whose response body never completes", async () => {
@@ -23,5 +27,38 @@ describe("withAbortTimeout", () => {
 
     await expect(operation).rejects.toThrow("Timed out after 10ms while reading a test response body");
     expect(wasAborted).toBe(true);
+  });
+});
+
+describe("streaming file utilities", () => {
+  test("calculates all hashes in one streamed pass", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-hash-"));
+    const file = path.join(dir, "fixture.bin");
+    const content = Buffer.alloc(1024 * 1024, 0x5a);
+    fs.writeFileSync(file, content);
+    try {
+      const result = await computeFileHashesStreaming(file);
+      expect(result.size).toBe(content.length);
+      expect(result.sha256).toBe(createHash("sha256").update(content).digest("hex"));
+      expect(result.sha512).toBe(createHash("sha512").update(content).digest("hex"));
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("does not promote a hash-mismatched download", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-download-"));
+    const destination = path.join(dir, "blob");
+    try {
+      await expect(downloadFileVerified(
+        "data:application/octet-stream;base64,Y29ycnVwdA==",
+        destination,
+        { expectedHash: "0".repeat(64), attempts: 1 }
+      )).rejects.toThrow("Failed to download");
+      expect(fs.existsSync(destination)).toBe(false);
+      expect(fs.readdirSync(dir).some((name) => name.includes(".partial."))).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

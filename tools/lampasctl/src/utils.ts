@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { Readable, Transform } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import * as fflate from "fflate";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
@@ -41,6 +43,147 @@ export function computeFileHashes(filePath: string): FileHashes {
     sha512: createHash("sha512").update(buffer).digest("hex"),
     size: buffer.length,
   };
+}
+
+export async function computeFileHashesStreaming(filePath: string): Promise<FileHashes> {
+  const hashes = {
+    sha1: createHash("sha1"),
+    sha256: createHash("sha256"),
+    sha512: createHash("sha512"),
+  };
+  let size = 0;
+
+  for await (const chunk of fs.createReadStream(filePath)) {
+    const buffer = chunk as Buffer;
+    size += buffer.length;
+    hashes.sha1.update(buffer);
+    hashes.sha256.update(buffer);
+    hashes.sha512.update(buffer);
+  }
+
+  return {
+    sha1: hashes.sha1.digest("hex"),
+    sha256: hashes.sha256.digest("hex"),
+    sha512: hashes.sha512.digest("hex"),
+    size,
+  };
+}
+
+export interface VerifiedTransferOptions {
+  expectedHash: string;
+  algorithm?: "sha1" | "sha256";
+  expectedSize?: number;
+  headers?: Record<string, string>;
+  attempts?: number;
+  timeoutMs?: number;
+}
+
+function temporarySibling(filePath: string): string {
+  return `${filePath}.partial.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}`;
+}
+
+async function replaceFile(tempPath: string, destination: string): Promise<void> {
+  try {
+    await fs.promises.rename(tempPath, destination);
+  } catch (error: any) {
+    if (!fs.existsSync(destination) || (error?.code !== "EEXIST" && error?.code !== "EPERM")) throw error;
+    const backupPath = temporarySibling(`${destination}.previous`);
+    await fs.promises.rename(destination, backupPath);
+    try {
+      await fs.promises.rename(tempPath, destination);
+      await fs.promises.rm(backupPath, { force: true });
+    } catch (replacementError) {
+      await fs.promises.rename(backupPath, destination).catch(() => undefined);
+      throw replacementError;
+    }
+  }
+}
+
+async function verifyAndPromote(
+  source: NodeJS.ReadableStream,
+  destination: string,
+  options: VerifiedTransferOptions
+): Promise<number> {
+  ensureDir(path.dirname(destination));
+  const tempPath = temporarySibling(destination);
+  const algorithm = options.algorithm || "sha256";
+  const hash = createHash(algorithm);
+  let size = 0;
+  const hashingStream = new Transform({
+    transform(chunk: Buffer, _encoding, callback) {
+      size += chunk.length;
+      hash.update(chunk);
+      callback(null, chunk);
+    },
+  });
+
+  try {
+    await pipeline(source, hashingStream, fs.createWriteStream(tempPath, { flags: "wx" }));
+    const actualHash = hash.digest("hex");
+    if (actualHash !== options.expectedHash) {
+      throw new Error(`${algorithm.toUpperCase()} mismatch: expected ${options.expectedHash}, got ${actualHash}`);
+    }
+    if (options.expectedSize !== undefined && options.expectedSize > 0 && size !== options.expectedSize) {
+      throw new Error(`Size mismatch: expected ${options.expectedSize} bytes, got ${size}`);
+    }
+    await replaceFile(tempPath, destination);
+    return size;
+  } catch (error) {
+    await fs.promises.rm(tempPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
+}
+
+export async function copyFileVerified(
+  sourcePath: string,
+  destination: string,
+  options: VerifiedTransferOptions
+): Promise<number> {
+  return verifyAndPromote(fs.createReadStream(sourcePath), destination, options);
+}
+
+export async function downloadFileVerified(
+  url: string,
+  destination: string,
+  options: VerifiedTransferOptions
+): Promise<number> {
+  const attempts = options.attempts || 3;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await withAbortTimeout(
+        `downloading ${url}`,
+        async (signal) => {
+          const response = await fetch(url, { signal, headers: options.headers });
+          if (!response.ok || !response.body) {
+            throw new Error(`HTTP ${response.status} ${response.statusText}`);
+          }
+          return verifyAndPromote(Readable.fromWeb(response.body as any), destination, options);
+        },
+        options.timeoutMs
+      );
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** (attempt - 1)));
+      }
+    }
+  }
+
+  throw new Error(`Failed to download ${url} after ${attempts} attempts`, { cause: lastError });
+}
+
+export async function copyFileAtomic(sourcePath: string, destination: string): Promise<void> {
+  ensureDir(path.dirname(destination));
+  const tempPath = temporarySibling(destination);
+  try {
+    await fs.promises.copyFile(sourcePath, tempPath, fs.constants.COPYFILE_FICLONE);
+    await replaceFile(tempPath, destination);
+  } catch (error) {
+    await fs.promises.rm(tempPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 export function computeBufferHashes(buffer: Buffer | Uint8Array): FileHashes {

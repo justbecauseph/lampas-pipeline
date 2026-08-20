@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createHash } from "node:crypto";
 import { unzipSync } from "fflate";
+import { downloadVerified, hashFile } from "./file-transfer";
 import versionMeta262 from "./version-meta-26.2.json";
 
 interface MavenCoordinate {
@@ -33,11 +33,6 @@ function mavenToPath(coord: { group: string; artifact: string; version: string; 
   const groupPath = coord.group.replace(/\./g, "/");
   const fileSuffix = coord.classifier ? `-${coord.classifier}` : "";
   return `${groupPath}/${coord.artifact}/${coord.version}/${coord.artifact}-${coord.version}${fileSuffix}.jar`;
-}
-
-function computeFileSha1(filePath: string): string {
-  const buffer = fs.readFileSync(filePath);
-  return createHash("sha1").update(buffer).digest("hex");
 }
 
 function isLibraryAllowed(lib: MavenCoordinate): boolean {
@@ -73,30 +68,30 @@ const FABRIC_LOADER_LIBRARIES = [
 ];
 
 export class MinecraftBootstrap {
-  private static async downloadFile(url: string, destPath: string, expectedSha1?: string): Promise<Buffer> {
+  private static async ensureFile(
+    url: string,
+    destPath: string,
+    expectedSha1: string | undefined,
+    expectedSize: number | undefined,
+    verificationMode: "fast" | "full"
+  ): Promise<boolean> {
     if (fs.existsSync(destPath)) {
-      const existing = fs.readFileSync(destPath);
-      if (!expectedSha1 || createHash("sha1").update(existing).digest("hex") === expectedSha1) {
-        return existing;
+      const stat = fs.statSync(destPath);
+      if (!expectedSize || stat.size === expectedSize) {
+        if (verificationMode === "fast" || !expectedSha1 || await hashFile(destPath, "sha1") === expectedSha1) {
+          return false;
+        }
       }
     }
 
-    fs.mkdirSync(path.dirname(destPath), { recursive: true });
-    const resp = await fetch(url, { headers: { "User-Agent": "Lampas-Launcher/1.0" } });
-    if (!resp.ok) {
-      throw new Error(`Failed to download ${url} (${resp.status}): ${resp.statusText}`);
-    }
-
-    const buffer = Buffer.from(await resp.arrayBuffer());
-    if (expectedSha1) {
-      const actualSha1 = createHash("sha1").update(buffer).digest("hex");
-      if (actualSha1 !== expectedSha1) {
-        throw new Error(`SHA-1 mismatch for ${path.basename(destPath)}!\n  Expected: ${expectedSha1}\n  Got:      ${actualSha1}`);
-      }
-    }
-
-    fs.writeFileSync(destPath, buffer);
-    return buffer;
+    await fs.promises.rm(destPath, { force: true });
+    await downloadVerified(url, destPath, {
+      algorithm: "sha1",
+      expectedHash: expectedSha1,
+      expectedSize,
+      headers: { "User-Agent": "Lampas-Launcher/1.0" },
+    });
+    return true;
   }
 
   private static extractNatives(jarBuffer: Buffer, nativesDir: string): void {
@@ -122,7 +117,8 @@ export class MinecraftBootstrap {
     gameDir: string,
     mcVersion = "26.2",
     fabricVersion = "0.19.3",
-    onLog: (msg: string) => void
+    onLog: (msg: string) => void,
+    verificationMode: "fast" | "full" = "fast"
   ): Promise<{ classpath: string[]; mainClass: string; assetIndex: string }> {
     const librariesDir = path.join(gameDir, "libraries");
     const assetsDir = path.join(gameDir, "assets");
@@ -140,57 +136,80 @@ export class MinecraftBootstrap {
     const clientJar = versionMeta262.mainJar.downloads.artifact;
     const clientJarPath = path.join(versionsDir, `${mcVersion}-client.jar`);
     onLog(`[Bootstrap] Verifying Minecraft ${mcVersion} client JAR...`);
-    await this.downloadFile(clientJar.url, clientJarPath, clientJar.sha1);
+    await this.ensureFile(clientJar.url, clientJarPath, clientJar.sha1, clientJar.size, verificationMode);
 
     const classpath: string[] = [clientJarPath];
 
     // 2. Download Fabric Loader 0.19.3 & Intermediary 26.2
     onLog(`[Bootstrap] Verifying Fabric Loader & Intermediary...`);
-    for (const lib of FABRIC_LOADER_LIBRARIES) {
+    const fabricPaths = await Promise.all(FABRIC_LOADER_LIBRARIES.map(async (lib) => {
       const coord = parseMavenCoordinate(lib.name);
       const relPath = mavenToPath(coord);
       const destPath = path.join(librariesDir, relPath);
       const repoUrl = lib.url || "https://maven.fabricmc.net/";
       const downloadUrl = `${repoUrl.replace(/\/+$/, "")}/${relPath}`;
 
-      await this.downloadFile(downloadUrl, destPath);
-      classpath.push(destPath);
-    }
+      await this.ensureFile(downloadUrl, destPath, undefined, undefined, verificationMode);
+      return destPath;
+    }));
+    classpath.push(...fabricPaths);
 
     // 3. Download Mojang & LWJGL 3.4.1 Libraries (Fastutil, Gson, Guava, Log4j, LWJGL, etc.)
     const allLibs = (versionMeta262.libraries || []) as MavenCoordinate[];
     const allowedLibs = allLibs.filter(isLibraryAllowed);
     onLog(`[Bootstrap] Verifying ${allowedLibs.length} core game libraries (Mojang & LWJGL)...`);
 
-    for (const lib of allowedLibs) {
-      const coord = parseMavenCoordinate(lib.name);
-      const relPath = mavenToPath(coord);
-      const destPath = path.join(librariesDir, relPath);
+    const nativeArchives: Array<{ path: string; changed: boolean }> = [];
+    let nextLibrary = 0;
+    const libraryPaths = new Array<string>(allowedLibs.length);
+    async function libraryWorker() {
+      while (nextLibrary < allowedLibs.length) {
+        const index = nextLibrary++;
+        const lib = allowedLibs[index];
+        const coord = parseMavenCoordinate(lib.name);
+        const relPath = mavenToPath(coord);
+        const destPath = path.join(librariesDir, relPath);
 
-      let downloadUrl = lib.downloads?.artifact?.url;
-      let expectedSha1 = lib.downloads?.artifact?.sha1;
+        let downloadUrl = lib.downloads?.artifact?.url;
+        const expectedSha1 = lib.downloads?.artifact?.sha1;
 
-      if (!downloadUrl) {
-        const repoUrl = lib.url || "https://libraries.minecraft.net/";
-        downloadUrl = `${repoUrl.replace(/\/+$/, "")}/${relPath}`;
+        if (!downloadUrl) {
+          const repoUrl = lib.url || "https://libraries.minecraft.net/";
+          downloadUrl = `${repoUrl.replace(/\/+$/, "")}/${relPath}`;
+        }
+
+        const changed = await MinecraftBootstrap.ensureFile(
+          downloadUrl,
+          destPath,
+          expectedSha1,
+          lib.downloads?.artifact?.size,
+          verificationMode
+        );
+        libraryPaths[index] = destPath;
+
+        // Extract platform natives if this library is a native bundle
+        if (
+          coord.classifier?.includes("natives") ||
+          coord.artifact.includes("natives") ||
+          lib.name.includes("natives")
+        ) {
+          nativeArchives.push({ path: destPath, changed });
+        }
       }
+    }
+    await Promise.all(Array.from({ length: Math.min(8, allowedLibs.length) }, () => libraryWorker()));
+    classpath.push(...libraryPaths);
 
-      const buffer = await this.downloadFile(downloadUrl, destPath, expectedSha1);
-      classpath.push(destPath);
-
-      // Extract platform natives if this library is a native bundle
-      if (
-        coord.classifier?.includes("natives") ||
-        coord.artifact.includes("natives") ||
-        lib.name.includes("natives")
-      ) {
-        this.extractNatives(buffer, nativesDir);
-      }
+    const nativeMarker = path.join(gameDir, ".lampas", `natives-${mcVersion}-${process.platform}.complete`);
+    if (!fs.existsSync(nativeMarker) || nativeArchives.some((archive) => archive.changed)) {
+      for (const archive of nativeArchives) this.extractNatives(fs.readFileSync(archive.path), nativesDir);
+      fs.mkdirSync(path.dirname(nativeMarker), { recursive: true });
+      fs.writeFileSync(nativeMarker, new Date().toISOString(), "utf-8");
     }
 
     // 4. Download Asset Index & Ensure Asset Objects (Textures, Sounds, Panorama)
     const assetIndex = versionMeta262.assetIndex;
-    await this.ensureAssets(assetsDir, assetIndex, onLog);
+    await this.ensureAssets(assetsDir, assetIndex, onLog, verificationMode);
 
     const mainClass = "net.fabricmc.loader.impl.launch.knot.KnotClient";
 
@@ -204,7 +223,8 @@ export class MinecraftBootstrap {
   private static async ensureAssets(
     assetsDir: string,
     assetIndexMeta: { id: string; sha1: string; url: string; size: number },
-    onLog: (msg: string) => void
+    onLog: (msg: string) => void,
+    verificationMode: "fast" | "full"
   ): Promise<void> {
     const assetIndexDir = path.join(assetsDir, "indexes");
     const assetObjectsDir = path.join(assetsDir, "objects");
@@ -215,19 +235,25 @@ export class MinecraftBootstrap {
 
     if (!fs.existsSync(assetIndexPath)) {
       onLog(`[Bootstrap] Downloading Minecraft asset index (${assetIndexMeta.id})...`);
-      await this.downloadFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1);
+      await this.ensureFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1, assetIndexMeta.size, "full");
     }
 
     let indexData: any = {};
     try {
       indexData = JSON.parse(fs.readFileSync(assetIndexPath, "utf-8"));
     } catch {
-      await this.downloadFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1);
+      await fs.promises.rm(assetIndexPath, { force: true });
+      await this.ensureFile(assetIndexMeta.url, assetIndexPath, assetIndexMeta.sha1, assetIndexMeta.size, "full");
       indexData = JSON.parse(fs.readFileSync(assetIndexPath, "utf-8"));
     }
 
     const objects: Record<string, { hash: string; size: number }> = indexData.objects || {};
     const entries = Object.values(objects);
+    const assetMarker = path.join(assetsDir, `.verified-${assetIndexMeta.id}-${assetIndexMeta.sha1}`);
+    if (verificationMode === "fast" && fs.existsSync(assetMarker)) {
+      onLog(`[Bootstrap] ${entries.length} official asset objects ready (cached verification).`);
+      return;
+    }
 
     const missing: Array<{ hash: string; size: number; destFile: string }> = [];
     let alreadyPresentCount = 0;
@@ -240,7 +266,7 @@ export class MinecraftBootstrap {
       if (fs.existsSync(destFile)) {
         try {
           const stat = fs.statSync(destFile);
-          if (stat.size === item.size) {
+          if (stat.size === item.size && (verificationMode === "fast" || await hashFile(destFile, "sha1") === item.hash)) {
             alreadyPresentCount++;
             continue;
           }
@@ -252,14 +278,14 @@ export class MinecraftBootstrap {
 
     if (missing.length > 0) {
       onLog(`[Bootstrap] Downloading ${missing.length} Minecraft assets from official CDN...`);
-      const concurrency = 32;
-      const queue = [...missing];
+      const concurrency = 8;
+      let nextAsset = 0;
       let completed = 0;
       const total = missing.length;
 
       async function worker() {
-        while (queue.length > 0) {
-          const task = queue.shift();
+        while (nextAsset < missing.length) {
+          const task = missing[nextAsset++];
           if (!task) break;
 
           const prefix = task.hash.substring(0, 2);
@@ -267,13 +293,13 @@ export class MinecraftBootstrap {
           const dir = path.dirname(task.destFile);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
-          try {
-            const resp = await fetch(url, { headers: { "User-Agent": "Lampas-Launcher/1.0" } });
-            if (resp.ok) {
-              const buf = Buffer.from(await resp.arrayBuffer());
-              fs.writeFileSync(task.destFile, buf);
-            }
-          } catch {}
+          await fs.promises.rm(task.destFile, { force: true });
+          await downloadVerified(url, task.destFile, {
+            algorithm: "sha1",
+            expectedHash: task.hash,
+            expectedSize: task.size,
+            headers: { "User-Agent": "Lampas-Launcher/1.0" },
+          });
 
           completed++;
           if (completed % 250 === 0 || completed === total) {
@@ -286,6 +312,7 @@ export class MinecraftBootstrap {
       await Promise.all(workers);
     }
 
+    fs.writeFileSync(assetMarker, new Date().toISOString(), "utf-8");
     onLog(`[Bootstrap] All ${entries.length} official asset objects verified.`);
   }
 }

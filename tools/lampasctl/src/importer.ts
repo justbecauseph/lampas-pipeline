@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { computeFileHashes, inspectJar, writeTomlFile, ensureDir } from "./utils";
+import { computeFileHashesStreaming, inspectJar, writeTomlFile, ensureDir } from "./utils";
 import { ModrinthClient } from "./providers";
 import type { ModDefinition, Side } from "./types";
 
@@ -57,7 +57,7 @@ export async function importExistingMods(options: ImportOptions): Promise<void> 
     const side: Side = inClient && inServer ? "both" : inClient ? "client" : "server";
     const samplePath = inClient ? clientJars.get(filename)! : serverJars.get(filename)!;
 
-    const hashes = computeFileHashes(samplePath);
+    const hashes = await computeFileHashesStreaming(samplePath);
     const meta = inspectJar(samplePath);
 
     discovered.push({

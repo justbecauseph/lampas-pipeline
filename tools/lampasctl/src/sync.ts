@@ -1,6 +1,14 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { computeBufferHashes, computeFileHashes, ensureDir, readJsonFile, writeJsonFile } from "./utils";
+import {
+  computeFileHashesStreaming,
+  copyFileAtomic,
+  copyFileVerified,
+  downloadFileVerified,
+  ensureDir,
+  readJsonFile,
+  writeJsonFile,
+} from "./utils";
 import type { InstallationState, ManifestFile, PackManifest } from "./types";
 
 export interface SyncOptions {
@@ -8,6 +16,7 @@ export interface SyncOptions {
   targetDir: string;
   portalBaseUrl?: string;
   concurrency?: number;
+  verificationMode?: "fast" | "full";
 }
 
 const PROTECTED_PREFIXES = [
@@ -59,6 +68,7 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
 
   const toDownload: ManifestFile[] = [];
   const toKeep: string[] = [];
+  const verifiedAt = new Map<string, string>();
 
   for (const file of manifest.files) {
     const localPath = path.join(targetDir, file.path);
@@ -71,9 +81,24 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     }
 
     if (fs.existsSync(localPath)) {
-      const hashes = computeFileHashes(localPath);
+      const stat = fs.statSync(localPath);
+      const previous = prevState.files[file.path];
+      const metadataMatches =
+        options.verificationMode !== "full" &&
+        previous?.sha256 === file.hashes.sha256 &&
+        previous.size === file.size &&
+        previous.mtimeMs === stat.mtimeMs &&
+        stat.size === file.size;
+
+      if (metadataMatches) {
+        toKeep.push(file.path);
+        continue;
+      }
+
+      const hashes = await computeFileHashesStreaming(localPath);
       if (hashes.sha256 === file.hashes.sha256) {
         toKeep.push(file.path);
+        verifiedAt.set(file.path, new Date().toISOString());
         continue;
       }
     }
@@ -113,12 +138,11 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
 
   // Download needed files
   const concurrency = options.concurrency || 6;
-  const queue = [...toDownload];
-  const downloadedFiles = new Map<string, Buffer>();
+  let nextIndex = 0;
 
   async function worker() {
-    while (queue.length > 0) {
-      const file = queue.shift();
+    while (nextIndex < toDownload.length) {
+      const file = toDownload[nextIndex++];
       if (!file) break;
 
       let downloadUrl = file.download.url;
@@ -129,29 +153,24 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
       // Check blob cache first
       const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
       if (fs.existsSync(cachePath)) {
-        const cachedBuffer = fs.readFileSync(cachePath);
-        const hashes = computeBufferHashes(cachedBuffer);
+        const hashes = await computeFileHashesStreaming(cachePath);
         if (hashes.sha256 === file.hashes.sha256) {
-          downloadedFiles.set(file.path, cachedBuffer);
+          verifiedAt.set(file.path, new Date().toISOString());
           console.log(`  ⚡ [Cache Hit] ${file.path}`);
           continue;
         }
+        await fs.promises.rm(cachePath, { force: true });
       }
-
-      let buf: Buffer;
 
       if (downloadUrl.startsWith("/")) {
         if (options.portalBaseUrl) {
           downloadUrl = `${options.portalBaseUrl}${downloadUrl}`;
           console.log(`  ↓ [Downloading Blob] ${file.path}...`);
-          const resp = await fetch(downloadUrl, {
+          await downloadFileVerified(downloadUrl, cachePath, {
+            expectedHash: file.hashes.sha256,
+            expectedSize: file.size,
             headers: { "User-Agent": "Lampas-Launcher/1.0" },
           });
-
-          if (!resp.ok) {
-            throw new Error(`Failed to download ${file.path} from ${downloadUrl}: ${resp.status} ${resp.statusText}`);
-          }
-          buf = Buffer.from(await resp.arrayBuffer());
         } else {
           // Local fallback: search in pack/
           const candidatePaths = [
@@ -165,46 +184,32 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
           if (!foundPath) {
             throw new Error(`Local blob source for ${file.path} not found in pack/ directories. Provide --portal URL.`);
           }
-          buf = fs.readFileSync(foundPath);
+          await copyFileVerified(foundPath, cachePath, {
+            expectedHash: file.hashes.sha256,
+            expectedSize: file.size,
+          });
         }
       } else {
         console.log(`  ↓ [Downloading] ${file.path}...`);
-        const resp = await fetch(downloadUrl, {
+        await downloadFileVerified(downloadUrl, cachePath, {
+          expectedHash: file.hashes.sha256,
+          expectedSize: file.size,
           headers: { "User-Agent": "Lampas-Launcher/1.0" },
         });
-
-        if (!resp.ok) {
-          throw new Error(`Failed to download ${file.path} from ${downloadUrl}: ${resp.status} ${resp.statusText}`);
-        }
-        buf = Buffer.from(await resp.arrayBuffer());
-      }
-      const hashes = computeBufferHashes(buf);
-
-      if (hashes.sha256 !== file.hashes.sha256) {
-        throw new Error(
-          `Hash mismatch for ${file.path}! Expected SHA-256 ${file.hashes.sha256}, got ${hashes.sha256}`
-        );
       }
 
-      // Write to cache
-      ensureDir(path.dirname(cachePath));
-      fs.writeFileSync(cachePath, buf);
-
-      downloadedFiles.set(file.path, buf);
-      console.log(`  ✓ [Downloaded] ${file.path} (${(buf.length / 1024 / 1024).toFixed(2)} MB)`);
+      verifiedAt.set(file.path, new Date().toISOString());
+      console.log(`  ✓ [Downloaded] ${file.path} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
     }
   }
 
   const workers = Array.from({ length: Math.min(concurrency, toDownload.length) }, () => worker());
   await Promise.all(workers);
 
-  // Apply downloads atomically to destination
-  for (const [relPath, buffer] of downloadedFiles.entries()) {
-    const destPath = path.join(targetDir, relPath);
-    ensureDir(path.dirname(destPath));
-    const tempPath = `${destPath}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempPath, buffer);
-    fs.renameSync(tempPath, destPath);
+  // Apply only after every artifact is present and verified in the cache.
+  for (const file of toDownload) {
+    const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
+    await copyFileAtomic(cachePath, path.join(targetDir, file.path));
   }
 
   // Delete obsolete managed files
@@ -225,10 +230,15 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   };
 
   for (const file of manifest.files) {
+    const filePath = path.join(targetDir, file.path);
+    const stat = fs.existsSync(filePath) ? fs.statSync(filePath) : undefined;
+    const previous = prevState.files[file.path];
     newState.files[file.path] = {
       sha256: file.hashes.sha256,
       size: file.size,
       policy: file.policy,
+      mtimeMs: stat?.mtimeMs,
+      verifiedAt: verifiedAt.get(file.path) || previous?.verifiedAt,
     };
   }
 

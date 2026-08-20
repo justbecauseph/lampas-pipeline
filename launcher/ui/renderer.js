@@ -53,6 +53,8 @@ const modsChannelBadge = document.getElementById("mods-channel-badge");
 const btnRepairPack = document.getElementById("btn-repair-pack");
 const btnVerifyPack = document.getElementById("btn-verify-pack");
 const btnModsOpenDir = document.getElementById("btn-mods-open-dir");
+const btnAddMods = document.getElementById("btn-add-mods");
+const modDropZone = document.getElementById("mod-drop-zone");
 
 // DOM Elements: Console Tab
 const consoleOutput = document.getElementById("console-output");
@@ -110,6 +112,7 @@ const settingRamVal = document.getElementById("setting-ram-val");
 const settingGamedirInput = document.getElementById("setting-gamedir-input");
 const btnSettingsOpenDir = document.getElementById("btn-settings-open-dir");
 const settingPortal = document.getElementById("setting-portal");
+const settingJavaArgs = document.getElementById("setting-java-args");
 const btnRepairSettings = document.getElementById("btn-repair-settings");
 const btnSaveSettings = document.getElementById("btn-save-settings");
 
@@ -410,6 +413,7 @@ if (btnSaveSettings) {
       currentConfig = await window.lampas.config.set({
         allocatedRamGb: ram,
         portalUrl,
+        javaArgs: settingJavaArgs?.value?.trim() || "",
       });
 
       showToast("Settings saved successfully!", "success");
@@ -644,6 +648,7 @@ async function init() {
     if (settingPortal) {
       settingPortal.value = currentConfig.portalUrl || "http://localhost:3000";
     }
+    if (settingJavaArgs) settingJavaArgs.value = currentConfig.javaArgs || "";
 
     // Selected Channel
     const selChannel = currentConfig.selectedChannel || "stable";
@@ -678,6 +683,9 @@ let activeModSearch = "";
 const modsGrid = document.getElementById("mods-grid");
 const modsSearchInput = document.getElementById("mods-search-input");
 const modsFilteredCount = document.getElementById("mods-filtered-count");
+const managedModCount = document.getElementById("managed-mod-count");
+const optionalModCount = document.getElementById("optional-mod-count");
+const localModCount = document.getElementById("local-mod-count");
 const modFilterPills = document.querySelectorAll(".mod-filter-pill");
 
 function formatBytes(bytes) {
@@ -685,6 +693,12 @@ function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+  })[char]);
 }
 
 function renderMods() {
@@ -696,6 +710,7 @@ function renderMods() {
   const filtered = allMods.filter((mod) => {
     // Filter check
     if (filter === "client" && mod.side !== "client") return false;
+    if (filter === "custom" && mod.source !== "custom") return false;
     if (filter === "server" && mod.side !== "server") return false;
     if (filter === "both" && mod.side !== "both") return false;
     if (filter !== "all" && filter !== "client" && filter !== "server" && filter !== "both") {
@@ -737,10 +752,12 @@ function renderMods() {
           ? '<span class="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-1.5 py-0.5 rounded-md">SERVER ONLY</span>'
           : '<span class="text-[9px] font-bold text-indigo-400 bg-indigo-950/80 border border-indigo-800/60 px-1.5 py-0.5 rounded-md">DUAL-SIDED</span>';
 
-      const fallbackText = (mod.name || mod.id || "M")[0].toUpperCase();
+      const fallbackText = escapeHtml((mod.name || mod.id || "M")[0].toUpperCase());
+      const modName = escapeHtml(mod.name || mod.filename || "Unknown mod");
+      const modId = escapeHtml(mod.id);
       const iconHtml = mod.iconUrl
         ? `<div class="mod-icon-wrapper">
-            <img src="${mod.iconUrl}" alt="${mod.name || 'Mod'}" class="mod-icon-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <img src="${escapeHtml(mod.iconUrl)}" alt="${modName}" class="mod-icon-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
             <div class="mod-icon-fallback" style="display: none;">${fallbackText}</div>
           </div>`
         : `<div class="mod-icon-wrapper">
@@ -749,11 +766,22 @@ function renderMods() {
 
       const catsHtml = (mod.categories || [])
         .slice(0, 3)
-        .map((c) => `<span class="text-[9px] text-slate-500 bg-slate-950 px-1.5 py-0.5 rounded">#${c}</span>`)
+        .map((c) => `<span class="text-[9px] text-slate-500 bg-slate-950 px-1.5 py-0.5 rounded">#${escapeHtml(c)}</span>`)
         .join(" ");
 
       const linkBtn = mod.sourceUrl
-        ? `<button onclick="window.lampas.utils.openPath('${mod.sourceUrl}')" class="mod-link-btn" title="Open source page">View ↗</button>`
+        ? `<button data-source-url="${escapeHtml(mod.sourceUrl)}" class="mod-link-btn js-source-link" title="Open source page">View ↗</button>`
+        : "";
+
+      const toggle = mod.canDisable
+        ? `<label class="mod-switch" title="${mod.enabled ? "Disable" : "Enable"} ${modName}">
+            <input class="js-mod-toggle" type="checkbox" data-id="${modId}" data-filename="${escapeHtml(mod.filename)}" data-source="${escapeHtml(mod.source)}" ${mod.enabled ? "checked" : ""}>
+            <span></span>
+          </label>`
+        : "";
+      const localBadge = mod.source === "custom" ? '<span class="local-mod-badge">LOCAL</span>' : "";
+      const remove = mod.source === "custom"
+        ? `<button class="mod-remove-btn js-mod-remove" data-filename="${escapeHtml(mod.filename)}" title="Remove this local mod">Remove</button>`
         : "";
 
       return `
@@ -762,10 +790,10 @@ function renderMods() {
             ${iconHtml}
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-1">
-                <h5 class="font-bold text-xs text-white truncate" title="${mod.name}">${mod.name}</h5>
-                ${sideBadge}
+                <h5 class="font-bold text-xs text-white truncate" title="${modName}">${modName}</h5>
+                <div class="flex items-center gap-1">${localBadge}${sideBadge}${toggle}</div>
               </div>
-              <p class="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${mod.description || "Synchronized modpack component."}</p>
+              <p class="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${escapeHtml(mod.description || "Synchronized modpack component.")}</p>
             </div>
           </div>
           <div class="flex items-center justify-between pt-1 border-t border-slate-900/80 text-[10px] text-slate-500 font-mono">
@@ -774,6 +802,7 @@ function renderMods() {
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
               <span>${formatBytes(mod.size)}</span>
+              ${remove}
               ${linkBtn}
             </div>
           </div>
@@ -781,12 +810,77 @@ function renderMods() {
       `;
     })
     .join("");
+
+  modsGrid.querySelectorAll(".js-source-link").forEach((button) => {
+    button.onclick = () => window.lampas.utils.openPath(button.dataset.sourceUrl);
+  });
+  modsGrid.querySelectorAll(".js-mod-toggle").forEach((toggle) => {
+    toggle.onchange = async () => {
+      try {
+        toggle.disabled = true;
+        if (toggle.dataset.source === "custom") {
+          await window.lampas.mods.setCustomEnabled(toggle.dataset.filename, toggle.checked);
+        } else {
+          await window.lampas.mods.setOfficialEnabled(toggle.dataset.id, toggle.checked);
+        }
+        await loadModCatalog();
+        showToast(`${toggle.checked ? "Enabled" : "Disabled"} ${toggle.dataset.filename}. Changes apply on the next sync.`, "success");
+      } catch (err) {
+        toggle.checked = !toggle.checked;
+        toggle.disabled = false;
+        showToast(`Could not update mod: ${err.message}`, "error");
+      }
+    };
+  });
+  modsGrid.querySelectorAll(".js-mod-remove").forEach((button) => {
+    button.onclick = async () => {
+      try {
+        await window.lampas.mods.removeCustom(button.dataset.filename);
+        await loadModCatalog();
+        showToast(`Removed ${button.dataset.filename}.`, "success");
+      } catch (err) {
+        showToast(`Could not remove mod: ${err.message}`, "error");
+      }
+    };
+  });
+}
+
+async function addLocalMods(files) {
+  try {
+    if (files) await window.lampas.mods.addDropped(Array.from(files));
+    else await window.lampas.mods.browseAndAdd();
+    await loadModCatalog();
+    showToast("Local client mods added. They will be preserved during sync.", "success");
+  } catch (err) {
+    showToast(`Could not add mod: ${err.message}`, "error", 5000);
+  }
+}
+
+if (btnAddMods) btnAddMods.onclick = () => addLocalMods();
+if (modDropZone) {
+  for (const eventName of ["dragenter", "dragover"]) {
+    modDropZone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      modDropZone.classList.add("drag-active");
+    });
+  }
+  for (const eventName of ["dragleave", "drop"]) {
+    modDropZone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      modDropZone.classList.remove("drag-active");
+    });
+  }
+  modDropZone.addEventListener("drop", (event) => addLocalMods(event.dataTransfer?.files));
+  modDropZone.onclick = () => addLocalMods();
 }
 
 async function loadModCatalog() {
   try {
     if (window.lampas.sync?.getModCatalog) {
       allMods = await window.lampas.sync.getModCatalog();
+      if (managedModCount) managedModCount.innerText = allMods.filter((mod) => mod.source === "official").length;
+      if (optionalModCount) optionalModCount.innerText = allMods.filter((mod) => mod.source === "official" && mod.canDisable).length;
+      if (localModCount) localModCount.innerText = allMods.filter((mod) => mod.source === "custom").length;
       renderMods();
     }
   } catch (err) {
@@ -811,4 +905,3 @@ modFilterPills.forEach((pill) => {
 });
 
 init();
-

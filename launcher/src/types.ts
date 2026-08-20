@@ -18,9 +18,19 @@ export interface LauncherConfig {
   allocatedRamGb: number;
   gameDir: string;
   javaPath?: string;
+  javaArgs?: string;
+  disabledClientMods?: string[];
+  customClientMods?: CustomClientMod[];
   token?: string;
   refreshToken?: string;
   minecraftAccessToken?: string;
+}
+
+export interface CustomClientMod {
+  filename: string;
+  enabled: boolean;
+  addedAt: string;
+  size: number;
 }
 
 export interface SyncProgress {

@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { computeFileHashes, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
+import { computeFileHashesStreaming, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
 import type { ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor } from "./types";
 
 export interface ManifestOptions {
@@ -10,11 +10,11 @@ export interface ManifestOptions {
   portalBaseUrl?: string;
 }
 
-function scanStaticDir(baseDir: string, relDir: string): ManifestFile[] {
+async function scanStaticDir(baseDir: string, relDir: string): Promise<ManifestFile[]> {
   const dirPath = path.join(baseDir, relDir);
   if (!fs.existsSync(dirPath)) return [];
 
-  const results: ManifestFile[] = [];
+  const files: Array<{ fullPath: string; relPath: string }> = [];
 
   function walk(currentPath: string) {
     const entries = fs.readdirSync(currentPath, { withFileTypes: true });
@@ -24,26 +24,30 @@ function scanStaticDir(baseDir: string, relDir: string): ManifestFile[] {
         walk(fullPath);
       } else if (entry.isFile()) {
         const relPath = normalizeRelPath(path.relative(dirPath, fullPath));
-        const hashes = computeFileHashes(fullPath);
-
-        results.push({
-          path: relPath,
-          size: hashes.size,
-          hashes: {
-            sha256: hashes.sha256,
-            sha512: hashes.sha512,
-          },
-          download: {
-            url: `/api/v1/blobs/${hashes.sha256}`,
-            provider: "lampas",
-          },
-          policy: "MANAGED",
-        });
+        files.push({ fullPath, relPath });
       }
     }
   }
 
   walk(dirPath);
+  files.sort((a, b) => a.relPath.localeCompare(b.relPath));
+  const results = new Array<ManifestFile>(files.length);
+  let nextFile = 0;
+  async function worker() {
+    while (nextFile < files.length) {
+      const index = nextFile++;
+      const { fullPath, relPath } = files[index];
+      const hashes = await computeFileHashesStreaming(fullPath);
+      results[index] = {
+        path: relPath,
+        size: hashes.size,
+        hashes: { sha256: hashes.sha256, sha512: hashes.sha512 },
+        download: { url: `/api/v1/blobs/${hashes.sha256}`, provider: "lampas" },
+        policy: "MANAGED",
+      };
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(4, files.length) }, () => worker()));
   return results;
 }
 
@@ -56,9 +60,9 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   const packConfig = parseTomlFile<PackConfig>(packConfigPath);
   const lock = readJsonFile<PackLock>(options.lockFile);
 
-  const commonFiles = scanStaticDir(options.packDir, "common");
-  const clientStaticFiles = scanStaticDir(options.packDir, "client");
-  const serverStaticFiles = scanStaticDir(options.packDir, "server");
+  const commonFiles = await scanStaticDir(options.packDir, "common");
+  const clientStaticFiles = await scanStaticDir(options.packDir, "client");
+  const serverStaticFiles = await scanStaticDir(options.packDir, "server");
 
   const clientModFiles: ManifestFile[] = [];
   const serverModFiles: ManifestFile[] = [];

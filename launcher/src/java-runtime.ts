@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { execSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { ConfigManager } from "./config";
+import { downloadVerified, fetchJsonWithRetry, hashFile } from "./file-transfer";
 
 export class JavaRuntimeManager {
   private static checkJavaVersion(javaPath: string): number | null {
@@ -21,7 +21,8 @@ export class JavaRuntimeManager {
 
   static async ensureJava25(
     gameDir: string,
-    onLog: (msg: string) => void
+    onLog: (msg: string) => void,
+    verificationMode: "fast" | "full" = "fast"
   ): Promise<string> {
     const config = ConfigManager.get();
 
@@ -45,12 +46,15 @@ export class JavaRuntimeManager {
     if (fs.existsSync(localRuntimeJava)) {
       const ver = this.checkJavaVersion(localRuntimeJava);
       if (ver && ver >= 25) {
-        onLog(`[Java] Found local Java ${ver}: ${localRuntimeJava}`);
-        return localRuntimeJava;
+        if (verificationMode === "fast") {
+          onLog(`[Java] Found local Java ${ver}: ${localRuntimeJava}`);
+          return localRuntimeJava;
+        }
+        onLog(`[Java] Fully verifying local Java ${ver}: ${localRuntimeJava}`);
       }
     }
 
-    // 3. Search common system locations for Java 25 / OpenJDK 25
+    // 3. Search common system locations for Java 25 / OpenJDK 25 unless repairing a managed runtime.
     const searchPaths: string[] = [];
 
     if (process.env.JAVA_HOME) {
@@ -74,7 +78,7 @@ export class JavaRuntimeManager {
       );
     }
 
-    for (const p of searchPaths) {
+    for (const p of verificationMode === "full" && fs.existsSync(localRuntimeJava) ? [] : searchPaths) {
       const ver = this.checkJavaVersion(p);
       if (ver && ver >= 25) {
         onLog(`[Java] Located system Java ${ver}: ${p}`);
@@ -83,7 +87,7 @@ export class JavaRuntimeManager {
     }
 
     // 4. Check PATH 'java'
-    const systemJavaVer = this.checkJavaVersion("java");
+    const systemJavaVer = verificationMode === "full" && fs.existsSync(localRuntimeJava) ? null : this.checkJavaVersion("java");
     if (systemJavaVer && systemJavaVer >= 25) {
       onLog(`[Java] Using PATH Java ${systemJavaVer}`);
       return "java";
@@ -96,8 +100,7 @@ export class JavaRuntimeManager {
 
     try {
       const platformKey = process.platform === "win32" ? "windows-x64" : process.platform === "darwin" ? "mac-os" : "linux";
-      const allRuntimesResp = await fetch("https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json");
-      const allRuntimes = await allRuntimesResp.json();
+      const allRuntimes: any = await fetchJsonWithRetry("https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json");
       const epsilonEntries = allRuntimes[platformKey]?.["java-runtime-epsilon"];
 
       if (!epsilonEntries || epsilonEntries.length === 0) {
@@ -105,42 +108,58 @@ export class JavaRuntimeManager {
       }
 
       const manifestUrl = epsilonEntries[0].manifest.url;
-      const manifestResp = await fetch(manifestUrl);
-      const manifest = await manifestResp.json();
+      const manifest: any = await fetchJsonWithRetry(manifestUrl);
       const files: Record<string, any> = manifest.files || {};
 
       let completed = 0;
       const total = Object.keys(files).length;
 
-      for (const [relPath, fileInfo] of Object.entries(files)) {
-        const targetPath = path.join(runtimeDest, relPath);
-        if (fileInfo.type === "directory") {
-          fs.mkdirSync(targetPath, { recursive: true });
-          continue;
-        }
-
-        if (fileInfo.type === "file" && fileInfo.downloads?.raw) {
-          if (!fs.existsSync(path.dirname(targetPath))) {
-            fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+      const entries = Object.entries(files);
+      let nextFile = 0;
+      async function worker() {
+        while (nextFile < entries.length) {
+          const [relPath, fileInfo] = entries[nextFile++];
+          const targetPath = path.join(runtimeDest, relPath);
+          if (fileInfo.type === "directory") {
+            fs.mkdirSync(targetPath, { recursive: true });
+            completed++;
+            continue;
           }
 
-          const raw = fileInfo.downloads.raw;
-          const resp = await fetch(raw.url);
-          const buf = Buffer.from(await resp.arrayBuffer());
-          fs.writeFileSync(targetPath, buf);
+          if (fileInfo.type === "file" && fileInfo.downloads?.raw) {
+            if (!fs.existsSync(path.dirname(targetPath))) {
+              fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+            }
 
-          if (fileInfo.executable) {
-            try {
-              fs.chmodSync(targetPath, 0o755);
-            } catch {}
+            const raw = fileInfo.downloads.raw;
+            const isValid = fs.existsSync(targetPath) &&
+              (!raw.size || fs.statSync(targetPath).size === raw.size) &&
+              (!raw.sha1 || await hashFile(targetPath, "sha1") === raw.sha1);
+            if (!isValid) {
+              await fs.promises.rm(targetPath, { force: true });
+              await downloadVerified(raw.url, targetPath, {
+                algorithm: "sha1",
+                expectedHash: raw.sha1,
+                expectedSize: raw.size,
+                headers: { "User-Agent": "Lampas-Launcher/1.0" },
+                timeoutMs: 60_000,
+              });
+            }
+
+            if (fileInfo.executable) {
+              try {
+                fs.chmodSync(targetPath, 0o755);
+              } catch {}
+            }
           }
-        }
 
-        completed++;
-        if (completed % 100 === 0 || completed === total) {
-          onLog(`[Java] Downloading OpenJDK 25: ${completed}/${total} files...`);
+          completed++;
+          if (completed % 100 === 0 || completed === total) {
+            onLog(`[Java] Downloading OpenJDK 25: ${completed}/${total} files...`);
+          }
         }
       }
+      await Promise.all(Array.from({ length: Math.min(8, entries.length) }, () => worker()));
 
       onLog(`[Java] OpenJDK 25 successfully installed in: ${runtimeDest}`);
       return localRuntimeJava;

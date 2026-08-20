@@ -1,0 +1,95 @@
+{
+  "default_overworld": {
+    "priority": 1,
+    "strategy": "SPAWN_DISTANCE",
+    "min_level": 1,
+    "max_level": 50,
+    "conditions": {
+      "dimensions": {
+        "include": [
+          "minecraft:overworld"
+        ]
+      }
+    },
+    "attributes": {
+      "max_health": 2.5,
+      "attack_damage": 0.25,
+      "movement_speed": 0.001
+    },
+    "xp": {
+      "multiplier": 0.05
+    },
+    "drops": {
+      "item_multiplier": 0.03
+    }
+  },
+  "nether_scaling": {
+    "priority": 10,
+    "strategy": "Y_DISTANCE",
+    "min_level": 10,
+    "max_level": 60,
+    "conditions": {
+      "dimensions": {
+        "include": [
+          "minecraft:the_nether"
+        ]
+      }
+    },
+    "attributes": {
+      "max_health": 5.0,
+      "attack_damage": 0.4,
+      "movement_speed": 0.002
+    },
+    "xp": {
+      "multiplier": 0.08
+    },
+    "drops": {
+      "item_multiplier": 0.05
+    }
+  },
+  "the_end_scaling": {
+    "priority": 20,
+    "strategy": "SPAWN_DISTANCE",
+    "min_level": 25,
+    "max_level": 100,
+    "conditions": {
+      "dimensions": {
+        "include": [
+          "minecraft:the_end"
+        ]
+      }
+    },
+    "attributes": {
+      "max_health": 7.5,
+      "attack_damage": 0.6,
+      "movement_speed": 0.003
+    },
+    "xp": {
+      "multiplier": 0.1
+    },
+    "drops": {
+      "item_multiplier": 0.07
+    }
+  },
+  "passive_mobs_rule": {
+    "priority": 50,
+    "strategy": "RANDOM",
+    "min_level": 1,
+    "max_level": 5,
+    "conditions": {
+      "entities": {
+        "include": [
+          "minecraft:cow",
+          "minecraft:pig",
+          "minecraft:sheep",
+          "minecraft:chicken",
+          "minecraft:horse"
+        ]
+      }
+    },
+    "attributes": {
+      "attack_damage": 0.0,
+      "max_health": 0.0
+    }
+  }
+}

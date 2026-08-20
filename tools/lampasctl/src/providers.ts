@@ -1,4 +1,4 @@
-import { computeBufferHashes, computeFileHashes, withAbortTimeout, type FileHashes } from "./utils";
+import { computeBufferHashes, computeFileHashesStreaming, withAbortTimeout, type FileHashes } from "./utils";
 import type { ModDefinition, ResolvedArtifact, Side } from "./types";
 import * as path from "node:path";
 import * as fs from "node:fs";
@@ -94,6 +94,12 @@ export class ModrinthClient {
     return this.fetchJson<ModrinthVersion>(url);
   }
 
+  static async getVersions(versionIds: string[]): Promise<ModrinthVersion[]> {
+    if (versionIds.length === 0) return [];
+    const ids = encodeURIComponent(JSON.stringify(versionIds));
+    return (await this.fetchJson<ModrinthVersion[]>(`${MODRINTH_API}/versions?ids=${ids}`)) || [];
+  }
+
   static async getProject(projectIdOrSlug: string): Promise<ModrinthProject | null> {
     const url = `${MODRINTH_API}/project/${projectIdOrSlug}`;
     return this.fetchJson<ModrinthProject>(url);
@@ -104,12 +110,13 @@ export class ArtifactResolver {
   static async resolveModDefinition(
     modId: string,
     def: ModDefinition,
-    baseDir: string
+    baseDir: string,
+    prefetchedVersion?: ModrinthVersion
   ): Promise<ResolvedArtifact> {
     const { provider, side, name } = def;
 
     if (provider.type === "modrinth") {
-      const version = await ModrinthClient.getVersion(provider.version_id);
+      const version = prefetchedVersion || await ModrinthClient.getVersion(provider.version_id);
       if (!version) {
         throw new Error(`Mod '${modId}' (${name}): Modrinth version '${provider.version_id}' not found.`);
       }
@@ -188,7 +195,7 @@ export class ArtifactResolver {
         throw new Error(`Mod '${modId}' (${name}): Lampas file '${provider.file}' not found at ${filePath}`);
       }
 
-      const hashes = computeFileHashes(filePath);
+      const hashes = await computeFileHashesStreaming(filePath);
       const filename = path.basename(filePath);
       const artifactType = def.type || (provider.file.includes("shader") ? "shader" : provider.file.includes("resource") ? "resourcepack" : "mod");
       const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";

@@ -173,7 +173,12 @@ bun run lampasctl publish --portal http://localhost:3000 --channel stable --secr
 ### 5. Headless Client / Server Sync
 ```bash
 bun run lampasctl install --manifest manifest/client-manifest.json --target ./my-instance
+
+# Force a complete SHA-256 verification instead of the metadata fast path
+bun run lampasctl install --manifest manifest/client-manifest.json --target ./my-instance --verify full
 ```
+
+Normal installs use the `fast` verification mode, which trusts unchanged size and modification-time metadata recorded in `.lampas/installation.json`. Use `--verify full` (or the launcher's Repair action) to hash every managed file.
 
 ---
 

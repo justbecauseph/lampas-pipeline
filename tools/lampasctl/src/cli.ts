@@ -56,6 +56,7 @@ Commands:
     -m, --manifest <p>  Path to client-manifest.json or server-manifest.json
     -t, --target <path> Target Minecraft instance directory
     --portal <url>      Lampas Portal base URL (optional)
+    --verify <mode>     Verification mode: fast | full (default: fast)
 
   check-updates         Check Modrinth & CurseForge for newer upstream releases
     -p, --pack <path>   Pack directory (default: ./pack)
@@ -235,10 +236,16 @@ async function main() {
           process.exit(1);
         }
 
+        const verificationMode = flags.verify || "fast";
+        if (verificationMode !== "fast" && verificationMode !== "full") {
+          throw new Error("--verify must be either 'fast' or 'full'");
+        }
+
         await syncInstance({
           manifestPath: path.resolve(manifestPath),
           targetDir: path.resolve(targetDir),
           portalBaseUrl: flags.portal,
+          verificationMode,
         });
         break;
       }

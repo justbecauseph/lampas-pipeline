@@ -1,0 +1,64 @@
+import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-launcher-test-"));
+const userDataDir = path.join(testRoot, "user-data");
+
+mock.module("electron", () => ({
+  app: { getPath: () => userDataDir },
+  shell: { openExternal: async () => undefined },
+}));
+
+const { ConfigManager } = await import("../src/config");
+const { ClientModManager } = await import("../src/client-mods");
+const { parseJavaArgs } = await import("../src/game-runner");
+
+beforeAll(() => {
+  ConfigManager.set({ gameDir: path.join(testRoot, "game"), customClientMods: [], disabledClientMods: [] });
+});
+
+afterAll(() => {
+  if (path.resolve(testRoot).startsWith(path.resolve(os.tmpdir()))) {
+    fs.rmSync(testRoot, { recursive: true, force: true });
+  }
+});
+
+describe("launcher settings", () => {
+  test("parses quoted Java arguments without corrupting Windows paths", () => {
+    expect(parseJavaArgs('-Dlabel="Lampas client" -Dpath=C:\\Games\\Lampas -XX:+UseStringDeduplication')).toEqual([
+      "-Dlabel=Lampas client",
+      "-Dpath=C:\\Games\\Lampas",
+      "-XX:+UseStringDeduplication",
+    ]);
+    expect(() => parseJavaArgs('-Dlabel="unfinished')).toThrow("unclosed quote");
+  });
+
+  test("tracks, disables, and removes an imported local mod", () => {
+    const source = path.join(testRoot, "example-client.jar");
+    fs.writeFileSync(source, "test mod");
+
+    ClientModManager.add([source]);
+    const enabledPath = path.join(testRoot, "game", "mods", "example-client.jar");
+    const disabledPath = `${enabledPath}.disabled`;
+    expect(fs.existsSync(enabledPath)).toBe(true);
+    expect(ConfigManager.get().customClientMods?.[0]?.enabled).toBe(true);
+
+    ClientModManager.setEnabled("example-client.jar", false);
+    expect(fs.existsSync(enabledPath)).toBe(false);
+    expect(fs.existsSync(disabledPath)).toBe(true);
+
+    ClientModManager.remove("example-client.jar");
+    expect(fs.existsSync(disabledPath)).toBe(false);
+    expect(ConfigManager.get().customClientMods).toEqual([]);
+  });
+
+  test("rejects path traversal in local mod operations", () => {
+    ConfigManager.set({
+      customClientMods: [{ filename: "../example-client.jar", enabled: true, addedAt: new Date().toISOString(), size: 1 }],
+    });
+    expect(() => ClientModManager.remove("../example-client.jar")).toThrow("Invalid local mod filename");
+    ConfigManager.set({ customClientMods: [] });
+  });
+});

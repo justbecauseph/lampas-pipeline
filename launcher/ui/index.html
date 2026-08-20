@@ -6,7 +6,7 @@
   <title>Lampas Launcher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="flex flex-col h-full select-none">
@@ -52,7 +52,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <span>Modpack Info</span>
+            <span>Client Mods</span>
           </button>
 
           <button id="nav-console" class="nav-item">
@@ -208,10 +208,14 @@
       <section id="tab-mods" class="tab-content hidden flex-col flex-1 min-h-0 space-y-4">
         <div class="flex items-center justify-between flex-shrink-0">
           <div>
-            <h2 class="text-xl font-extrabold text-white tracking-tight">Modpack Information</h2>
-            <p class="text-xs text-slate-400 mt-1">Deterministic release manifest and synchronized client pipeline.</p>
+            <h2 class="text-xl font-extrabold text-white tracking-tight">Client Loadout</h2>
+            <p class="text-xs text-slate-400 mt-1">Tune optional client mods and keep your own additions across pack syncs.</p>
           </div>
           <div class="flex items-center gap-2">
+            <button id="btn-add-mods" class="btn-primary" title="Add one or more local client mod JARs">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              <span>Add local mods</span>
+            </button>
             <button id="btn-repair-pack" class="btn-secondary text-cyan-400 hover:border-cyan-500/50" title="Force check and repair all files, assets, and libraries">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -248,16 +252,16 @@
 
           <div class="grid grid-cols-3 gap-3 text-center flex-shrink-0">
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-xl font-black text-cyan-400 font-mono">156</div>
+              <div id="managed-mod-count" class="text-xl font-black text-cyan-400 font-mono">—</div>
               <span class="text-[11px] text-slate-400 font-medium">Managed Mods</span>
             </div>
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-xl font-black text-indigo-400 font-mono">423</div>
-              <span class="text-[11px] text-slate-400 font-medium">Synchronized Files</span>
+              <div id="optional-mod-count" class="text-xl font-black text-indigo-400 font-mono">—</div>
+              <span class="text-[11px] text-slate-400 font-medium">Optional Client Mods</span>
             </div>
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="text-xl font-black text-emerald-400 font-mono">SHA-256</div>
-              <span class="text-[11px] text-slate-400 font-medium">Verified Checksums</span>
+              <div id="local-mod-count" class="text-xl font-black text-emerald-400 font-mono">0</div>
+              <span class="text-[11px] text-slate-400 font-medium">Local Additions</span>
             </div>
           </div>
 
@@ -305,6 +309,7 @@
               <button class="mod-filter-pill active" data-filter="all">All</button>
               <button class="mod-filter-pill" data-filter="shader">Shaders</button>
               <button class="mod-filter-pill" data-filter="client">Client-Only</button>
+              <button class="mod-filter-pill" data-filter="custom">My Mods</button>
               <button class="mod-filter-pill" data-filter="server">Server-Only</button>
               <button class="mod-filter-pill" data-filter="both">Dual-Sided</button>
               <button class="mod-filter-pill" data-filter="optimization">Optimization</button>
@@ -312,6 +317,17 @@
               <button class="mod-filter-pill" data-filter="decoration">Decoration</button>
               <button class="mod-filter-pill" data-filter="adventure">Adventure</button>
               <button class="mod-filter-pill" data-filter="utility">Utility</button>
+            </div>
+
+            <div id="mod-drop-zone" class="mod-drop-zone flex items-center justify-between flex-shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="drop-mark">JAR</div>
+                <div>
+                  <div class="text-xs font-bold text-slate-200">Drop client mod JARs here</div>
+                  <div class="text-[10px] text-slate-500">Local additions stay yours and are never removed by synchronization.</div>
+                </div>
+              </div>
+              <span class="badge">LOCAL OVERRIDES</span>
             </div>
 
             <!-- Mod List Grid: flex-1 fills remaining height cleanly! -->
@@ -368,7 +384,7 @@
       <section id="tab-settings" class="tab-content hidden flex-col flex-1 min-h-0 space-y-4">
         <div class="flex-shrink-0">
           <h2 class="text-xl font-extrabold text-white tracking-tight">Launcher Settings</h2>
-          <p class="text-xs text-slate-400 mt-1">Configure memory allocation, portal network endpoints, and directories.</p>
+          <p class="text-xs text-slate-400 mt-1">Configure performance, Java launch behavior, and pipeline access.</p>
         </div>
 
         <div class="flex-1 min-h-0 overflow-y-auto space-y-5 pr-1 pb-6">
@@ -399,6 +415,15 @@
                   <span>Open Folder</span>
                 </button>
               </div>
+            </div>
+
+            <div class="space-y-2 pt-2 border-t border-slate-800/80">
+              <div class="flex items-center justify-between">
+                <label for="setting-java-args" class="text-xs font-bold text-slate-300">Custom Java arguments</label>
+                <span class="badge">ADVANCED</span>
+              </div>
+              <textarea id="setting-java-args" rows="3" spellcheck="false" class="input-field java-args-field" placeholder="-Dexample=value -XX:+UseStringDeduplication"></textarea>
+              <p class="text-[11px] text-slate-500">Passed to Java after the launcher's memory and GC defaults. Use quotes around values containing spaces.</p>
             </div>
           </div>
 

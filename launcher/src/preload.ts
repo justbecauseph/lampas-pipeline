@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, webUtils } from "electron";
 import type { LauncherConfig, SyncProgress, GameLogEntry, UserProfile } from "./types";
 
 contextBridge.exposeInMainWorld("lampas", {
@@ -22,6 +22,13 @@ contextBridge.exposeInMainWorld("lampas", {
       ipcRenderer.on("sync:progress", handler);
       return () => ipcRenderer.removeListener("sync:progress", handler);
     },
+  },
+  mods: {
+    browseAndAdd: () => ipcRenderer.invoke("mods:browseAndAdd"),
+    addDropped: (files: File[]) => ipcRenderer.invoke("mods:addPaths", files.map((file) => webUtils.getPathForFile(file))),
+    setOfficialEnabled: (id: string, enabled: boolean) => ipcRenderer.invoke("mods:setOfficialEnabled", id, enabled),
+    setCustomEnabled: (filename: string, enabled: boolean) => ipcRenderer.invoke("mods:setCustomEnabled", filename, enabled),
+    removeCustom: (filename: string) => ipcRenderer.invoke("mods:removeCustom", filename),
   },
   game: {
     launch: (user: UserProfile | null): Promise<boolean> => ipcRenderer.invoke("game:launch", user),

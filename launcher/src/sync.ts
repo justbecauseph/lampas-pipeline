@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createHash } from "node:crypto";
 import { ConfigManager } from "./config";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
+import { copyAtomic, copyVerified, downloadVerified, fetchJsonWithRetry, hashFile, HttpResponseError } from "./file-transfer";
 import type { SyncProgress } from "./types";
 
 const PROTECTED_PREFIXES = [
@@ -22,18 +22,21 @@ function isPathProtected(relPath: string): boolean {
   return PROTECTED_PREFIXES.some((p) => norm === p || norm.startsWith(p));
 }
 
-function computeFileSha256(filePath: string): string {
-  const buffer = fs.readFileSync(filePath);
-  return createHash("sha256").update(buffer).digest("hex");
-}
-
-function computeBufferSha256(buffer: Buffer): string {
-  return createHash("sha256").update(buffer).digest("hex");
+interface InstallationState {
+  files: Record<string, {
+    sha256: string;
+    size: number;
+    policy: string;
+    mtimeMs?: number;
+    verifiedAt?: string;
+  }>;
+  [key: string]: unknown;
 }
 
 export class LauncherSync {
   static async syncClient(
-    onProgress: (progress: SyncProgress) => void
+    onProgress: (progress: SyncProgress) => void,
+    verificationMode: "fast" | "full" = "fast"
   ): Promise<{ success: boolean; version: string; packName: string }> {
     const config = ConfigManager.get();
     if (!config.token) {
@@ -75,24 +78,18 @@ export class LauncherSync {
         channelHeaders["Authorization"] = `Bearer ${config.token}`;
       }
 
-      const channelResp = await fetch(`${portalUrl}/api/v1/channels/${channel}`, { headers: channelHeaders });
-      if (!channelResp.ok) {
-        throw new Error(`Failed to query channel '${channel}': ${channelResp.statusText}`);
-      }
-
-      const channelData = await channelResp.json();
+      const channelData: any = await fetchJsonWithRetry(`${portalUrl}/api/v1/channels/${channel}`, channelHeaders);
       targetVersion = channelData.version;
 
       // 2. Fetch release descriptor
-      const releaseResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}`, { headers: channelHeaders });
-      if (!releaseResp.ok) {
-        if (releaseResp.status === 410) {
+      try {
+        releaseData = await fetchJsonWithRetry(`${portalUrl}/api/v1/releases/${targetVersion}`, channelHeaders);
+      } catch (error) {
+        if (error instanceof HttpResponseError && error.status === 410) {
           throw new Error(`Release v${targetVersion} has been REVOKED due to critical issues. Please select another channel.`);
         }
-        throw new Error(`Failed to fetch release descriptor: ${releaseResp.statusText}`);
+        throw error;
       }
-
-      releaseData = await releaseResp.json();
 
       // 3. Fetch client manifest
       onProgress({
@@ -105,14 +102,7 @@ export class LauncherSync {
         totalBytes: 0,
       });
 
-      const manifestResp = await fetch(`${portalUrl}/api/v1/releases/${targetVersion}/client-manifest`, {
-        headers: channelHeaders,
-      });
-      if (!manifestResp.ok) {
-        throw new Error(`Failed to fetch client manifest: ${manifestResp.statusText}`);
-      }
-
-      manifest = await manifestResp.json();
+      manifest = await fetchJsonWithRetry(`${portalUrl}/api/v1/releases/${targetVersion}/client-manifest`, channelHeaders);
     } catch (portalErr: any) {
       // Offline / Local pipeline fallback
       const localManifestPath = path.join(__dirname, "../../manifest/client-manifest.json");
@@ -124,10 +114,18 @@ export class LauncherSync {
       }
     }
 
-    const manifestFiles: any[] = manifest.files || [];
+    const disabledClientMods = new Set(config.disabledClientMods || []);
+    const disabledFilenames = new Set(
+      (manifest.mods || [])
+        .filter((mod: any) => mod.side === "client" && disabledClientMods.has(mod.id))
+        .map((mod: any) => mod.filename)
+    );
+    const manifestFiles: any[] = (manifest.files || []).filter((file: any) =>
+      !disabledFilenames.has(path.basename(file.path))
+    );
 
     // 4. Reconcile with local files
-    let prevState = { files: {} as Record<string, any> };
+    let prevState: InstallationState = { files: {} };
     if (fs.existsSync(stateFile)) {
       try {
         prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
@@ -143,6 +141,7 @@ export class LauncherSync {
 
     const toDownload: any[] = [];
     let upToDateCount = 0;
+    const verifiedAt = new Map<string, string>();
 
     for (const file of manifestFiles) {
       const localPath = path.join(gameDir, file.path);
@@ -156,9 +155,23 @@ export class LauncherSync {
       }
 
       if (fs.existsSync(localPath)) {
-        const hash = computeFileSha256(localPath);
+        const stat = fs.statSync(localPath);
+        const previous = prevState.files[file.path];
+        const metadataMatches =
+          verificationMode !== "full" &&
+          previous?.sha256 === file.hashes.sha256 &&
+          previous.size === file.size &&
+          previous.mtimeMs === stat.mtimeMs &&
+          stat.size === file.size;
+        if (metadataMatches) {
+          upToDateCount++;
+          continue;
+        }
+
+        const hash = await hashFile(localPath, "sha256");
         if (hash === file.hashes.sha256) {
           upToDateCount++;
+          verifiedAt.set(file.path, new Date().toISOString());
           continue;
         }
       }
@@ -174,15 +187,16 @@ export class LauncherSync {
       }
     }
 
-    // Direct disk reconciliation: scan mods/ directory for any unmanifested JAR files
+    // Direct disk reconciliation: preserve explicitly imported local mods.
     const modsDir = path.join(gameDir, "mods");
+    const customModFilenames = new Set((config.customClientMods || []).map((mod) => mod.filename.toLowerCase()));
     if (fs.existsSync(modsDir)) {
       try {
         const diskFiles = fs.readdirSync(modsDir);
         for (const file of diskFiles) {
           if (file.endsWith(".jar")) {
             const relModPath = `mods/${file}`;
-            if (!desiredFilesMap.has(relModPath) && !isPathProtected(relModPath)) {
+            if (!desiredFilesMap.has(relModPath) && !isPathProtected(relModPath) && !customModFilenames.has(file.toLowerCase())) {
               toDeleteSet.add(relModPath);
             }
           }
@@ -202,12 +216,11 @@ export class LauncherSync {
 
     if (toDownload.length > 0) {
       const concurrency = 6;
-      const queue = [...toDownload];
-      const downloadedMap = new Map<string, Buffer>();
+      let nextIndex = 0;
 
       async function worker() {
-        while (queue.length > 0) {
-          const file = queue.shift();
+        while (nextIndex < toDownload.length) {
+          const file = toDownload[nextIndex++];
           if (!file) break;
 
           let downloadUrl = file.download.url;
@@ -217,27 +230,18 @@ export class LauncherSync {
 
           // Check blob cache first
           const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
-          let buf: Buffer;
-
           if (fs.existsSync(cachePath)) {
-            const cachedBuf = fs.readFileSync(cachePath);
-            if (computeBufferSha256(cachedBuf) === file.hashes.sha256) {
-              buf = cachedBuf;
-            } else {
-              buf = await downloadBinary(file);
-              fs.writeFileSync(cachePath, buf);
+            const cachedHash = await hashFile(cachePath, "sha256");
+            if (cachedHash !== file.hashes.sha256 || fs.statSync(cachePath).size !== file.size) {
+              await fs.promises.rm(cachePath, { force: true });
             }
-          } else {
-            buf = await downloadBinary(file);
-            if (!fs.existsSync(path.dirname(cachePath))) {
-              fs.mkdirSync(path.dirname(cachePath), { recursive: true });
-            }
-            fs.writeFileSync(cachePath, buf);
           }
 
-          downloadedMap.set(file.path, buf);
+          let networkBytes = 0;
+          if (!fs.existsSync(cachePath)) networkBytes = await cacheFile(file, cachePath);
+          verifiedAt.set(file.path, new Date().toISOString());
           completedCount++;
-          bytesDownloaded += buf.length;
+          bytesDownloaded += networkBytes;
 
           const percent = Math.min(95, Math.round(15 + (completedCount / totalFiles) * 80));
           onProgress({
@@ -253,7 +257,7 @@ export class LauncherSync {
         }
       }
 
-      async function downloadBinary(fileEntry: any): Promise<Buffer> {
+      async function cacheFile(fileEntry: any, cachePath: string): Promise<number> {
         let url = fileEntry.download.url;
         const expectedSha256 = fileEntry.hashes.sha256;
 
@@ -265,31 +269,27 @@ export class LauncherSync {
           ];
           for (const c of candidates) {
             if (fs.existsSync(c)) {
-              const buf = fs.readFileSync(c);
-              if (computeBufferSha256(buf) === expectedSha256) {
-                return buf;
-              }
+              await copyVerified(c, cachePath, {
+                expectedHash: expectedSha256,
+                expectedSize: fileEntry.size,
+              });
+              return 0;
             }
           }
           url = `${portalUrl}${url}`;
         }
 
-        const resp = await fetch(url, { headers: { "User-Agent": "Lampas-Launcher/1.0" } });
-        if (!resp.ok) {
-          throw new Error(`Failed to download ${url}: ${resp.statusText}`);
-        }
-        const buffer = Buffer.from(await resp.arrayBuffer());
-        const hash = computeBufferSha256(buffer);
-        if (hash !== expectedSha256) {
-          throw new Error(`SHA-256 mismatch for ${url}! Expected ${expectedSha256}, got ${hash}`);
-        }
-        return buffer;
+        return downloadVerified(url, cachePath, {
+          expectedHash: expectedSha256,
+          expectedSize: fileEntry.size,
+          headers: { "User-Agent": "Lampas-Launcher/1.0" },
+        });
       }
 
       const workers = Array.from({ length: Math.min(concurrency, toDownload.length) }, () => worker());
       await Promise.all(workers);
 
-      // Apply staged files atomically
+      // Apply only after every artifact is present and verified in the cache.
       onProgress({
         status: "staging",
         message: "Staging and applying modpack files...",
@@ -300,15 +300,11 @@ export class LauncherSync {
         totalBytes,
       });
 
-      for (const [relPath, buffer] of downloadedMap.entries()) {
-        const destPath = path.join(gameDir, relPath);
-        if (!fs.existsSync(path.dirname(destPath))) {
-          fs.mkdirSync(path.dirname(destPath), { recursive: true });
-        }
-        const tmpPath = `${destPath}.tmp.${Date.now()}`;
-        fs.writeFileSync(tmpPath, buffer);
-        fs.renameSync(tmpPath, destPath);
+      for (const file of toDownload) {
+        const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
+        await copyAtomic(cachePath, path.join(gameDir, file.path));
       }
+
     }
 
     // 6. Delete obsolete managed files
@@ -328,10 +324,15 @@ export class LauncherSync {
     };
 
     for (const file of manifestFiles) {
+      const filePath = path.join(gameDir, file.path);
+      const stat = fs.existsSync(filePath) ? fs.statSync(filePath) : undefined;
+      const previous = prevState.files[file.path];
       newState.files[file.path] = {
         sha256: file.hashes.sha256,
         size: file.size,
         policy: file.policy,
+        mtimeMs: stat?.mtimeMs,
+        verifiedAt: verifiedAt.get(file.path) || previous?.verifiedAt,
       };
     }
 
@@ -343,7 +344,7 @@ export class LauncherSync {
       filesCompleted: totalFiles,
       totalFiles,
       percent: 100,
-      bytesDownloaded: totalBytes,
+      bytesDownloaded,
       totalBytes,
     });
 
@@ -385,7 +386,7 @@ export class LauncherSync {
         status: "repairing",
         percent: Math.round(p.percent * 0.4), // 0% - 40%
       });
-    });
+    }, "full");
 
     log("INFO", `[Repair] Modpack files verified and repaired (${syncResult.packName} v${syncResult.version}).`);
 
@@ -415,7 +416,8 @@ export class LauncherSync {
           bytesDownloaded: 0,
           totalBytes: 0,
         });
-      }
+      },
+      "full"
     );
 
     // 3. Java 25 verification
@@ -429,7 +431,7 @@ export class LauncherSync {
       totalBytes: 0,
     });
 
-    const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg));
+    const javaExe = await JavaRuntimeManager.ensureJava25(gameDir, (msg) => log("INFO", msg), "full");
     log("INFO", `[Repair] Java runtime verified: ${javaExe}`);
 
     onProgress({
@@ -458,16 +460,10 @@ export class LauncherSync {
     const channel = config.selectedChannel || "stable";
 
     try {
-      const channelResp = await fetch(`${portalUrl}/api/v1/channels/${channel}`);
-      if (channelResp.ok) {
-        const channelData = await channelResp.json();
-        const manifestResp = await fetch(`${portalUrl}/api/v1/releases/${channelData.version}/client-manifest`);
-        if (manifestResp.ok) {
-          const manifest = await manifestResp.json();
-          if (manifest.mods && Array.isArray(manifest.mods)) {
-            return manifest.mods;
-          }
-        }
+      const channelData: any = await fetchJsonWithRetry(`${portalUrl}/api/v1/channels/${channel}`);
+      const manifest: any = await fetchJsonWithRetry(`${portalUrl}/api/v1/releases/${channelData.version}/client-manifest`);
+      if (manifest.mods && Array.isArray(manifest.mods)) {
+        return this.decorateModCatalog(manifest.mods);
       }
     } catch {}
 
@@ -475,10 +471,34 @@ export class LauncherSync {
     if (fs.existsSync(localManifestPath)) {
       try {
         const manifest = JSON.parse(fs.readFileSync(localManifestPath, "utf-8"));
-        return manifest.mods || [];
+        return this.decorateModCatalog(manifest.mods || []);
       } catch {}
     }
 
     return [];
+  }
+
+  private static decorateModCatalog(mods: any[]): any[] {
+    const config = ConfigManager.get();
+    const disabled = new Set(config.disabledClientMods || []);
+    const official = mods.map((mod) => ({
+      ...mod,
+      source: "official",
+      enabled: mod.side !== "client" || !disabled.has(mod.id),
+      canDisable: mod.side === "client",
+    }));
+    const custom = (config.customClientMods || []).map((mod) => ({
+      id: `local:${mod.filename}`,
+      name: mod.filename.replace(/\.jar$/i, ""),
+      filename: mod.filename,
+      description: "Local client mod. Preserved when the Lampas pack synchronizes.",
+      side: "client",
+      categories: ["custom"],
+      source: "custom",
+      enabled: mod.enabled,
+      canDisable: true,
+      size: mod.size,
+    }));
+    return [...custom, ...official];
   }
 }

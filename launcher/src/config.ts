@@ -8,6 +8,9 @@ const DEFAULT_CONFIG: LauncherConfig = {
   selectedChannel: "stable",
   allocatedRamGb: 4,
   gameDir: "",
+  javaArgs: "",
+  disabledClientMods: [],
+  customClientMods: [],
 };
 
 export class ConfigManager {

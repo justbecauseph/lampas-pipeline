@@ -8,8 +8,10 @@ interface ModUpdateInfo {
   name: string;
   provider: string;
   currentVersionId: string;
+  currentVersionName: string;
   latestVersionId: string;
   latestVersionName: string;
+  latestVersionUrl: string;
   latestFileName: string;
   changelog?: string;
   publishedAt?: string;
@@ -79,14 +81,27 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
 
           const latest = versions[0];
           if (latest.id !== currentVersionId) {
+            let currentVersion = versions.find((version: any) => version.id === currentVersionId);
+            if (!currentVersion) {
+              const currentRes = await fetch(`https://api.modrinth.com/v2/version/${currentVersionId}`, {
+                headers: {
+                  "User-Agent": "Lampas-Pipeline/2.0 (update-checker)",
+                  Accept: "application/json",
+                },
+              });
+              if (currentRes.ok) currentVersion = await currentRes.json();
+            }
+
             const primaryFile = latest.files.find((f: any) => f.primary) || latest.files[0];
             const updateInfo: ModUpdateInfo = {
               modId,
               name: def.name,
               provider: "modrinth",
               currentVersionId,
+              currentVersionName: currentVersion?.version_number || currentVersion?.name || currentVersionId,
               latestVersionId: latest.id,
-              latestVersionName: latest.name,
+              latestVersionName: latest.version_number || latest.name,
+              latestVersionUrl: `https://modrinth.com/mod/${projectId}/version/${latest.id}`,
               latestFileName: primaryFile?.filename || latest.name,
               changelog: latest.changelog ? latest.changelog.trim().substring(0, 300) : undefined,
               publishedAt: latest.date_published,
@@ -94,7 +109,10 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
 
             updatesAvailable.push(updateInfo);
             console.log(`  ⚡ [Update Found] ${def.name} (${modId})`);
-            console.log(`     Current: ${currentVersionId} -> Latest: ${latest.id} (${latest.name})`);
+            console.log(`     Mod ID: ${modId}`);
+            console.log(`     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`);
+            console.log(`     Version IDs: ${currentVersionId} -> ${latest.id}`);
+            console.log(`     Updated version: ${updateInfo.latestVersionUrl}`);
 
             if (options.apply) {
               def.provider.version_id = latest.id;
@@ -123,12 +141,12 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   if (options.markdownOut && updatesAvailable.length > 0) {
     let md = `## 📦 Upstream Mod Updates Available (${updatesAvailable.length})\n\n`;
     md += `Target: **Minecraft ${targetMc}** • **Fabric ${packConfig.loader.version}**\n\n`;
-    md += `| Mod | Current ID | Latest Release | Release Date |\n`;
-    md += `| :--- | :--- | :--- | :--- |\n`;
+    md += `| Mod | Mod ID | Version | Version IDs | Release Date |\n`;
+    md += `| :--- | :--- | :--- | :--- | :--- |\n`;
 
     for (const u of updatesAvailable) {
       const dateStr = u.publishedAt ? new Date(u.publishedAt).toLocaleDateString() : "N/A";
-      md += `| **${u.name}** (\`${u.modId}\`) | \`${u.currentVersionId}\` | **${u.latestVersionName}** (\`${u.latestVersionId}\`) | ${dateStr} |\n`;
+      md += `| **${u.name}** | \`${u.modId}\` | **${u.currentVersionName}** → [**${u.latestVersionName}**](${u.latestVersionUrl}) | \`${u.currentVersionId}\` → \`${u.latestVersionId}\` | ${dateStr} |\n`;
     }
 
     fs.writeFileSync(options.markdownOut, md, "utf-8");

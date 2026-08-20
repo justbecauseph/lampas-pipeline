@@ -86,6 +86,7 @@ export class GameRunner {
     const cpSeparator = process.platform === "win32" ? ";" : ":";
     const classpathString = classpath.join(cpSeparator);
 
+    const customJavaArgs = parseJavaArgs(activeConfig.javaArgs || "");
     const jvmArgs = [
       `-Xmx${ramGb}G`,
       `-Xms${Math.min(2, ramGb)}G`,
@@ -98,6 +99,7 @@ export class GameRunner {
       "-Dfabric.disableTelemetry=true",
       `-Djava.library.path=${path.join(gameDir, "natives")}`,
       `-Dminecraft.applet.TargetDirectory=${gameDir}`,
+      ...customJavaArgs,
       "-cp",
       classpathString,
       mainClass,
@@ -167,4 +169,40 @@ export class GameRunner {
       this.runningProcess.kill("SIGTERM");
     }
   }
+}
+
+export function parseJavaArgs(value: string): string[] {
+  const args: string[] = [];
+  let current = "";
+  let quote: '"' | "'" | null = null;
+  let escaped = false;
+
+  const input = value.trim();
+  for (let index = 0; index < input.length; index++) {
+    const char = input[index];
+    if (escaped) {
+      current += char;
+      escaped = false;
+    } else if (char === "\\") {
+      const next = input[index + 1];
+      if (next === "\\" || next === '"' || next === "'" || /\s/.test(next || "")) escaped = true;
+      else current += char;
+    } else if (quote) {
+      if (char === quote) quote = null;
+      else current += char;
+    } else if (char === '"' || char === "'") {
+      quote = char;
+    } else if (/\s/.test(char)) {
+      if (current) {
+        args.push(current);
+        current = "";
+      }
+    } else {
+      current += char;
+    }
+  }
+  if (escaped) current += "\\";
+  if (quote) throw new Error("Custom Java arguments contain an unclosed quote.");
+  if (current) args.push(current);
+  return args;
 }
