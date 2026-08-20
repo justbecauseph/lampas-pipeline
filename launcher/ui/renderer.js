@@ -172,6 +172,7 @@ if (btnClose) {
 // Navigation Tabs
 // ========================================================
 function switchTab(activeNav, activeTab) {
+  window.scrollTo(0, 0);
   [navPlay, navMods, navConsole, navSettings].forEach((n) => n?.classList.remove("active"));
   [tabPlay, tabMods, tabConsole, tabSettings].forEach((t) => t?.classList.add("hidden"));
 
@@ -710,10 +711,11 @@ function renderMods() {
   const filtered = allMods.filter((mod) => {
     // Filter check
     if (filter === "client" && mod.side !== "client") return false;
+    if (filter === "disabled" && mod.enabled !== false) return false;
     if (filter === "custom" && mod.source !== "custom") return false;
     if (filter === "server" && mod.side !== "server") return false;
     if (filter === "both" && mod.side !== "both") return false;
-    if (filter !== "all" && filter !== "client" && filter !== "server" && filter !== "both") {
+    if (!["all", "client", "disabled", "custom", "server", "both"].includes(filter)) {
       const cats = (mod.categories || []).map((c) => c.toLowerCase());
       if (!cats.includes(filter)) return false;
     }
@@ -816,28 +818,37 @@ function renderMods() {
   });
   modsGrid.querySelectorAll(".js-mod-toggle").forEach((toggle) => {
     toggle.onchange = async () => {
+      const enabled = toggle.checked;
+      const filename = toggle.dataset.filename;
+      const modId = toggle.dataset.id;
+      const source = toggle.dataset.source;
       try {
         toggle.disabled = true;
-        if (toggle.dataset.source === "custom") {
-          await window.lampas.mods.setCustomEnabled(toggle.dataset.filename, toggle.checked);
+        if (source === "custom") {
+          await window.lampas.mods.setCustomEnabled(filename, enabled);
         } else {
-          await window.lampas.mods.setOfficialEnabled(toggle.dataset.id, toggle.checked);
+          await window.lampas.mods.setOfficialEnabled(modId, enabled);
         }
-        await loadModCatalog();
-        showToast(`${toggle.checked ? "Enabled" : "Disabled"} ${toggle.dataset.filename}. Changes apply on the next sync.`, "success");
+        const entry = allMods.find((mod) => mod.id === modId);
+        if (entry) entry.enabled = enabled;
+        toggle.disabled = false;
+        showToast(`${enabled ? "Enabled" : "Disabled"} ${filename}. Changes apply on the next sync.`, "success");
       } catch (err) {
-        toggle.checked = !toggle.checked;
+        toggle.checked = !enabled;
         toggle.disabled = false;
         showToast(`Could not update mod: ${err.message}`, "error");
       }
+      window.scrollTo(0, 0);
     };
   });
   modsGrid.querySelectorAll(".js-mod-remove").forEach((button) => {
     button.onclick = async () => {
       try {
-        await window.lampas.mods.removeCustom(button.dataset.filename);
+        const filename = button.dataset.filename;
+        button.blur();
+        await window.lampas.mods.removeCustom(filename);
         await loadModCatalog();
-        showToast(`Removed ${button.dataset.filename}.`, "success");
+        showToast(`Removed ${filename}.`, "success");
       } catch (err) {
         showToast(`Could not remove mod: ${err.message}`, "error");
       }
@@ -882,6 +893,7 @@ async function loadModCatalog() {
       if (optionalModCount) optionalModCount.innerText = allMods.filter((mod) => mod.source === "official" && mod.canDisable).length;
       if (localModCount) localModCount.innerText = allMods.filter((mod) => mod.source === "custom").length;
       renderMods();
+      window.scrollTo(0, 0);
     }
   } catch (err) {
     console.warn("Failed to load mod catalog:", err);

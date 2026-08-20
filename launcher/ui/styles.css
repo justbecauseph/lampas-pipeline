@@ -55,6 +55,9 @@ html, body {
   user-select: none;
 }
 
+html { overflow: hidden; }
+body { position: fixed; inset: 0; }
+
 /* Visibility & Utilities */
 .hidden { display: none !important; }
 .select-none { user-select: none; }
@@ -704,6 +707,22 @@ input[type="range"] {
   background: #1e293b;
   cursor: pointer;
 }
+
+.range-labels {
+  position: relative;
+  height: 16px;
+  margin-inline: 7px;
+}
+
+.range-labels span {
+  position: absolute;
+  left: var(--range-position);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.range-labels span:first-child { transform: translateX(-7px); }
+.range-labels span:last-child { transform: translateX(calc(-100% + 7px)); }
 
 /* Buttons */
 .btn-primary {

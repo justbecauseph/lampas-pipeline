@@ -309,6 +309,7 @@
               <button class="mod-filter-pill active" data-filter="all">All</button>
               <button class="mod-filter-pill" data-filter="shader">Shaders</button>
               <button class="mod-filter-pill" data-filter="client">Client-Only</button>
+              <button class="mod-filter-pill" data-filter="disabled">Disabled</button>
               <button class="mod-filter-pill" data-filter="custom">My Mods</button>
               <button class="mod-filter-pill" data-filter="server">Server-Only</button>
               <button class="mod-filter-pill" data-filter="both">Dual-Sided</button>
@@ -398,12 +399,12 @@
                 <span id="setting-ram-val" class="badge text-cyan-400">4 GB</span>
               </div>
               <input id="ram-slider" type="range" min="2" max="16" step="1" value="4" class="w-full">
-              <div class="flex justify-between text-xs font-mono text-slate-500">
-                <span>2 GB</span>
-                <span>4 GB</span>
-                <span>8 GB</span>
-                <span>12 GB</span>
-                <span>16 GB</span>
+              <div class="range-labels text-xs font-mono text-slate-500" aria-hidden="true">
+                <span style="--range-position: 0%">2 GB</span>
+                <span style="--range-position: 14.2857%">4 GB</span>
+                <span style="--range-position: 42.8571%">8 GB</span>
+                <span style="--range-position: 71.4286%">12 GB</span>
+                <span style="--range-position: 100%">16 GB</span>
               </div>
             </div>
 
