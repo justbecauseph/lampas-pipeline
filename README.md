@@ -78,9 +78,10 @@ graph TD
 ```text
 lampas-pipeline/
 ├── pack/
-│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack v2.0.0)
+│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack v2.0.0, [launcher.play], [launcher.resourcepacks])
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
 │   ├── mods/                     # 150+ declarative mod TOML definitions
+│   ├── resourcepacks/            # Declarative resource pack TOML definitions (e.g. lampas.toml)
 │   ├── common/                   # Shared configs, scripts, and assets (synced to both client & server)
 │   ├── client/                   # Client-only mods and configs
 │   ├── server/                   # Server-only mods and configs
@@ -179,6 +180,63 @@ bun run lampasctl install --manifest manifest/client-manifest.json --target ./my
 ```
 
 Normal installs use the `fast` verification mode, which trusts unchanged size and modification-time metadata recorded in `.lampas/installation.json`. Use `--verify full` (or the launcher's Repair action) to hash every managed file.
+
+---
+
+## 🌐 Direct Connect & Required Resource Packs
+
+Lampas releases can declaratively configure automatic server connection and required resource packs directly in `pack/pack.toml`:
+
+```toml
+[launcher.play]
+auto_connect = true
+server = "play.lampas.gg:25565"
+
+[launcher.resourcepacks]
+required = ["lampas"]
+```
+
+### Resource Pack Definitions
+
+Resource packs are declared under `pack/resourcepacks/`:
+
+```text
+pack/
+├── pack.toml
+├── resourcepacks/
+│   └── lampas.toml
+```
+
+Example `pack/resourcepacks/lampas.toml`:
+```toml
+name = "Lampas Official Resources"
+side = "client"
+type = "resourcepack"
+
+[provider]
+type = "direct"
+url = "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip"
+sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+filename = "Lampas-Resources-2.0.0.zip"
+size = 1048576
+```
+
+### Managed vs. Required Resource Packs
+
+- **Managed Resource Packs**: Any resource pack resolved in `pack.lock.json` and distributed to `resourcepacks/`. It is synchronized and kept up to date by the pipeline and launcher.
+- **Required Resource Packs**: Defined in `[launcher.resourcepacks] required = ["<artifact-id>"]`. A required pack is synchronized **and automatically enabled** in Minecraft's `options.txt` prior to launch. If the player disables, deletes, or modifies it, the launcher safely re-enables or repairs it without altering any user-installed custom resource packs or player settings.
+
+### Direct Connect Auto-Connection
+
+When `[launcher.play] auto_connect = true` and a vlampas.towner address is configured:
+- The launcher UI indicates the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.gg:25565`).
+- The game runner launches modern Minecraft Java Edition passing `--quickPlayMultiplayer <server>` to instantly join the server on boot without requiring client-side mods.
+
+### Server-Side Resource Pack Enforcement
+
+When generating release manifests (`lampasctl manifest`), the pipeline automatically exports:
+- `manifest/server-resource-pack.properties` containing `resource-pack=<url>`, `resource-pack-sha1=<sha1>`, and `require-resource-pack=true` for vanilla dedicated servers.
+- `manifest/server-resource-pack.json` for custom server plugins and backend infrastructure.
 
 ---
 

@@ -231,13 +231,13 @@ Once verified by testing, promote the channel pointer instantaneously without re
 ```bash
 # Promote current release to beta
 bun run lampasctl publish \
-  --portal https://portal.lampas.gg \
+  --portal https://portal.lampas.town \
   --channel beta \
   --secret "$PORTAL_SECRET"
 
 # Promote to production stable
 bun run lampasctl publish \
-  --portal https://portal.lampas.gg \
+  --portal https://portal.lampas.town \
   --channel stable \
   --secret "$PORTAL_SECRET"
 ```
@@ -258,7 +258,7 @@ python deploy_pack.py
 python deploy_pack.py --skip-backup
 
 # 3. Synchronize directly from a remote Lampas Portal instance and release channel
-python deploy_pack.py --portal-url https://portal.lampas.gg --channel stable
+python deploy_pack.py --portal-url https://portal.lampas.town --channel stable
 ```
 
 ---

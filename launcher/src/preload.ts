@@ -31,7 +31,8 @@ contextBridge.exposeInMainWorld("lampas", {
     removeCustom: (filename: string) => ipcRenderer.invoke("mods:removeCustom", filename),
   },
   game: {
-    launch: (user: UserProfile | null): Promise<boolean> => ipcRenderer.invoke("game:launch", user),
+    launch: (user: UserProfile | null, releaseOverride?: any): Promise<boolean> =>
+      ipcRenderer.invoke("game:launch", user, releaseOverride),
     kill: (): Promise<void> => ipcRenderer.invoke("game:kill"),
     isRunning: (): Promise<boolean> => ipcRenderer.invoke("game:isRunning"),
     onLog: (callback: (entry: GameLogEntry) => void) => {

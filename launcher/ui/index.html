@@ -195,10 +195,16 @@
                 <span>STOP GAME</span>
               </button>
 
-              <button id="btn-play" class="btn-play shadow-lg cursor-pointer">
-                <span id="btn-play-spinner" class="spinner hidden mr-2"></span>
-                <span id="btn-play-text">PLAY</span>
-              </button>
+              <div class="flex flex-col items-center">
+                <button id="btn-play" class="btn-play shadow-lg cursor-pointer">
+                  <span id="btn-play-spinner" class="spinner hidden mr-2"></span>
+                  <span id="btn-play-text">PLAY</span>
+                </button>
+                <div id="play-target-container" class="hidden flex items-center gap-1 text-[10px] text-slate-400 font-mono mt-1">
+                  <span>Connecting to:</span>
+                  <span id="play-target-server" class="text-cyan-400 font-semibold"></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

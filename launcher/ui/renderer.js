@@ -38,6 +38,8 @@ const btnPlay = document.getElementById("btn-play");
 const btnPlayText = document.getElementById("btn-play-text");
 const btnPlaySpinner = document.getElementById("btn-play-spinner");
 const btnStop = document.getElementById("btn-stop");
+const playTargetContainer = document.getElementById("play-target-container");
+const playTargetServer = document.getElementById("play-target-server");
 const progressContainer = document.getElementById("progress-container");
 const progressFill = document.getElementById("progress-fill");
 const progressMsg = document.getElementById("progress-msg");
@@ -46,6 +48,17 @@ const ramDisplay = document.getElementById("ram-display");
 const gamedirDisplay = document.getElementById("gamedir-display");
 const btnOpenGamedir = document.getElementById("btn-open-gamedir");
 const channelBtns = document.querySelectorAll(".channel-btn");
+
+function updateLaunchTargetUI(release) {
+  if (playTargetContainer && playTargetServer) {
+    if (release?.launch?.autoConnect && release?.launch?.server) {
+      playTargetServer.innerText = release.launch.server;
+      playTargetContainer.classList.remove("hidden");
+    } else {
+      playTargetContainer.classList.add("hidden");
+    }
+  }
+}
 
 // DOM Elements: Modpack Info Tab
 const modsPackVersion = document.getElementById("mods-pack-version");
@@ -597,6 +610,8 @@ if (btnPlay) {
       const syncResult = await window.lampas.sync.start();
       removeListener();
 
+      updateLaunchTargetUI(syncResult.release);
+
       if (btnPlayText) btnPlayText.innerText = "LAUNCHING...";
       setConsoleStatus("launching", "STARTING JVM...");
       if (progressMsg) progressMsg.innerText = "Starting Minecraft JVM...";
@@ -606,7 +621,7 @@ if (btnPlay) {
       appendLog("INFO", `Pack v${syncResult.version} synchronized. Bootstrapping KnotClient runtime...`);
       showToast(`Pack v${syncResult.version} verified. Launching game...`, "info", 2500);
 
-      await window.lampas.game.launch(currentUser);
+      await window.lampas.game.launch(currentUser, syncResult.release);
 
       if (btnPlayText) btnPlayText.innerText = "RUNNING";
       setConsoleStatus("running", "GAME RUNNING");

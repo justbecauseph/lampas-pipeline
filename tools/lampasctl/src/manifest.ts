@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { computeFileHashesStreaming, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
-import type { ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor } from "./types";
+import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid, isValidServerAddress, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
+import type { ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
 
 export interface ManifestOptions {
   packDir: string;
@@ -59,6 +59,52 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   const packConfigPath = path.join(options.packDir, "pack.toml");
   const packConfig = parseTomlFile<PackConfig>(packConfigPath);
   const lock = readJsonFile<PackLock>(options.lockFile);
+
+  // Validate launcher play configuration
+  if (packConfig.launcher?.play) {
+    const { auto_connect, server } = packConfig.launcher.play;
+    if (server && !isValidServerAddress(server)) {
+      throw new Error(`Invalid server address in pack.toml ([launcher.play] server = '${server}'): malformed address.`);
+    }
+    if (auto_connect && !server) {
+      throw new Error(
+        `Auto-connect is enabled in pack.toml ([launcher.play] auto_connect = true) but no valid server address was specified.`
+      );
+    }
+  }
+
+  // Validate and resolve launcher required resource packs
+  const requiredResourcePacks: ReleaseRequiredResourcePack[] = [];
+  if (packConfig.launcher?.resourcepacks?.required) {
+    for (const packId of packConfig.launcher.resourcepacks.required) {
+      const artifact = lock.artifacts[packId];
+      if (!artifact) {
+        throw new Error(`Required resource pack '${packId}' was not found in pack.lock.json.`);
+      }
+      const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+      if (artifactType !== "resourcepack") {
+        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`);
+      }
+      if (artifact.side !== "client" && artifact.side !== "both") {
+        throw new Error(`Artifact '${packId}' is configured as a required resource pack but is not available to the client (side='${artifact.side}').`);
+      }
+      if (!artifact.filename) {
+        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has no filename.`);
+      }
+      const targetDir = artifact.targetDir || "resourcepacks";
+      if (targetDir !== "resourcepacks") {
+        throw new Error(`Artifact '${packId}' is configured as a required resource pack but its path does not resolve to resourcepacks/ (${targetDir}/${artifact.filename}).`);
+      }
+
+      requiredResourcePacks.push({
+        id: packId,
+        filename: artifact.filename,
+        path: `resourcepacks/${artifact.filename}`,
+        sha256: artifact.sha256,
+        ...(artifact.sha1 ? { sha1: artifact.sha1 } : {}),
+      });
+    }
+  }
 
   const commonFiles = await scanStaticDir(options.packDir, "common");
   const clientStaticFiles = await scanStaticDir(options.packDir, "client");
@@ -147,7 +193,80 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     files: [...serverModFiles, ...commonFiles, ...serverStaticFiles],
   };
 
+  // Build resolved release launch configuration
+  let launchConfig: ReleaseLaunchConfig | undefined = undefined;
+  const playConfig = packConfig.launcher?.play;
+  const hasPlay = playConfig && (playConfig.auto_connect !== undefined || playConfig.server !== undefined);
+  const hasRequiredPacks = requiredResourcePacks.length > 0;
+
+  if (hasPlay || hasRequiredPacks) {
+    launchConfig = {};
+    if (playConfig?.auto_connect !== undefined) {
+      launchConfig.autoConnect = playConfig.auto_connect;
+    }
+    if (playConfig?.server !== undefined) {
+      launchConfig.server = playConfig.server;
+    }
+    if (hasRequiredPacks) {
+      launchConfig.requiredResourcePacks = requiredResourcePacks;
+    }
+  }
+
+  // Build server resource pack configuration
+  let serverResourcePackConfig: ServerResourcePackConfig | undefined = undefined;
+  const srpDef = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
   const portalBase = options.portalBaseUrl || "";
+
+  if (srpDef?.artifact) {
+    const artifact = lock.artifacts[srpDef.artifact];
+    if (!artifact) {
+      throw new Error(`Server resource pack artifact '${srpDef.artifact}' was not found in pack.lock.json.`);
+    }
+    const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+    if (artifactType !== "resourcepack") {
+      throw new Error(`Artifact '${srpDef.artifact}' is configured as server resource pack but has type '${artifactType}'.`);
+    }
+    let downloadUrl = artifact.downloadUrl;
+    if (downloadUrl.startsWith("/") && portalBase) {
+      downloadUrl = `${portalBase}${downloadUrl}`;
+    }
+    const packId = srpDef.id || (srpDef as any).uuid || (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${artifact.id}:${artifact.sha256}`);
+    serverResourcePackConfig = {
+      artifact: srpDef.artifact,
+      required: srpDef.required !== false,
+      filename: artifact.filename,
+      path: `resourcepacks/${artifact.filename}`,
+      url: downloadUrl,
+      ...(artifact.sha1 ? { sha1: artifact.sha1 } : {}),
+      sha256: artifact.sha256,
+      ...(srpDef.prompt ? { prompt: formatPromptJson(srpDef.prompt) } : {}),
+      id: packId,
+    };
+  } else if (requiredResourcePacks.length > 0) {
+    // If launcher has required resource pack, also create server resource pack config for seamless enforcement
+    const primaryPack = requiredResourcePacks[0];
+    const artifact = lock.artifacts[primaryPack.id];
+    let downloadUrl = artifact.downloadUrl;
+    if (downloadUrl.startsWith("/") && portalBase) {
+      downloadUrl = `${portalBase}${downloadUrl}`;
+    }
+    const packId = (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${primaryPack.id}:${primaryPack.sha256}`);
+    serverResourcePackConfig = {
+      artifact: primaryPack.id,
+      required: true,
+      filename: primaryPack.filename,
+      path: primaryPack.path,
+      url: downloadUrl,
+      ...(primaryPack.sha1 ? { sha1: primaryPack.sha1 } : {}),
+      sha256: primaryPack.sha256,
+      id: packId,
+    };
+  }
+
+  if (serverResourcePackConfig) {
+    serverManifest.resourcePack = serverResourcePackConfig;
+  }
+
   const release: ReleaseDescriptor = {
     schemaVersion: 1,
     pack: packConfig.pack.name,
@@ -164,6 +283,8 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     serverManifest: `${portalBase}/api/v1/releases/${packConfig.pack.version}/server-manifest`,
     totalMods: Object.keys(lock.artifacts).length,
     totalFiles: clientManifest.files.length,
+    ...(launchConfig ? { launch: launchConfig } : {}),
+    ...(serverResourcePackConfig ? { serverResourcePack: serverResourcePackConfig } : {}),
   };
 
   const clientOut = path.join(options.outDir, "client-manifest.json");
@@ -178,6 +299,28 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   console.log(`  - Client manifest (${clientManifest.files.length} files, ${clientModsCatalog.length} cataloged mods) -> ${clientOut}`);
   console.log(`  - Server manifest (${serverManifest.files.length} files, ${serverModsCatalog.length} cataloged mods) -> ${serverOut}`);
   console.log(`  - Release descriptor -> ${releaseOut}`);
+
+  // Optional: Generate server-side resource-pack configuration if server resource pack is present
+  if (serverResourcePackConfig) {
+    const serverPropsOut = path.join(options.outDir, "server-resource-pack.properties");
+    const serverPropsLines = [
+      `resource-pack=${serverResourcePackConfig.url}`,
+      `resource-pack-sha1=${serverResourcePackConfig.sha1 || ""}`,
+    ];
+    if (serverResourcePackConfig.prompt) {
+      serverPropsLines.push(`resource-pack-prompt=${serverResourcePackConfig.prompt}`);
+    }
+    if (serverResourcePackConfig.id) {
+      serverPropsLines.push(`resource-pack-id=${serverResourcePackConfig.id}`);
+    }
+    serverPropsLines.push(`require-resource-pack=${serverResourcePackConfig.required}`);
+    serverPropsLines.push("");
+    fs.writeFileSync(serverPropsOut, serverPropsLines.join("\n"), "utf-8");
+
+    const serverJsonOut = path.join(options.outDir, "server-resource-pack.json");
+    writeJsonFile(serverJsonOut, serverResourcePackConfig, true);
+    console.log(`  - Server resource-pack properties -> ${serverPropsOut}`);
+  }
 
   return { clientManifest, serverManifest, release };
 }

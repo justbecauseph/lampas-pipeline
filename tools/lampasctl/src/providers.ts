@@ -4,7 +4,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 
 const MODRINTH_API = "https://api.modrinth.com/v2";
-const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.gg)";
+const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.town)";
 const FETCH_ATTEMPTS = 2;
 
 export interface ModrinthVersionFile {
@@ -230,6 +230,7 @@ export class ArtifactResolver {
         filename: provider.filename || `${modId}.jar`,
         size: provider.size || 0,
         sha256: provider.sha256,
+        ...(provider.sha1 ? { sha1: provider.sha1 } : {}),
         downloadUrl: provider.url,
         artifactType,
         targetDir,

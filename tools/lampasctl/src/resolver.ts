@@ -76,7 +76,9 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   const parsedDefinitions = allDefinitions.map((item) => {
     const def = parseTomlFile<ModDefinition>(item.filePath);
     if (!def.type) def.type = item.defaultType;
-    if ((item.defaultType === "shader" || item.defaultType === "resourcepack") && !def.side) def.side = "client";
+    if (def.type === "shader" || def.type === "resourcepack" || item.defaultType === "shader" || item.defaultType === "resourcepack") {
+      def.side = "client";
+    }
     return { item, def };
   });
 

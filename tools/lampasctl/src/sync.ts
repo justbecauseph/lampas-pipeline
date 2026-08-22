@@ -6,6 +6,7 @@ import {
   copyFileVerified,
   downloadFileVerified,
   ensureDir,
+  formatPromptJson,
   readJsonFile,
   writeJsonFile,
 } from "./utils";
@@ -243,5 +244,60 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   }
 
   writeJsonFile(stateFile, newState, true);
+
+  // Apply server-side resource pack configuration to server.properties
+  if (manifest.target === "server" && manifest.resourcePack) {
+    applyServerResourcePackProperties(targetDir, manifest.resourcePack);
+  }
+
   console.log(`\n[Sync Complete] Successfully synchronized ${manifest.pack} v${manifest.version}`);
+}
+
+export function applyServerResourcePackProperties(
+  targetDir: string,
+  srp: { url: string; sha1?: string; required: boolean; prompt?: string; id?: string; uuid?: string }
+): void {
+  const propsPath = path.join(targetDir, "server.properties");
+  let content = "";
+  if (fs.existsSync(propsPath)) {
+    content = fs.readFileSync(propsPath, "utf-8");
+  }
+
+  const lines = content ? content.split(/\r?\n/) : [];
+  const keysToSet: Record<string, string> = {
+    "resource-pack": srp.url,
+    "resource-pack-sha1": srp.sha1 || "",
+    "require-resource-pack": String(srp.required),
+  };
+  if (srp.prompt) {
+    keysToSet["resource-pack-prompt"] = formatPromptJson(srp.prompt);
+  }
+  const packId = srp.id || srp.uuid;
+  if (packId) {
+    keysToSet["resource-pack-id"] = packId;
+  }
+
+  const seenKeys = new Set<string>();
+  const newLines = lines.map((line) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("#") || !trimmed.includes("=")) {
+      return line;
+    }
+    const eqIdx = line.indexOf("=");
+    const key = line.substring(0, eqIdx).trim();
+    if (key in keysToSet) {
+      seenKeys.add(key);
+      return `${key}=${keysToSet[key]}`;
+    }
+    return line;
+  });
+
+  for (const [key, value] of Object.entries(keysToSet)) {
+    if (!seenKeys.has(key)) {
+      newLines.push(`${key}=${value}`);
+    }
+  }
+
+  fs.writeFileSync(propsPath, newLines.join("\n"), "utf-8");
+  console.log(`  ⚙ [Server Config] Configured resource-pack settings in server.properties`);
 }

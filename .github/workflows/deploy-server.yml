@@ -40,5 +40,5 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /opt/minecraft/lampas-server
-            python3 deploy_pack.py --portal-url ${{ secrets.PORTAL_URL || 'https://portal.lampas.gg' }} --channel ${{ github.event.inputs.channel || 'stable' }}
+            python3 deploy_pack.py --portal-url ${{ secrets.PORTAL_URL || 'https://portal.lampas.town' }} --channel ${{ github.event.inputs.channel || 'stable' }}
             sudo systemctl restart lampas-server

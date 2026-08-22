@@ -15,7 +15,57 @@ export interface PackConfig {
   launcher?: {
     minimum_version?: string;
     protocol?: number;
+    play?: {
+      auto_connect?: boolean;
+      server?: string;
+    };
+    resourcepacks?: {
+      required?: string[];
+    };
   };
+  server?: {
+    resourcepack?: {
+      artifact?: string;
+      required?: boolean;
+      prompt?: string;
+      id?: string;
+      uuid?: string;
+    };
+    resource_pack?: {
+      artifact?: string;
+      required?: boolean;
+      prompt?: string;
+      id?: string;
+      uuid?: string;
+    };
+  };
+}
+
+export interface ReleaseRequiredResourcePack {
+  id: string;
+  filename: string;
+  path: string;
+  sha256: string;
+  sha1?: string;
+}
+
+export interface ReleaseLaunchConfig {
+  autoConnect?: boolean;
+  server?: string;
+  requiredResourcePacks?: ReleaseRequiredResourcePack[];
+}
+
+export interface ServerResourcePackConfig {
+  artifact: string;
+  required: boolean;
+  filename: string;
+  path: string;
+  url: string;
+  sha1?: string;
+  sha256: string;
+  prompt?: string;
+  id?: string;
+  uuid?: string;
 }
 
 export type ProviderConfig =
@@ -37,6 +87,7 @@ export type ProviderConfig =
       type: "direct";
       url: string;
       sha256: string;
+      sha1?: string;
       filename?: string;
       size?: number;
     };
@@ -48,6 +99,8 @@ export interface ModDefinition {
   side: Side;
   provider: ProviderConfig;
   type?: ArtifactType;
+  sha1?: string;
+  uuid?: string;
   notes?: string;
 }
 
@@ -132,6 +185,7 @@ export interface PackManifest {
     version: string;
   };
   protocol: number;
+  resourcePack?: ServerResourcePackConfig;
   mods?: ModCatalogEntry[];
   files: ManifestFile[];
 }
@@ -153,12 +207,15 @@ export interface ReleaseDescriptor {
   serverManifest: string;
   totalMods?: number;
   totalFiles?: number;
+  launch?: ReleaseLaunchConfig;
+  serverResourcePack?: ServerResourcePackConfig;
 }
 
 export interface InstallationState {
   pack: string;
   version: string;
   installedAt: string;
+  managedResourcePacks?: string[];
   files: Record<
     string,
     {

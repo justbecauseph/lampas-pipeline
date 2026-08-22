@@ -103,11 +103,12 @@ app.whenReady().then(() => {
   ipcMain.handle("mods:removeCustom", (_, filename: string) => ClientModManager.remove(filename));
 
   // IPC Handlers: Game
-  ipcMain.handle("game:launch", async (_, user: UserProfile | null) => {
+  ipcMain.handle("game:launch", async (_, user: UserProfile | null, releaseOverride?: any) => {
     return GameRunner.launchGame(
       user,
       (log) => mainWindow?.webContents.send("game:log", log),
-      (code) => mainWindow?.webContents.send("game:exit", code)
+      (code) => mainWindow?.webContents.send("game:exit", code),
+      releaseOverride
     );
   });
   ipcMain.handle("game:kill", () => GameRunner.killGame());

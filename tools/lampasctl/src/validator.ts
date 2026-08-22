@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseTomlFile, readJsonFile } from "./utils";
+import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
 import type { PackConfig, PackLock } from "./types";
 
 export interface ValidateOptions {
@@ -47,6 +47,67 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     if (!artifact.size || artifact.size <= 0) {
       console.error(`  ✗ [Invalid Size] Artifact '${id}' has non-positive size: ${artifact.size}`);
       hasErrors = true;
+    }
+  }
+
+  // Check launcher play configuration
+  if (packConfig.launcher?.play) {
+    const { auto_connect, server } = packConfig.launcher.play;
+    if (auto_connect && (!server || !isValidServerAddress(server))) {
+      console.error(`  ✗ [Invalid Play Config] auto_connect is true but server is missing or invalid: '${server || ""}'`);
+      hasErrors = true;
+    }
+    if (server && !isValidServerAddress(server)) {
+      console.error(`  ✗ [Invalid Server Address] server '${server}' is malformed.`);
+      hasErrors = true;
+    }
+  }
+
+  // Check launcher required resource packs
+  if (packConfig.launcher?.resourcepacks?.required) {
+    for (const packId of packConfig.launcher.resourcepacks.required) {
+      const artifact = lock.artifacts[packId];
+      if (!artifact) {
+        console.error(`  ✗ [Missing Required Resource Pack] Required resource pack '${packId}' was not found in pack.lock.json.`);
+        hasErrors = true;
+      } else {
+        const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+        if (artifactType !== "resourcepack") {
+          console.error(`  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`);
+          hasErrors = true;
+        }
+        if (artifact.side !== "client" && artifact.side !== "both") {
+          console.error(`  ✗ [Invalid Side] Artifact '${packId}' is configured as a required resource pack but is not available to client (side='${artifact.side}').`);
+          hasErrors = true;
+        }
+        const targetDir = artifact.targetDir || "resourcepacks";
+        if (targetDir !== "resourcepacks") {
+          console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as a required resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
+          hasErrors = true;
+        }
+      }
+    }
+  }
+
+  // Check server resourcepack configuration
+  const serverResourcePack = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
+  if (serverResourcePack?.artifact) {
+    const packId = serverResourcePack.artifact;
+    const artifact = lock.artifacts[packId];
+    if (!artifact) {
+      console.error(`  ✗ [Missing Server Resource Pack] Server resource pack '${packId}' was not found in pack.lock.json.`);
+      hasErrors = true;
+    } else {
+      const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+      if (artifactType !== "resourcepack") {
+        console.error(`  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as server resource pack but has type '${artifactType}'.`);
+        hasErrors = true;
+      }
+      const targetDir = artifact.targetDir || "resourcepacks";
+      if (targetDir !== "resourcepacks") {
+        console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as server resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
+        hasErrors = true;
+      }
     }
   }
 

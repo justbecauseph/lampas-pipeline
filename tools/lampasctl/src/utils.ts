@@ -297,3 +297,94 @@ export function readJsonFile<T = unknown>(filePath: string): T {
   const content = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(content) as T;
 }
+
+export function isValidServerAddress(server: string): boolean {
+  if (!server || typeof server !== "string") return false;
+  const trimmed = server.trim();
+  if (!trimmed || trimmed !== server) return false;
+  if (
+    trimmed.includes("://") ||
+    trimmed.includes("/") ||
+    trimmed.includes("\\") ||
+    /\s/.test(trimmed) ||
+    trimmed.includes("?") ||
+    trimmed.includes("#") ||
+    trimmed.includes("@")
+  ) {
+    return false;
+  }
+
+  let host = trimmed;
+  let portStr: string | undefined;
+
+  if (trimmed.startsWith("[")) {
+    const closeBracket = trimmed.indexOf("]");
+    if (closeBracket === -1) return false;
+    host = trimmed.substring(1, closeBracket);
+    const rest = trimmed.substring(closeBracket + 1);
+    if (rest) {
+      if (!rest.startsWith(":")) return false;
+      portStr = rest.substring(1);
+    }
+  } else {
+    const colonIndex = trimmed.lastIndexOf(":");
+    if (colonIndex !== -1 && trimmed.indexOf(":") === colonIndex) {
+      // Exactly one colon -> host:port
+      host = trimmed.substring(0, colonIndex);
+      portStr = trimmed.substring(colonIndex + 1);
+    } else if (colonIndex !== -1) {
+      // Multiple colons without brackets -> IPv6 address without port
+      host = trimmed;
+    }
+  }
+
+  if (!host) return false;
+
+  if (portStr !== undefined) {
+    if (!/^\d+$/.test(portStr)) return false;
+    const portNum = parseInt(portStr, 10);
+    if (portNum < 1 || portNum > 65535) return false;
+  }
+
+  // IPv4 check
+  const isIpv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(host);
+  if (isIpv4) {
+    const octets = host.split(".").map(Number);
+    if (octets.some((o) => o < 0 || o > 255)) return false;
+    return true;
+  }
+
+  // Hostname check (RFC 1123 / standard domains / localhost)
+  const hostnameRegex = /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*$/;
+  if (hostnameRegex.test(host)) {
+    return true;
+  }
+
+  // IPv6 check
+  const isIpv6 = /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$/.test(host);
+  if (isIpv6) {
+    return true;
+  }
+
+  return false;
+}
+
+export function formatPromptJson(prompt: string): string {
+  const trimmed = prompt.trim();
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+    return trimmed;
+  }
+  return JSON.stringify({ text: trimmed });
+}
+
+export function generateDeterministicUuid(seed: string): string {
+  const hash = createHash("sha256").update(seed).digest("hex");
+  const p1 = hash.substring(0, 8);
+  const p2 = hash.substring(8, 12);
+  const p3 = "4" + hash.substring(13, 16);
+  const variantByte = (parseInt(hash.substring(16, 18), 16) & 0x3f) | 0x80;
+  const p4 = variantByte.toString(16).padStart(2, "0") + hash.substring(18, 20);
+  const p5 = hash.substring(20, 32);
+  return `${p1}-${p2}-${p3}-${p4}-${p5}`;
+}
+

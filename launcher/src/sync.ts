@@ -4,7 +4,8 @@ import { ConfigManager } from "./config";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
 import { copyAtomic, copyVerified, downloadVerified, fetchJsonWithRetry, hashFile, HttpResponseError } from "./file-transfer";
-import type { SyncProgress } from "./types";
+import { ensureRequiredResourcePacks } from "./resource-packs";
+import type { InstallationState, SyncProgress } from "./types";
 
 const PROTECTED_PREFIXES = [
   "saves/",
@@ -22,22 +23,11 @@ function isPathProtected(relPath: string): boolean {
   return PROTECTED_PREFIXES.some((p) => norm === p || norm.startsWith(p));
 }
 
-interface InstallationState {
-  files: Record<string, {
-    sha256: string;
-    size: number;
-    policy: string;
-    mtimeMs?: number;
-    verifiedAt?: string;
-  }>;
-  [key: string]: unknown;
-}
-
 export class LauncherSync {
   static async syncClient(
     onProgress: (progress: SyncProgress) => void,
     verificationMode: "fast" | "full" = "fast"
-  ): Promise<{ success: boolean; version: string; packName: string }> {
+  ): Promise<{ success: boolean; version: string; packName: string; release?: any }> {
     const config = ConfigManager.get();
     if (!config.token) {
       throw new Error("Authentication required: Please log in with your Lampas Portal account.");
@@ -109,6 +99,12 @@ export class LauncherSync {
       if (fs.existsSync(localManifestPath)) {
         manifest = JSON.parse(fs.readFileSync(localManifestPath, "utf-8"));
         targetVersion = manifest.version || "2.0.0";
+        const localReleasePath = path.join(__dirname, "../../manifest/release.json");
+        if (fs.existsSync(localReleasePath)) {
+          try {
+            releaseData = JSON.parse(fs.readFileSync(localReleasePath, "utf-8"));
+          } catch {}
+        }
       } else {
         throw new Error(`Portal unavailable (${portalErr.message}) and no local manifest found.`);
       }
@@ -125,7 +121,7 @@ export class LauncherSync {
     );
 
     // 4. Reconcile with local files
-    let prevState: InstallationState = { files: {} };
+    let prevState: InstallationState = { pack: "", version: "", installedAt: "", files: {} };
     if (fs.existsSync(stateFile)) {
       try {
         prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
@@ -315,11 +311,20 @@ export class LauncherSync {
       }
     }
 
-    // 7. Write installation state
-    const newState = {
+    // 7. Write release descriptor and installation state
+    const releaseFilePath = path.join(stateDir, "release.json");
+    try {
+      fs.writeFileSync(releaseFilePath, JSON.stringify(releaseData, null, 2), "utf-8");
+    } catch {}
+
+    const currentReqPacks = releaseData?.launch?.requiredResourcePacks;
+    const currentReqFilenames = currentReqPacks ? currentReqPacks.map((p: any) => p.filename) : undefined;
+
+    const newState: InstallationState = {
       pack: manifest.pack || releaseData.pack || "Lampas 2",
       version: targetVersion,
       installedAt: new Date().toISOString(),
+      managedResourcePacks: currentReqFilenames || prevState.managedResourcePacks,
       files: {} as Record<string, any>,
     };
 
@@ -338,6 +343,15 @@ export class LauncherSync {
 
     fs.writeFileSync(stateFile, JSON.stringify(newState, null, 2), "utf-8");
 
+    // 8. Ensure required resource packs are active
+    if (currentReqPacks && currentReqPacks.length > 0) {
+      try {
+        await ensureRequiredResourcePacks(gameDir, currentReqPacks);
+      } catch (packErr: any) {
+        console.warn(`[Sync Warning] Could not activate required resource packs immediately: ${packErr.message}`);
+      }
+    }
+
     onProgress({
       status: "complete",
       message: `Lampas Modpack v${targetVersion} is ready!`,
@@ -352,6 +366,7 @@ export class LauncherSync {
       success: true,
       version: targetVersion,
       packName: newState.pack,
+      release: releaseData,
     };
   }
 

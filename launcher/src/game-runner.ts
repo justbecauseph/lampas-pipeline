@@ -6,7 +6,8 @@ import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
-import type { GameLogEntry, UserProfile } from "./types";
+import { ensureRequiredResourcePacks, isValidServerAddress } from "./resource-packs";
+import type { GameLogEntry, ReleaseDescriptor, UserProfile } from "./types";
 
 function generateOfflineUuid(username: string): string {
   const md5 = createHash("md5").update(`OfflinePlayer:${username}`).digest();
@@ -25,7 +26,8 @@ export class GameRunner {
   static async launchGame(
     user: UserProfile | null,
     onLog: (entry: GameLogEntry) => void,
-    onExit: (code: number | null) => void
+    onExit: (code: number | null) => void,
+    releaseOverride?: ReleaseDescriptor
   ): Promise<boolean> {
     if (this.isGameRunning()) {
       throw new Error("Minecraft is already running!");
@@ -67,6 +69,37 @@ export class GameRunner {
     const token = isRealMsa ? mcToken : "0";
     const userType = isRealMsa ? "msa" : "legacy";
 
+    // Resolve active release descriptor for launch configuration
+    let release: ReleaseDescriptor | null = releaseOverride || null;
+    if (!release) {
+      const stateReleasePath = path.join(gameDir, ".lampas", "release.json");
+      if (fs.existsSync(stateReleasePath)) {
+        try {
+          release = JSON.parse(fs.readFileSync(stateReleasePath, "utf-8"));
+        } catch {}
+      }
+      if (!release) {
+        const localReleasePath = path.join(__dirname, "../../manifest/release.json");
+        if (fs.existsSync(localReleasePath)) {
+          try {
+            release = JSON.parse(fs.readFileSync(localReleasePath, "utf-8"));
+          } catch {}
+        }
+      }
+    }
+
+    // Verify & ensure required resource packs before bootstrapping
+    if (release?.launch?.requiredResourcePacks && release.launch.requiredResourcePacks.length > 0) {
+      log("INFO", `Verifying ${release.launch.requiredResourcePacks.length} required Lampas resource pack(s)...`);
+      try {
+        await ensureRequiredResourcePacks(gameDir, release.launch.requiredResourcePacks);
+        log("INFO", "Required resource pack(s) verified and enabled.");
+      } catch (err: any) {
+        log("ERROR", `Failed to prepare required Lampas resource pack: ${err.message}`);
+        throw new Error("Unable to prepare required Lampas resource pack. Run Repair and try again.");
+      }
+    }
+
     log("INFO", `Preparing Standalone Minecraft + Fabric Environment (Java 25)...`);
     log("INFO", `Game Directory: ${gameDir}`);
     log("INFO", `Player: ${username} (UUID: ${rawUuid}, Auth: ${isRealMsa ? "Microsoft Services" : "Lampas Protocol"})`);
@@ -82,7 +115,7 @@ export class GameRunner {
       (msg) => log("INFO", msg)
     );
 
-    // 2. Build JVM and Game Classpath
+    // 3. Build JVM and Game Classpath
     const cpSeparator = process.platform === "win32" ? ";" : ":";
     const classpathString = classpath.join(cpSeparator);
 
@@ -124,6 +157,17 @@ export class GameRunner {
       "--userProperties",
       "{}",
     ];
+
+    // Quick Play: Direct server connection
+    if (release?.launch?.autoConnect && release.launch.server) {
+      const serverAddr = release.launch.server.trim();
+      if (!isValidServerAddress(serverAddr)) {
+        log("ERROR", `Invalid auto-connect server address configured: '${serverAddr}'`);
+        throw new Error(`Malformed auto-connect server address: '${serverAddr}'`);
+      }
+      log("INFO", `Direct connect enabled: automatically connecting to ${serverAddr}...`);
+      jvmArgs.push("--quickPlayMultiplayer", serverAddr);
+    }
 
     log("INFO", `Starting Minecraft client via KnotClient (${mainClass})...`);
 
@@ -167,7 +211,12 @@ export class GameRunner {
   static killGame() {
     if (this.runningProcess) {
       this.runningProcess.kill("SIGTERM");
+      this.runningProcess = null;
     }
+  }
+
+  static resetForTesting() {
+    this.runningProcess = null;
   }
 }
 

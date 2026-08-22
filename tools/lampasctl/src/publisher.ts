@@ -76,6 +76,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     protocolVersion: release.protocol,
     clientManifest,
     serverManifest,
+    launch: release.launch,
     channel: options.channel || "stable",
     gitCommit: release.gitCommit,
     blobs: blobsToUpload,

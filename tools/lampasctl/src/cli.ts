@@ -205,7 +205,12 @@ async function main() {
         const lockFile = path.resolve(flags.lock || path.join(packDir, "pack.lock.json"));
         const outDir = path.resolve(flags.out || path.join(rootDir, "manifest"));
 
-        await buildManifests({ packDir, lockFile, outDir, portalBaseUrl: flags.portal });
+        await buildManifests({
+          packDir,
+          lockFile,
+          outDir,
+          portalBaseUrl: flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL || "https://portal.lampas.town",
+        });
         break;
       }
 

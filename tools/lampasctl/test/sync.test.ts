@@ -53,4 +53,58 @@ describe("sync verification modes", () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test("server sync updates server.properties with resource pack metadata", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-server-sync-"));
+    const target = path.join(dir, "server");
+    fs.mkdirSync(target, { recursive: true });
+
+    const initialProps = [
+      "# Minecraft server properties",
+      "server-port=25565",
+      "motd=Lampas SMP",
+      "resource-pack=",
+      "difficulty=hard",
+    ].join("\n");
+    fs.writeFileSync(path.join(target, "server.properties"), initialProps, "utf-8");
+
+    const manifestPath = path.join(dir, "server-manifest.json");
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        schemaVersion: 1,
+        pack: "Lampas 2",
+        version: "2.0.0",
+        target: "server",
+        minecraft: "26.2",
+        loader: { type: "fabric", version: "0.19.3" },
+        protocol: 2,
+        resourcePack: {
+          artifact: "lampas",
+          required: true,
+          filename: "Lampas-Resources-2.0.0.zip",
+          path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+          url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+          sha1: "abc1234567890123456789012345678901234567",
+          sha256: "a".repeat(64),
+          prompt: "Lampas requires its resource pack.",
+        },
+        files: [],
+      })
+    );
+
+    try {
+      await syncInstance({ manifestPath, targetDir: target });
+      const propsContent = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(propsContent).toContain("server-port=25565");
+      expect(propsContent).toContain("motd=Lampas SMP");
+      expect(propsContent).toContain("difficulty=hard");
+      expect(propsContent).toContain("resource-pack=https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip");
+      expect(propsContent).toContain("resource-pack-sha1=abc1234567890123456789012345678901234567");
+      expect(propsContent).toContain("require-resource-pack=true");
+      expect(propsContent).toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

@@ -69,4 +69,9 @@ export class ConfigManager {
     fs.writeFileSync(this.configPath, JSON.stringify(this.cachedConfig, null, 2), "utf-8");
     return this.cachedConfig;
   }
+
+  static resetForTesting(): void {
+    this.cachedConfig = null;
+    this.configPath = "";
+  }
 }

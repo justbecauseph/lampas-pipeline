@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -15,7 +15,8 @@ const { ConfigManager } = await import("../src/config");
 const { ClientModManager } = await import("../src/client-mods");
 const { parseJavaArgs } = await import("../src/game-runner");
 
-beforeAll(() => {
+beforeEach(() => {
+  ConfigManager.resetForTesting();
   ConfigManager.set({ gameDir: path.join(testRoot, "game"), customClientMods: [], disabledClientMods: [] });
 });
 

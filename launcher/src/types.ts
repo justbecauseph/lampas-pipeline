@@ -49,3 +49,56 @@ export interface GameLogEntry {
   level: "INFO" | "WARN" | "ERROR" | "CHAT";
   message: string;
 }
+
+export interface RequiredResourcePack {
+  id: string;
+  filename: string;
+  path: string;
+  sha256: string;
+  sha1?: string;
+}
+
+export interface ReleaseLaunchConfig {
+  autoConnect?: boolean;
+  server?: string;
+  requiredResourcePacks?: RequiredResourcePack[];
+}
+
+export interface ReleaseDescriptor {
+  schemaVersion: number;
+  pack: string;
+  version: string;
+  minecraft: string;
+  loader: {
+    type: "fabric";
+    version: string;
+  };
+  minimumLauncherVersion: string;
+  protocol: number;
+  gitCommit?: string;
+  created: string;
+  clientManifest: string;
+  serverManifest: string;
+  totalMods?: number;
+  totalFiles?: number;
+  launch?: ReleaseLaunchConfig;
+}
+
+export interface InstallationState {
+  pack: string;
+  version: string;
+  installedAt: string;
+  managedResourcePacks?: string[];
+  files: Record<
+    string,
+    {
+      sha256: string;
+      size: number;
+      policy: string;
+      mtimeMs?: number;
+      verifiedAt?: string;
+    }
+  >;
+  [key: string]: unknown;
+}
+
