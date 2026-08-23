@@ -59,5 +59,8 @@ contextBridge.exposeInMainWorld("lampas", {
   },
   utils: {
     openPath: (targetPath: string): Promise<string> => ipcRenderer.invoke("utils:openPath", targetPath),
+    getLogPath: (): Promise<string> => ipcRenderer.invoke("utils:getLogPath"),
+    openLogsDir: (): Promise<string> => ipcRenderer.invoke("utils:openLogsDir"),
+    openLogFile: (): Promise<string> => ipcRenderer.invoke("utils:openLogFile"),
   },
 });

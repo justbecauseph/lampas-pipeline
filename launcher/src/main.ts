@@ -5,6 +5,7 @@ import { LauncherAuth } from "./auth";
 import { LauncherSync } from "./sync";
 import { GameRunner, parseJavaArgs } from "./game-runner";
 import { ClientModManager } from "./client-mods";
+import { LauncherLogger } from "./logger";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
@@ -38,6 +39,9 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  LauncherLogger.init();
+  LauncherLogger.info(`Lampas Launcher initialized (App: ${app.getName()} ${app.getVersion()})`);
+
   createWindow();
 
   // IPC Handlers: Window Controls
@@ -59,6 +63,17 @@ app.whenReady().then(() => {
       else await shell.openPath(targetPath);
     }
   });
+  ipcMain.handle("utils:getLogPath", () => LauncherLogger.getLogPath());
+  ipcMain.handle("utils:openLogsDir", async () => {
+    const logsDir = LauncherLogger.getLogsDir();
+    await shell.openPath(logsDir);
+    return logsDir;
+  });
+  ipcMain.handle("utils:openLogFile", async () => {
+    const logPath = LauncherLogger.getLogPath();
+    await shell.openPath(logPath);
+    return logPath;
+  });
 
   // IPC Handlers: Config
   ipcMain.handle("config:get", () => ConfigManager.get());
@@ -75,14 +90,22 @@ app.whenReady().then(() => {
 
   // IPC Handlers: Sync & Repair
   ipcMain.handle("sync:start", async () => {
+    LauncherLogger.info("Starting modpack synchronization...");
     return LauncherSync.syncClient((progress) => {
+      if (progress.message) {
+        LauncherLogger.info(`[Sync] ${progress.message}`);
+      }
       mainWindow?.webContents.send("sync:progress", progress);
     });
   });
   ipcMain.handle("sync:repair", async () => {
+    LauncherLogger.info("Starting full installation repair...");
     return LauncherSync.repairInstallation(
       (progress) => mainWindow?.webContents.send("sync:progress", progress),
-      (log) => mainWindow?.webContents.send("game:log", log)
+      (log) => {
+        LauncherLogger.log(log.level, log.message);
+        mainWindow?.webContents.send("game:log", log);
+      }
     );
   });
   ipcMain.handle("sync:getModCatalog", () => LauncherSync.getModCatalog());
@@ -104,14 +127,24 @@ app.whenReady().then(() => {
 
   // IPC Handlers: Game
   ipcMain.handle("game:launch", async (_, user: UserProfile | null, releaseOverride?: any) => {
+    LauncherLogger.info(`Initiating game launch for player: ${user?.minecraftUsername || user?.name || "Unknown"}`);
     return GameRunner.launchGame(
       user,
-      (log) => mainWindow?.webContents.send("game:log", log),
-      (code) => mainWindow?.webContents.send("game:exit", code),
+      (log) => {
+        // Stream live game output to UI console only (Minecraft Log4j logs stay in logs/latest.log)
+        mainWindow?.webContents.send("game:log", log);
+      },
+      (code) => {
+        LauncherLogger.info(`Minecraft process exited with code ${code}`);
+        mainWindow?.webContents.send("game:exit", code);
+      },
       releaseOverride
     );
   });
-  ipcMain.handle("game:kill", () => GameRunner.killGame());
+  ipcMain.handle("game:kill", () => {
+    LauncherLogger.warn("Game kill request received from user.");
+    GameRunner.killGame();
+  });
   ipcMain.handle("game:isRunning", () => GameRunner.isGameRunning());
 });
 

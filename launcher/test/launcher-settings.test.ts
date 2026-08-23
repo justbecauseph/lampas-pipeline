@@ -62,4 +62,14 @@ describe("launcher settings", () => {
     expect(() => ClientModManager.remove("../example-client.jar")).toThrow("Invalid local mod filename");
     ConfigManager.set({ customClientMods: [] });
   });
+
+  test("normalizes portal URLs and upgrades HTTP to HTTPS for remote portals", () => {
+    const { normalizePortalUrl } = require("../src/config");
+    expect(normalizePortalUrl("http://dev.lampas.town")).toBe("https://dev.lampas.town");
+    expect(normalizePortalUrl("dev.lampas.town")).toBe("https://dev.lampas.town");
+    expect(normalizePortalUrl("http://dev.lampas.town/")).toBe("https://dev.lampas.town");
+    expect(normalizePortalUrl("https://dev.lampas.town")).toBe("https://dev.lampas.town");
+    expect(normalizePortalUrl("http://localhost:3000")).toBe("http://localhost:3000");
+    expect(normalizePortalUrl("http://127.0.0.1:3000")).toBe("http://127.0.0.1:3000");
+  });
 });

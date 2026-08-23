@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ConfigManager } from "./config";
+import { ConfigManager, normalizePortalUrl } from "./config";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
 import { copyAtomic, copyVerified, downloadVerified, fetchJsonWithRetry, hashFile, HttpResponseError } from "./file-transfer";
@@ -32,7 +32,7 @@ export class LauncherSync {
     if (!config.token) {
       throw new Error("Authentication required: Please log in with your Lampas Portal account.");
     }
-    const portalUrl = (config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
+    const portalUrl = normalizePortalUrl(config.portalUrl);
     const channel = config.selectedChannel || "stable";
     const gameDir = config.gameDir;
 
@@ -471,7 +471,7 @@ export class LauncherSync {
 
   static async getModCatalog(): Promise<any[]> {
     const config = ConfigManager.get();
-    const portalUrl = (config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
+    const portalUrl = normalizePortalUrl(config.portalUrl);
     const channel = config.selectedChannel || "stable";
 
     try {

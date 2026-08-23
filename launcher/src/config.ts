@@ -13,6 +13,18 @@ const DEFAULT_CONFIG: LauncherConfig = {
   customClientMods: [],
 };
 
+export function normalizePortalUrl(url?: string): string {
+  let normalized = (url || "https://dev.lampas.town").trim().replace(/\/+$/, "");
+  if (!/^https?:\/\//i.test(normalized)) {
+    normalized = `https://${normalized}`;
+  }
+  // Auto-upgrade remote HTTP to HTTPS (preserve http only for local loopback dev)
+  if (normalized.startsWith("http://") && !normalized.includes("localhost") && !normalized.includes("127.0.0.1")) {
+    normalized = normalized.replace(/^http:\/\//i, "https://");
+  }
+  return normalized;
+}
+
 export class ConfigManager {
   private static configPath: string;
   private static cachedConfig: LauncherConfig | null = null;
@@ -44,6 +56,8 @@ export class ConfigManager {
       loaded = { ...DEFAULT_CONFIG };
     }
 
+    loaded.portalUrl = normalizePortalUrl(loaded.portalUrl);
+
     if (!loaded.gameDir) {
       const defaultGameDir = path.join(
         process.env.APPDATA || process.env.HOME || process.cwd(),
@@ -60,6 +74,9 @@ export class ConfigManager {
     this.initPath();
     const current = this.get();
     const updated = { ...current, ...newConfig };
+    if (updated.portalUrl) {
+      updated.portalUrl = normalizePortalUrl(updated.portalUrl);
+    }
     for (const key of Object.keys(updated) as Array<keyof LauncherConfig>) {
       if (updated[key] === undefined) {
         delete updated[key];

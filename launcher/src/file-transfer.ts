@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
+import { LauncherLogger } from "./logger";
+
 export type HashAlgorithm = "sha1" | "sha256";
 
 export interface VerifiedTransferOptions {
@@ -29,14 +31,24 @@ export async function fetchJsonWithRetry<T>(
 ): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= attempts; attempt++) {
+    const startTime = Date.now();
+    LauncherLogger.logApiRequest("GET", url, attempt > 1 ? { attempt, maxAttempts: attempts } : undefined);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const response = await fetch(url, { signal: controller.signal, headers });
-      if (!response.ok) throw new HttpResponseError(response.status, response.statusText, url);
-      return await response.json() as T;
-    } catch (error) {
+      const durationMs = Date.now() - startTime;
+      if (!response.ok) {
+        LauncherLogger.logApiResponse("GET", url, response.status, durationMs, response.statusText);
+        throw new HttpResponseError(response.status, response.statusText, url);
+      }
+      const data = await response.json() as T;
+      LauncherLogger.logApiResponse("GET", url, response.status, durationMs, data);
+      return data;
+    } catch (error: any) {
+      const durationMs = Date.now() - startTime;
       lastError = error;
+      LauncherLogger.logApiError("GET", url, error, durationMs);
       if (error instanceof HttpResponseError && error.status >= 400 && error.status < 500 && error.status !== 429) throw error;
       if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** (attempt - 1)));
     } finally {
@@ -125,14 +137,26 @@ export async function downloadVerified(
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
+    const startTime = Date.now();
+    const destName = path.basename(destination);
+    LauncherLogger.log("INFO", `[Download Request] GET ${url} -> ${destName} (attempt ${attempt}/${attempts})`);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeoutMs || 30_000);
     try {
       const response = await fetch(url, { signal: controller.signal, headers: options.headers });
-      if (!response.ok || !response.body) throw new Error(`HTTP ${response.status} ${response.statusText}`);
-      return await streamVerified(Readable.fromWeb(response.body as any), destination, options);
-    } catch (error) {
+      if (!response.ok || !response.body) {
+        const durationMs = Date.now() - startTime;
+        LauncherLogger.log("ERROR", `[Download Error] HTTP ${response.status} ${response.statusText} for ${url} (${durationMs}ms)`);
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      }
+      const bytes = await streamVerified(Readable.fromWeb(response.body as any), destination, options);
+      const durationMs = Date.now() - startTime;
+      LauncherLogger.log("INFO", `[Download Complete] ${destName} (${bytes} bytes in ${durationMs}ms) from ${url}`);
+      return bytes;
+    } catch (error: any) {
+      const durationMs = Date.now() - startTime;
       lastError = error;
+      LauncherLogger.log("WARN", `[Download Retry] Failed ${destName}: ${error?.message || error} (${durationMs}ms)`);
       if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** (attempt - 1)));
     } finally {
       clearTimeout(timer);

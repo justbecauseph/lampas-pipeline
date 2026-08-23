@@ -73,6 +73,7 @@ const modDropZone = document.getElementById("mod-drop-zone");
 const consoleOutput = document.getElementById("console-output");
 const consoleCount = document.getElementById("console-count");
 const consoleAutoscroll = document.getElementById("console-autoscroll");
+const btnOpenLogFile = document.getElementById("btn-open-log-file");
 const btnCopyLogs = document.getElementById("btn-copy-logs");
 const btnClearLogs = document.getElementById("btn-clear-logs");
 const consoleGameStatus = document.getElementById("console-game-status");
@@ -241,6 +242,22 @@ if (btnClearLogs) {
       logLineCount = 0;
       if (consoleCount) consoleCount.innerText = "0 lines";
       showToast("Console cleared", "info", 1500);
+    }
+  };
+}
+
+if (btnOpenLogFile) {
+  btnOpenLogFile.onclick = async () => {
+    try {
+      if (window.lampas.utils?.openLogFile) {
+        await window.lampas.utils.openLogFile();
+      } else if (window.lampas.utils?.getLogPath) {
+        const logPath = await window.lampas.utils.getLogPath();
+        await window.lampas.utils.openPath(logPath);
+      }
+      showToast("Opening launcher.log...", "info", 2000);
+    } catch (err) {
+      showToast(`Failed to open log file: ${err.message}`, "error", 3000);
     }
   };
 }
