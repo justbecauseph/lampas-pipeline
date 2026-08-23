@@ -4,7 +4,7 @@ import { app } from "electron";
 import type { LauncherConfig } from "./types";
 
 const DEFAULT_CONFIG: LauncherConfig = {
-  portalUrl: "http://localhost:3000",
+  portalUrl: "https://dev.lampas.town",
   selectedChannel: "stable",
   allocatedRamGb: 4,
   gameDir: "",

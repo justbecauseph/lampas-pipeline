@@ -32,7 +32,7 @@ export class LauncherSync {
     if (!config.token) {
       throw new Error("Authentication required: Please log in with your Lampas Portal account.");
     }
-    const portalUrl = (config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const portalUrl = (config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
     const channel = config.selectedChannel || "stable";
     const gameDir = config.gameDir;
 
@@ -471,7 +471,7 @@ export class LauncherSync {
 
   static async getModCatalog(): Promise<any[]> {
     const config = ConfigManager.get();
-    const portalUrl = (config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const portalUrl = (config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
     const channel = config.selectedChannel || "stable";
 
     try {

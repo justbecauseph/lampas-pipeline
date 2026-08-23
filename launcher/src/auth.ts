@@ -18,7 +18,7 @@ function generatePkce() {
 export class LauncherAuth {
   static async loginWithPortal(portalUrlOverride?: string): Promise<{ token: string; user: UserProfile }> {
     const config = ConfigManager.get();
-    const portalUrl = (portalUrlOverride || config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const portalUrl = (portalUrlOverride || config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
     const { verifier, challenge } = generatePkce();
     const state = randomBytes(16).toString("hex");
 
@@ -75,20 +75,34 @@ export class LauncherAuth {
             });
 
             if (!resp.ok) {
-              const errText = await resp.text();
-              throw new Error(`Token exchange failed (${resp.status}): ${errText}`);
+              let errMsg = `Token exchange failed (${resp.status})`;
+              try {
+                const errJson = await resp.json();
+                if (errJson?.error) errMsg = errJson.error;
+              } catch {
+                try {
+                  const errText = await resp.text();
+                  if (errText) errMsg = `${errMsg}: ${errText}`;
+                } catch {}
+              }
+              throw new Error(errMsg);
             }
 
             const json = await resp.json();
+            const user = json.user;
+            if (!user?.minecraftUuid || user.minecraftUuid === "00000000-0000-0000-0000-000000000000" || !user?.minecraftUsername) {
+              throw new Error("Minecraft account not bound: Please link your Minecraft Java account on the Lampas Portal dashboard.");
+            }
+
             ConfigManager.set({
               token: json.token,
               refreshToken: json.refreshToken || undefined,
-              minecraftAccessToken: json.user?.minecraftAccessToken || json.minecraftAccessToken,
+              minecraftAccessToken: user?.minecraftAccessToken || json.minecraftAccessToken,
             });
 
             resolve({
               token: json.token,
-              user: json.user,
+              user,
             });
           }
         } catch (err: any) {
@@ -118,7 +132,7 @@ export class LauncherAuth {
       return { valid: false };
     }
 
-    const portalUrl = (portalUrlOverride || config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const portalUrl = (portalUrlOverride || config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
 
     // 1. Attempt token refresh via /api/v1/auth/refresh
     try {
@@ -137,9 +151,16 @@ export class LauncherAuth {
 
       if (resp.ok) {
         const json = await resp.json();
+        const user = json.user;
+
+        if (!user?.minecraftUuid || user.minecraftUuid === "00000000-0000-0000-0000-000000000000" || !user?.minecraftUsername) {
+          ConfigManager.set({ token: undefined, refreshToken: undefined, minecraftAccessToken: undefined });
+          return { valid: false };
+        }
+
         const newToken = json.token || config.token;
         const newRefreshToken = json.refreshToken || config.refreshToken;
-        const newMcToken = json.user?.minecraftAccessToken || json.minecraftAccessToken || config.minecraftAccessToken;
+        const newMcToken = user?.minecraftAccessToken || json.minecraftAccessToken || config.minecraftAccessToken;
 
         ConfigManager.set({
           token: newToken,
@@ -150,7 +171,7 @@ export class LauncherAuth {
         return {
           valid: true,
           token: newToken,
-          user: json.user,
+          user,
         };
       }
     } catch {
@@ -167,7 +188,7 @@ export class LauncherAuth {
       return { valid: false };
     }
 
-    const portalUrl = (portalUrlOverride || config.portalUrl || "http://localhost:3000").replace(/\/+$/, "");
+    const portalUrl = (portalUrlOverride || config.portalUrl || "https://dev.lampas.town").replace(/\/+$/, "");
     const verifyUrl = `${portalUrl}/api/v1/auth/verify`;
 
     try {
@@ -190,12 +211,17 @@ export class LauncherAuth {
             });
             if (refreshResp.ok) {
               const json = await refreshResp.json();
+              const user = json.user;
+              if (!user?.minecraftUuid || user.minecraftUuid === "00000000-0000-0000-0000-000000000000" || !user?.minecraftUsername) {
+                ConfigManager.set({ token: undefined, refreshToken: undefined, minecraftAccessToken: undefined });
+                return { valid: false };
+              }
               ConfigManager.set({
                 token: json.token,
                 refreshToken: json.refreshToken || config.refreshToken,
-                minecraftAccessToken: json.user?.minecraftAccessToken || json.minecraftAccessToken,
+                minecraftAccessToken: user?.minecraftAccessToken || json.minecraftAccessToken,
               });
-              return { valid: true, user: json.user };
+              return { valid: true, user };
             }
           } catch {}
         }
@@ -205,14 +231,20 @@ export class LauncherAuth {
       }
 
       const json = await resp.json();
-      if (json.user?.minecraftAccessToken) {
+      const user = json.user;
+      if (!json.valid || !user?.minecraftUuid || user.minecraftUuid === "00000000-0000-0000-0000-000000000000" || !user?.minecraftUsername) {
+        ConfigManager.set({ token: undefined, refreshToken: undefined, minecraftAccessToken: undefined });
+        return { valid: false };
+      }
+
+      if (user?.minecraftAccessToken) {
         ConfigManager.set({
-          minecraftAccessToken: json.user.minecraftAccessToken,
+          minecraftAccessToken: user.minecraftAccessToken,
         });
       }
       return {
         valid: true,
-        user: json.user,
+        user,
       };
     } catch {
       return { valid: false };

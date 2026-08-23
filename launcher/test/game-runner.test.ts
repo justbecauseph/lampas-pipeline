@@ -31,20 +31,22 @@ mock.module("node:child_process", () => ({
   },
 }));
 
+let mockSessionUser: any = {
+  id: "user-123",
+  name: "TestPlayer",
+  minecraftUsername: "TestPlayer",
+  minecraftUuid: "11111111-2222-3333-4444-555555555555",
+  isAdmin: false,
+  isTech: false,
+  roles: [],
+  allowedChannels: ["stable"],
+};
+
 mock.module("../src/auth", () => ({
   LauncherAuth: {
     refreshSession: async () => ({
-      valid: true,
-      user: {
-        id: "user-123",
-        name: "TestPlayer",
-        minecraftUsername: "TestPlayer",
-        minecraftUuid: "11111111-2222-3333-4444-555555555555",
-        isAdmin: false,
-        isTech: false,
-        roles: [],
-        allowedChannels: ["stable"],
-      },
+      valid: !!mockSessionUser,
+      user: mockSessionUser,
     }),
   },
 }));
@@ -79,6 +81,16 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  mockSessionUser = {
+    id: "user-123",
+    name: "TestPlayer",
+    minecraftUsername: "TestPlayer",
+    minecraftUuid: "11111111-2222-3333-4444-555555555555",
+    isAdmin: false,
+    isTech: false,
+    roles: [],
+    allowedChannels: ["stable"],
+  };
   GameRunner.resetForTesting();
   ConfigManager.resetForTesting();
   ConfigManager.set({
@@ -281,5 +293,47 @@ describe("GameRunner launch flow & Quick Play", () => {
     expect(fs.existsSync(optionsPath)).toBe(true);
     const optionsContent = fs.readFileSync(optionsPath, "utf-8");
     expect(optionsContent).toContain('resourcePacks:["vanilla","file/Lampas-Resources-2.0.0.zip"]');
+  });
+
+  test("rejects launch if user has no bound Minecraft UUID", async () => {
+    mockSessionUser = {
+      id: "user-123",
+      name: "UnboundUser",
+      minecraftUsername: "UnboundUser",
+      minecraftUuid: undefined,
+      isAdmin: false,
+      isTech: false,
+      roles: [],
+      allowedChannels: ["stable"],
+    };
+
+    await expect(
+      GameRunner.launchGame(
+        dummyUser,
+        () => {},
+        () => {}
+      )
+    ).rejects.toThrow("No bound Minecraft account found in your profile");
+  });
+
+  test("rejects launch if user has zero/placeholder Minecraft UUID", async () => {
+    mockSessionUser = {
+      id: "user-123",
+      name: "ZeroUuidUser",
+      minecraftUsername: "ZeroUuidUser",
+      minecraftUuid: "00000000-0000-0000-0000-000000000000",
+      isAdmin: false,
+      isTech: false,
+      roles: [],
+      allowedChannels: ["stable"],
+    };
+
+    await expect(
+      GameRunner.launchGame(
+        dummyUser,
+        () => {},
+        () => {}
+      )
+    ).rejects.toThrow("No bound Minecraft account found in your profile");
   });
 });

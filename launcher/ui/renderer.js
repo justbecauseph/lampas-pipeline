@@ -288,6 +288,12 @@ window.lampas.game.onExit((code) => {
 // Auth & Profile Management
 // ========================================================
 function updateUserUI(user) {
+  if (user && (!user.minecraftUuid || user.minecraftUuid === "00000000-0000-0000-0000-000000000000")) {
+    currentUser = null;
+    showToast("Minecraft account not bound. Please link your Minecraft account on the portal dashboard.", "error", 5000);
+    user = null;
+  }
+
   currentUser = user;
 
   if (user) {
@@ -422,7 +428,7 @@ if (btnSaveSettings) {
   btnSaveSettings.onclick = async () => {
     try {
       const ram = parseInt(ramSlider?.value || "4", 10);
-      const portalUrl = settingPortal?.value?.trim() || "http://localhost:3000";
+      const portalUrl = settingPortal?.value?.trim() || "https://dev.lampas.town";
 
       currentConfig = await window.lampas.config.set({
         allocatedRamGb: ram,
@@ -662,7 +668,7 @@ async function init() {
 
     // Portal Endpoint
     if (settingPortal) {
-      settingPortal.value = currentConfig.portalUrl || "http://localhost:3000";
+      settingPortal.value = currentConfig.portalUrl || "https://dev.lampas.town";
     }
     if (settingJavaArgs) settingJavaArgs.value = currentConfig.javaArgs || "";
 

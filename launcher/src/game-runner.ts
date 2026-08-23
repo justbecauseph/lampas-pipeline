@@ -55,15 +55,14 @@ export class GameRunner {
     const activeUser = refreshed.user;
     const activeConfig = ConfigManager.get();
     const username = activeUser.minecraftUsername || activeUser.name;
-    if (!username) {
-      throw new Error("Authentication error: No Minecraft username found in your profile.");
+    const uuid = activeUser.minecraftUuid;
+    if (!username || !uuid || uuid === "00000000-0000-0000-0000-000000000000") {
+      throw new Error("Authentication error: No bound Minecraft account found in your profile. Please link your Minecraft account on the portal dashboard.");
     }
 
     const gameDir = activeConfig.gameDir;
     const ramGb = activeConfig.allocatedRamGb || 4;
-    const rawUuid = activeUser.minecraftUuid && activeUser.minecraftUuid !== "00000000-0000-0000-0000-000000000000"
-      ? activeUser.minecraftUuid.replace(/-/g, "")
-      : generateOfflineUuid(username);
+    const rawUuid = uuid.replace(/-/g, "");
     const mcToken = activeUser.minecraftAccessToken || activeConfig.minecraftAccessToken;
     const isRealMsa = !!(mcToken && mcToken.startsWith("ey") && mcToken.length > 50);
     const token = isRealMsa ? mcToken : "0";
