@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { readJsonFile, withAbortTimeout, writeJsonFile } from "./utils";
 import type { PackLock, ResolvedArtifact } from "./types";
+import { CurseForgeClient } from "./curseforge";
 
 export interface EnrichOptions {
   packDir: string;
@@ -27,6 +28,15 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
       const pid = String(artifact.provider.projectId);
       if (!modrinthMap[pid]) modrinthMap[pid] = [];
       modrinthMap[pid].push(key);
+    }
+  }
+
+  const curseForgeMap: Record<string, string[]> = {};
+  for (const [key, artifact] of entries) {
+    if (artifact.provider.type === "curseforge" && artifact.provider.projectId) {
+      const projectId = String(artifact.provider.projectId);
+      if (!curseForgeMap[projectId]) curseForgeMap[projectId] = [];
+      curseForgeMap[projectId].push(key);
     }
   }
 
@@ -81,7 +91,36 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
     }
   }
 
-  // 2. Add custom metadata for in-house/custom mods
+  const curseForgeProjectIds = Object.keys(curseForgeMap).map(Number);
+  console.log(`[Enricher] Fetching batch metadata for ${curseForgeProjectIds.length} CurseForge projects...`);
+  for (let i = 0; i < curseForgeProjectIds.length; i += 50) {
+    const chunk = curseForgeProjectIds.slice(i, i + 50);
+    try {
+      const projects = await CurseForgeClient.getMods(chunk);
+      for (const project of projects) {
+        const keys = curseForgeMap[String(project.id)] || [];
+        for (const key of keys) {
+          const artifact = artifacts[key];
+          if (!artifact) continue;
+          artifact.name = project.name || artifact.name;
+          artifact.metadata = {
+            description: project.summary || "",
+            iconUrl: project.logo?.thumbnailUrl || project.logo?.url,
+            categories: project.categories?.map((category) => category.name) || [],
+            sourceUrl:
+              project.links?.websiteUrl ||
+              `https://www.curseforge.com/minecraft/mc-mods/${project.slug}`,
+            author: project.authors?.map((author) => author.name).join(", ") || undefined,
+          };
+          enrichedCount++;
+        }
+      }
+    } catch (err: any) {
+      console.warn(`[Enricher] Warning: CurseForge batch query failed: ${err.message}`);
+    }
+  }
+
+  // Add custom metadata for in-house/custom mods
   for (const [key, art] of entries) {
     if (art.provider.type === "lampas") {
       if (key.includes("lampas2-overrides") || key.includes("overrides")) {

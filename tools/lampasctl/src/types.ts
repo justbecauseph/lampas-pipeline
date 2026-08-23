@@ -130,6 +130,7 @@ export interface ResolvedArtifact {
     type: "modrinth" | "curseforge" | "lampas" | "direct";
     projectId?: string | number;
     versionId?: string | number;
+    fileId?: number;
     file?: string;
   };
   metadata?: ModMetadata;

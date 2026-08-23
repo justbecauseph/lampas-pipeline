@@ -127,12 +127,31 @@ bun run lampasctl add appleskin --side client
 bun run lampasctl add 5sy6g3kz --side both
 bun run lampasctl add https://modrinth.com/mod/sodium --side client
 
+# Add a CurseForge mod (URL auto-detection, slug, project ID, or pinned file URL)
+bun run lampasctl add https://www.curseforge.com/minecraft/mc-mods/appleskin
+bun run lampasctl add appleskin --provider curseforge --side client
+bun run lampasctl add 248787 --provider curseforge --version 5604145
+bun run lampasctl add https://www.curseforge.com/minecraft/mc-mods/appleskin/files/5604145
+
 # Add a custom local JAR
 bun run lampasctl add ./my-custom-mod.jar --side both
 
 # Remove a mod and re-synchronize manifests
 bun run lampasctl remove appleskin
 ```
+
+CurseForge authoring commands require a Core API key. Put it in the process environment or an ignored local `.env`
+file; the key is used only by `lampasctl add`, `resolve`, `enrich`, and `check-updates` and is never written to pack
+descriptors, lockfiles, or manifests:
+
+```dotenv
+CURSEFORGE_API_KEY=replace-with-your-curseforge-core-api-key
+```
+
+CurseForge artifacts remain on the upstream CDN. During resolution, `lampasctl` verifies the upstream SHA-1 and file
+size, calculates the SHA-256/SHA-512 hashes required by Lampas, and keeps a verified local copy under the ignored
+`.lampas/cache/curseforge/` directory. Projects that disable third-party distribution must be downloaded manually and
+added as a local JAR instead.
 
 ### 2. Daily Upstream Update Checker
 Scan all pack mods concurrently against Modrinth / CurseForge APIs:
@@ -310,7 +329,7 @@ Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verific
 
 - **[`validate-pack.yml`](file:///.github/workflows/validate-pack.yml)**: Validates every pull request, ensuring all mod descriptors resolve, dependencies match, and hashes verify.
 - **[`release-pack.yml`](file:///.github/workflows/release-pack.yml)**: Triggers on Git tags (`v*`). Builds manifests, compiles Windows and Linux launcher binaries, uploads release artifacts, and publishes the release to the Lampas Portal.
-- **[`update-check.yml`](file:///.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs.
+- **[`update-check.yml`](file:///.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs. Configure the repository secret `CURSEFORGE_API_KEY` before adding CurseForge-backed descriptors.
 
 ---
 

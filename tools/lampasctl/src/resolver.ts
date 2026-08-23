@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseTomlFile, writeJsonFile } from "./utils";
 import { ArtifactResolver, ModrinthClient } from "./providers";
+import { CurseForgeClient } from "./curseforge";
 import { enrichPackLock } from "./enricher";
 import type { ModDefinition, PackConfig, PackLock, ResolvedArtifact } from "./types";
 
@@ -90,6 +91,18 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   const versionResponses = await Promise.all(versionChunks.map((chunk) => ModrinthClient.getVersions(chunk)));
   const versionsById = new Map(versionResponses.flat().map((version) => [version.id, version]));
 
+  const curseForgeFileIds = [...new Set(parsedDefinitions.flatMap(({ def }) =>
+    def.provider.type === "curseforge" ? [def.provider.file_id] : []
+  ))];
+  const curseForgeFileChunks: number[][] = [];
+  for (let i = 0; i < curseForgeFileIds.length; i += 50) {
+    curseForgeFileChunks.push(curseForgeFileIds.slice(i, i + 50));
+  }
+  const curseForgeFileResponses = await Promise.all(
+    curseForgeFileChunks.map((chunk) => CurseForgeClient.getFiles(chunk))
+  );
+  const curseForgeFilesById = new Map(curseForgeFileResponses.flat().map((file) => [file.id, file]));
+
   // Parallel resolution with concurrency limit
   const concurrency = 10;
   let nextDefinition = 0;
@@ -105,7 +118,19 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
         if (def.provider.type === "modrinth" && !prefetchedVersion) {
           throw new Error(`Modrinth version '${def.provider.version_id}' was not returned by the bulk API.`);
         }
-        const artifact = await ArtifactResolver.resolveModDefinition(item.id, def, baseDir, prefetchedVersion);
+        const prefetchedCurseForgeFile = def.provider.type === "curseforge"
+          ? curseForgeFilesById.get(def.provider.file_id)
+          : undefined;
+        if (def.provider.type === "curseforge" && !prefetchedCurseForgeFile) {
+          throw new Error(`CurseForge file '${def.provider.file_id}' was not returned by the bulk API.`);
+        }
+        const artifact = await ArtifactResolver.resolveModDefinition(
+          item.id,
+          def,
+          baseDir,
+          prefetchedVersion,
+          prefetchedCurseForgeFile
+        );
         artifacts[item.id] = artifact;
         console.log(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);
       } catch (err: any) {

@@ -25,8 +25,11 @@ Commands:
                           lampasctl add appleskin --version 2.5.1
                           lampasctl add appleskin@2.5.1
                           lampasctl add https://modrinth.com/mod/appleskin/version/mc1.21-2.5.1
+                          lampasctl add https://www.curseforge.com/minecraft/mc-mods/appleskin
+                          lampasctl add appleskin --provider curseforge
     -s, --side <side>   Target side: client | server | both (default: both)
-    -v, --version <ver> Pin a specific version ID, number, or name (e.g. 2.5.1, AAbbCCdd)
+    -v, --version <ver> Pin a Modrinth version or numeric CurseForge file ID
+    --provider <name>   Source for slugs/IDs: modrinth | curseforge (default: modrinth)
     -p, --pack <path>   Pack directory (default: ./pack)
 
   remove <mod-id>       Remove a mod from the pack and auto-update manifests (alias: rm)
@@ -131,18 +134,26 @@ async function main() {
       case "add": {
         const query = positional[0] || flags.query;
         if (!query) {
-          console.error("Error: Please specify a mod slug, project ID, Modrinth URL, or .jar file path.");
+          console.error("Error: Please specify a mod slug, project ID, Modrinth/CurseForge URL, or .jar file path.");
           console.log("Example: lampasctl add appleskin --side client");
           process.exit(1);
         }
 
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
-        const side = (flags.side as "client" | "server" | "both") || "both";
+        const side = flags.side as "client" | "server" | "both" | undefined;
+        if (side && !["client", "server", "both"].includes(side)) {
+          throw new Error("--side must be one of: client, server, both");
+        }
+        const provider = flags.provider as "modrinth" | "curseforge" | undefined;
+        if (provider && !["modrinth", "curseforge"].includes(provider)) {
+          throw new Error("--provider must be one of: modrinth, curseforge");
+        }
 
         await addMod({
           packDir,
           query,
           side,
+          provider,
           versionId: flags.version,
         });
         break;

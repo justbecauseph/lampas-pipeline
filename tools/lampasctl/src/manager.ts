@@ -3,6 +3,13 @@ import * as path from "node:path";
 import { parseTomlFile, writeTomlFile, writeJsonFile, readJsonFile } from "./utils";
 import { resolvePack } from "./resolver";
 import { buildManifests } from "./manifest";
+import {
+  CURSEFORGE_FABRIC_LOADER_TYPE,
+  CURSEFORGE_MINECRAFT_GAME_ID,
+  CURSEFORGE_MODS_CLASS_ID,
+  CurseForgeClient,
+  type CurseForgeFile,
+} from "./curseforge";
 import type { ModDefinition, PackConfig, PackLock } from "./types";
 
 export interface AddModOptions {
@@ -35,6 +42,8 @@ function getExistingModIdentifiers(modsDir: string): Set<string> {
       const def = parseTomlFile<ModDefinition>(path.join(modsDir, file));
       if (def.provider?.type === "modrinth") {
         if (def.provider.project_id) ids.add(def.provider.project_id.toLowerCase());
+      } else if (def.provider?.type === "curseforge") {
+        ids.add(String(def.provider.project_id));
       }
     } catch {}
   }
@@ -102,9 +111,11 @@ export async function addMod(options: AddModOptions) {
     console.log(`✓ [Added Custom Mod] ${filename} -> ${tomlPath}`);
   } else {
     let query = rawQuery;
+    let detectedProvider: "modrinth" | "curseforge" | undefined;
 
     // 2. Parse URL patterns
     if (query.includes("modrinth.com/version/")) {
+      detectedProvider = "modrinth";
       // Direct version URL: https://modrinth.com/version/{version_id}
       const versionIdFromUrl = query.split("modrinth.com/version/")[1].split("?")[0].split("/")[0];
       explicitVersion = versionIdFromUrl;
@@ -122,6 +133,7 @@ export async function addMod(options: AddModOptions) {
       query.includes("modrinth.com/resourcepack/") ||
       query.includes("modrinth.com/datapack/")
     ) {
+      detectedProvider = "modrinth";
       const match = query.match(/modrinth\.com\/(?:mod|shader|resourcepack|datapack)\/([^/?#]+)/);
       if (match) {
         query = match[1];
@@ -132,6 +144,7 @@ export async function addMod(options: AddModOptions) {
         }
       }
     } else if (query.includes("curseforge.com/minecraft/mc-mods/")) {
+      detectedProvider = "curseforge";
       const afterMod = query.split("curseforge.com/minecraft/mc-mods/")[1].split("?")[0];
       const segments = afterMod.split("/").filter(Boolean);
       query = segments[0];
@@ -157,7 +170,7 @@ export async function addMod(options: AddModOptions) {
       }
     }
 
-    const providerType = options.provider || "modrinth";
+    const providerType = options.provider || detectedProvider || "modrinth";
 
     if (providerType === "modrinth") {
       const indent = "  ".repeat(depth);
@@ -340,6 +353,129 @@ export async function addMod(options: AddModOptions) {
           } catch (depErr: any) {
             console.warn(`${indent}   ⚠️ Could not automatically install dependency '${depTarget}': ${depErr.message}`);
           }
+        }
+      }
+    } else if (providerType === "curseforge") {
+      const indent = "  ".repeat(depth);
+      const verDisplay = explicitVersion ? ` (File: ${explicitVersion})` : "";
+      console.log(
+        `${indent}[Artifact Manager] Querying CurseForge for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`
+      );
+
+      const project = await CurseForgeClient.findMod(query);
+      if (project.gameId !== CURSEFORGE_MINECRAFT_GAME_ID) {
+        throw new Error(`CurseForge project '${query}' is not a Minecraft project.`);
+      }
+      if (project.classId !== undefined && project.classId !== CURSEFORGE_MODS_CLASS_ID) {
+        throw new Error(`CurseForge project '${project.name}' is not a Minecraft mod project.`);
+      }
+      if (project.isAvailable === false) {
+        throw new Error(`CurseForge project '${project.name}' (${project.id}) is not available.`);
+      }
+      if (project.allowModDistribution === false) {
+        throw new Error(
+          `CurseForge project '${project.name}' does not permit third-party downloads. Download the .jar manually and add the local file instead.`
+        );
+      }
+
+      let selectedFile: CurseForgeFile;
+      if (explicitVersion) {
+        if (!/^\d+$/.test(explicitVersion)) {
+          throw new Error(
+            `CurseForge versions must be pinned by numeric file ID; received '${explicitVersion}'.`
+          );
+        }
+        selectedFile = await CurseForgeClient.getFile(project.id, Number(explicitVersion));
+
+        const versionNames = selectedFile.gameVersions.map((version) => version.toLowerCase());
+        const matchesMinecraft = selectedFile.gameVersions.includes(targetMc);
+        const matchesFabric = versionNames.some((version) => version === "fabric" || version.includes("fabric"));
+        if (!matchesMinecraft || !matchesFabric) {
+          console.warn(
+            `${indent}⚠ [Compatibility Override] File ${selectedFile.id} is not explicitly tagged for Minecraft ${targetMc} + Fabric.`
+          );
+        }
+      } else {
+        const compatibleFiles = await CurseForgeClient.getModFiles(project.id, {
+          gameVersion: targetMc,
+          modLoaderType: CURSEFORGE_FABRIC_LOADER_TYPE,
+        });
+        selectedFile = compatibleFiles[0];
+        if (!selectedFile) {
+          throw new Error(
+            `No compatible CurseForge file found for '${project.name}' on Minecraft ${targetMc} (Fabric). ` +
+              `Use --version <file_id> only if you intentionally want to override compatibility filtering.`
+          );
+        }
+      }
+
+      await CurseForgeClient.getDownloadUrl(project.id, selectedFile.id, selectedFile);
+
+      const slug = project.slug.toLowerCase();
+      const targetSide = options.side || "both";
+      const tomlPath = path.join(modsDir, `${slug}.toml`);
+      if (fs.existsSync(tomlPath)) {
+        const existing = parseTomlFile<ModDefinition>(tomlPath);
+        const sameProject =
+          existing.provider.type === "curseforge" && existing.provider.project_id === project.id;
+        if (!sameProject) {
+          throw new Error(
+            `Cannot add CurseForge project '${project.name}': descriptor '${slug}.toml' already belongs to another project or provider.`
+          );
+        }
+      }
+
+      const def: ModDefinition = {
+        name: project.name,
+        side: targetSide,
+        type: "mod",
+        provider: {
+          type: "curseforge",
+          project_id: project.id,
+          file_id: selectedFile.id,
+        },
+      };
+      writeTomlFile(tomlPath, def);
+
+      console.log(`\n${indent}✓ [Added MOD] ${project.name} (${slug})`);
+      console.log(`${indent}   Provider: CurseForge (${project.id})`);
+      console.log(`${indent}   File:     ${selectedFile.displayName} [ID: ${selectedFile.id}]`);
+      console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(default)"}`);
+      console.log(`${indent}   JAR:      ${selectedFile.fileName}`);
+      console.log(`${indent}   Saved to: ${tomlPath}\n`);
+
+      const requiredDependencies = (selectedFile.dependencies || []).filter(
+        (dependency) => dependency.relationType === 3
+      );
+      if (requiredDependencies.length > 0) {
+        const existingIds = getExistingModIdentifiers(modsDir);
+        console.log(
+          `${indent}🔍 [Dependency Checker] Inspecting ${requiredDependencies.length} required dependencies for ${project.name}...`
+        );
+
+        for (const dependency of requiredDependencies) {
+          const dependencyId = String(dependency.modId);
+          if (existingIds.has(dependencyId)) {
+            console.log(`${indent}   ✓ [Satisfied] CurseForge project '${dependencyId}' is already installed.`);
+            continue;
+          }
+
+          console.log(`\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${dependencyId}...`);
+          try {
+            await addMod({
+              packDir: options.packDir,
+              query: dependencyId,
+              side: targetSide,
+              provider: "curseforge",
+              depth: depth + 1,
+            });
+          } catch (error: any) {
+            throw new Error(
+              `Required CurseForge dependency '${dependencyId}' for '${project.name}' could not be installed: ${error.message}`,
+              { cause: error }
+            );
+          }
+          existingIds.add(dependencyId);
         }
       }
     } else {

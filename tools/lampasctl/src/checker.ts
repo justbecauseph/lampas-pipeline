@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseTomlFile, writeTomlFile } from "./utils";
 import type { ModDefinition, PackConfig } from "./types";
+import { CURSEFORGE_FABRIC_LOADER_TYPE, CurseForgeClient } from "./curseforge";
 
 interface ModUpdateInfo {
   modId: string;
@@ -131,6 +132,68 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           }
         } catch (err: any) {
           skippedCount++;
+        }
+      } else if (def.provider.type === "curseforge") {
+        const projectId = def.provider.project_id;
+        const currentFileId = def.provider.file_id;
+
+        try {
+          const files = await CurseForgeClient.getModFiles(projectId, {
+            gameVersion: targetMc,
+            modLoaderType: CURSEFORGE_FABRIC_LOADER_TYPE,
+          });
+          const latest = files[0];
+          if (!latest) {
+            skippedCount++;
+            continue;
+          }
+
+          if (latest.id !== currentFileId) {
+            let current = files.find((candidate) => candidate.id === currentFileId);
+            if (!current) {
+              try {
+                current = await CurseForgeClient.getFile(projectId, currentFileId);
+              } catch {
+                // Keep reporting the update using the pinned file ID.
+              }
+            }
+            const project = await CurseForgeClient.getMod(projectId);
+            const latestVersionUrl =
+              `https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${latest.id}`;
+            const updateInfo: ModUpdateInfo = {
+              modId,
+              name: def.name,
+              provider: "curseforge",
+              projectId: String(projectId),
+              currentVersionId: String(currentFileId),
+              currentVersionName: current?.displayName || current?.fileName || String(currentFileId),
+              latestVersionId: String(latest.id),
+              latestVersionName: latest.displayName || latest.fileName,
+              latestVersionUrl,
+              latestFileName: latest.fileName,
+              publishedAt: latest.fileDate,
+            };
+
+            updatesAvailable.push(updateInfo);
+            console.log(`  ⚡ [Update Found] ${def.name}`);
+            console.log(`     Mod ID: ${modId}`);
+            console.log(`     Project ID: ${projectId}`);
+            console.log(`     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`);
+            console.log(`     File IDs: ${currentFileId} -> ${latest.id}`);
+            console.log(`     Updated version: ${latestVersionUrl}`);
+
+            if (options.apply) {
+              def.provider.file_id = latest.id;
+              writeTomlFile(filePath, def);
+              console.log(`     ✓ Applied to ${file}`);
+            }
+          } else {
+            upToDateCount++;
+          }
+        } catch (err: any) {
+          if (err?.message?.includes("CURSEFORGE_API_KEY")) throw err;
+          skippedCount++;
+          console.warn(`  ⚠ [Skipped] ${def.name}: ${err.message}`);
         }
       } else {
         skippedCount++;

@@ -1,4 +1,10 @@
-import { computeBufferHashes, computeFileHashesStreaming, withAbortTimeout, type FileHashes } from "./utils";
+import { computeBufferHashes, computeFileHashesStreaming, downloadFileVerified, withAbortTimeout } from "./utils";
+import {
+  CURSEFORGE_USER_AGENT,
+  CurseForgeClient,
+  curseForgeSha1,
+  type CurseForgeFile,
+} from "./curseforge";
 import type { ModDefinition, ResolvedArtifact, Side } from "./types";
 import * as path from "node:path";
 import * as fs from "node:fs";
@@ -111,7 +117,8 @@ export class ArtifactResolver {
     modId: string,
     def: ModDefinition,
     baseDir: string,
-    prefetchedVersion?: ModrinthVersion
+    prefetchedVersion?: ModrinthVersion,
+    prefetchedCurseForgeFile?: CurseForgeFile
   ): Promise<ResolvedArtifact> {
     const { provider, side, name } = def;
 
@@ -185,6 +192,71 @@ export class ArtifactResolver {
           type: "modrinth",
           projectId: provider.project_id,
           versionId: provider.version_id,
+        },
+      };
+    }
+
+    if (provider.type === "curseforge") {
+      const file = prefetchedCurseForgeFile || await CurseForgeClient.getFile(provider.project_id, provider.file_id);
+      if (file.modId !== provider.project_id) {
+        throw new Error(
+          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' belongs to project '${file.modId}'.`
+        );
+      }
+      if (file.isAvailable === false) {
+        throw new Error(`Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' is not available.`);
+      }
+
+      const expectedSha1 = curseForgeSha1(file);
+      if (!expectedSha1) {
+        throw new Error(
+          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' has no SHA-1 hash and cannot be verified safely.`
+        );
+      }
+
+      const downloadUrl = await CurseForgeClient.getDownloadUrl(provider.project_id, provider.file_id, file);
+      const filename = path.basename(file.fileName);
+      const cachePath = path.resolve(
+        baseDir,
+        ".lampas",
+        "cache",
+        "curseforge",
+        String(provider.project_id),
+        String(provider.file_id),
+        filename
+      );
+
+      let hashes = fs.existsSync(cachePath) ? await computeFileHashesStreaming(cachePath) : undefined;
+      if (!hashes || hashes.sha1 !== expectedSha1 || (file.fileLength > 0 && hashes.size !== file.fileLength)) {
+        await downloadFileVerified(downloadUrl, cachePath, {
+          expectedHash: expectedSha1,
+          algorithm: "sha1",
+          expectedSize: file.fileLength,
+          headers: { "User-Agent": CURSEFORGE_USER_AGENT },
+          timeoutMs: 120_000,
+        });
+        hashes = await computeFileHashesStreaming(cachePath);
+      }
+
+      const artifactType = def.type || "mod";
+      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
+
+      return {
+        id: modId,
+        name: def.name,
+        side,
+        filename,
+        size: hashes.size,
+        sha256: hashes.sha256,
+        sha512: hashes.sha512,
+        sha1: hashes.sha1,
+        downloadUrl,
+        artifactType,
+        targetDir,
+        provider: {
+          type: "curseforge",
+          projectId: provider.project_id,
+          fileId: provider.file_id,
         },
       };
     }
