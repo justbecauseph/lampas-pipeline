@@ -184,6 +184,21 @@
       "sourceUrl": "https://modrinth.com/mod/beautify-refabricated"
     },
     {
+      "id": "better-combat",
+      "name": "Better Combat",
+      "side": "both",
+      "filename": "bettercombat-fabric-3.2.2+26.2.jar",
+      "size": 930628,
+      "description": "⚔️ Easy, spectacular and fun melee combat system from Minecraft Dungeons.",
+      "iconUrl": "https://cdn.modrinth.com/data/5sy6g3kz/4d59a2a1ddd25f977b39c89e391edc4cdc7c71ba_96.webp",
+      "categories": [
+        "adventure",
+        "equipment",
+        "library"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/better-combat"
+    },
+    {
       "id": "better_lib",
       "name": "Better Library",
       "side": "server",
@@ -1946,6 +1961,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/additionallanterns-1.1.2-fabric-mc26.2.jar",
+      "size": 3806731,
+      "hashes": {
+        "sha256": "6a05239546f320bffcfd957427f5f778347809dd2ed137f8f89b10a8c8d53cc3",
+        "sha512": "9f177f8bc4f970a56a66453d41a8711165afddff83829319e259fff19289c901a2bd565a6338bb024de27f1a2e64d6eb76e796e921aaaa6d83b204c8771114c2"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/jXNvTKds/versions/LlSWK1oA/additionallanterns-1.1.2-fabric-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/beautify-fabric-2.0.0+26.2.jar",
       "size": 905757,
       "hashes": {
@@ -1959,40 +1987,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/BTP-Fabric-26.1.2-2.0.1.jar",
-      "size": 1860484,
+      "path": "mods/bettercombat-fabric-3.2.2+26.2.jar",
+      "size": 930628,
       "hashes": {
-        "sha256": "53d132f68b9c97105699e3de3542ad9f3ef5ec4e4df5e147f00e5f8510e33a82",
-        "sha512": "8431a97edebccd4f52457ca91a5b647295600aec1aab039435128a6f38112cf7022eb5cfcb28de8d26360e18affe9530e825d60016a03289e3bc71c9f72eca02"
+        "sha256": "cce827992f517b181bc25c4f6c35e2c75818d29fcdbea90c3838704364b04639",
+        "sha512": "057f7bbf52d87dc6ee41a8cf9d5a5634aafcff8b6fd94e4f797fb54c1926f90f027aede9800cc1ea0200d1c3e8a8e5da9f1368fb650ead2ef94ebf3336af61b7"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/H3a6cFKr/versions/qVFXJDqx/BTP-Fabric-26.1.2-2.0.1.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
-      },
-      "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/biolith-fabric-3.7.0-alpha.2.jar",
-      "size": 237324,
-      "hashes": {
-        "sha256": "29473e19176547785221f3d1abd48623204f93030059d0a28c9b31293bd255e8",
-        "sha512": "92535804fcb63ba45f17a138f5b86c5faf9d25ba2bba712cedc3612cbe73e697d42f55b1333be4addf4792773d4a17792490a6e117f433ba0935a89c5ecee758"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/iGEl6Crx/versions/6aikmCOR/biolith-fabric-3.7.0-alpha.2.jar",
+        "url": "https://cdn.modrinth.com/data/5sy6g3kz/versions/enlZuzkJ/bettercombat-fabric-3.2.2%2B26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2011,28 +2013,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2476264,
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
       "hashes": {
-        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
-        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
       },
       "download": {
-        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/additionallanterns-1.1.2-fabric-mc26.2.jar",
-      "size": 3806731,
-      "hashes": {
-        "sha256": "6a05239546f320bffcfd957427f5f778347809dd2ed137f8f89b10a8c8d53cc3",
-        "sha512": "9f177f8bc4f970a56a66453d41a8711165afddff83829319e259fff19289c901a2bd565a6338bb024de27f1a2e64d6eb76e796e921aaaa6d83b204c8771114c2"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/jXNvTKds/versions/LlSWK1oA/additionallanterns-1.1.2-fabric-mc26.2.jar",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -2050,6 +2039,32 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2476264,
+      "hashes": {
+        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/biolith-fabric-3.7.0-alpha.2.jar",
+      "size": 237324,
+      "hashes": {
+        "sha256": "29473e19176547785221f3d1abd48623204f93030059d0a28c9b31293bd255e8",
+        "sha512": "92535804fcb63ba45f17a138f5b86c5faf9d25ba2bba712cedc3612cbe73e697d42f55b1333be4addf4792773d4a17792490a6e117f433ba0935a89c5ecee758"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/iGEl6Crx/versions/6aikmCOR/biolith-fabric-3.7.0-alpha.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/boids-2.0.0+26.2.jar",
       "size": 106064,
       "hashes": {
@@ -2058,6 +2073,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/2OckSy74/versions/Bjg3IAg6/boids-2.0.0%2B26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/BTP-Fabric-26.1.2-2.0.1.jar",
+      "size": 1860484,
+      "hashes": {
+        "sha256": "53d132f68b9c97105699e3de3542ad9f3ef5ec4e4df5e147f00e5f8510e33a82",
+        "sha512": "8431a97edebccd4f52457ca91a5b647295600aec1aab039435128a6f38112cf7022eb5cfcb28de8d26360e18affe9530e825d60016a03289e3bc71c9f72eca02"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/H3a6cFKr/versions/qVFXJDqx/BTP-Fabric-26.1.2-2.0.1.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2089,19 +2117,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
-      "size": 3833382,
-      "hashes": {
-        "sha256": "b013229383f51789c57684cbcfc12981c8d791206f3b594866dfeb74aed3770b",
-        "sha512": "c9c9c9babe4d94e06abf72c92e453aaa39c82634a7ae646d1041f673e12eff3d99e77e205a686ea53d0a5ae143e9e1e6ed595b3ccfcaeafe64cbfb6327e2f375"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/VSNURh3q/versions/jSMMstCy/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/collective-26.2.0-8.39.jar",
       "size": 1084412,
       "hashes": {
@@ -2115,14 +2130,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/cloth-config-26.2.155.jar",
-      "size": 1135186,
+      "path": "mods/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
+      "size": 3833382,
       "hashes": {
-        "sha256": "def4be7639cd66704f7e304d658ea0f6bf490fb4a6eaa2dbf18ec2c3999d6349",
-        "sha512": "37b1e402f0df5a383656e21a38ee18cdd15cb4ba3fb62fbeba82ef4b959a4479fc32718ac0d9d154a7d9104c5f7315bfa67dbeced0b8ff240b8039d4848d5df1"
+        "sha256": "b013229383f51789c57684cbcfc12981c8d791206f3b594866dfeb74aed3770b",
+        "sha512": "c9c9c9babe4d94e06abf72c92e453aaa39c82634a7ae646d1041f673e12eff3d99e77e205a686ea53d0a5ae143e9e1e6ed595b3ccfcaeafe64cbfb6327e2f375"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/Nv3xnWXd/cloth-config-26.2.155.jar",
+        "url": "https://cdn.modrinth.com/data/VSNURh3q/versions/jSMMstCy/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2137,6 +2152,19 @@
       "download": {
         "url": "/api/v1/blobs/a13499ec17900ecb9dcfee0266cf0c03e1c11f2312ee2e32bea8adbb1458f8f0",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/cloth-config-26.2.155.jar",
+      "size": 1135186,
+      "hashes": {
+        "sha256": "def4be7639cd66704f7e304d658ea0f6bf490fb4a6eaa2dbf18ec2c3999d6349",
+        "sha512": "37b1e402f0df5a383656e21a38ee18cdd15cb4ba3fb62fbeba82ef4b959a4479fc32718ac0d9d154a7d9104c5f7315bfa67dbeced0b8ff240b8039d4848d5df1"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/Nv3xnWXd/cloth-config-26.2.155.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -2180,19 +2208,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/decorative-lamps_Fabric-26.2-1.8.1.jar",
-      "size": 1034001,
-      "hashes": {
-        "sha256": "603d4362e6fcd2863a8f9dd44d811389d51d9cbe8d63bba8af6392a969b06b93",
-        "sha512": "f2ea2c192e317deca9a64e4e5f34180d4c22eae7492c9de973571d8b6ec41a00375f940a6f89d74706bef4cd087a3f1a16e77fc980e6d764960b45fea99e3a71"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/B4n7BWWA/versions/qDaig7kF/decorative-lamps_Fabric-26.2-1.8.1.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/distant-decorations-0.1.0.jar",
       "size": 100151,
       "hashes": {
@@ -2206,6 +2221,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/delightlib-26.06.23-26.2-fabric.jar",
+      "size": 61225,
+      "hashes": {
+        "sha256": "4cce6ddd8e28e60b2e3058073c3aab9baaedd1524eea6ee89fa94de19e220a16",
+        "sha512": "5cd018acdf3eb5a4a4a3caaba74bc93343437fc372fed8b5294f2cc0141dff3ad85bd4833faaa67a6ea008fad9563adab84ff8c25997b8d15f49286437a19d6c"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/rmDY6fYt/versions/SjphfJS9/delightlib-26.06.23-26.2-fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/DiagonalFences-v26.2.0-mc26.2.x-Fabric.jar",
       "size": 126765,
       "hashes": {
@@ -2214,19 +2242,6 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/IKARgflD/versions/XxnvsgPA/DiagonalFences-v26.2.0-mc26.2.x-Fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/better-nether-26.201.2.jar",
-      "size": 27875658,
-      "hashes": {
-        "sha256": "ab8b71f3ff49dd5676351d336dc76bdb10ea39ca2101fc963f676bf1988f1a3a",
-        "sha512": "8efcab3e8a00c628fffadb14878b8a3a5755a5f5104b2d67c755af5bb1996a3b0cf54061a320b34dad9c3db327f73e7e9f9bb6bb85ad31674345d53a48f29307"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/MpzVLzy5/versions/iBR9QMPF/better-nether-26.201.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2258,45 +2273,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/display-delight-1.8.4-mc26.2.jar",
-      "size": 1385236,
-      "hashes": {
-        "sha256": "0dfdaf83d1c34c2e95ff997d75b9010e92b689c7bc522d07ee57a2ae4c17f7fa",
-        "sha512": "bb20d29649a7c88281600b6e88d24c5b80bdbfa618f305e95e8cbd85c35a5758ea04e5da3787ff47a56a8fd28abab91a4f8dfa8042cf9f3230de7762a5ab82ae"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/jK2xMxSG/versions/MSrMWH4D/display-delight-1.8.4-mc26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/delightlib-26.06.23-26.2-fabric.jar",
-      "size": 61225,
-      "hashes": {
-        "sha256": "4cce6ddd8e28e60b2e3058073c3aab9baaedd1524eea6ee89fa94de19e220a16",
-        "sha512": "5cd018acdf3eb5a4a4a3caaba74bc93343437fc372fed8b5294f2cc0141dff3ad85bd4833faaa67a6ea008fad9563adab84ff8c25997b8d15f49286437a19d6c"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/rmDY6fYt/versions/SjphfJS9/delightlib-26.06.23-26.2-fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/doubledoors-26.2.0-7.2.jar",
-      "size": 78268,
-      "hashes": {
-        "sha256": "7be9c63167445c2d322ef193a9771c9a7cf556ae05b73f3942a096411f7f4193",
-        "sha512": "8d63de32bd7558812c78d67e5fe4e620bbb2aaa9f2f6b7af56020844aa5f7dcf9f7313db287bada2483073f04dfe05822c00a86eca83c597821543f85e22f024"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/JrvR9OHr/versions/uiANFlUz/doubledoors-26.2.0-7.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/dungeons+-1.12.0.jar",
       "size": 353652,
       "hashes": {
@@ -2323,6 +2299,32 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/decorative-lamps_Fabric-26.2-1.8.1.jar",
+      "size": 1034001,
+      "hashes": {
+        "sha256": "603d4362e6fcd2863a8f9dd44d811389d51d9cbe8d63bba8af6392a969b06b93",
+        "sha512": "f2ea2c192e317deca9a64e4e5f34180d4c22eae7492c9de973571d8b6ec41a00375f940a6f89d74706bef4cd087a3f1a16e77fc980e6d764960b45fea99e3a71"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/B4n7BWWA/versions/qDaig7kF/decorative-lamps_Fabric-26.2-1.8.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/display-delight-1.8.4-mc26.2.jar",
+      "size": 1385236,
+      "hashes": {
+        "sha256": "0dfdaf83d1c34c2e95ff997d75b9010e92b689c7bc522d07ee57a2ae4c17f7fa",
+        "sha512": "bb20d29649a7c88281600b6e88d24c5b80bdbfa618f305e95e8cbd85c35a5758ea04e5da3787ff47a56a8fd28abab91a4f8dfa8042cf9f3230de7762a5ab82ae"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/jK2xMxSG/versions/MSrMWH4D/display-delight-1.8.4-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/easyelytratakeoff-26.2.0-4.5.jar",
       "size": 45553,
       "hashes": {
@@ -2336,14 +2338,40 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/customname-fabric-0.4.4-26.2.jar",
-      "size": 89954,
+      "path": "mods/better-nether-26.201.2.jar",
+      "size": 27875658,
       "hashes": {
-        "sha256": "d70aff259e65ca2a9c8ca9d4b3734b6f9089e93141ba2283e06e23bbe0e3bb04",
-        "sha512": "b0e65f81d9c975fb24e1215b665e19d67c046f85592e299163fc71f17a401f9940c90825ffb19c73cf25bc81b867138d4520b7bed1d8061e28d4a628036111b4"
+        "sha256": "ab8b71f3ff49dd5676351d336dc76bdb10ea39ca2101fc963f676bf1988f1a3a",
+        "sha512": "8efcab3e8a00c628fffadb14878b8a3a5755a5f5104b2d67c755af5bb1996a3b0cf54061a320b34dad9c3db327f73e7e9f9bb6bb85ad31674345d53a48f29307"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/saIlazMs/versions/w6yXsioC/customname-fabric-0.4.4-26.2.jar",
+        "url": "https://cdn.modrinth.com/data/MpzVLzy5/versions/iBR9QMPF/better-nether-26.201.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/doubledoors-26.2.0-7.2.jar",
+      "size": 78268,
+      "hashes": {
+        "sha256": "7be9c63167445c2d322ef193a9771c9a7cf556ae05b73f3942a096411f7f4193",
+        "sha512": "8d63de32bd7558812c78d67e5fe4e620bbb2aaa9f2f6b7af56020844aa5f7dcf9f7313db287bada2483073f04dfe05822c00a86eca83c597821543f85e22f024"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/JrvR9OHr/versions/uiANFlUz/doubledoors-26.2.0-7.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/elytratrims-fabric-4.8.3+26.2.jar",
+      "size": 824336,
+      "hashes": {
+        "sha256": "9f5a8ccfe54876deeb96a7c9957c9a5a0cae8385fceeb86e1921c46902c716e7",
+        "sha512": "812c09154c1b38d3cedd93c25d8bd9dbb57e54d553089d4f8ee6a19d70de178bb541db09755327bd854f887edaa6ce82759d46c717b5636686205d9fce20fb70"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/XpzGz7KD/versions/xe4XXryG/elytratrims-fabric-4.8.3%2B26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2362,14 +2390,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/elytratrims-fabric-4.8.3+26.2.jar",
-      "size": 824336,
+      "path": "mods/fabric-api-0.158.0+26.2.jar",
+      "size": 2535765,
       "hashes": {
-        "sha256": "9f5a8ccfe54876deeb96a7c9957c9a5a0cae8385fceeb86e1921c46902c716e7",
-        "sha512": "812c09154c1b38d3cedd93c25d8bd9dbb57e54d553089d4f8ee6a19d70de178bb541db09755327bd854f887edaa6ce82759d46c717b5636686205d9fce20fb70"
+        "sha256": "a4510eb2e9d4057ff20f751e420d0618598813ab9695b6f793a53c2883808dac",
+        "sha512": "4c2c1ebe74ffd54875a01ff371b53ba3d8674ac98d561f7dae02a96d3d37fbdbc5f5abc6e820f73b6154d6f873ddd05a442b0998ed2d456863dc0ad972e040a6"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/XpzGz7KD/versions/xe4XXryG/elytratrims-fabric-4.8.3%2B26.2.jar",
+        "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/NqwNSxwA/fabric-api-0.158.0%2B26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2388,27 +2416,27 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
-      "size": 609550,
+      "path": "mods/customname-fabric-0.4.4-26.2.jar",
+      "size": 89954,
       "hashes": {
-        "sha256": "1b4b17fc4150481447201152604688c74726d6631c9a626dd21f2c5e2b3df1ac",
-        "sha512": "948b8d83de61a11aad2fc0bb0744a8b4848c9b2f0663c9aa015389d9560b3fa78518e609c44ec90278de0e159a92ebd721ccbdebb453aa455c353e5cd19413bf"
+        "sha256": "d70aff259e65ca2a9c8ca9d4b3734b6f9089e93141ba2283e06e23bbe0e3bb04",
+        "sha512": "b0e65f81d9c975fb24e1215b665e19d67c046f85592e299163fc71f17a401f9940c90825ffb19c73cf25bc81b867138d4520b7bed1d8061e28d4a628036111b4"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/rSd3GiG8/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+        "url": "https://cdn.modrinth.com/data/saIlazMs/versions/w6yXsioC/customname-fabric-0.4.4-26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "mods/FarmersDelight-26.2-3.6.17+refabricated.jar",
-      "size": 3472371,
+      "path": "mods/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 99762,
       "hashes": {
-        "sha256": "b03480b430d904607a293d888f972f91fb889527bbff33f2582c2af7dc350628",
-        "sha512": "d22709ef4ab5c55d527cc8287420304ea06aebce64d29052515de0f84f94b056d4d2c535a117f5419fb6ba1399a047f9eb17d741cd27d792905524427e0f156f"
+        "sha256": "47c87d4e1df6bdcd61c56ac380da880ee2bdb60611da36c454915a8ff86aaa42",
+        "sha512": "db19f887d64920023650129b8199a7d8e13201a082b2f65b6e5e722b71f5ae8c747ca893bfbd29b58521d241768e55311e122c8981434d905b22a6d51b7913ca"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/7vxePowz/versions/7v050iYz/FarmersDelight-26.2-3.6.17%2Brefabricated.jar",
+        "url": "https://cdn.modrinth.com/data/FsoeTIV0/versions/lVThjvK5/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2427,27 +2455,66 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
-      "size": 99762,
+      "path": "mods/better-end-26.201.2.jar",
+      "size": 99356745,
       "hashes": {
-        "sha256": "47c87d4e1df6bdcd61c56ac380da880ee2bdb60611da36c454915a8ff86aaa42",
-        "sha512": "db19f887d64920023650129b8199a7d8e13201a082b2f65b6e5e722b71f5ae8c747ca893bfbd29b58521d241768e55311e122c8981434d905b22a6d51b7913ca"
+        "sha256": "97dac860402e781ee50a5e10e1c3d299f9c84873e7426f53fab76918c1559425",
+        "sha512": "f6ec87159bb36dc848ad7fd170e643170fd9e36811d91c22278d6d256e320b0cc28a1fa69de680fefe07652a39b67ccf0d84d5d037d2a8f00f148ee0ae35c94a"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/FsoeTIV0/versions/lVThjvK5/FastItemFrames-v26.2.0-mc26.2.x-Fabric.jar",
+        "url": "https://cdn.modrinth.com/data/gc8OEnCC/versions/VD4qwVUF/better-end-26.201.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "mods/fabric-language-kotlin-1.13.13+kotlin.2.4.10.jar",
-      "size": 8076363,
+      "path": "mods/FarmersDelight-26.2-3.6.17+refabricated.jar",
+      "size": 3472371,
       "hashes": {
-        "sha256": "34ccdacf13bb9351fe43ce61912c2e09b72364e43e787d36ba3d2d04dec75a52",
-        "sha512": "9a63c35a550b0362b7b25ff045d93709c7b0dae08c89076cba422813fdfb9e5f5dd021ed3afac9f82e74e95b88c249e8f68b240717151540ca3e88cc27fb9c77"
+        "sha256": "b03480b430d904607a293d888f972f91fb889527bbff33f2582c2af7dc350628",
+        "sha512": "d22709ef4ab5c55d527cc8287420304ea06aebce64d29052515de0f84f94b056d4d2c535a117f5419fb6ba1399a047f9eb17d741cd27d792905524427e0f156f"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/bdhiINYC/fabric-language-kotlin-1.13.13%2Bkotlin.2.4.10.jar",
+        "url": "https://cdn.modrinth.com/data/7vxePowz/versions/7v050iYz/FarmersDelight-26.2-3.6.17%2Brefabricated.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+      "size": 609550,
+      "hashes": {
+        "sha256": "1b4b17fc4150481447201152604688c74726d6631c9a626dd21f2c5e2b3df1ac",
+        "sha512": "948b8d83de61a11aad2fc0bb0744a8b4848c9b2f0663c9aa015389d9560b3fa78518e609c44ec90278de0e159a92ebd721ccbdebb453aa455c353e5cd19413bf"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/rSd3GiG8/ForgeConfigAPIPort-v26.2.1-mc26.2.x-Fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/FrozenLib-2.5.3-mc26.2.jar",
+      "size": 1862333,
+      "hashes": {
+        "sha256": "510bce30b1d7fdc869eccab3cd2ffd49609ec81c29b40f30da5d9d984f73338e",
+        "sha512": "e41ce242c16ee7a79350fb2eea3b09a7ca51afbc2eaebd452680aab9da4d9e26b6195248d08f44aa6726d955f2cf39cda5f926ac77cf96ad3029fb836f4b92f1"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/9KawNmQc/versions/Ak4sHFuc/FrozenLib-2.5.3-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/fusion-1.3.13-fabric-mc26.2.jar",
+      "size": 951430,
+      "hashes": {
+        "sha256": "aa7a0d0a88741b865c317e4da8b55974f4e0e2da078f9b4c8ec8b0c55aaea961",
+        "sha512": "0c73aba1b3004b0236990f6d9d96bc76ff259021f4dff9c1033ad7c74731a1b27a42c50e77b82af4db9f0e910566633ca7505a34a93092d49d86651a5b08f043"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/p19vrgc2/versions/Px3Tnrlf/fusion-1.3.13-fabric-mc26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2466,14 +2533,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/fusion-1.3.13-fabric-mc26.2.jar",
-      "size": 951430,
+      "path": "mods/Jade-mc26.2-Fabric-26.2.11.jar",
+      "size": 1043764,
       "hashes": {
-        "sha256": "aa7a0d0a88741b865c317e4da8b55974f4e0e2da078f9b4c8ec8b0c55aaea961",
-        "sha512": "0c73aba1b3004b0236990f6d9d96bc76ff259021f4dff9c1033ad7c74731a1b27a42c50e77b82af4db9f0e910566633ca7505a34a93092d49d86651a5b08f043"
+        "sha256": "ffe5d2e83a531c3fbe75ad54095e6a9eafc73a38d5827b4c90bedb4b03618b87",
+        "sha512": "730e07dd5cbbf850ba0e7fd4852b528867d3e2fc2de63b156c89eee9ee6dd92d882b744f97fe724f2aa0afc5b468577486d9558f80d3e46cc5fa133ba241b9c9"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/p19vrgc2/versions/Px3Tnrlf/fusion-1.3.13-fabric-mc26.2.jar",
+        "url": "https://cdn.modrinth.com/data/nvQzSEkH/versions/ue8CO97w/Jade-mc26.2-Fabric-26.2.11.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2505,93 +2572,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/dungeons-and-taverns-5.3.0.jar",
-      "size": 39639975,
+      "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
+      "size": 96088,
       "hashes": {
-        "sha256": "a62d84df3111d9c876ace4f18fc93e239d66b1d077e9604e250c10fda42591bd",
-        "sha512": "04a435e483d8c0204a49769cc749b1ec4d34a005b4a266cf0b3a62f6cc3d7c28bbbf50f5e2b684ab70b617d98e2bbe9e1e98e0a237564c572f1d6391afa66d5e"
+        "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+        "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/tpehi7ww/versions/kejPgknA/dungeons-and-taverns-5.3.0.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/better-end-26.201.2.jar",
-      "size": 99356745,
-      "hashes": {
-        "sha256": "97dac860402e781ee50a5e10e1c3d299f9c84873e7426f53fab76918c1559425",
-        "sha512": "f6ec87159bb36dc848ad7fd170e643170fd9e36811d91c22278d6d256e320b0cc28a1fa69de680fefe07652a39b67ccf0d84d5d037d2a8f00f148ee0ae35c94a"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/gc8OEnCC/versions/VD4qwVUF/better-end-26.201.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/grim-kingdoms-lost-structures-ruins-2.0.3.jar",
-      "size": 10281208,
-      "hashes": {
-        "sha256": "d5f4af9dca99b6df9ad7db214df69d7ea63fb0e601eeabdcd73c304ddc9f7601",
-        "sha512": "441e23bac567a6af3051bb97029c775646bf7c1f3b31741975bb4e25abfa488a6271e3036d6d0f3921ce7c92461e2cfd9afc74a0d9fd1a93d86d816b326e2f00"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/f4d4E9De/versions/2HwCrjkl/grim-kingdoms-lost-structures-ruins-2.0.3.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/fabric-api-0.158.0+26.2.jar",
-      "size": 2535765,
-      "hashes": {
-        "sha256": "a4510eb2e9d4057ff20f751e420d0618598813ab9695b6f793a53c2883808dac",
-        "sha512": "4c2c1ebe74ffd54875a01ff371b53ba3d8674ac98d561f7dae02a96d3d37fbdbc5f5abc6e820f73b6154d6f873ddd05a442b0998ed2d456863dc0ad972e040a6"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/NqwNSxwA/fabric-api-0.158.0%2B26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/FrozenLib-2.5.3-mc26.2.jar",
-      "size": 1862333,
-      "hashes": {
-        "sha256": "510bce30b1d7fdc869eccab3cd2ffd49609ec81c29b40f30da5d9d984f73338e",
-        "sha512": "e41ce242c16ee7a79350fb2eea3b09a7ca51afbc2eaebd452680aab9da4d9e26b6195248d08f44aa6726d955f2cf39cda5f926ac77cf96ad3029fb836f4b92f1"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/9KawNmQc/versions/Ak4sHFuc/FrozenLib-2.5.3-mc26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Jade-mc26.2-Fabric-26.2.11.jar",
-      "size": 1043764,
-      "hashes": {
-        "sha256": "ffe5d2e83a531c3fbe75ad54095e6a9eafc73a38d5827b4c90bedb4b03618b87",
-        "sha512": "730e07dd5cbbf850ba0e7fd4852b528867d3e2fc2de63b156c89eee9ee6dd92d882b744f97fe724f2aa0afc5b468577486d9558f80d3e46cc5fa133ba241b9c9"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/nvQzSEkH/versions/ue8CO97w/Jade-mc26.2-Fabric-26.2.11.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/kitchenprojectiles-1.0.13+mc26.2.jar",
-      "size": 66886,
-      "hashes": {
-        "sha256": "3a13a492f242e5940fd877b31166388f1fc3ca0f0bdcfba85f17267b024bb446",
-        "sha512": "1ad62670103fc634d4b1490270f98dc1c9b239731de979b90cc5ab29cc2d21f444358f95e360657b4b8b5b4516297c097419bae934af703092e5ea7b0633c1fa"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/BYmvNgRP/versions/3YuekkKQ/kitchenprojectiles-1.0.13%2Bmc26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -2609,15 +2598,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
-      "size": 96088,
+      "path": "mods/kitchenprojectiles-1.0.13+mc26.2.jar",
+      "size": 66886,
       "hashes": {
-        "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-        "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e"
+        "sha256": "3a13a492f242e5940fd877b31166388f1fc3ca0f0bdcfba85f17267b024bb446",
+        "sha512": "1ad62670103fc634d4b1490270f98dc1c9b239731de979b90cc5ab29cc2d21f444358f95e360657b4b8b5b4516297c097419bae934af703092e5ea7b0633c1fa"
       },
       "download": {
-        "url": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/BYmvNgRP/versions/3YuekkKQ/kitchenprojectiles-1.0.13%2Bmc26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -2635,19 +2624,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/jei-26.2-fabric-30.25.0.177.jar",
-      "size": 1809815,
-      "hashes": {
-        "sha256": "f2d3e624ccbd2bf5838f8ed59d53efca1a529016c42f807d6295af929d6d7767",
-        "sha512": "749454d81f0b8e9860995e4fea6703573453cc16d5fec7b24c97b8c58d319988bb4d8f49e20b5e0e18781ee1c5e90a6bc7c2ef0046bf7a3ffac5d885a15d9740"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/AFgObZjc/jei-26.2-fabric-30.25.0.177.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/krypton-0.3.1.jar",
       "size": 268842,
       "hashes": {
@@ -2656,6 +2632,32 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/fQEb0iXm/versions/5WeL0Nkz/krypton-0.3.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/fabric-language-kotlin-1.13.13+kotlin.2.4.10.jar",
+      "size": 8076363,
+      "hashes": {
+        "sha256": "34ccdacf13bb9351fe43ce61912c2e09b72364e43e787d36ba3d2d04dec75a52",
+        "sha512": "9a63c35a550b0362b7b25ff045d93709c7b0dae08c89076cba422813fdfb9e5f5dd021ed3afac9f82e74e95b88c249e8f68b240717151540ca3e88cc27fb9c77"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/bdhiINYC/fabric-language-kotlin-1.13.13%2Bkotlin.2.4.10.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/jei-26.2-fabric-30.25.0.177.jar",
+      "size": 1809815,
+      "hashes": {
+        "sha256": "f2d3e624ccbd2bf5838f8ed59d53efca1a529016c42f807d6295af929d6d7767",
+        "sha512": "749454d81f0b8e9860995e4fea6703573453cc16d5fec7b24c97b8c58d319988bb4d8f49e20b5e0e18781ee1c5e90a6bc7c2ef0046bf7a3ffac5d885a15d9740"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/AFgObZjc/jei-26.2-fabric-30.25.0.177.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2674,14 +2676,40 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lithostitched-1.8.0+beta3-fabric-26.2.jar",
-      "size": 988009,
+      "path": "mods/dungeons-and-taverns-5.3.0.jar",
+      "size": 39639975,
       "hashes": {
-        "sha256": "226f45f9dbd933b6e165fd7279b9fa3c499fdaff544ebe3388ae19f0a1276736",
-        "sha512": "32f9b747b80c9b5ac01ee98e167491d4ea433158c22462f80e301fb32238c1e01f5c55dded2fb20e0745720de7f3881971f21dfef03c135c1fed5a8afb2ea8a3"
+        "sha256": "a62d84df3111d9c876ace4f18fc93e239d66b1d077e9604e250c10fda42591bd",
+        "sha512": "04a435e483d8c0204a49769cc749b1ec4d34a005b4a266cf0b3a62f6cc3d7c28bbbf50f5e2b684ab70b617d98e2bbe9e1e98e0a237564c572f1d6391afa66d5e"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/V3XWhM8r/lithostitched-1.8.0%2Bbeta3-fabric-26.2.jar",
+        "url": "https://cdn.modrinth.com/data/tpehi7ww/versions/kejPgknA/dungeons-and-taverns-5.3.0.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/grim-kingdoms-lost-structures-ruins-2.0.3.jar",
+      "size": 10281208,
+      "hashes": {
+        "sha256": "d5f4af9dca99b6df9ad7db214df69d7ea63fb0e601eeabdcd73c304ddc9f7601",
+        "sha512": "441e23bac567a6af3051bb97029c775646bf7c1f3b31741975bb4e25abfa488a6271e3036d6d0f3921ce7c92461e2cfd9afc74a0d9fd1a93d86d816b326e2f00"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/f4d4E9De/versions/2HwCrjkl/grim-kingdoms-lost-structures-ruins-2.0.3.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/Incendium_Legacy_26.2_v5.5.0.jar",
+      "size": 4173667,
+      "hashes": {
+        "sha256": "1626bcced55d5baa3a9c7c3526c830880cbd828bd8793a3cfc60f713479fcc34",
+        "sha512": "01ea96af25367f41ec420282abdb5684608b326fff40621cf9b0df9b0f7901a76ba23c38c79f55fcbb0f291923d181af243ca52c5414a2e19c8161319ef11dbe"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/ZVzW5oNS/versions/kjnBRlCW/Incendium_Legacy_26.2_v5.5.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2713,6 +2741,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/lithostitched-1.8.0+beta3-fabric-26.2.jar",
+      "size": 988009,
+      "hashes": {
+        "sha256": "226f45f9dbd933b6e165fd7279b9fa3c499fdaff544ebe3388ae19f0a1276736",
+        "sha512": "32f9b747b80c9b5ac01ee98e167491d4ea433158c22462f80e301fb32238c1e01f5c55dded2fb20e0745720de7f3881971f21dfef03c135c1fed5a8afb2ea8a3"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/V3XWhM8r/lithostitched-1.8.0%2Bbeta3-fabric-26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/more-chest-variants-1.5.14+26.1.1-fabric.jar",
       "size": 190079,
       "hashes": {
@@ -2739,19 +2780,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/MoreSmithingTables-1.3.4+26.1-Fabric.jar",
-      "size": 86868,
-      "hashes": {
-        "sha256": "29e06d47692801947da43ab58e037d3a20040292914179f5e3fed0cf37199ecf",
-        "sha512": "68eec563b2c5d8dee9be074d051c5c7c027d9a6d1d1dd7062c702fc1dc981c5b2d5f0b066134d2817860d8f3089e58a5e3b54fe232cb09b0de97ba99878cdc1f"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/t3iWfx17/versions/M2qG7d5o/MoreSmithingTables-1.3.4%2B26.1-Fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/MoreShieldVariants-1.4.0+26.1-Fabric.jar",
       "size": 156927,
       "hashes": {
@@ -2765,14 +2793,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lootr-fabric-26.2-1.24.39.121.jar",
-      "size": 1497014,
+      "path": "mods/MoreSmithingTables-1.3.4+26.1-Fabric.jar",
+      "size": 86868,
       "hashes": {
-        "sha256": "3bff544567fd88571df89332876168b6d35b32f668c7e9b0c2591c2bbd8a54e3",
-        "sha512": "7763f8ba03978f9e967980f4f35deba13cb90348a2a0e8cad3145a7ab1cf2fad6349784f0647aeadb4ffa56ee222aca415008e2751ab913b35c0d302002e4375"
+        "sha256": "29e06d47692801947da43ab58e037d3a20040292914179f5e3fed0cf37199ecf",
+        "sha512": "68eec563b2c5d8dee9be074d051c5c7c027d9a6d1d1dd7062c702fc1dc981c5b2d5f0b066134d2817860d8f3089e58a5e3b54fe232cb09b0de97ba99878cdc1f"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/EltpO5cN/versions/k00AgeE7/lootr-fabric-26.2-1.24.39.121.jar",
+        "url": "https://cdn.modrinth.com/data/t3iWfx17/versions/M2qG7d5o/MoreSmithingTables-1.3.4%2B26.1-Fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2804,27 +2832,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mcw-paths-1.1.1-mc26.2fabric.jar",
-      "size": 815169,
+      "path": "mods/lootr-fabric-26.2-1.24.39.121.jar",
+      "size": 1497014,
       "hashes": {
-        "sha256": "39128a12cb64fd61286b631714da742d7b6ea0fa8d4573c103081d01e4993bc2",
-        "sha512": "701619d1989432674b7ffc7642e045c222a29c7c42528721107e09b330e6179e5872a920bd00c544809472209d8c1c4259bab28b1cd29b80a9d518bc61f8efa9"
+        "sha256": "3bff544567fd88571df89332876168b6d35b32f668c7e9b0c2591c2bbd8a54e3",
+        "sha512": "7763f8ba03978f9e967980f4f35deba13cb90348a2a0e8cad3145a7ab1cf2fad6349784f0647aeadb4ffa56ee222aca415008e2751ab913b35c0d302002e4375"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/VRLhWB91/versions/LLYA3vec/mcw-paths-1.1.1-mc26.2fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Incendium_Legacy_26.2_v5.5.0.jar",
-      "size": 4173667,
-      "hashes": {
-        "sha256": "1626bcced55d5baa3a9c7c3526c830880cbd828bd8793a3cfc60f713479fcc34",
-        "sha512": "01ea96af25367f41ec420282abdb5684608b326fff40621cf9b0df9b0f7901a76ba23c38c79f55fcbb0f291923d181af243ca52c5414a2e19c8161319ef11dbe"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/ZVzW5oNS/versions/kjnBRlCW/Incendium_Legacy_26.2_v5.5.0.jar",
+        "url": "https://cdn.modrinth.com/data/EltpO5cN/versions/k00AgeE7/lootr-fabric-26.2-1.24.39.121.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2838,6 +2853,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/okE6QVAY/versions/IYqbBWnh/mcw-paintings-1.1.0-mc26.2fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/mcw-furniture-3.4.2-mc26.2fabric.jar",
+      "size": 2386965,
+      "hashes": {
+        "sha256": "0bc76491e4219c60089f6e8ef0b69d7c9593385dd3b7f39e6eb231f8a71b97df",
+        "sha512": "ed39b132609eb31ad7205d667f844097ef04d66a44982f260216cab049f42ebc9458ffd27f251cd67294aa36ba84eaab9bab763e1e6db92f645c51b776ac31d5"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/dtWC90iB/versions/ptL25rVF/mcw-furniture-3.4.2-mc26.2fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2869,14 +2897,27 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mcw-furniture-3.4.2-mc26.2fabric.jar",
-      "size": 2386965,
+      "path": "mods/mcw-paths-1.1.1-mc26.2fabric.jar",
+      "size": 815169,
       "hashes": {
-        "sha256": "0bc76491e4219c60089f6e8ef0b69d7c9593385dd3b7f39e6eb231f8a71b97df",
-        "sha512": "ed39b132609eb31ad7205d667f844097ef04d66a44982f260216cab049f42ebc9458ffd27f251cd67294aa36ba84eaab9bab763e1e6db92f645c51b776ac31d5"
+        "sha256": "39128a12cb64fd61286b631714da742d7b6ea0fa8d4573c103081d01e4993bc2",
+        "sha512": "701619d1989432674b7ffc7642e045c222a29c7c42528721107e09b330e6179e5872a920bd00c544809472209d8c1c4259bab28b1cd29b80a9d518bc61f8efa9"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/dtWC90iB/versions/ptL25rVF/mcw-furniture-3.4.2-mc26.2fabric.jar",
+        "url": "https://cdn.modrinth.com/data/VRLhWB91/versions/LLYA3vec/mcw-paths-1.1.1-mc26.2fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/mcw-trapdoors-1.1.5-mc26.2fabric.jar",
+      "size": 641243,
+      "hashes": {
+        "sha256": "6411cb0ff6c6cc4312deed48c3ca69cdbcbae72e80ff4ed0269f2d0a78acd32d",
+        "sha512": "61a04a72e72b9a8d944feebb1f8b106ceed57710656d1934e1b7fbb219cf62c356dac9866a9a6bef6254fc3c9726b345429ebadd63b4d807fd24c67747cf7306"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/n2fvCDlM/versions/guJEg4jK/mcw-trapdoors-1.1.5-mc26.2fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2895,6 +2936,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/mcw-roofs-2.3.3-mc26.2fabric.jar",
+      "size": 1925146,
+      "hashes": {
+        "sha256": "bbd7dabc28c2071d587d44b7f131e8f478b4ad3577121e03e02e4baa8f3eb1e6",
+        "sha512": "bb4a66e8c7def85436de99040f6be44698874c6aac7a708b4c39ba4fc70f97d0bfa264520118d6cc5a221f7142e419c652f1ab28834b837f4a4968665f792d21"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/B8jaH3P1/versions/2NEmd2hl/mcw-roofs-2.3.3-mc26.2fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/mcw-windows-2.4.2-mc26.2fabric.jar",
       "size": 1402302,
       "hashes": {
@@ -2908,14 +2962,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mcw-roofs-2.3.3-mc26.2fabric.jar",
-      "size": 1925146,
+      "path": "mods/mingen-v7.2.2.jar",
+      "size": 1695440,
       "hashes": {
-        "sha256": "bbd7dabc28c2071d587d44b7f131e8f478b4ad3577121e03e02e4baa8f3eb1e6",
-        "sha512": "bb4a66e8c7def85436de99040f6be44698874c6aac7a708b4c39ba4fc70f97d0bfa264520118d6cc5a221f7142e419c652f1ab28834b837f4a4968665f792d21"
+        "sha256": "520ae37f942ce9e5be23576a756dafdd93996b66f128af037b5f0bebd1cd8812",
+        "sha512": "b788264d24db6b31697a26e07431920b29fdea7294c8268f7a321edf46d2ab3da165c949419eb33b09b20f7ebf66d757f1ef8c7454fa5868d95a08e6db27eb29"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/B8jaH3P1/versions/2NEmd2hl/mcw-roofs-2.3.3-mc26.2fabric.jar",
+        "url": "https://cdn.modrinth.com/data/FyLFHdlz/versions/Ze9ByKBY/mingen-v7.2.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2947,14 +3001,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mingen-v7.2.2.jar",
-      "size": 1695440,
+      "path": "mods/MoreBarrelVariants-2.0.5+26.1(2)-Fabric.jar",
+      "size": 145981,
       "hashes": {
-        "sha256": "520ae37f942ce9e5be23576a756dafdd93996b66f128af037b5f0bebd1cd8812",
-        "sha512": "b788264d24db6b31697a26e07431920b29fdea7294c8268f7a321edf46d2ab3da165c949419eb33b09b20f7ebf66d757f1ef8c7454fa5868d95a08e6db27eb29"
+        "sha256": "246fad506979c06c89571cd9d8905f1bac8c58368844d3e49c1042c3f3eab6f5",
+        "sha512": "8bd279420c5f7002bdc78590ff73bd55243ed71d4d8f22c1bb733a7e5a6a0fe88a8208274521f4a431a2feb3c9106800f0f37c6d3a1a1ac542726cbafa4d07db"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/FyLFHdlz/versions/Ze9ByKBY/mingen-v7.2.2.jar",
+        "url": "https://cdn.modrinth.com/data/g4AhyGgi/versions/xSukzynN/MoreBarrelVariants-2.0.5%2B26.1%282%29-Fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2973,19 +3027,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/MoreBarrelVariants-2.0.5+26.1(2)-Fabric.jar",
-      "size": 145981,
-      "hashes": {
-        "sha256": "246fad506979c06c89571cd9d8905f1bac8c58368844d3e49c1042c3f3eab6f5",
-        "sha512": "8bd279420c5f7002bdc78590ff73bd55243ed71d4d8f22c1bb733a7e5a6a0fe88a8208274521f4a431a2feb3c9106800f0f37c6d3a1a1ac542726cbafa4d07db"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/g4AhyGgi/versions/xSukzynN/MoreBarrelVariants-2.0.5%2B26.1%282%29-Fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/MoreBedVariants-2.1.9+26.2-Fabric.jar",
       "size": 1770832,
       "hashes": {
@@ -2994,6 +3035,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/nKaiA11S/versions/RepA5IBL/MoreBedVariants-2.1.9%2B26.2-Fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/MoreSmokerVariants-1.3.5+26.1-Fabric.jar",
+      "size": 325079,
+      "hashes": {
+        "sha256": "bbe72b0edcf5d4e546c381c8c34cb70f9e855c3e535c2bfc5ca1b9be06b074cf",
+        "sha512": "11d7f636b499597707f565e14228f6b98809a74e07c29cefeaf899db5b52c11e3d9e8e95fa3a909fad42a317c202a20f2d2654b6e3797e7a293f8049fe4ddd46"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/8HxZnUY7/versions/vnQCiwUu/MoreSmokerVariants-1.3.5%2B26.1-Fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3021,32 +3075,6 @@
       "download": {
         "url": "/api/v1/blobs/4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/MoreSmokerVariants-1.3.5+26.1-Fabric.jar",
-      "size": 325079,
-      "hashes": {
-        "sha256": "bbe72b0edcf5d4e546c381c8c34cb70f9e855c3e535c2bfc5ca1b9be06b074cf",
-        "sha512": "11d7f636b499597707f565e14228f6b98809a74e07c29cefeaf899db5b52c11e3d9e8e95fa3a909fad42a317c202a20f2d2654b6e3797e7a293f8049fe4ddd46"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/8HxZnUY7/versions/vnQCiwUu/MoreSmokerVariants-1.3.5%2B26.1-Fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/mcw-trapdoors-1.1.5-mc26.2fabric.jar",
-      "size": 641243,
-      "hashes": {
-        "sha256": "6411cb0ff6c6cc4312deed48c3ca69cdbcbae72e80ff4ed0269f2d0a78acd32d",
-        "sha512": "61a04a72e72b9a8d944feebb1f8b106ceed57710656d1934e1b7fbb219cf62c356dac9866a9a6bef6254fc3c9726b345429ebadd63b4d807fd24c67747cf7306"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/n2fvCDlM/versions/guJEg4jK/mcw-trapdoors-1.1.5-mc26.2fabric.jar",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -3103,6 +3131,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/PlayerAnimationLibMerged-1.2.6+mc.26.2.jar",
+      "size": 419757,
+      "hashes": {
+        "sha256": "97af3288dd39643bf3607bf9ff5c3293022793559236586a6783fe71dd66e6bd",
+        "sha512": "8a497e6f168837c660f88d9d8134ceea295ad6c862ae3a34296383bcb9a68e6b173b69da58ff6e5eb80594208064b41f0ee0f02aaeefddef53a27ab2e71ea28f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/ha1mEyJS/versions/Hq1CwB9w/PlayerAnimationLibMerged-1.2.6%2Bmc.26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/pneumonocore-1.3.1+26.2+A.jar",
       "size": 163068,
       "hashes": {
@@ -3129,32 +3170,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/PuzzlesLib-v26.2.3-mc26.2.x-Fabric.jar",
-      "size": 1145463,
-      "hashes": {
-        "sha256": "746d90c6723fccce4fca076e7e87753354abc4670016e1c461120a3306ee9af1",
-        "sha512": "3d5c0fa58f75f3cd345bc48a08a783890aab8ef01d1be113088138dda1bf79030a782dd267688c07cc2ea7a7d09710d50797416fc2292c58004cc6ff27c791bd"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/KU5rZUAR/PuzzlesLib-v26.2.3-mc26.2.x-Fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/PlayerAnimationLibMerged-1.2.6+mc.26.2.jar",
-      "size": 419757,
-      "hashes": {
-        "sha256": "97af3288dd39643bf3607bf9ff5c3293022793559236586a6783fe71dd66e6bd",
-        "sha512": "8a497e6f168837c660f88d9d8134ceea295ad6c862ae3a34296383bcb9a68e6b173b69da58ff6e5eb80594208064b41f0ee0f02aaeefddef53a27ab2e71ea28f"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/ha1mEyJS/versions/Hq1CwB9w/PlayerAnimationLibMerged-1.2.6%2Bmc.26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/pv-addon-priority-1.1.0.jar",
       "size": 13790,
       "hashes": {
@@ -3163,6 +3178,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/DoKOaUOC/versions/xPHUGv4E/pv-addon-priority-1.1.0.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/PuzzlesLib-v26.2.3-mc26.2.x-Fabric.jar",
+      "size": 1145463,
+      "hashes": {
+        "sha256": "746d90c6723fccce4fca076e7e87753354abc4670016e1c461120a3306ee9af1",
+        "sha512": "3d5c0fa58f75f3cd345bc48a08a783890aab8ef01d1be113088138dda1bf79030a782dd267688c07cc2ea7a7d09710d50797416fc2292c58004cc6ff27c791bd"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/KU5rZUAR/PuzzlesLib-v26.2.3-mc26.2.x-Fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3220,6 +3248,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/ScalableLux-fabric-0.3.0-alpha.0.3-all.jar",
+      "size": 193030,
+      "hashes": {
+        "sha256": "8d76cf27589dcc8e16c34ba0709a9ee2134cfcd60b90862f8cbd204ea9b6c7c8",
+        "sha512": "ea1551c8728a726f6ee82fed3040af52791943ef99f6b63428ed770797f60677e0160975ad59ad0f51bcd4a4ec2b5da39c6913ab2379f2e25d2397132d469a94"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/Ps1zyz6x/versions/EKLUURiy/ScalableLux-fabric-0.3.0-alpha.0.3-all.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/rusticdelight-fabric-26.2-1.7.0.jar",
       "size": 1053173,
       "hashes": {
@@ -3228,19 +3269,6 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/foa4fGIH/versions/Ioo3Id1t/rusticdelight-fabric-26.2-1.7.0.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/pyrite-0.18.3+26.2-fabric.jar",
-      "size": 7470822,
-      "hashes": {
-        "sha256": "6c378632fcadd0501a41bd4af90aec58b8cf03a065f69cd9837160c97ed81831",
-        "sha512": "fefa4849b22ea429ee36f955a54063690e2633ccb3e7436acc77f6604f02ef36b554a6d90dccb9a108cfe39ae847949724b73e88ea6844ee647043cb0e5d3d35"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/qO4ozPoe/versions/mav9tmY0/pyrite-0.18.3%2B26.2-fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3259,14 +3287,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ScalableLux-fabric-0.3.0-alpha.0.3-all.jar",
-      "size": 193030,
+      "path": "mods/pyrite-0.18.3+26.2-fabric.jar",
+      "size": 7470822,
       "hashes": {
-        "sha256": "8d76cf27589dcc8e16c34ba0709a9ee2134cfcd60b90862f8cbd204ea9b6c7c8",
-        "sha512": "ea1551c8728a726f6ee82fed3040af52791943ef99f6b63428ed770797f60677e0160975ad59ad0f51bcd4a4ec2b5da39c6913ab2379f2e25d2397132d469a94"
+        "sha256": "6c378632fcadd0501a41bd4af90aec58b8cf03a065f69cd9837160c97ed81831",
+        "sha512": "fefa4849b22ea429ee36f955a54063690e2633ccb3e7436acc77f6604f02ef36b554a6d90dccb9a108cfe39ae847949724b73e88ea6844ee647043cb0e5d3d35"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/Ps1zyz6x/versions/EKLUURiy/ScalableLux-fabric-0.3.0-alpha.0.3-all.jar",
+        "url": "https://cdn.modrinth.com/data/qO4ozPoe/versions/mav9tmY0/pyrite-0.18.3%2B26.2-fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3324,14 +3352,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Structory_26.2_v1.3.7.jar",
-      "size": 1261346,
+      "path": "mods/rechiseled-1.2.5-fabric-mc26.2.jar",
+      "size": 12265078,
       "hashes": {
-        "sha256": "e9079b2bb9bc2efb9b0f1244376488e41f8b50f25415094d8f03dc753cdfb131",
-        "sha512": "4178a15f32f6ed3d59a7eb2222a8e3f539efd7b54d8ffb790cbf1dfe5c54c6ce6ec33220e148424109c6360c4c6f081b9fbebfe74745fe3c8f05619a06ccb9ec"
+        "sha256": "f1c192a03b3b66490e74e7740ead82e48a82c53b07a9462001885cbc0b5d1f7c",
+        "sha512": "7adf03641342288b93909630b1dbf7b3cbaf581f5ce12d95ffa7ee1f0c4cd82bcd699d185ab195d5af9bb54820327233fea8a097f21217348bd8e5eb04dcae85"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/aKCwCJlY/versions/TUbwu7eG/Structory_26.2_v1.3.7.jar",
+        "url": "https://cdn.modrinth.com/data/B0g2vT6l/versions/NxJGKz5b/rechiseled-1.2.5-fabric-mc26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3350,6 +3378,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/Structory_26.2_v1.3.7.jar",
+      "size": 1261346,
+      "hashes": {
+        "sha256": "e9079b2bb9bc2efb9b0f1244376488e41f8b50f25415094d8f03dc753cdfb131",
+        "sha512": "4178a15f32f6ed3d59a7eb2222a8e3f539efd7b54d8ffb790cbf1dfe5c54c6ce6ec33220e148424109c6360c4c6f081b9fbebfe74745fe3c8f05619a06ccb9ec"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/aKCwCJlY/versions/TUbwu7eG/Structory_26.2_v1.3.7.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
       "size": 206149,
       "hashes": {
@@ -3358,6 +3399,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/LN9BxssP/versions/tg619S8t/supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/spark-1.10.173-fabric.jar",
+      "size": 3887184,
+      "hashes": {
+        "sha256": "076ed2288db2a05ca6e8061615e1a31d1912cf1b10665e4f09a1794d5db99433",
+        "sha512": "1dcbf2b76ceacf07523afaeaf63d3625b0318077cc6ce588bb701aea4a494bc2a5179fd2ca5aeda9513c6a2248c2ec590387e8aec6ac9fd8e3d01760bbc3dbfb"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/l6YH9Als/versions/iYFOl6lQ/spark-1.10.173-fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3389,6 +3443,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/tooltrims-2.0.10+tt3.0.x+mc26.2.jar",
+      "size": 400033,
+      "hashes": {
+        "sha256": "a7c68ce43e5cee10ccf42dcea0429eb3e89b82207584caa23b49f58b247ef1db",
+        "sha512": "30188a7182868873b9b580d1aac3d09c206f2b4edb1d609ea12dd98de738a8bcd9f7acf43ed3fb159470fea46752c4d2b3f443747c8dd18198d9c61905a71208"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/GqdixiwC/versions/Hbyk0zuB/tooltrims-2.0.10%2Btt3.0.x%2Bmc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/Terralith_26.2_v2.6.4.jar",
       "size": 2974843,
       "hashes": {
@@ -3402,19 +3469,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/rechiseled-1.2.5-fabric-mc26.2.jar",
-      "size": 12265078,
-      "hashes": {
-        "sha256": "f1c192a03b3b66490e74e7740ead82e48a82c53b07a9462001885cbc0b5d1f7c",
-        "sha512": "7adf03641342288b93909630b1dbf7b3cbaf581f5ce12d95ffa7ee1f0c4cd82bcd699d185ab195d5af9bb54820327233fea8a097f21217348bd8e5eb04dcae85"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/B0g2vT6l/versions/NxJGKz5b/rechiseled-1.2.5-fabric-mc26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/travelersbackpack-fabric-26.2-11.3.1.jar",
       "size": 1496106,
       "hashes": {
@@ -3423,19 +3477,6 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/rlloIFEV/versions/mjQY8slD/travelersbackpack-fabric-26.2-11.3.1.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/tooltrims-2.0.10+tt3.0.x+mc26.2.jar",
-      "size": 400033,
-      "hashes": {
-        "sha256": "a7c68ce43e5cee10ccf42dcea0429eb3e89b82207584caa23b49f58b247ef1db",
-        "sha512": "30188a7182868873b9b580d1aac3d09c206f2b4edb1d609ea12dd98de738a8bcd9f7acf43ed3fb159470fea46752c4d2b3f443747c8dd18198d9c61905a71208"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/GqdixiwC/versions/Hbyk0zuB/tooltrims-2.0.10%2Btt3.0.x%2Bmc26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3467,19 +3508,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/umbrellas-1.4.4+26.2+A.jar",
-      "size": 710691,
-      "hashes": {
-        "sha256": "b664d460b89d7f3cc0ab16643c5164b20855bba0b7ff62b762bc6fd2c9f5511c",
-        "sha512": "1ad34a997c4000b21065a58d7db3062d8441e5786264ab8ee88d4688ab4ec11407cf532cbb20cff7c092d89840ab3e431f9e772a110ccf98c94cbdbea963b2d6"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/dgTb67Ox/versions/Z8GYHxx5/umbrellas-1.4.4%2B26.2%2BA.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/underground_village-fabric-26.1-2.1.1.jar",
       "size": 414457,
       "hashes": {
@@ -3488,6 +3516,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/KmyhssPl/versions/2YZgqDhK/underground_village-fabric-26.1-2.1.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/umbrellas-1.4.4+26.2+A.jar",
+      "size": 710691,
+      "hashes": {
+        "sha256": "b664d460b89d7f3cc0ab16643c5164b20855bba0b7ff62b762bc6fd2c9f5511c",
+        "sha512": "1ad34a997c4000b21065a58d7db3062d8441e5786264ab8ee88d4688ab4ec11407cf532cbb20cff7c092d89840ab3e431f9e772a110ccf98c94cbdbea963b2d6"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/dgTb67Ox/versions/Z8GYHxx5/umbrellas-1.4.4%2B26.2%2BA.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3545,19 +3586,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/trek-B0.6.2.jar",
-      "size": 12461621,
-      "hashes": {
-        "sha256": "5ea0837a4b1ef02cc702d7e7e49a245f4857591696183b9d2fe56c574cbfc022",
-        "sha512": "17f35802c2f8dbae026153718b6d40a2b4c3ae1558e6e87500ecffe859fe2e607e00b3be76b8c8cbee7da932a042ebe5a279df9929fb7b51000ea1af49fcc1c9"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/h2jngREY/versions/OYbFzi8L/trek-B0.6.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/xaeroworldmap-fabric-26.2-1.45.0.jar",
       "size": 1477385,
       "hashes": {
@@ -3571,27 +3599,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/voxy-server-side-fabric.jar",
-      "size": 7928776,
+      "path": "mods/worldweaver-26.201.2.jar",
+      "size": 2936999,
       "hashes": {
-        "sha256": "b7b1d92231c0b4b26cbba988516cac824d60cf9e7dfc61b4a59a6d5d108ac056",
-        "sha512": "157f4b6473e6d099bddc2ce69b370c13bb05ae591c4bf4739723eb27e08c28e813362dc9acfb7bf0b49113662d43e60042db58826832cdcd829444c8fee472ec"
+        "sha256": "e042ec2011d1613eaf9e7fc3e27179f31b1a1be704b4271d035589a69914b8a1",
+        "sha512": "01e41444580f5752d317fdb274e1bc3ee9cc63f1a12bbd4f624c96ff252e40b00fc57351dcb089ddcd612123a245aff011acdb36866746f0fcf2431a417d7a9c"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/84zcagOb/versions/JiG0StST/voxy-server-side-fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/spark-1.10.173-fabric.jar",
-      "size": 3887184,
-      "hashes": {
-        "sha256": "076ed2288db2a05ca6e8061615e1a31d1912cf1b10665e4f09a1794d5db99433",
-        "sha512": "1dcbf2b76ceacf07523afaeaf63d3625b0318077cc6ce588bb701aea4a494bc2a5179fd2ca5aeda9513c6a2248c2ec590387e8aec6ac9fd8e3d01760bbc3dbfb"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/l6YH9Als/versions/iYFOl6lQ/spark-1.10.173-fabric.jar",
+        "url": "https://cdn.modrinth.com/data/RiN8rDVs/versions/GHdiOIsp/worldweaver-26.201.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3610,14 +3625,27 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/worldweaver-26.201.2.jar",
-      "size": 2936999,
+      "path": "mods/voxy-server-side-fabric.jar",
+      "size": 7928776,
       "hashes": {
-        "sha256": "e042ec2011d1613eaf9e7fc3e27179f31b1a1be704b4271d035589a69914b8a1",
-        "sha512": "01e41444580f5752d317fdb274e1bc3ee9cc63f1a12bbd4f624c96ff252e40b00fc57351dcb089ddcd612123a245aff011acdb36866746f0fcf2431a417d7a9c"
+        "sha256": "b7b1d92231c0b4b26cbba988516cac824d60cf9e7dfc61b4a59a6d5d108ac056",
+        "sha512": "157f4b6473e6d099bddc2ce69b370c13bb05ae591c4bf4739723eb27e08c28e813362dc9acfb7bf0b49113662d43e60042db58826832cdcd829444c8fee472ec"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/RiN8rDVs/versions/GHdiOIsp/worldweaver-26.201.2.jar",
+        "url": "https://cdn.modrinth.com/data/84zcagOb/versions/JiG0StST/voxy-server-side-fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/trek-B0.6.2.jar",
+      "size": 12461621,
+      "hashes": {
+        "sha256": "5ea0837a4b1ef02cc702d7e7e49a245f4857591696183b9d2fe56c574cbfc022",
+        "sha512": "17f35802c2f8dbae026153718b6d40a2b4c3ae1558e6e87500ecffe859fe2e607e00b3be76b8c8cbee7da932a042ebe5a279df9929fb7b51000ea1af49fcc1c9"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/h2jngREY/versions/OYbFzi8L/trek-B0.6.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

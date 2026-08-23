@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "pack": "Lampas 2",
+  "version": "2.0.0",
+  "minecraft": "26.2",
+  "loader": {
+    "type": "fabric",
+    "version": "0.19.3"
+  },
+  "minimumLauncherVersion": "1.1.0",
+  "protocol": 2,
+  "created": "2026-08-23T19:07:44.529Z",
+  "clientManifest": "http://localhost:3000/api/v1/releases/2.0.0/client-manifest",
+  "serverManifest": "http://localhost:3000/api/v1/releases/2.0.0/server-manifest",
+  "totalMods": 190,
+  "totalFiles": 358,
+  "launch": {
+    "autoConnect": false,
+    "server": "localhost:25576",
+    "requiredResourcePacks": [
+      {
+        "id": "lampas2",
+        "filename": "lampas2-resource-pack.zip",
+        "path": "resourcepacks/lampas2-resource-pack.zip",
+        "sha256": "f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
+        "sha1": "45c0bdec3a7c862c233ebfd00c2fa0656752137d"
+      },
+      {
+        "id": "fa-player-extension",
+        "filename": "FA+Player-v1.1.zip",
+        "path": "resourcepacks/FA+Player-v1.1.zip",
+        "sha256": "9ee3ae5b2fe5cd980e4041429dc66d88243f5f2420e2814e5361c746ad937f33",
+        "sha1": "122e397af111e3dc5fb6b60004aad9464980f13a"
+      }
+    ]
+  },
+  "serverResourcePack": {
+    "artifact": "lampas2",
+    "required": true,
+    "filename": "lampas2-resource-pack.zip",
+    "path": "resourcepacks/lampas2-resource-pack.zip",
+    "url": "http://localhost:3000/api/v1/blobs/f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
+    "sha1": "45c0bdec3a7c862c233ebfd00c2fa0656752137d",
+    "sha256": "f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
+    "prompt": "{\"text\":\"The Lampas 2 resource pack\"}",
+    "id": "2a6fb9c0-3063-42f6-8585-2bb8000fdf56"
+  }
+}
