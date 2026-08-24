@@ -15,7 +15,7 @@ type LauncherOperation = "sync" | "repair" | "move" | "launch" | null;
 let currentOperation: LauncherOperation = null;
 
 function createWindow() {
-  const iconPath = path.join(__dirname, "../ui/assets/lampas.jpg");
+  const iconPath = path.join(__dirname, "../ui/assets/lampas.png");
   const appIcon = fs.existsSync(iconPath) ? nativeImage.createFromPath(iconPath) : undefined;
 
   mainWindow = new BrowserWindow({

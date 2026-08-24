@@ -38,7 +38,7 @@
       "package.json"
     ],
     "win": {
-      "icon": "assets/lampas.jpg",
+      "icon": "assets/lampas.png",
       "target": [
         "nsis",
         "portable"
@@ -51,7 +51,7 @@
       "createStartMenuShortcut": true
     },
     "linux": {
-      "icon": "assets/lampas.jpg",
+      "icon": "assets/lampas.png",
       "target": [
         "AppImage",
         "tar.gz"
