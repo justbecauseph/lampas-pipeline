@@ -1,0 +1,21 @@
+#Edit name tags without an anvil, simply from a handy screen opened via right-clicking.
+#Default Value: true
+edit_name_tags_without_anvil = true
+#When trying to use a name tag on a mob already named with that exact name nothing will be consumed.
+#Default Value: true
+prevent_voiding_name_tags = true
+#Play a plopping sound when using a name tag on a mob.
+#Default Value: true
+play_name_tag_sound = true
+#Mobs that have a custom name drop a name tag with that name on death.
+#Default Value: true
+drop_name_tags_on_death = false
+#Mobs that have a custom name can have it removed using shears and drop a name tag with that name.
+#Default Value: true
+remove_custom_name_using_shears = false
+#The naming field in the name tag screen will support formatting codes for setting custom text colors and styles.
+#Default Value: true
+renaming_supports_formatting = true
+#When renaming an already named mob, the old name tag will drop as an item when the new name tag is applied.
+#Default Value: true
+return_applied_name_tags = false
