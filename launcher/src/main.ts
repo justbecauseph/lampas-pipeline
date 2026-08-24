@@ -1,4 +1,5 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, nativeImage, shell } from "electron";
+import * as fs from "node:fs";
 import * as path from "node:path";
 import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
@@ -14,6 +15,9 @@ type LauncherOperation = "sync" | "repair" | "move" | "launch" | null;
 let currentOperation: LauncherOperation = null;
 
 function createWindow() {
+  const iconPath = path.join(__dirname, "../ui/assets/lampas.jpg");
+  const appIcon = fs.existsSync(iconPath) ? nativeImage.createFromPath(iconPath) : undefined;
+
   mainWindow = new BrowserWindow({
     width: 1040,
     height: 680,
@@ -22,6 +26,7 @@ function createWindow() {
     frame: false,
     titleBarStyle: "hidden",
     backgroundColor: "#0b0f0e",
+    icon: appIcon,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
