@@ -3,12 +3,43 @@ import * as path from "node:path";
 import { readJsonFile } from "./utils";
 import type { PackManifest, ReleaseDescriptor } from "./types";
 
+export type ReleaseChannel = "dev" | "beta" | "stable";
+
+export const ALL_RELEASE_CHANNELS: readonly ReleaseChannel[] = ["dev", "beta", "stable"];
+
 export interface PublishOptions {
   manifestDir: string;
   packDir: string;
   portalUrl: string;
   publishSecret: string;
-  channel?: "dev" | "beta" | "stable";
+  channel?: ReleaseChannel | ReleaseChannel[] | string;
+}
+
+export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel[] | string): ReleaseChannel[] {
+  if (!channel || channel === "all" || channel === "true") {
+    return [...ALL_RELEASE_CHANNELS];
+  }
+
+  let channels: string[];
+  if (Array.isArray(channel)) {
+    channels = channel;
+  } else if (typeof channel === "string") {
+    channels = channel.split(",").map((c) => c.trim()).filter(Boolean);
+  } else {
+    channels = [String(channel)];
+  }
+
+  if (channels.length === 0) {
+    return [...ALL_RELEASE_CHANNELS];
+  }
+
+  for (const ch of channels) {
+    if (!ALL_RELEASE_CHANNELS.includes(ch as ReleaseChannel)) {
+      throw new Error(`Invalid channel '${ch}'. Supported channels are: ${ALL_RELEASE_CHANNELS.join(", ")} (or omit --channel to publish to all).`);
+    }
+  }
+
+  return channels as ReleaseChannel[];
 }
 
 export async function publishRelease(options: PublishOptions): Promise<void> {
@@ -20,11 +51,16 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     throw new Error(`Manifests missing in ${options.manifestDir}. Run 'lampasctl manifest' first.`);
   }
 
+  if (!options.portalUrl) {
+    throw new Error("Portal URL is required for 'publish'. Specify --portal <url> or PACK_PORTAL_URL.");
+  }
+
   const release = readJsonFile<ReleaseDescriptor>(releasePath);
   const clientManifest = readJsonFile<PackManifest>(clientManifestPath);
   const serverManifest = readJsonFile<PackManifest>(serverManifestPath);
+  const targetChannels = resolvePublishChannels(options.channel);
 
-  console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${options.portalUrl}...`);
+  console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${options.portalUrl} (channels: ${targetChannels.join(", ")})...`);
 
   // Collect Lampas blobs to upload
   const blobsToUpload: Array<{
@@ -68,37 +104,40 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
 
   console.log(`[Publish] Packaging ${blobsToUpload.length} content blobs...`);
 
-  const payload = {
-    version: release.version,
-    minecraftVersion: release.minecraft,
-    fabricVersion: release.loader.version,
-    minimumLauncherVersion: release.minimumLauncherVersion,
-    protocolVersion: release.protocol,
-    clientManifest,
-    serverManifest,
-    launch: release.launch,
-    channel: options.channel || "stable",
-    gitCommit: release.gitCommit,
-    blobs: blobsToUpload,
-  };
-
   const publishUrl = `${options.portalUrl.replace(/\/+$/, "")}/api/v1/releases/publish`;
-  console.log(`[Publish] Sending release payload to ${publishUrl}...`);
 
-  const res = await fetch(publishUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${options.publishSecret}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  for (const ch of targetChannels) {
+    const payload = {
+      version: release.version,
+      minecraftVersion: release.minecraft,
+      fabricVersion: release.loader.version,
+      minimumLauncherVersion: release.minimumLauncherVersion,
+      protocolVersion: release.protocol,
+      clientManifest,
+      serverManifest,
+      launch: release.launch,
+      channel: ch,
+      gitCommit: release.gitCommit,
+      blobs: blobsToUpload,
+    };
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Failed to publish release (${res.status} ${res.statusText}): ${errorText}`);
+    console.log(`[Publish] Sending release payload to ${publishUrl} (channel: ${ch})...`);
+
+    const res = await fetch(publishUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${options.publishSecret}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Failed to publish release to channel '${ch}' (${res.status} ${res.statusText}): ${errorText}`);
+    }
+
+    const result = (await res.json()) as any;
+    console.log(`\n✓ [Publish Success] Release v${release.version} published to channel '${result?.channelUpdated || ch}'!`);
   }
-
-  const result = await res.json();
-  console.log(`\n✓ [Publish Success] Release v${release.version} published to channel '${result.channelUpdated}'!`);
 }

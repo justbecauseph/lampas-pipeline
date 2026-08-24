@@ -211,9 +211,20 @@ bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server
 
 ## 3. Release & Channel Promotion Workflows
 
-### Workflow H: Publishing a Staging / Dev Release
+### Workflow H: Publishing Releases to Channels
 
-Publish your local manifests and upload config/custom blobs to the Lampas Portal API:
+Publish your local manifests and upload config/custom blobs to the Lampas Portal API.
+
+#### Publish to All Environments (`dev`, `beta`, `stable`)
+Omit the `--channel` parameter to publish and update channel pointers across all environments at once:
+
+```bash
+bun run lampasctl publish \
+  --portal http://localhost:3000 \
+  --secret "lampas-secret-key"
+```
+
+#### Publish to a Specific Channel (`dev`, `beta`, or `stable`)
 
 ```bash
 bun run lampasctl publish \

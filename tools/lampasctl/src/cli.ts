@@ -51,7 +51,7 @@ Commands:
   publish               Publish release and upload blobs to Lampas Portal
     --portal <url>      Lampas Portal URL (e.g. http://localhost:3000)
     --secret <token>    Publish bearer secret token
-    --channel <name>    Channel pointer to update (dev | beta | stable)
+    --channel <name>    Channel pointer to update (dev | beta | stable, or all if omitted)
     -p, --pack <path>   Pack directory (default: ./pack)
     -m, --manifest <p>  Manifest directory (default: ./manifest)
 
@@ -230,7 +230,7 @@ async function main() {
         const publishSecret = flags.secret || process.env.PACK_PUBLISH_SECRET || "";
         const manifestDir = path.resolve(flags.manifest || path.join(rootDir, "manifest"));
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
-        const channel = (flags.channel as "dev" | "beta" | "stable") || "stable";
+        const channel = flags.channel;
 
         await publishRelease({
           manifestDir,

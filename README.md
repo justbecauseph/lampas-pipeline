@@ -187,7 +187,11 @@ bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server
 ### 4. Portal Release Publishing
 Publish a release and upload configs/custom blobs to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
 ```bash
+# Publish to a specific channel:
 bun run lampasctl publish --portal http://localhost:3000 --channel stable --secret <PUBLISH_TOKEN>
+
+# Publish to all channels (dev, beta, stable) simultaneously:
+bun run lampasctl publish --portal http://localhost:3000 --secret <PUBLISH_TOKEN>
 ```
 
 ### 5. Headless Client / Server Sync
