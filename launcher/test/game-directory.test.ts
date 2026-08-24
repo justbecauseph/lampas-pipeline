@@ -107,6 +107,13 @@ describe("GameDirectoryManager & Installation Relocation", () => {
     expect(GameDirectoryManager.needsInitialSetup()).toBe(false);
   });
 
+  test("configureInitial is rejected when game directory is already configured", async () => {
+    ConfigManager.set({ gameDirConfigured: true });
+    await expect(GameDirectoryManager.configureInitial(path.join(testRoot, "another-dir"))).rejects.toThrow(
+      "Game directory is already configured; use Move Installation."
+    );
+  });
+
   test("validates target paths and rejects invalid, root, identical, or nested paths", () => {
     const current = path.join(testRoot, "installed-here");
 
@@ -314,6 +321,91 @@ describe("GameDirectoryManager & Installation Relocation", () => {
     } finally {
       GameDirectoryManager.resetForTesting();
     }
+  });
+
+  test("detects same-size file content corruption via SHA-256 verification and aborts move", async () => {
+    const sourceDir = path.join(testRoot, "sha-corrupt-source");
+    const targetDir = path.join(testRoot, "sha-corrupt-target");
+
+    fs.mkdirSync(sourceDir, { recursive: true });
+    fs.writeFileSync(path.join(sourceDir, "options.txt"), "ABCD"); // 4 bytes
+
+    ConfigManager.set({ gameDir: sourceDir, gameDirConfigured: true });
+
+    // Force copy fallback
+    GameDirectoryManager._renameFn = (src: string, dst: string) => {
+      if (src === path.resolve(sourceDir)) {
+        const err: any = new Error("EXDEV");
+        err.code = "EXDEV";
+        throw err;
+      }
+      return fs.renameSync(src, dst);
+    };
+
+    // Corrupt copied file with EXACT SAME LENGTH but DIFFERENT CONTENT ("WXYZ" instead of "ABCD")
+    GameDirectoryManager._copyFn = (src: string, dst: string) => {
+      fs.writeFileSync(dst, "WXYZ"); // exactly 4 bytes
+    };
+
+    try {
+      await expect(GameDirectoryManager.moveInstallation(targetDir)).rejects.toThrow("content SHA-256 mismatch");
+
+      // Source is untouched
+      expect(fs.readFileSync(path.join(sourceDir, "options.txt"), "utf-8")).toBe("ABCD");
+      expect(fs.existsSync(targetDir)).toBe(false);
+      expect(ConfigManager.get().gameDir).toBe(path.resolve(sourceDir));
+    } finally {
+      GameDirectoryManager.resetForTesting();
+    }
+  });
+
+  test("moving into an existing empty directory succeeds cleanly without rename failure", async () => {
+    const sourceDir = path.join(testRoot, "source-empty-target-test");
+    const targetDir = path.join(testRoot, "target-empty-dir");
+
+    fs.mkdirSync(sourceDir, { recursive: true });
+    fs.writeFileSync(path.join(sourceDir, "options.txt"), "sound:1.0");
+
+    // Empty directory returned by file chooser
+    fs.mkdirSync(targetDir, { recursive: true });
+    expect(fs.existsSync(targetDir)).toBe(true);
+    expect(fs.readdirSync(targetDir).length).toBe(0);
+
+    ConfigManager.set({ gameDir: sourceDir, gameDirConfigured: true });
+
+    const result = await GameDirectoryManager.moveInstallation(targetDir);
+    expect(result.success).toBe(true);
+    expect(fs.existsSync(path.join(targetDir, "options.txt"))).toBe(true);
+    expect(fs.existsSync(sourceDir)).toBe(false);
+    expect(ConfigManager.get().gameDir).toBe(path.resolve(targetDir));
+  });
+
+  test("startup recovery detects same-filesystem rename crash before config update and finalizes config", async () => {
+    const oldSource = path.join(testRoot, "direct-rename-crashed-source");
+    const newTarget = path.join(testRoot, "direct-rename-crashed-target");
+
+    // Source was already renamed to target on disk
+    fs.mkdirSync(newTarget, { recursive: true });
+    fs.writeFileSync(path.join(newTarget, "options.txt"), "renamed-options");
+
+    const journalPath = path.join(userDataDir, "directory-move.json");
+    fs.writeFileSync(
+      journalPath,
+      JSON.stringify({
+        source: oldSource,
+        target: newTarget,
+        staging: path.join(testRoot, ".lampas-moving-rename"),
+        phase: "renaming",
+      })
+    );
+
+    ConfigManager.set({ gameDir: oldSource, gameDirConfigured: true });
+
+    await GameDirectoryManager.recoverInterruptedMove();
+
+    // Config must be updated to newTarget
+    expect(ConfigManager.get().gameDir).toBe(path.resolve(newTarget));
+    expect(fs.existsSync(journalPath)).toBe(false);
   });
 
   test("startup recovery cleans up abandoned staging directory from interrupted copy", async () => {

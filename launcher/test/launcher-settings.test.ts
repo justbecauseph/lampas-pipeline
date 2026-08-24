@@ -80,4 +80,21 @@ describe("launcher settings", () => {
     expect(getDefaultGameDir()).toBe(path.join(testRoot, "default-env-game"));
     delete process.env.LAMPAS_DEFAULT_GAME_DIR;
   });
+
+  test("generic config update sanitization preserves gameDir and gameDirConfigured", () => {
+    ConfigManager.set({ gameDir: path.join(testRoot, "initial-dir"), gameDirConfigured: true });
+    const payload: any = {
+      gameDir: path.join(testRoot, "malicious-change"),
+      gameDirConfigured: false,
+      allocatedRamGb: 8,
+    };
+    delete payload.gameDir;
+    delete payload.gameDirConfigured;
+    ConfigManager.set(payload);
+
+    const updated = ConfigManager.get();
+    expect(updated.gameDir).toBe(path.join(testRoot, "initial-dir"));
+    expect(updated.gameDirConfigured).toBe(true);
+    expect(updated.allocatedRamGb).toBe(8);
+  });
 });

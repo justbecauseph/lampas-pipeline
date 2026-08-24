@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { createHash } from "node:crypto";
 import { ConfigManager, getDefaultGameDir, getUserDataDir } from "./config";
 import { GameRunner } from "./game-runner";
 import { LauncherLogger } from "./logger";
@@ -39,6 +40,21 @@ function scanDirectory(dir: string, baseDir: string = dir): ScannedFile[] {
     }
   }
   return results;
+}
+
+function computeFileSha256(filePath: string): string {
+  const hash = createHash("sha256");
+  const fd = fs.openSync(filePath, "r");
+  const buffer = Buffer.alloc(64 * 1024);
+  try {
+    let bytesRead = 0;
+    while ((bytesRead = fs.readSync(fd, buffer, 0, buffer.length, null)) > 0) {
+      hash.update(buffer.subarray(0, bytesRead));
+    }
+  } finally {
+    fs.closeSync(fd);
+  }
+  return hash.digest("hex");
 }
 
 function checkWritable(targetPath: string): boolean {
@@ -145,6 +161,10 @@ export class GameDirectoryManager {
   }
 
   static async configureInitial(targetPath: string): Promise<LauncherConfig> {
+    if (ConfigManager.get().gameDirConfigured) {
+      throw new Error("Game directory is already configured; use Move Installation.");
+    }
+
     const validation = this.validateTarget(targetPath);
     if (!validation.valid) {
       throw new Error(validation.reason || "Invalid game directory target.");
@@ -178,9 +198,14 @@ export class GameDirectoryManager {
       throw new Error(validation.reason || "Invalid target directory");
     }
 
-    // Strictly reject existing non-empty directory for move
-    if (fs.existsSync(target) && fs.readdirSync(target).length > 0) {
-      throw new Error("Target directory already exists and is not empty.");
+    // Strictly validate existing target directory:
+    // If target exists and is empty (common when chosen from Electron openDirectory picker),
+    // remove the empty directory before renaming so fs.rename does not fail.
+    if (fs.existsSync(target)) {
+      if (fs.readdirSync(target).length > 0) {
+        throw new Error("Target directory already exists and is not empty.");
+      }
+      fs.rmdirSync(target);
     }
 
     // If source directory doesn't exist on disk (e.g. moved prior to first sync)
@@ -232,7 +257,10 @@ export class GameDirectoryManager {
       percent: 0,
     });
 
-    // 1. Try fast same-filesystem rename
+    // 1. Try fast same-filesystem rename with explicit state transition
+    journalData.phase = "renaming";
+    fs.writeFileSync(journalPath, JSON.stringify(journalData, null, 2), "utf-8");
+
     let directRenameSuccess = false;
     try {
       this._renameFn(source, target);
@@ -242,6 +270,9 @@ export class GameDirectoryManager {
     }
 
     if (directRenameSuccess) {
+      journalData.phase = "finalizing";
+      fs.writeFileSync(journalPath, JSON.stringify(journalData, null, 2), "utf-8");
+
       ConfigManager.set({ gameDir: target, gameDirConfigured: true });
       if (fs.existsSync(journalPath)) {
         try {
@@ -259,7 +290,7 @@ export class GameDirectoryManager {
       return { success: true, gameDir: target, previousGameDir: source };
     }
 
-    // 2. Fallback: Copy to staging + verify + atomic rename staging to target + cleanup source
+    // 2. Fallback: Copy to staging + SHA-256 hash verify + atomic rename staging to target + cleanup source
     try {
       journalData.phase = "copying";
       fs.writeFileSync(journalPath, JSON.stringify(journalData, null, 2), "utf-8");
@@ -267,6 +298,7 @@ export class GameDirectoryManager {
       const files = scanDirectory(source);
       const totalFiles = files.length;
       const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+      const sourceHashes = new Map<string, string>();
       let filesCompleted = 0;
       let bytesCompleted = 0;
 
@@ -279,6 +311,7 @@ export class GameDirectoryManager {
           fs.mkdirSync(destDir, { recursive: true });
         }
 
+        sourceHashes.set(file.relativePath, computeFileSha256(file.absolutePath));
         this._copyFn(file.absolutePath, destPath);
         try {
           const stat = fs.statSync(file.absolutePath);
@@ -299,7 +332,7 @@ export class GameDirectoryManager {
         });
       }
 
-      // 3. Verify copied tree
+      // 3. Verify copied tree: file counts, sizes, and full content SHA-256 hashes
       journalData.phase = "verifying";
       fs.writeFileSync(journalPath, JSON.stringify(journalData, null, 2), "utf-8");
 
@@ -322,6 +355,13 @@ export class GameDirectoryManager {
         const stagedSize = stagedMap.get(file.relativePath);
         if (stagedSize === undefined || stagedSize !== file.size) {
           throw new Error(`Verification failed for file: ${file.relativePath} (size mismatch: original ${file.size}, copied ${stagedSize})`);
+        }
+
+        const expectedHash = sourceHashes.get(file.relativePath);
+        const stagedFilePath = path.join(staging, file.relativePath);
+        const actualHash = computeFileSha256(stagedFilePath);
+        if (expectedHash && actualHash !== expectedHash) {
+          throw new Error(`Verification failed for file: ${file.relativePath} (content SHA-256 mismatch: expected ${expectedHash}, got ${actualHash})`);
         }
       }
 
@@ -399,27 +439,32 @@ export class GameDirectoryManager {
         `Found interrupted directory move journal (phase=${journal.phase}, source=${journal.source}, target=${journal.target})`
       );
 
-      if (journal.phase === "cleaning") {
-        // Move was finalized; clean up old source if it still exists
-        if (journal.source && fs.existsSync(journal.source)) {
+      const sourceExists = journal.source && fs.existsSync(journal.source);
+      const targetExists = journal.target && fs.existsSync(journal.target);
+      const stagingExists = journal.staging && fs.existsSync(journal.staging);
+
+      if (targetExists && !sourceExists) {
+        // Target was renamed/moved in place; finalize config and cleanup
+        ConfigManager.set({ gameDir: journal.target, gameDirConfigured: true });
+        if (stagingExists) {
           try {
-            fs.rmSync(journal.source, { recursive: true, force: true });
+            fs.rmSync(journal.staging, { recursive: true, force: true });
           } catch {}
         }
         try {
           fs.unlinkSync(journalPath);
         } catch {}
-      } else if (journal.phase === "finalizing") {
-        // Destination was renamed; update config if needed and cleanup staging/source
-        if (journal.target && fs.existsSync(journal.target)) {
+      } else if (journal.phase === "cleaning" || journal.phase === "finalizing") {
+        // Destination move finalized on disk; update config and clean up source/staging
+        if (targetExists) {
           ConfigManager.set({ gameDir: journal.target, gameDirConfigured: true });
-          if (journal.source && fs.existsSync(journal.source)) {
+          if (sourceExists) {
             try {
               fs.rmSync(journal.source, { recursive: true, force: true });
             } catch {}
           }
         }
-        if (journal.staging && fs.existsSync(journal.staging)) {
+        if (stagingExists) {
           try {
             fs.rmSync(journal.staging, { recursive: true, force: true });
           } catch {}
@@ -428,8 +473,9 @@ export class GameDirectoryManager {
           fs.unlinkSync(journalPath);
         } catch {}
       } else {
-        // Move was interrupted during copy or verification; discard staging and preserve original source
-        if (journal.staging && fs.existsSync(journal.staging)) {
+        // Move was interrupted during copy or verification before target became active;
+        // discard staging and preserve original source
+        if (stagingExists) {
           try {
             fs.rmSync(journal.staging, { recursive: true, force: true });
           } catch {}

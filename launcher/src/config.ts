@@ -113,6 +113,10 @@ export class ConfigManager {
       }
     }
     this.cachedConfig = updated;
+    const dir = path.dirname(this.configPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     fs.writeFileSync(this.configPath, JSON.stringify(this.cachedConfig, null, 2), "utf-8");
     return this.cachedConfig;
   }

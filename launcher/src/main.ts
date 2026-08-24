@@ -10,7 +10,7 @@ import { GameDirectoryManager } from "./game-directory";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
-type LauncherOperation = "sync" | "repair" | "move" | null;
+type LauncherOperation = "sync" | "repair" | "move" | "launch" | null;
 let currentOperation: LauncherOperation = null;
 
 function createWindow() {
@@ -89,6 +89,7 @@ app.whenReady().then(async () => {
   ipcMain.handle("config:set", (_, newConfig) => {
     const safeConfig = { ...newConfig };
     delete safeConfig.gameDir; // Generic config updates cannot directly overwrite gameDir
+    delete safeConfig.gameDirConfigured; // Generic config updates cannot manipulate directory onboarding state
     if (typeof safeConfig?.javaArgs === "string") parseJavaArgs(safeConfig.javaArgs);
     return ConfigManager.set(safeConfig);
   });
@@ -192,22 +193,30 @@ app.whenReady().then(async () => {
 
   // IPC Handlers: Game
   ipcMain.handle("game:launch", async (_, user: UserProfile | null, releaseOverride?: any) => {
+    if (GameRunner.isGameRunning()) {
+      throw new Error("Minecraft is already running.");
+    }
     if (currentOperation !== null) {
       throw new Error(`Cannot launch Minecraft while ${currentOperation} is in progress.`);
     }
-    LauncherLogger.info(`Initiating game launch for player: ${user?.minecraftUsername || user?.name || "Unknown"}`);
-    return GameRunner.launchGame(
-      user,
-      (log) => {
-        // Stream live game output to UI console only (Minecraft Log4j logs stay in logs/latest.log)
-        mainWindow?.webContents.send("game:log", log);
-      },
-      (code) => {
-        LauncherLogger.info(`Minecraft process exited with code ${code}`);
-        mainWindow?.webContents.send("game:exit", code);
-      },
-      releaseOverride
-    );
+    currentOperation = "launch";
+    try {
+      LauncherLogger.info(`Initiating game launch for player: ${user?.minecraftUsername || user?.name || "Unknown"}`);
+      return await GameRunner.launchGame(
+        user,
+        (log) => {
+          // Stream live game output to UI console only (Minecraft Log4j logs stay in logs/latest.log)
+          mainWindow?.webContents.send("game:log", log);
+        },
+        (code) => {
+          LauncherLogger.info(`Minecraft process exited with code ${code}`);
+          mainWindow?.webContents.send("game:exit", code);
+        },
+        releaseOverride
+      );
+    } finally {
+      currentOperation = null;
+    }
   });
   ipcMain.handle("game:kill", () => {
     LauncherLogger.warn("Game kill request received from user.");
