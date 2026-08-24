@@ -125,10 +125,32 @@ const ramSlider = document.getElementById("ram-slider");
 const settingRamVal = document.getElementById("setting-ram-val");
 const settingGamedirInput = document.getElementById("setting-gamedir-input");
 const btnSettingsOpenDir = document.getElementById("btn-settings-open-dir");
+const btnSettingsMoveDir = document.getElementById("btn-settings-move-dir");
 const settingPortal = document.getElementById("setting-portal");
 const settingJavaArgs = document.getElementById("setting-java-args");
 const btnRepairSettings = document.getElementById("btn-repair-settings");
 const btnSaveSettings = document.getElementById("btn-save-settings");
+
+// DOM Elements: Initial Directory Setup Modal
+const modalInitialDir = document.getElementById("modal-initial-dir");
+const initialGamedirInput = document.getElementById("initial-gamedir-input");
+const btnInitialBrowse = document.getElementById("btn-initial-browse");
+const btnInitialConfirm = document.getElementById("btn-initial-confirm");
+const initialDirError = document.getElementById("initial-dir-error");
+
+// DOM Elements: Move Installation Modal
+const modalMoveDir = document.getElementById("modal-move-dir");
+const moveModalConfirmView = document.getElementById("move-modal-confirm-view");
+const moveModalProgressView = document.getElementById("move-modal-progress-view");
+const moveSourcePath = document.getElementById("move-source-path");
+const moveTargetPath = document.getElementById("move-target-path");
+const btnCancelMove = document.getElementById("btn-cancel-move");
+const btnConfirmMove = document.getElementById("btn-confirm-move");
+const moveProgressPhase = document.getElementById("move-progress-phase");
+const moveProgressDetails = document.getElementById("move-progress-details");
+const moveProgressPercent = document.getElementById("move-progress-percent");
+const moveProgressFill = document.getElementById("move-progress-fill");
+const moveProgressFile = document.getElementById("move-progress-file");
 
 // DOM Elements: Toast Container
 const toastContainer = document.getElementById("toast-container");
@@ -426,8 +448,18 @@ channelBtns.forEach((btn) => {
 });
 
 // ========================================================
-// Directory Opening Actions
+// Directory Opening & Relocation Actions
 // ========================================================
+let pendingMoveTargetPath = "";
+
+function updateGameDirUI(newGameDir) {
+  if (currentConfig) {
+    currentConfig.gameDir = newGameDir;
+  }
+  if (gamedirDisplay) gamedirDisplay.innerText = newGameDir;
+  if (settingGamedirInput) settingGamedirInput.value = newGameDir;
+}
+
 async function openGameDir() {
   if (currentConfig?.gameDir && window.lampas.utils?.openPath) {
     await window.lampas.utils.openPath(currentConfig.gameDir);
@@ -437,6 +469,176 @@ async function openGameDir() {
 if (btnOpenGamedir) btnOpenGamedir.onclick = openGameDir;
 if (btnSettingsOpenDir) btnSettingsOpenDir.onclick = openGameDir;
 if (btnModsOpenDir) btnModsOpenDir.onclick = openGameDir;
+
+function checkInitialGameDir(dirStatus) {
+  return new Promise((resolve) => {
+    if (dirStatus.isConfigured) {
+      resolve();
+      return;
+    }
+
+    if (modalInitialDir && initialGamedirInput) {
+      initialGamedirInput.value = dirStatus.defaultGameDir || dirStatus.gameDir;
+      if (initialDirError) initialDirError.classList.add("hidden");
+      modalInitialDir.classList.remove("hidden");
+
+      if (btnInitialBrowse) {
+        btnInitialBrowse.onclick = async () => {
+          try {
+            const res = await window.lampas.gameDirectory.browse(initialGamedirInput.value);
+            if (!res.canceled && res.filePaths.length > 0) {
+              initialGamedirInput.value = res.filePaths[0];
+              if (initialDirError) initialDirError.classList.add("hidden");
+            }
+          } catch (err) {
+            showToast(`Could not select folder: ${err.message}`, "error");
+          }
+        };
+      }
+
+      if (btnInitialConfirm) {
+        btnInitialConfirm.onclick = async () => {
+          const selected = initialGamedirInput.value.trim();
+          try {
+            const val = await window.lampas.gameDirectory.validate(selected);
+            if (!val.valid) {
+              if (initialDirError) {
+                initialDirError.innerText = val.reason || "Invalid directory path";
+                initialDirError.classList.remove("hidden");
+              }
+              return;
+            }
+
+            btnInitialConfirm.disabled = true;
+            currentConfig = await window.lampas.gameDirectory.configure(selected);
+            updateGameDirUI(currentConfig.gameDir);
+            modalInitialDir.classList.add("hidden");
+            showToast("Installation directory configured!", "success", 3000);
+            resolve();
+          } catch (err) {
+            if (initialDirError) {
+              initialDirError.innerText = err.message;
+              initialDirError.classList.remove("hidden");
+            }
+          } finally {
+            if (btnInitialConfirm) btnInitialConfirm.disabled = false;
+          }
+        };
+      }
+    } else {
+      resolve();
+    }
+  });
+}
+
+// Settings Move Installation Flow
+if (btnSettingsMoveDir) {
+  btnSettingsMoveDir.onclick = async () => {
+    if (isLaunching) {
+      showToast("Cannot move installation while game or sync is in progress.", "warning", 4000);
+      return;
+    }
+
+    try {
+      const browseRes = await window.lampas.gameDirectory.browse(currentConfig?.gameDir);
+      if (browseRes.canceled || !browseRes.filePaths?.length) {
+        return;
+      }
+
+      const targetPath = browseRes.filePaths[0];
+      const val = await window.lampas.gameDirectory.validate(targetPath, currentConfig?.gameDir);
+      if (!val.valid) {
+        showToast(val.reason || "Cannot use this location.", "error", 5000);
+        return;
+      }
+
+      pendingMoveTargetPath = targetPath;
+      if (moveSourcePath) moveSourcePath.innerText = currentConfig?.gameDir || "";
+      if (moveTargetPath) moveTargetPath.innerText = targetPath;
+
+      if (moveModalConfirmView) moveModalConfirmView.classList.remove("hidden");
+      if (moveModalProgressView) moveModalProgressView.classList.add("hidden");
+      if (modalMoveDir) modalMoveDir.classList.remove("hidden");
+    } catch (err) {
+      showToast(`Error choosing directory: ${err.message}`, "error");
+    }
+  };
+}
+
+if (btnCancelMove) {
+  btnCancelMove.onclick = () => {
+    if (modalMoveDir) modalMoveDir.classList.add("hidden");
+    pendingMoveTargetPath = "";
+  };
+}
+
+if (btnConfirmMove) {
+  btnConfirmMove.onclick = async () => {
+    if (!pendingMoveTargetPath) return;
+
+    try {
+      isLaunching = true;
+      if (btnPlay) btnPlay.disabled = true;
+      if (btnRepairPack) btnRepairPack.disabled = true;
+      if (btnRepairSettings) btnRepairSettings.disabled = true;
+
+      if (moveModalConfirmView) moveModalConfirmView.classList.add("hidden");
+      if (moveModalProgressView) moveModalProgressView.classList.remove("hidden");
+
+      if (moveProgressFill) moveProgressFill.style.width = "0%";
+      if (moveProgressPercent) moveProgressPercent.innerText = "0%";
+      if (moveProgressPhase) moveProgressPhase.innerText = "Preparing relocation...";
+      if (moveProgressDetails) moveProgressDetails.innerText = "Scanning files...";
+      if (moveProgressFile) moveProgressFile.innerText = "";
+
+      const removeProgress = window.lampas.gameDirectory.onMoveProgress((progress) => {
+        if (moveProgressFill) moveProgressFill.style.width = `${progress.percent}%`;
+        if (moveProgressPercent) moveProgressPercent.innerText = `${progress.percent}%`;
+
+        if (progress.phase === "preparing") {
+          if (moveProgressPhase) moveProgressPhase.innerText = "Preparing relocation...";
+          if (moveProgressDetails) moveProgressDetails.innerText = "Scanning files...";
+        } else if (progress.phase === "moving") {
+          if (moveProgressPhase) moveProgressPhase.innerText = "Copying files...";
+          if (moveProgressDetails) {
+            moveProgressDetails.innerText = `${progress.filesCompleted} / ${progress.totalFiles} files (${formatBytes(progress.bytesCompleted)} / ${formatBytes(progress.totalBytes)})`;
+          }
+          if (moveProgressFile) moveProgressFile.innerText = progress.currentFile || "";
+        } else if (progress.phase === "verifying") {
+          if (moveProgressPhase) moveProgressPhase.innerText = "Verifying file integrity...";
+          if (moveProgressDetails) moveProgressDetails.innerText = `Verifying ${progress.totalFiles} files...`;
+          if (moveProgressFile) moveProgressFile.innerText = "";
+        } else if (progress.phase === "cleaning") {
+          if (moveProgressPhase) moveProgressPhase.innerText = "Cleaning previous location...";
+          if (moveProgressDetails) moveProgressDetails.innerText = "Finalizing directory...";
+          if (moveProgressFile) moveProgressFile.innerText = "";
+        }
+      });
+
+      appendLog("INFO", `[Game Directory] Moving installation to ${pendingMoveTargetPath}...`);
+      const result = await window.lampas.gameDirectory.move(pendingMoveTargetPath);
+      removeProgress();
+
+      updateGameDirUI(result.gameDir);
+      if (modalMoveDir) modalMoveDir.classList.add("hidden");
+      showToast(`Minecraft installation successfully moved to ${result.gameDir}!`, "success", 5000);
+      appendLog("INFO", `[Game Directory] Installation moved from ${result.previousGameDir} to ${result.gameDir}`);
+
+      // Reload mod catalog with new directory
+      await loadModCatalog();
+    } catch (err) {
+      if (modalMoveDir) modalMoveDir.classList.add("hidden");
+      showToast(`Move failed: ${err.message}`, "error", 6000);
+      appendLog("ERROR", `[Game Directory] Move failed: ${err.message}`);
+    } finally {
+      isLaunching = false;
+      pendingMoveTargetPath = "";
+      if (btnPlay) btnPlay.disabled = false;
+      if (btnRepairPack) btnRepairPack.disabled = false;
+      if (btnRepairSettings) btnRepairSettings.disabled = false;
+    }
+  };
+}
 
 // ========================================================
 // Settings Management
@@ -672,6 +874,10 @@ async function init() {
   try {
     currentConfig = await window.lampas.config.get();
 
+    // Check directory configuration & handle first-run onboarding
+    const dirStatus = await window.lampas.gameDirectory.getStatus();
+    await checkInitialGameDir(dirStatus);
+
     // RAM allocation display & controls
     const ram = currentConfig.allocatedRamGb || 4;
     if (ramSlider) ramSlider.value = ram;
@@ -679,9 +885,7 @@ async function init() {
     if (settingRamVal) settingRamVal.innerText = `${ram} GB`;
 
     // Game Directory display
-    const gDir = currentConfig.gameDir || ".minecraft-lampas";
-    if (gamedirDisplay) gamedirDisplay.innerText = gDir;
-    if (settingGamedirInput) settingGamedirInput.value = gDir;
+    updateGameDirUI(currentConfig.gameDir || ".minecraft-lampas");
 
     // Portal Endpoint
     if (settingPortal) {

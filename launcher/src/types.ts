@@ -17,6 +17,7 @@ export interface LauncherConfig {
   selectedChannel: "stable" | "beta" | "dev";
   allocatedRamGb: number;
   gameDir: string;
+  gameDirConfigured?: boolean;
   javaPath?: string;
   javaArgs?: string;
   disabledClientMods?: string[];
@@ -24,6 +25,36 @@ export interface LauncherConfig {
   token?: string;
   refreshToken?: string;
   minecraftAccessToken?: string;
+}
+
+export interface DirectoryStatus {
+  gameDir: string;
+  isConfigured: boolean;
+  defaultGameDir: string;
+  exists: boolean;
+  hasInstallation: boolean;
+}
+
+export interface DirectoryValidationResult {
+  valid: boolean;
+  reason?: string;
+}
+
+export interface DirectoryMoveProgress {
+  phase: "preparing" | "moving" | "verifying" | "cleaning" | "complete";
+  filesCompleted: number;
+  totalFiles: number;
+  bytesCompleted: number;
+  totalBytes: number;
+  currentFile?: string;
+  percent: number;
+}
+
+export interface DirectoryMoveResult {
+  success: boolean;
+  gameDir: string;
+  previousGameDir: string;
+  error?: string;
 }
 
 export interface CustomClientMod {

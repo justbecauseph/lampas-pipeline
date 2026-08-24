@@ -72,4 +72,12 @@ describe("launcher settings", () => {
     expect(normalizePortalUrl("http://localhost:3000")).toBe("http://localhost:3000");
     expect(normalizePortalUrl("http://127.0.0.1:3000")).toBe("http://127.0.0.1:3000");
   });
+
+  test("resolves default gameDir when unconfigured", () => {
+    const { getDefaultGameDir } = require("../src/config");
+    process.env.LAMPAS_DEFAULT_GAME_DIR = path.join(testRoot, "default-env-game");
+    ConfigManager.resetForTesting();
+    expect(getDefaultGameDir()).toBe(path.join(testRoot, "default-env-game"));
+    delete process.env.LAMPAS_DEFAULT_GAME_DIR;
+  });
 });

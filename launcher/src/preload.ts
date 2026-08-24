@@ -1,5 +1,14 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron";
-import type { LauncherConfig, SyncProgress, GameLogEntry, UserProfile } from "./types";
+import type {
+  LauncherConfig,
+  SyncProgress,
+  GameLogEntry,
+  UserProfile,
+  DirectoryStatus,
+  DirectoryValidationResult,
+  DirectoryMoveProgress,
+  DirectoryMoveResult,
+} from "./types";
 
 contextBridge.exposeInMainWorld("lampas", {
   auth: {
@@ -46,6 +55,22 @@ contextBridge.exposeInMainWorld("lampas", {
       return () => ipcRenderer.removeListener("game:exit", handler);
     },
   },
+  gameDirectory: {
+    getStatus: (): Promise<DirectoryStatus> => ipcRenderer.invoke("gameDir:getStatus"),
+    browse: (defaultPath?: string): Promise<{ canceled: boolean; filePaths: string[] }> =>
+      ipcRenderer.invoke("gameDir:browse", defaultPath),
+    validate: (targetPath: string, currentPath?: string): Promise<DirectoryValidationResult> =>
+      ipcRenderer.invoke("gameDir:validate", targetPath, currentPath),
+    configure: (targetPath: string): Promise<LauncherConfig> =>
+      ipcRenderer.invoke("gameDir:configure", targetPath),
+    move: (targetPath: string): Promise<DirectoryMoveResult> =>
+      ipcRenderer.invoke("gameDir:move", targetPath),
+    onMoveProgress: (callback: (progress: DirectoryMoveProgress) => void) => {
+      const handler = (_: any, data: DirectoryMoveProgress) => callback(data);
+      ipcRenderer.on("gameDir:moveProgress", handler);
+      return () => ipcRenderer.removeListener("gameDir:moveProgress", handler);
+    },
+  },
   config: {
     get: (): Promise<LauncherConfig> => ipcRenderer.invoke("config:get"),
     set: (newConfig: Partial<LauncherConfig>): Promise<LauncherConfig> =>
@@ -64,3 +89,4 @@ contextBridge.exposeInMainWorld("lampas", {
     openLogFile: (): Promise<string> => ipcRenderer.invoke("utils:openLogFile"),
   },
 });
+

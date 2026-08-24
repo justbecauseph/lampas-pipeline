@@ -424,8 +424,11 @@
               <label for="setting-gamedir-input" class="text-xs font-bold text-slate-300">Game Installation Directory</label>
               <div class="flex items-center gap-2">
                 <input id="setting-gamedir-input" type="text" readonly class="input-field cursor-not-allowed opacity-80 text-slate-400">
-                <button id="btn-settings-open-dir" class="btn-secondary whitespace-nowrap">
+                <button id="btn-settings-open-dir" class="btn-secondary whitespace-nowrap" type="button">
                   <span>Open Folder</span>
+                </button>
+                <button id="btn-settings-move-dir" class="btn-secondary whitespace-nowrap text-cyan-400 hover:border-cyan-500/50" type="button">
+                  <span>Move Installation…</span>
                 </button>
               </div>
             </div>
@@ -479,6 +482,98 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Modal: First-Run Directory Setup -->
+  <div id="modal-initial-dir" class="modal-backdrop hidden">
+    <div class="modal-dialog p-6 space-y-5">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <div class="logo-icon w-5 h-5 text-[10px]">λ</div>
+          <span class="badge text-cyan-400">INITIAL SETUP</span>
+        </div>
+        <h3 class="text-lg font-extrabold text-white tracking-tight mt-2">Choose Minecraft Installation Location</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Lampas will store Minecraft, mods, saves, resource packs and its runtime here.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <label for="initial-gamedir-input" class="text-xs font-bold text-slate-300">Target Folder</label>
+        <div class="flex items-center gap-2">
+          <input id="initial-gamedir-input" type="text" class="input-field text-slate-200 text-xs select-text font-mono flex-1">
+          <button id="btn-initial-browse" class="btn-secondary whitespace-nowrap" type="button">
+            <span>Browse…</span>
+          </button>
+        </div>
+        <p id="initial-dir-error" class="hidden text-[11px] text-rose-400"></p>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-800/80">
+        <button id="btn-initial-confirm" class="btn-play py-2.5 px-6 min-w-0 text-xs" type="button">
+          <span>Use This Location</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Move Installation -->
+  <div id="modal-move-dir" class="modal-backdrop hidden">
+    <div class="modal-dialog p-6 space-y-5">
+      <!-- Confirmation View -->
+      <div id="move-modal-confirm-view" class="space-y-4">
+        <div class="space-y-1">
+          <h3 class="text-lg font-extrabold text-white tracking-tight">Move Minecraft Installation?</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            This moves Minecraft, mods, worlds, screenshots, resource packs and launcher-managed runtime files.
+          </p>
+        </div>
+
+        <div class="space-y-3 bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-xs font-mono">
+          <div class="space-y-1">
+            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">From:</span>
+            <div id="move-source-path" class="text-slate-300 truncate select-text"></div>
+          </div>
+          <div class="space-y-1 pt-2 border-t border-slate-900">
+            <span class="text-[10px] text-cyan-500 uppercase font-bold tracking-wider">To:</span>
+            <div id="move-target-path" class="text-cyan-400 font-bold truncate select-text"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-800/80">
+          <button id="btn-cancel-move" class="btn-secondary" type="button">Cancel</button>
+          <button id="btn-confirm-move" class="btn-play py-2.5 px-6 min-w-0 text-xs" type="button">
+            <span>Move Installation</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress View -->
+      <div id="move-modal-progress-view" class="hidden space-y-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="spinner"></span>
+            <h3 class="text-lg font-extrabold text-white tracking-tight">Moving Minecraft Installation...</h3>
+          </div>
+          <p id="move-progress-phase" class="text-xs text-cyan-400 font-mono">Preparing relocation...</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span id="move-progress-details" class="text-slate-400 truncate">0 / 0 files (0 MB / 0 MB)</span>
+            <span id="move-progress-percent" class="text-cyan-400 font-bold">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="move-progress-fill" class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p id="move-progress-file" class="text-[10px] text-slate-500 font-mono truncate min-h-[14px]"></p>
+        </div>
+
+        <div class="rounded-xl bg-amber-950/30 border border-amber-900/50 p-3 text-[11px] text-amber-300">
+          Please keep the launcher open until relocation and verification complete.
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Toast Notification Container -->

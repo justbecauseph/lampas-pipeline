@@ -6,9 +6,12 @@ import { LauncherSync } from "./sync";
 import { GameRunner, parseJavaArgs } from "./game-runner";
 import { ClientModManager } from "./client-mods";
 import { LauncherLogger } from "./logger";
+import { GameDirectoryManager } from "./game-directory";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
+type LauncherOperation = "sync" | "repair" | "move" | null;
+let currentOperation: LauncherOperation = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -38,9 +41,15 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   LauncherLogger.init();
   LauncherLogger.info(`Lampas Launcher initialized (App: ${app.getName()} ${app.getVersion()})`);
+
+  try {
+    await GameDirectoryManager.recoverInterruptedMove();
+  } catch (err: any) {
+    LauncherLogger.error(`Failed to process move journal recovery: ${err.message}`);
+  }
 
   createWindow();
 
@@ -78,8 +87,42 @@ app.whenReady().then(() => {
   // IPC Handlers: Config
   ipcMain.handle("config:get", () => ConfigManager.get());
   ipcMain.handle("config:set", (_, newConfig) => {
-    if (typeof newConfig?.javaArgs === "string") parseJavaArgs(newConfig.javaArgs);
-    return ConfigManager.set(newConfig);
+    const safeConfig = { ...newConfig };
+    delete safeConfig.gameDir; // Generic config updates cannot directly overwrite gameDir
+    if (typeof safeConfig?.javaArgs === "string") parseJavaArgs(safeConfig.javaArgs);
+    return ConfigManager.set(safeConfig);
+  });
+
+  // IPC Handlers: Game Directory
+  ipcMain.handle("gameDir:getStatus", () => GameDirectoryManager.getStatus());
+  ipcMain.handle("gameDir:browse", async (_, defaultPath?: string) => {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      title: "Select Minecraft Installation Directory",
+      defaultPath: defaultPath || ConfigManager.get().gameDir,
+      properties: ["openDirectory", "createDirectory"],
+    });
+    return { canceled: result.canceled, filePaths: result.filePaths };
+  });
+  ipcMain.handle("gameDir:validate", (_, targetPath: string, currentPath?: string) =>
+    GameDirectoryManager.validateTarget(targetPath, currentPath));
+  ipcMain.handle("gameDir:configure", (_, targetPath: string) =>
+    GameDirectoryManager.configureInitial(targetPath));
+  ipcMain.handle("gameDir:move", async (_, targetPath: string) => {
+    if (GameRunner.isGameRunning()) {
+      throw new Error("Cannot move installation while Minecraft is running.");
+    }
+    if (currentOperation !== null) {
+      throw new Error(`Another operation (${currentOperation}) is currently in progress.`);
+    }
+    currentOperation = "move";
+    try {
+      LauncherLogger.info(`Moving game installation to: ${targetPath}`);
+      return await GameDirectoryManager.moveInstallation(targetPath, (progress) => {
+        mainWindow?.webContents.send("gameDir:moveProgress", progress);
+      });
+    } finally {
+      currentOperation = null;
+    }
   });
 
   // IPC Handlers: Auth
@@ -90,23 +133,45 @@ app.whenReady().then(() => {
 
   // IPC Handlers: Sync & Repair
   ipcMain.handle("sync:start", async () => {
-    LauncherLogger.info("Starting modpack synchronization...");
-    return LauncherSync.syncClient((progress) => {
-      if (progress.message) {
-        LauncherLogger.info(`[Sync] ${progress.message}`);
-      }
-      mainWindow?.webContents.send("sync:progress", progress);
-    });
+    if (GameRunner.isGameRunning()) {
+      throw new Error("Cannot synchronize while Minecraft is running.");
+    }
+    if (currentOperation !== null) {
+      throw new Error(`Another operation (${currentOperation}) is currently in progress.`);
+    }
+    currentOperation = "sync";
+    try {
+      LauncherLogger.info("Starting modpack synchronization...");
+      return await LauncherSync.syncClient((progress) => {
+        if (progress.message) {
+          LauncherLogger.info(`[Sync] ${progress.message}`);
+        }
+        mainWindow?.webContents.send("sync:progress", progress);
+      });
+    } finally {
+      currentOperation = null;
+    }
   });
   ipcMain.handle("sync:repair", async () => {
-    LauncherLogger.info("Starting full installation repair...");
-    return LauncherSync.repairInstallation(
-      (progress) => mainWindow?.webContents.send("sync:progress", progress),
-      (log) => {
-        LauncherLogger.log(log.level, log.message);
-        mainWindow?.webContents.send("game:log", log);
-      }
-    );
+    if (GameRunner.isGameRunning()) {
+      throw new Error("Cannot repair while Minecraft is running.");
+    }
+    if (currentOperation !== null) {
+      throw new Error(`Another operation (${currentOperation}) is currently in progress.`);
+    }
+    currentOperation = "repair";
+    try {
+      LauncherLogger.info("Starting full installation repair...");
+      return await LauncherSync.repairInstallation(
+        (progress) => mainWindow?.webContents.send("sync:progress", progress),
+        (log) => {
+          LauncherLogger.log(log.level, log.message);
+          mainWindow?.webContents.send("game:log", log);
+        }
+      );
+    } finally {
+      currentOperation = null;
+    }
   });
   ipcMain.handle("sync:getModCatalog", () => LauncherSync.getModCatalog());
 
@@ -127,6 +192,9 @@ app.whenReady().then(() => {
 
   // IPC Handlers: Game
   ipcMain.handle("game:launch", async (_, user: UserProfile | null, releaseOverride?: any) => {
+    if (currentOperation !== null) {
+      throw new Error(`Cannot launch Minecraft while ${currentOperation} is in progress.`);
+    }
     LauncherLogger.info(`Initiating game launch for player: ${user?.minecraftUsername || user?.name || "Unknown"}`);
     return GameRunner.launchGame(
       user,
@@ -153,3 +221,4 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+

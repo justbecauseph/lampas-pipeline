@@ -3,11 +3,26 @@ import * as path from "node:path";
 import { app } from "electron";
 import type { LauncherConfig } from "./types";
 
+export function getDefaultGameDir(): string {
+  if (process.env.LAMPAS_DEFAULT_GAME_DIR) {
+    return process.env.LAMPAS_DEFAULT_GAME_DIR;
+  }
+  return path.join(
+    process.env.APPDATA || process.env.HOME || process.cwd(),
+    ".minecraft-lampas"
+  );
+}
+
+export function getUserDataDir(): string {
+  return app ? app.getPath("userData") : path.join(process.env.APPDATA || process.cwd(), ".lampas-launcher");
+}
+
 const DEFAULT_CONFIG: LauncherConfig = {
   portalUrl: "https://dev.lampas.town",
   selectedChannel: "stable",
   allocatedRamGb: 4,
   gameDir: "",
+  gameDirConfigured: false,
   javaArgs: "",
   disabledClientMods: [],
   customClientMods: [],
@@ -31,7 +46,7 @@ export class ConfigManager {
 
   private static initPath() {
     if (!this.configPath) {
-      const userDataDir = app ? app.getPath("userData") : path.join(process.env.APPDATA || process.cwd(), ".lampas-launcher");
+      const userDataDir = getUserDataDir();
       if (!fs.existsSync(userDataDir)) {
         fs.mkdirSync(userDataDir, { recursive: true });
       }
@@ -44,25 +59,40 @@ export class ConfigManager {
     if (this.cachedConfig) return this.cachedConfig;
 
     let loaded: LauncherConfig;
+    const defaultGameDir = getDefaultGameDir();
 
     if (fs.existsSync(this.configPath)) {
       try {
         const data = fs.readFileSync(this.configPath, "utf-8");
-        loaded = { ...DEFAULT_CONFIG, ...JSON.parse(data) };
+        const parsed = JSON.parse(data);
+        loaded = { ...DEFAULT_CONFIG, ...parsed };
+
+        // Legacy migration: automatically regard existing configuration or existing installation as configured
+        if (parsed.gameDirConfigured === undefined) {
+          const resolvedDir =
+            typeof parsed.gameDir === "string" && parsed.gameDir.trim().length > 0
+              ? parsed.gameDir
+              : defaultGameDir;
+          const hasInstallation = fs.existsSync(path.join(resolvedDir, ".lampas", "installation.json"));
+
+          if ((typeof parsed.gameDir === "string" && parsed.gameDir.trim().length > 0) || hasInstallation) {
+            loaded.gameDirConfigured = true;
+          } else {
+            loaded.gameDirConfigured = false;
+          }
+        }
       } catch {
         loaded = { ...DEFAULT_CONFIG };
       }
     } else {
       loaded = { ...DEFAULT_CONFIG };
+      const hasInstallation = fs.existsSync(path.join(defaultGameDir, ".lampas", "installation.json"));
+      loaded.gameDirConfigured = hasInstallation;
     }
 
     loaded.portalUrl = normalizePortalUrl(loaded.portalUrl);
 
     if (!loaded.gameDir) {
-      const defaultGameDir = path.join(
-        process.env.APPDATA || process.env.HOME || process.cwd(),
-        ".minecraft-lampas"
-      );
       loaded.gameDir = defaultGameDir;
     }
 
