@@ -68,12 +68,12 @@ describe("streaming file utilities", () => {
 
     const server = Bun.serve({
       port: 0,
-      fetch(req) {
+      fetch(req, srv): Response {
         const url = new URL(req.url);
         if (url.pathname === `/api/v1/blobs/${sha256}`) {
           return new Response(null, {
             status: 302,
-            headers: { Location: `http://127.0.0.1:${server.port}/s3/blobs/${sha256}` },
+            headers: { Location: `http://127.0.0.1:${srv.port}/s3/blobs/${sha256}` },
           });
         }
         if (url.pathname === `/s3/blobs/${sha256}`) {
