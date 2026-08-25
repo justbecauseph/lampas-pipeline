@@ -12,6 +12,35 @@ export interface UserProfile {
   allowedChannels: string[];
 }
 
+export interface OnlineMinecraftPlayer {
+  uuid: string;
+  username: string;
+}
+
+export type MinecraftServerState =
+  | "starting"
+  | "online"
+  | "stopping"
+  | "offline"
+  | "unknown";
+
+export type PresenceFreshness = "live" | "stale" | "unavailable";
+
+export interface ServerStatus {
+  server: {
+    state: MinecraftServerState;
+    managementConnected: boolean;
+  };
+  players: {
+    online: number | null;
+    list: OnlineMinecraftPlayer[];
+  };
+  presence: {
+    freshness: PresenceFreshness;
+    updatedAt: string | null;
+  };
+}
+
 export interface LauncherConfig {
   portalUrl: string;
   selectedChannel: "stable" | "beta" | "dev";
@@ -132,4 +161,3 @@ export interface InstallationState {
   >;
   [key: string]: unknown;
 }
-

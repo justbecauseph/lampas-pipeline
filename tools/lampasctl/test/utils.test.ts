@@ -61,4 +61,47 @@ describe("streaming file utilities", () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test("follows 302 redirect and verifies hash and size", async () => {
+    const payload = Buffer.from("lampas-cli-download-redirected-bytes");
+    const sha256 = createHash("sha256").update(payload).digest("hex");
+
+    const server = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === `/api/v1/blobs/${sha256}`) {
+          return new Response(null, {
+            status: 302,
+            headers: { Location: `http://127.0.0.1:${server.port}/s3/blobs/${sha256}` },
+          });
+        }
+        if (url.pathname === `/s3/blobs/${sha256}`) {
+          return new Response(payload, {
+            status: 200,
+            headers: { "Content-Length": payload.length.toString() },
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-download-302-"));
+    const destination = path.join(dir, "target.bin");
+
+    try {
+      const bytes = await downloadFileVerified(
+        `http://127.0.0.1:${server.port}/api/v1/blobs/${sha256}`,
+        destination,
+        { expectedHash: sha256, expectedSize: payload.length, attempts: 1 }
+      );
+
+      expect(bytes).toBe(payload.length);
+      expect(fs.existsSync(destination)).toBe(true);
+      expect(fs.readFileSync(destination).equals(payload)).toBe(true);
+    } finally {
+      server.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

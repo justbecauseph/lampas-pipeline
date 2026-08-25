@@ -8,6 +8,7 @@ import { GameRunner, parseJavaArgs } from "./game-runner";
 import { ClientModManager } from "./client-mods";
 import { LauncherLogger } from "./logger";
 import { GameDirectoryManager } from "./game-directory";
+import { ServerStatusClient } from "./server-status";
 import type { UserProfile } from "./types";
 
 let mainWindow: BrowserWindow | null = null;
@@ -137,6 +138,9 @@ app.whenReady().then(async () => {
   ipcMain.handle("auth:verify", (_, portalUrl) => LauncherAuth.verifySession(portalUrl));
   ipcMain.handle("auth:refresh", (_, portalUrl) => LauncherAuth.refreshSession(portalUrl));
 
+  // IPC Handlers: Server presence. Portal credentials stay in the main process.
+  ipcMain.handle("server:getStatus", () => ServerStatusClient.getStatus());
+
   // IPC Handlers: Sync & Repair
   ipcMain.handle("sync:start", async () => {
     if (GameRunner.isGameRunning()) {
@@ -235,4 +239,3 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-

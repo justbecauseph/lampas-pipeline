@@ -8,6 +8,7 @@ import type {
   DirectoryValidationResult,
   DirectoryMoveProgress,
   DirectoryMoveResult,
+  ServerStatus,
 } from "./types";
 
 contextBridge.exposeInMainWorld("lampas", {
@@ -19,6 +20,9 @@ contextBridge.exposeInMainWorld("lampas", {
       ipcRenderer.invoke("auth:verify", portalUrl),
     refresh: (portalUrl?: string): Promise<{ valid: boolean; user?: UserProfile; token?: string }> =>
       ipcRenderer.invoke("auth:refresh", portalUrl),
+  },
+  server: {
+    getStatus: (): Promise<ServerStatus> => ipcRenderer.invoke("server:getStatus"),
   },
   sync: {
     start: (): Promise<{ success: boolean; version: string; packName: string }> =>
@@ -89,4 +93,3 @@ contextBridge.exposeInMainWorld("lampas", {
     openLogFile: (): Promise<string> => ipcRenderer.invoke("utils:openLogFile"),
   },
 });
-
