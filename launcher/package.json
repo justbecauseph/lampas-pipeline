@@ -5,6 +5,10 @@
   "private": true,
   "main": "dist/main.js",
   "author": "Lampas Tech Team",
+  "desktopName": "Lampas Launcher",
+  "linux": {
+    "syncDesktopName": true
+  },
   "scripts": {
     "dev": "concurrently \"tsc -w\" \"electron .\"",
     "build": "tsc",
