@@ -24,39 +24,49 @@ graph TD
         Lampasctl["lampasctl manifest<br/>• SHA-256 Checksums<br/>• JiJ Validation<br/>• File Policy Engine"]
     end
 
-    subgraph Portal ["3. Lampas Portal Backend (lampas2-portal)"]
-        PortalAPI["Portal APIs & CDN<br/>• /api/v1/channels/* (Routing)<br/>• /api/v1/releases/* (Manifests)<br/>• /api/v1/blobs/* (CDN)<br/>• /auth/launcher (OAuth PKCE)"]
+    subgraph PortalLayer ["3. Lampas Portal (lampas2-portal)"]
+        PortalAPI["Lampas Portal<br/>• Release & Channel APIs<br/>• Portal Blob Routing<br/>• Presigned URL Generation<br/>• /auth/launcher (OAuth PKCE)"]
     end
 
-    subgraph ClientLayer ["4. Client Ecosystem"]
+    subgraph Storage ["4. Content-Addressed Blob Storage"]
+        RailwayBucket["Railway Bucket (Object Storage)<br/>• Immutable SHA-256 Addressed Blobs<br/>• Configs & Custom JARs<br/>• Lampas-Owned Artifacts"]
+    end
+
+    subgraph CDNs ["5. Upstream Mod CDNs"]
+        Modrinth["Modrinth CDN<br/>(3rd-party mods)"]
+        CurseForge["CurseForge CDN<br/>(3rd-party mods)"]
+    end
+
+    subgraph ClientLayer ["6. Client Ecosystem"]
         Launcher["Lampas Launcher (Desktop)<br/>• OpenJDK 25 Auto-Discovery<br/>• Web OAuth PKCE Login<br/>• Direct KnotClient JVM Spawner"]
-        ClientMC["Minecraft 26.2 Client<br/>• Fabric Loader 0.19.3<br/>• 156 Synchronized Mods"]
+        ClientMC["Minecraft 26.2 Client<br/>• Fabric Loader 0.19.3<br/>• Synchronized Mods"]
     end
 
-    subgraph ServerLayer ["5. Dedicated Server Ecosystem"]
-        ServerScript["deploy_pack.py<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
+    subgraph ServerLayer ["7. Dedicated Server Ecosystem"]
+        ServerScript["deploy_pack.py / Headless Sync<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
         ServerMC["lampas-server-fabric<br/>• Fabric Dedicated Server<br/>• OpenJDK 25 JVM"]
     end
 
-    subgraph CDNs ["6. Decentralized Byte Delivery"]
-        Modrinth["Modrinth CDN<br/>(3rd-party mods)"]
-        CurseForge["CurseForge CDN<br/>(3rd-party mods)"]
-        PortalBlobs["Portal Blob Storage<br/>(configs & custom JARs)"]
-    end
-
     Pipeline -->|Pull Request / Tag| Lampasctl
-    Lampasctl -->|lampasctl publish| PortalAPI
+    Lampasctl -->|"1. POST /api/v1/blobs/prepare"| PortalAPI
+    PortalAPI -.->|"2. Presigned PUT URLs"| Lampasctl
+    Lampasctl -->|"3. Direct PUT raw bytes (missing only)"| RailwayBucket
+    Lampasctl -->|"4. POST /api/v1/releases/publish"| PortalAPI
 
     PortalAPI -->|Channel Pointers & Manifests| Launcher
     PortalAPI -->|Server Manifests| ServerScript
 
-    Launcher -.->|Download| Modrinth
-    Launcher -.->|Download| CurseForge
-    Launcher -.->|Download| PortalBlobs
+    Launcher -.->|Download 3rd-party| Modrinth
+    Launcher -.->|Download 3rd-party| CurseForge
+    Launcher -.->|"GET /api/v1/blobs/<sha256>"| PortalAPI
+    PortalAPI -.->|"302 Redirect (presigned GET)"| RailwayBucket
+    Launcher -.->|Download Lampas bytes| RailwayBucket
 
-    ServerScript -.->|Download| Modrinth
-    ServerScript -.->|Download| CurseForge
-    ServerScript -.->|Download| PortalBlobs
+    ServerScript -.->|Download 3rd-party| Modrinth
+    ServerScript -.->|Download 3rd-party| CurseForge
+    ServerScript -.->|"GET /api/v1/blobs/<sha256>"| PortalAPI
+    PortalAPI -.->|"302 Redirect (presigned GET)"| RailwayBucket
+    ServerScript -.->|Download Lampas bytes| RailwayBucket
 
     Launcher -->|Spawns JVM| ClientMC
     ServerScript -->|Deploys & Starts| ServerMC
@@ -65,11 +75,84 @@ graph TD
 ```
 
 1. **Deterministic Single Source of Truth**: Every client and server release is strictly generated from declarative TOML descriptors committed to Git.
-2. **Decentralized Byte Delivery**: Third-party mod binaries are streamed directly from original CDNs (Modrinth / CurseForge), while Lampas-owned configs and custom mods are served via the Lampas Portal content-addressed blob CDN.
-3. **Standalone Desktop Launcher**: 100% independent of PrismLauncher, CurseForge App, or MultiMC. Bundles automatic **OpenJDK 25 (`java-runtime-epsilon`)** discovery and direct `KnotClient` JVM execution.
-4. **Web OAuth2 PKCE Authentication**: Desktop login delegates to the web portal via a browser loopback OAuth2 flow, linking Discord roles, SMP whitelist verification, and official Minecraft Java UUIDs in one click.
-5. **Zero-Downtime Rollbacks & Gated Channels**: Channels (`stable`, `beta`, `dev`) use immutable pointer updates for instantaneous release promotion or rollback.
-6. **Automated Upstream Updater**: Scheduled CI jobs monitor all 150+ pack mods and automatically open Pull Requests with changelogs when updates are released.
+2. **Decentralized Byte Delivery**: Third-party artifacts are downloaded directly from upstream CDNs (Modrinth / CurseForge). Lampas-owned artifacts (configs, custom JARs, resource packs) use immutable SHA-256 content addressing stored in Railway Bucket, with the Portal providing stable blob URLs and redirecting clients to short-lived presigned downloads.
+3. **Content-Addressed Blob Storage & Deduplication**: Lampas-owned files are keyed by SHA-256. Publishing an unchanged artifact does not upload it again; only hashes missing from object storage are transferred.
+4. **Standalone Desktop Launcher**: 100% independent of PrismLauncher, CurseForge App, or MultiMC. Bundles automatic **OpenJDK 25 (`java-runtime-epsilon`)** discovery and direct `KnotClient` JVM execution.
+5. **Web OAuth2 PKCE Authentication**: Desktop login delegates to the web portal via a browser loopback OAuth2 flow, linking Discord roles, SMP whitelist verification, and official Minecraft Java UUIDs in one click.
+6. **Zero-Downtime Rollbacks & Gated Channels**: Channels (`stable`, `beta`, `dev`) use immutable pointer updates for instantaneous release promotion or rollback.
+7. **Automated Upstream Updater**: Scheduled CI jobs monitor all pack mods and automatically open Pull Requests with changelogs when updates are released.
+
+---
+
+## 🔄 Distribution Flow
+
+```mermaid
+flowchart LR
+    subgraph Authoring ["1. Authoritative Descriptors"]
+        Git["Git Repository<br/>(TOML Descriptors)"] --> Lampasctl["lampasctl manifest"]
+        Lampasctl --> Manifests["Client & Server<br/>Manifests"]
+    end
+
+    subgraph Publishing ["2. Direct-to-Bucket Publication"]
+        Lampasctl -->|"1. /api/v1/blobs/prepare"| Portal["Lampas Portal"]
+        Portal -.->|"2. Presigned PUT URLs"| Lampasctl
+        Lampasctl -->|"3. Direct Upload (missing blobs)"| Bucket[("Railway Bucket<br/>(Immutable Blobs)")]
+        Lampasctl -->|"4. /api/v1/releases/publish"| Portal
+    end
+
+    subgraph Distribution ["3. Dual Byte Delivery"]
+        Manifests -->|"Third-Party Mods"| CDNs["Modrinth / CurseForge"]
+        Portal -.->|"Stable Blob URLs (302 Presigned Redirects)"| Bucket
+    end
+
+    subgraph Consumption ["4. Verified Runtimes"]
+        Portal -->|"Channel Pointer & Manifest"| Client["Launcher / deploy_pack.py"]
+        CDNs -->|"Parallel Stream"| Client
+        Bucket -->|"Presigned GET Stream"| Client
+        Client -->|"Hash & Size Validated"| Instance["Minecraft Instance"]
+    end
+```
+
+### 1. Publication Flow (`lampasctl publish`)
+1. **Discover & Verify**: `lampasctl` scans manifests for `provider = "lampas"` artifacts and computes local SHA-256 hashes and file sizes.
+2. **Prepare**: Sends `POST /api/v1/blobs/prepare` to the Portal. The Portal checks object storage and returns presigned PUT URLs *only* for missing SHA-256 hashes.
+3. **Direct Upload**: `lampasctl` uploads missing blobs directly to Railway Bucket via presigned PUT with bounded concurrency and retry logic.
+4. **Publish Release**: Sends `POST /api/v1/releases/publish` with release metadata and target channels.
+5. **Atomic Commit**: The Portal HEAD-verifies that all referenced blobs exist in object storage, records the release, and atomically updates the target channel pointers.
+
+### 2. Client & Server Sync Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Runtime as Launcher / deploy_pack.py
+    participant Portal as Lampas Portal
+    participant S3 as Railway Bucket
+    participant Upstream as Modrinth / CurseForge
+
+    Runtime->>Portal: GET /api/v1/channels/{channel}
+    Portal-->>Runtime: 200 OK (Active Pack Manifest)
+
+    par Stream Third-Party Mods
+        Runtime->>Upstream: GET mod artifact URL
+        Upstream-->>Runtime: Binary bytes stream
+    and Stream Lampas-Owned Blobs
+        Runtime->>Portal: GET /api/v1/blobs/{sha256}
+        Portal-->>Runtime: 302 Found (Location: presigned GET URL)
+        Runtime->>S3: GET presigned URL
+        S3-->>Runtime: Blob bytes stream
+    end
+
+    Note over Runtime: Verify file size & SHA-256 hash against manifest
+    Note over Runtime: Write to content-addressed cache & link to instance
+```
+
+1. **Manifest Retrieval**: The Launcher or `deploy_pack.py` queries `/api/v1/channels/<channel>` on the Portal to fetch the active release manifest.
+2. **Parallel Downloads**:
+   - Upstream mods stream directly from Modrinth or CurseForge.
+   - Lampas-owned artifacts query the stable Portal blob URL (`/api/v1/blobs/<sha256>`), receive a `302` redirect to a short-lived presigned GET URL on Railway Bucket, and stream the raw bytes.
+3. **Integrity Validation**: Every downloaded file is verified against its declared size and SHA-256 hash before being added to the local content-addressed cache.
+4. **Atomic Instance Reconciliation**: The runtime instance directory is updated atomically, removing obsolete files and linking verified artifacts.
 
 ---
 
@@ -80,12 +163,12 @@ lampas-pipeline/
 ├── pack/
 │   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack v2.0.0, [launcher.play], [launcher.resourcepacks])
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
-│   ├── mods/                     # 150+ declarative mod TOML definitions
-│   ├── resourcepacks/            # Declarative resource pack TOML definitions (e.g. lampas.toml)
+│   ├── mods/                     # Declarative mod TOML definitions
+│   ├── resourcepacks/            # Declarative resource pack TOML definitions (e.g. lampas2.toml)
 │   ├── common/                   # Shared configs, scripts, and assets (synced to both client & server)
 │   ├── client/                   # Client-only mods and configs
 │   ├── server/                   # Server-only mods and configs
-│   └── custom/                   # Packaged custom override JARs (e.g. lampas2-overrides)
+│   └── custom/                   # Packaged custom override JARs & assets (e.g. lampas2-overrides)
 │
 ├── launcher/                     # Standalone Electron Desktop Launcher
 │   ├── src/                      # TypeScript main, preload, JVM executor, & sync engine
@@ -94,9 +177,11 @@ lampas-pipeline/
 │
 ├── tools/lampasctl/              # High-performance pipeline CLI (Bun + TypeScript)
 │   └── src/
+│       ├── blob-publisher.ts     # Lampas blob discovery, verification, prepare + direct PUT
 │       ├── checker.ts            # Concurrent upstream update checker for Modrinth/CurseForge
 │       ├── diff.ts               # Release & manifest visual diff tool
 │       ├── manifest.ts           # Manifest builder for client/server distribution
+│       ├── publisher.ts          # Release publication and multi-channel metadata publishing
 │       ├── resolver.ts           # Upstream API dependency resolver
 │       ├── validator.ts          # Fabric metadata & JiJ integrity validator
 │       └── sync.ts               # Headless installation and sync engine
@@ -108,7 +193,7 @@ lampas-pipeline/
 │
 └── .github/workflows/
     ├── validate-pack.yml         # PR automated smoke testing & lockfile validation
-    ├── release-pack.yml          # Git tag release compiler & portal publisher
+    ├── release-pack.yml          # Tagged release compiler, blob uploader, & portal publisher
     └── update-check.yml          # Daily cron job for upstream mod update PRs
 ```
 
@@ -178,23 +263,73 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
-### 3. Release Diff Tool
+### 4. Release Diff Tool
 Compare two manifests to inspect added, removed, or updated mods along with size deltas:
 ```bash
 bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server-manifest.json
 ```
 
-### 4. Portal Release Publishing
-Publish a release and upload configs/custom blobs to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
-```bash
-# Publish to a specific channel:
-bun run lampasctl publish --portal http://localhost:3000 --channel stable --secret <PUBLISH_TOKEN>
+### 5. Portal Release Publishing
+Publish Lampas-owned artifacts to content-addressed object storage and atomically publish release metadata to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
 
-# Publish to all channels (dev, beta, stable) simultaneously:
-bun run lampasctl publish --portal http://localhost:3000 --secret <PUBLISH_TOKEN>
+```bash
+# Publish release and simultaneously update all channels (dev, beta, stable):
+bun run lampasctl publish --portal https://portal.lampas.town --secret <PUBLISH_TOKEN>
+
+# Publish release to a specific channel:
+bun run lampasctl publish --portal https://portal.lampas.town --channel stable --secret <PUBLISH_TOKEN>
+
+# Publish release to multiple selected channels:
+bun run lampasctl publish --portal https://portal.lampas.town --channel dev,beta --secret <PUBLISH_TOKEN>
 ```
 
-### 5. Headless Client / Server Sync
+#### Publishing Sequence:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor CI as Developer / CI
+    participant CLI as lampasctl
+    participant Portal as Lampas Portal
+    participant S3 as Railway Bucket
+    participant DB as Postgres DB
+
+    CI->>CLI: lampasctl publish --portal <url> --secret <token>
+    Note over CLI: Discover local Lampas blobs<br/>Verify size & SHA-256 hashes
+    CLI->>Portal: POST /api/v1/blobs/prepare (hashes, sizes, MIME types)
+    Portal->>S3: Check existing objects
+    Portal-->>CLI: Return upload status & presigned PUT URLs (missing only)
+
+    loop Upload Missing Blobs (Bounded Concurrency)
+        CLI->>S3: PUT raw binary bytes (presigned upload)
+        S3-->>CLI: 200 OK
+    end
+
+    CLI->>Portal: POST /api/v1/releases/publish (release metadata + target channels)
+    Portal->>S3: HEAD-verify all referenced Lampas blobs exist
+    S3-->>Portal: 200 OK (all blobs verified)
+    Portal->>DB: Atomic transaction: create PackRelease & update channel pointers
+    Portal-->>CLI: 200 OK (channels updated: dev, beta, stable)
+    CLI-->>CI: ✓ Release Published
+```
+
+#### Multi-Channel Publishing:
+Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publishes the release metadata once and atomically points `dev`, `beta`, and `stable` to the new release in a single operation, eliminating redundant uploads or separate release records.
+
+#### Publishing Guarantees:
+- **Local Pre-validation**: Lampas blobs are verified for existence, byte size, and SHA-256 hash before any network transfer.
+- **Content-Addressed Deduplication**: Existing SHA-256 objects in object storage are detected during prepare and never re-uploaded.
+- **Direct Object Storage Upload**: Missing blobs upload directly to object storage via presigned PUT URLs.
+- **Resilient Transfers**: Blob uploads use bounded concurrency and automatically retry transient network errors with backoff.
+- **Integrity Gate**: Release metadata is committed only after the Portal HEAD-verifies that every referenced Lampas blob exists.
+- **Atomic Pointer Updates**: Release creation and channel pointer updates are committed in a single atomic database transaction.
+
+#### Blob Storage Security Model:
+- **Railway Bucket Credentials**: Held exclusively by the Portal backend.
+- **`lampasctl`**: Requires `PACK_PUBLISH_SECRET`; receives short-lived presigned PUT URLs for missing hashes from `/api/v1/blobs/prepare`.
+- **Launcher / `deploy_pack.py`**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
+
+### 6. Headless Client / Server Sync
 ```bash
 bun run lampasctl install --manifest manifest/client-manifest.json --target ./my-instance
 
@@ -213,10 +348,10 @@ Lampas releases can declaratively configure automatic server connection and requ
 ```toml
 [launcher.play]
 auto_connect = true
-server = "play.lampas.gg:25565"
+server = "play.lampas.town:25565"
 
 [launcher.resourcepacks]
-required = ["lampas"]
+required = ["lampas2"]
 ```
 
 ### Resource Pack Definitions
@@ -227,20 +362,32 @@ Resource packs are declared under `pack/resourcepacks/`:
 pack/
 ├── pack.toml
 ├── resourcepacks/
-│   └── lampas.toml
+│   ├── lampas2.toml
+│   └── fa-player-extension.toml
 ```
 
-Example `pack/resourcepacks/lampas.toml`:
+#### Lampas Blob Provider (Recommended for local/in-house assets):
 ```toml
 name = "Lampas Official Resources"
 side = "client"
 type = "resourcepack"
 
 [provider]
+type = "lampas"
+file = "custom/lampas2-resource-pack.zip"
+```
+
+#### Direct URL Provider (For external hosted assets):
+```toml
+name = "External Resource Pack"
+side = "client"
+type = "resourcepack"
+
+[provider]
 type = "direct"
-url = "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip"
+url = "https://example.com/resources/Example-Resources.zip"
 sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-filename = "Lampas-Resources-2.0.0.zip"
+filename = "Example-Resources.zip"
 size = 1048576
 ```
 
@@ -251,8 +398,8 @@ size = 1048576
 
 ### Direct Connect Auto-Connection
 
-When `[launcher.play] auto_connect = true` and a vlampas.towner address is configured:
-- The launcher UI indicates the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.gg:25565`).
+When `[launcher.play] auto_connect = true` and a valid server address is configured:
+- The launcher UI indicates the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.town:25565`).
 - The game runner launches modern Minecraft Java Edition passing `--quickPlayMultiplayer <server>` to instantly join the server on boot without requiring client-side mods.
 
 ### Server-Side Resource Pack Enforcement
@@ -273,6 +420,8 @@ The desktop launcher is built with **Electron + TypeScript** and packaged with *
 - **One-Click Portal Login**: Single unified login button using OAuth2 PKCE via the default web browser.
 - **Built-in Console**: Real-time log streaming with search and error highlighting.
 - **Channel Switching**: Instant switching between `Stable`, `Beta`, and `Dev` channels based on player roles.
+- **Stable Blob URL Resolution**: Queries `/api/v1/blobs/<sha256>` and transparently follows `302` redirects to presigned object storage URLs.
+- **Verified Content Reconciliation**: Performs chunked streaming, file size verification, SHA-256 hash checks, content-addressed caching, and atomic file replacement on disk.
 
 ### Running Locally:
 ```bash
@@ -299,7 +448,16 @@ bun run package:linux
 
 ## 🖥️ Dedicated Server Deployment (`deploy_pack.py`)
 
-Dedicated servers synchronize using the self-contained, dependency-free Python deployment engine:
+Dedicated servers synchronize using the self-contained, dependency-free Python deployment engine (or headless `lampasctl install`).
+
+`deploy_pack.py` operates on a uniform download abstraction:
+
+```mermaid
+flowchart LR
+    Manifest["Pack Manifest<br/>(client / server)"] --> URL["Uniform download.url<br/>(Modrinth / CurseForge / Lampas Blob)"]
+    URL --> Verified["Verified Local Artifact<br/>(SHA-256 Validated)"]
+```
+It consumes manifest URLs directly, without needing to know whether bytes originate from Modrinth, CurseForge, or Lampas content-addressed blob storage.
 
 ```bash
 # Full deployment with automatic timestamped world backup
@@ -309,13 +467,14 @@ python deploy_pack.py
 python deploy_pack.py --skip-backup
 
 # Deploy directly from a remote Lampas Portal instance
-python deploy_pack.py --portal-url https://portal.lampas.gg --channel stable
+python deploy_pack.py --portal-url https://portal.lampas.town --channel stable
 ```
 
 ### Safeguards:
 - **Chunked Streaming**: Downloads are streamed in 64 KB chunks directly to temporary files.
 - **Dual Validation**: Validates both total byte count and SHA-256 hash before replacing files.
-- **Automatic Recovery**: Corrupted or truncated files (e.g. 1 KB network aborts) are detected on disk and automatically re-downloaded.
+- **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
+- **Automatic Recovery**: Corrupted or truncated files (e.g. incomplete network aborts) are detected on disk and automatically re-downloaded.
 - **Protected Paths**: Never overwrites `world/`, `server.properties`, `whitelist.json`, `ops.json`, or player logs.
 
 ---
@@ -331,9 +490,9 @@ Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verific
 
 ## 🤖 CI/CD Automation
 
-- **[`validate-pack.yml`](file:///.github/workflows/validate-pack.yml)**: Validates every pull request, ensuring all mod descriptors resolve, dependencies match, and hashes verify.
-- **[`release-pack.yml`](file:///.github/workflows/release-pack.yml)**: Triggers on Git tags (`v*`). Builds manifests, compiles Windows and Linux launcher binaries, uploads release artifacts, and publishes the release to the Lampas Portal.
-- **[`update-check.yml`](file:///.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs. Configure the repository secret `CURSEFORGE_API_KEY` before adding CurseForge-backed descriptors.
+- **[`validate-pack.yml`](.github/workflows/validate-pack.yml)**: Validates every pull request, ensuring all mod descriptors resolve, dependencies match, and hashes verify.
+- **[`release-pack.yml`](.github/workflows/release-pack.yml)**: Triggers on Git tags (`v*`). Validates pack definitions, builds release manifests, publishes missing content-addressed blobs to Railway Bucket, atomically publishes release metadata and channel pointers to the Lampas Portal, compiles the standalone `lampasctl` binary, and builds Windows/Linux launcher installers.
+- **[`update-check.yml`](.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs. Configure the repository secret `CURSEFORGE_API_KEY` before adding CurseForge-backed descriptors.
 
 ---
 
