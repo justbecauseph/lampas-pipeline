@@ -7,7 +7,7 @@
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-08-25T18:47:18.774Z",
+  "updated": "2026-08-25T18:59:03.497Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2471,34 +2471,6 @@
           "library"
         ],
         "sourceUrl": "https://modrinth.com/mod/libipn",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "litematica": {
-      "id": "litematica",
-      "name": "Litematica",
-      "side": "client",
-      "filename": "litematica-fabric-26.2-0.28.5.jar",
-      "size": 1921299,
-      "sha256": "e711f69b0899ab3c4afafd49e7b825aa7d5051ee5358c88fef36023c612ae91a",
-      "sha512": "af988f57e934047848ad29607492479394cef69e7516c0492cc37907cedbfec1b3fb8cbf4e089872d20ce1039d2d592ceb459113ee7135401f91038ceb101097",
-      "sha1": "d88d130642372b05585d13feebaffd5defef860e",
-      "downloadUrl": "https://cdn.modrinth.com/data/bEpr0Arc/versions/Fhq3KCI8/litematica-fabric-26.2-0.28.5.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "bEpr0Arc",
-        "versionId": "Fhq3KCI8"
-      },
-      "metadata": {
-        "description": "A client-side schematic mod with extra features for creative mode work",
-        "iconUrl": "https://cdn.modrinth.com/data/bEpr0Arc/25b5529d7a3b030ac136a6ce879d8ed2a1aa4a8d.png",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/litematica",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -5886,23 +5858,6 @@
         ]
       }
     },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
-      "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
-      }
-    },
     "figura": {
       "id": "figura",
       "name": "Figura",
@@ -5925,6 +5880,23 @@
           "cosmetic",
           "avatar"
         ]
+      }
+    },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
     "apothicenchanting-26_2-3_0_0": {
