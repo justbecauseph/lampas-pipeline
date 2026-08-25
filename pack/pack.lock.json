@@ -7,7 +7,7 @@
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-08-25T18:38:41.051Z",
+  "updated": "2026-08-25T18:47:18.774Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -441,36 +441,6 @@
         "sourceUrl": "https://modrinth.com/mod/betterend",
         "clientSide": "required",
         "serverSide": "required"
-      }
-    },
-    "betterf3": {
-      "id": "betterf3",
-      "name": "BetterF3",
-      "side": "client",
-      "filename": "BetterF3-19.0.0-Fabric-26.2.jar",
-      "size": 719081,
-      "sha256": "5647c86d1969da775e34ffc5096dd31193b63509de56dfcc83f3c66212812459",
-      "sha512": "5da2f586b32b133f3098abca62905d9e2eecb8a6723bea5902def879dca17443b4dcf767d1ac48b28c77af3e0a13e80d445120c68c9e0c03e0b9ae2c8048dc4b",
-      "sha1": "f3e0c3dc93a2c5fba86f8796bd127076df6287b4",
-      "downloadUrl": "https://cdn.modrinth.com/data/8shC1gFX/versions/6zNdg01Z/BetterF3-19.0.0-Fabric-26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8shC1gFX",
-        "versionId": "6zNdg01Z"
-      },
-      "metadata": {
-        "description": "BetterF3 is a mod that replaces Minecraft's original debug HUD with a highly customizable, more human-readable HUD.",
-        "iconUrl": "https://cdn.modrinth.com//data/8shC1gFX/icon.png",
-        "categories": [
-          "decoration",
-          "game-mechanics",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/betterf3",
-        "clientSide": "required",
-        "serverSide": "unsupported"
       }
     },
     "betternether": {
@@ -5916,6 +5886,23 @@
         ]
       }
     },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+      }
+    },
     "figura": {
       "id": "figura",
       "name": "Figura",
@@ -5938,23 +5925,6 @@
           "cosmetic",
           "avatar"
         ]
-      }
-    },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
-      "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
     "apothicenchanting-26_2-3_0_0": {

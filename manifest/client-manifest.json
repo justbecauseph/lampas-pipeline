@@ -265,21 +265,6 @@
       "sourceUrl": "https://modrinth.com/mod/betterend"
     },
     {
-      "id": "betterf3",
-      "name": "BetterF3",
-      "side": "client",
-      "filename": "BetterF3-19.0.0-Fabric-26.2.jar",
-      "size": 719081,
-      "description": "BetterF3 is a mod that replaces Minecraft's original debug HUD with a highly customizable, more human-readable HUD.",
-      "iconUrl": "https://cdn.modrinth.com//data/8shC1gFX/icon.png",
-      "categories": [
-        "decoration",
-        "game-mechanics",
-        "utility"
-      ],
-      "sourceUrl": "https://modrinth.com/mod/betterf3"
-    },
-    {
       "id": "betternether",
       "name": "BetterNether",
       "side": "both",
@@ -2433,19 +2418,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/BetterF3-19.0.0-Fabric-26.2.jar",
-      "size": 719081,
-      "hashes": {
-        "sha256": "5647c86d1969da775e34ffc5096dd31193b63509de56dfcc83f3c66212812459",
-        "sha512": "5da2f586b32b133f3098abca62905d9e2eecb8a6723bea5902def879dca17443b4dcf767d1ac48b28c77af3e0a13e80d445120c68c9e0c03e0b9ae2c8048dc4b"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/8shC1gFX/versions/6zNdg01Z/BetterF3-19.0.0-Fabric-26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/better-nether-26.201.2.jar",
       "size": 27875658,
       "hashes": {
@@ -4461,19 +4433,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/figura-0.1.6+26.2.jar",
-      "size": 3094082,
-      "hashes": {
-        "sha256": "e232bccaf52975b4190f9c8a40b33a7405dd279b1bd50616657442b913e73a88",
-        "sha512": "7ace5808e87d8cd7d9577d18763b8bf77ee54c5bcb8418bac745783043bc1026a8b05b55e88018087e4f78e262f8f3f42b379f4fcd4a905ba927dd8ae13138bd"
-      },
-      "download": {
-        "url": "/api/v1/blobs/e232bccaf52975b4190f9c8a40b33a7405dd279b1bd50616657442b913e73a88",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
       "size": 3240497,
       "hashes": {
@@ -4482,6 +4441,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/figura-0.1.6+26.2.jar",
+      "size": 3094082,
+      "hashes": {
+        "sha256": "e232bccaf52975b4190f9c8a40b33a7405dd279b1bd50616657442b913e73a88",
+        "sha512": "7ace5808e87d8cd7d9577d18763b8bf77ee54c5bcb8418bac745783043bc1026a8b05b55e88018087e4f78e262f8f3f42b379f4fcd4a905ba927dd8ae13138bd"
+      },
+      "download": {
+        "url": "/api/v1/blobs/e232bccaf52975b4190f9c8a40b33a7405dd279b1bd50616657442b913e73a88",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -7036,13 +7008,13 @@
     },
     {
       "path": "config/figura.json",
-      "size": 112,
+      "size": 207,
       "hashes": {
-        "sha256": "87477b044581b5efb9874c5ee3180233ebd08ec89b68e76462f3223ddb4ece49",
-        "sha512": "2a2fe0ffdfe146674e314eedffafa02902aec9bc717d0ce0cf924682f71e054a1312fba3a93391260a471a2ad3c7883c6eada2241c48dbe2f01b289f7cc1c5cf"
+        "sha256": "0fc7ea8746bb57278b7ab9d277976b1326481556db797a2f89aac2d5fe529d07",
+        "sha512": "67bba9cbe0ca54a83da689e4ea2a75eb8d99f716adbf3bf537aa4db1bafb9f6ca20c36138797a066849c6a9f20f9ef9422c32f2a306ecde3d13c0b0294f93061"
       },
       "download": {
-        "url": "/api/v1/blobs/87477b044581b5efb9874c5ee3180233ebd08ec89b68e76462f3223ddb4ece49",
+        "url": "/api/v1/blobs/0fc7ea8746bb57278b7ab9d277976b1326481556db797a2f89aac2d5fe529d07",
         "provider": "lampas"
       },
       "policy": "MANAGED"
