@@ -44,9 +44,9 @@ jobs:
         run: bun run build:cli
 
       - name: Publish to Lampas Portal
-        if: env.PORTAL_URL != '' && env.PACK_PUBLISH_SECRET != ''
+        if: env.PORTAL_URL != ''
         env:
-          PORTAL_URL: ${{ secrets.PORTAL_URL }}
+          PORTAL_URL: ${{ env.PORTAL_URL }}
           PACK_PUBLISH_SECRET: ${{ secrets.PACK_PUBLISH_SECRET }}
         run: |
           CHANNEL="${{ github.event.inputs.channel || 'stable' }}"
