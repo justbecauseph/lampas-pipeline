@@ -27,7 +27,7 @@ export async function fetchJsonWithRetry<T>(
   url: string,
   headers?: Record<string, string>,
   attempts = 3,
-  timeoutMs = 30_000
+  timeoutMs = 60_000
 ): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -141,7 +141,7 @@ export async function downloadVerified(
     const destName = path.basename(destination);
     LauncherLogger.log("INFO", `[Download Request] GET ${url} -> ${destName} (attempt ${attempt}/${attempts})`);
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), options.timeoutMs || 30_000);
+    const timer = setTimeout(() => controller.abort(), options.timeoutMs || 60_000);
     try {
       const response = await fetch(url, { signal: controller.signal, headers: options.headers });
       if (!response.ok || !response.body) {

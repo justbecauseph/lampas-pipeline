@@ -1,4 +1,12 @@
-import { computeBufferHashes, computeFileHashesStreaming, downloadFileVerified, withAbortTimeout } from "./utils";
+import {
+  computeBufferHashes,
+  computeFileHashesStreaming,
+  downloadFileVerified,
+  ensureDir,
+  withAbortTimeout,
+} from "./utils";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import {
   CURSEFORGE_USER_AGENT,
   CurseForgeClient,
@@ -118,7 +126,8 @@ export class ArtifactResolver {
     def: ModDefinition,
     baseDir: string,
     prefetchedVersion?: ModrinthVersion,
-    prefetchedCurseForgeFile?: CurseForgeFile
+    prefetchedCurseForgeFile?: CurseForgeFile,
+    cachedArtifact?: ResolvedArtifact
   ): Promise<ResolvedArtifact> {
     const { provider, side, name } = def;
 
@@ -134,43 +143,80 @@ export class ArtifactResolver {
         throw new Error(`Mod '${modId}' (${name}): No files found in Modrinth version '${provider.version_id}'.`);
       }
 
-      // Compute sha256 if missing from response
+      // 1. Check if sha256 is already in the primaryFile metadata
       let sha256 = primaryFile.hashes.sha256;
-      if (!sha256) {
-        // Modrinth does not always supply sha256, so download and hash the complete artifact.
-        let buf: Buffer | undefined;
-        let lastError: unknown;
 
-        for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
-          try {
-            buf = await withAbortTimeout(`downloading '${modId}' to calculate sha256`, async (signal) => {
-              const resp = await fetch(primaryFile.url, {
-                signal,
-                headers: { "User-Agent": USER_AGENT },
-              });
-              if (!resp.ok) {
-                throw new Error(`Artifact download returned ${resp.status}: ${resp.statusText}`);
-              }
-              return Buffer.from(await resp.arrayBuffer());
+      // 2. Check if existing lockfile already has this exact artifact resolved
+      if (!sha256 && cachedArtifact && cachedArtifact.provider?.type === "modrinth") {
+        const matchesVersion = cachedArtifact.provider.versionId === provider.version_id;
+        const matchesHash =
+          (primaryFile.hashes.sha512 && cachedArtifact.sha512 === primaryFile.hashes.sha512) ||
+          (primaryFile.hashes.sha1 && cachedArtifact.sha1 === primaryFile.hashes.sha1);
+        if (matchesVersion && matchesHash && cachedArtifact.sha256) {
+          sha256 = cachedArtifact.sha256;
+        }
+      }
+
+      // 3. If sha256 is still needed, check local disk cache or download verified
+      if (!sha256) {
+        const filename = path.basename(primaryFile.filename);
+        const cachePath = path.resolve(
+          baseDir,
+          ".lampas",
+          "cache",
+          "modrinth",
+          provider.project_id || version.project_id || "unknown",
+          provider.version_id,
+          filename
+        );
+
+        const expectedSha512 = primaryFile.hashes.sha512;
+        const expectedSha1 = primaryFile.hashes.sha1;
+        const expectedSize = primaryFile.size;
+
+        let hashes = fs.existsSync(cachePath) ? await computeFileHashesStreaming(cachePath) : undefined;
+        const isCacheValid = hashes && (
+          (!expectedSha512 || hashes.sha512 === expectedSha512) &&
+          (!expectedSha1 || hashes.sha1 === expectedSha1) &&
+          (!expectedSize || hashes.size === expectedSize)
+        );
+
+        if (!isCacheValid) {
+          const verifyHash = expectedSha512 || expectedSha1;
+          const verifyAlgorithm: "sha512" | "sha1" = expectedSha512 ? "sha512" : "sha1";
+
+          if (verifyHash) {
+            await downloadFileVerified(primaryFile.url, cachePath, {
+              expectedHash: verifyHash,
+              algorithm: verifyAlgorithm,
+              expectedSize,
+              headers: { "User-Agent": USER_AGENT },
+              timeoutMs: 180_000,
+              attempts: 3,
             });
-            break;
-          } catch (err: any) {
-            lastError = err;
-            console.warn(
-              `[Resolver] Download attempt ${attempt}/${FETCH_ATTEMPTS} failed for '${modId}': ${err.message}`
+          } else {
+            ensureDir(path.dirname(cachePath));
+            await withAbortTimeout(
+              `downloading '${modId}' to calculate sha256`,
+              async (signal) => {
+                const resp = await fetch(primaryFile.url, {
+                  signal,
+                  headers: { "User-Agent": USER_AGENT },
+                });
+                if (!resp.ok || !resp.body) {
+                  throw new Error(`Artifact download returned ${resp.status}: ${resp.statusText}`);
+                }
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                await pipeline(Readable.fromWeb(resp.body as any), fs.createWriteStream(tempPath));
+                await fs.promises.rename(tempPath, cachePath);
+              },
+              180_000
             );
           }
+          hashes = await computeFileHashesStreaming(cachePath);
         }
 
-        if (!buf) {
-          throw new Error(
-            `Failed to download binary to calculate sha256 for '${modId}' after ${FETCH_ATTEMPTS} attempts`,
-            { cause: lastError }
-          );
-        }
-
-        const hashes = computeBufferHashes(buf);
-        sha256 = hashes.sha256;
+        sha256 = hashes!.sha256;
       }
 
       const artifactType = def.type || "mod";

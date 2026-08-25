@@ -1,0 +1,16 @@
+{
+  "rightClickMode": "RIDE",
+  "pickUpLimit": 20,
+  "stepUpLimit": 20,
+  "allowLivingEntities": false,
+  "allowPlayers": true,
+  "excludedLivingEntities": [
+    "minecraft:wither",
+    "minecraft:ender_dragon",
+    "minecraft:minecart",
+    "#minecraft:boat",
+    "#minecraft:dismounts_underwater"
+  ],
+  "rideCommandExtension": true,
+  "allowInteractions": true
+}

@@ -7,6 +7,7 @@ import * as fflate from "fflate";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
 export const DEFAULT_OPERATION_TIMEOUT_MS = 30_000;
+export const DEFAULT_DOWNLOAD_TIMEOUT_MS = 180_000;
 
 export async function withAbortTimeout<T>(
   description: string,
@@ -71,7 +72,7 @@ export async function computeFileHashesStreaming(filePath: string): Promise<File
 
 export interface VerifiedTransferOptions {
   expectedHash: string;
-  algorithm?: "sha1" | "sha256";
+  algorithm?: "sha1" | "sha256" | "sha512";
   expectedSize?: number;
   headers?: Record<string, string>;
   attempts?: number;
@@ -148,6 +149,7 @@ export async function downloadFileVerified(
   options: VerifiedTransferOptions
 ): Promise<number> {
   const attempts = options.attempts || 3;
+  const timeoutMs = options.timeoutMs || DEFAULT_DOWNLOAD_TIMEOUT_MS;
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -161,7 +163,7 @@ export async function downloadFileVerified(
           }
           return verifyAndPromote(Readable.fromWeb(response.body as any), destination, options);
         },
-        options.timeoutMs
+        timeoutMs
       );
     } catch (error) {
       lastError = error;

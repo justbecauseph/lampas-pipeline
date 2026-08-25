@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseTomlFile, writeJsonFile } from "./utils";
+import { parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
 import { ArtifactResolver, ModrinthClient } from "./providers";
 import { CurseForgeClient } from "./curseforge";
 import { enrichPackLock } from "./enricher";
@@ -71,6 +71,15 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
 
   console.log(`[Resolver] Resolving ${allDefinitions.length} artifact definitions for ${packConfig.pack.name} v${packConfig.pack.version}...`);
 
+  let existingLock: PackLock | undefined;
+  if (fs.existsSync(options.lockFile)) {
+    try {
+      existingLock = readJsonFile<PackLock>(options.lockFile);
+    } catch {
+      // ignore corrupted lock
+    }
+  }
+
   const artifacts: Record<string, ResolvedArtifact> = {};
   const baseDir = path.dirname(options.packDir);
 
@@ -124,12 +133,17 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
         if (def.provider.type === "curseforge" && !prefetchedCurseForgeFile) {
           throw new Error(`CurseForge file '${def.provider.file_id}' was not returned by the bulk API.`);
         }
+        const cachedArtifact =
+          existingLock?.artifacts?.[item.id] ||
+          existingLock?.artifacts?.[item.id.replace(/_/g, "-")] ||
+          existingLock?.artifacts?.[item.id.replace(/-/g, "_")];
         const artifact = await ArtifactResolver.resolveModDefinition(
           item.id,
           def,
           baseDir,
           prefetchedVersion,
-          prefetchedCurseForgeFile
+          prefetchedCurseForgeFile,
+          cachedArtifact
         );
         artifacts[item.id] = artifact;
         console.log(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);

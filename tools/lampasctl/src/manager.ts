@@ -134,13 +134,11 @@ export async function addMod(options: AddModOptions) {
       query.includes("modrinth.com/datapack/")
     ) {
       detectedProvider = "modrinth";
-      const match = query.match(/modrinth\.com\/(?:mod|shader|resourcepack|datapack)\/([^/?#]+)/);
+      const match = query.match(/modrinth\.com\/(?:mod|shader|resourcepack|datapack)\/([^/?#]+)(?:\/version\/([^/?#]+))?/);
       if (match) {
         query = match[1];
-        if (query.includes("/version/")) {
-          const parts = query.split("/version/");
-          query = parts[0];
-          explicitVersion = parts[1];
+        if (match[2]) {
+          explicitVersion = match[2];
         }
       }
     } else if (query.includes("curseforge.com/minecraft/mc-mods/")) {
