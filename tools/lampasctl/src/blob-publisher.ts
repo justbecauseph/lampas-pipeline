@@ -160,6 +160,7 @@ export async function uploadSingleBlob(blob: LocalPublishBlob, uploadUrl: string
         method: "PUT",
         headers: {
           "Content-Type": blob.mimeType,
+          "Cache-Control": "public, max-age=31536000, immutable",
         },
         body: Bun.file(blob.localPath),
       });
