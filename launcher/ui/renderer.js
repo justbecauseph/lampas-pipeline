@@ -49,6 +49,92 @@ const gamedirDisplay = document.getElementById("gamedir-display");
 const btnOpenGamedir = document.getElementById("btn-open-gamedir");
 const channelBtns = document.querySelectorAll(".channel-btn");
 
+// DOM Elements: Live server presence
+const serverPresence = document.getElementById("server-presence");
+const serverPresenceDot = document.getElementById("server-presence-dot");
+const serverPresenceState = document.getElementById("server-presence-state");
+const serverPresenceCount = document.getElementById("server-presence-count");
+const serverPresenceDetail = document.getElementById("server-presence-detail");
+const serverPresencePlayers = document.getElementById("server-presence-players");
+let latestServerStatus = null;
+let serverStatusRequest = null;
+let serverStatusInterval = null;
+
+function renderServerStatus(status) {
+  const view = window.LampasServerStatusView.getServerStatusView(status);
+  const state = view.state;
+
+  if (serverPresence) serverPresence.dataset.state = state;
+  if (serverPresenceDot) serverPresenceDot.className = `presence-dot presence-dot-${state}`;
+  if (serverPresenceState) serverPresenceState.innerText = view.label;
+  if (serverPresenceCount) serverPresenceCount.innerText = view.count;
+  if (serverPresenceDetail) serverPresenceDetail.innerText = view.detail;
+
+  if (!serverPresencePlayers) return;
+  serverPresencePlayers.replaceChildren();
+  if (state !== "online" || view.players.length === 0) return;
+
+  view.players.forEach((player) => {
+    const card = document.createElement("span");
+    card.className = "presence-player";
+    const avatar = document.createElement("span");
+    avatar.className = "presence-player-avatar";
+    avatar.innerText = player.initial;
+    avatar.setAttribute("aria-hidden", "true");
+    const name = document.createElement("span");
+    name.className = "presence-player-name";
+    name.innerText = player.username;
+    card.append(avatar, name);
+    serverPresencePlayers.appendChild(card);
+  });
+  if (view.more > 0) {
+    const more = document.createElement("span");
+    more.className = "presence-more";
+    more.innerText = `+${view.more} others`;
+    serverPresencePlayers.appendChild(more);
+  }
+}
+
+async function refreshServerStatus() {
+  if (!window.lampas.server?.getStatus) return null;
+  if (!currentUser) {
+    latestServerStatus = null;
+    renderServerStatus(null);
+    return null;
+  }
+  if (serverStatusRequest) return serverStatusRequest;
+
+  serverStatusRequest = window.lampas.server.getStatus()
+    .then((status) => {
+      latestServerStatus = status;
+      renderServerStatus(status);
+      return status;
+    })
+    .catch((err) => {
+      latestServerStatus = null;
+      renderServerStatus(null);
+      console.warn("Server presence unavailable:", err?.message || err);
+      return null;
+    })
+    .finally(() => {
+      serverStatusRequest = null;
+    });
+  return serverStatusRequest;
+}
+
+function startServerStatusPolling() {
+  if (serverStatusInterval) clearInterval(serverStatusInterval);
+  void refreshServerStatus();
+  serverStatusInterval = setInterval(() => {
+    if (!document.hidden) void refreshServerStatus();
+  }, 15_000);
+}
+
+window.addEventListener("focus", () => void refreshServerStatus());
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) void refreshServerStatus();
+});
+
 function updateLaunchTargetUI(release) {
   if (playTargetContainer && playTargetServer) {
     if (release?.launch?.autoConnect && release?.launch?.server) {
@@ -321,6 +407,7 @@ window.lampas.game.onExit((code) => {
   } else {
     showToast("Minecraft session ended.", "info", 2500);
   }
+  void refreshServerStatus();
 });
 
 // ========================================================
@@ -390,6 +477,7 @@ if (btnLogin) {
 
       const res = await window.lampas.auth.login(currentConfig?.portalUrl);
       updateUserUI(res.user);
+      void refreshServerStatus();
       showToast(`Welcome back, ${res.user.minecraftUsername || res.user.name || "Player"}!`, "success");
     } catch (err) {
       showToast(`Login failed: ${err.message}`, "error", 5000);
@@ -413,6 +501,8 @@ if (btnLogout) {
       await window.lampas.auth.logout();
       currentConfig = await window.lampas.config.get();
       updateUserUI(null);
+      latestServerStatus = null;
+      renderServerStatus(null);
       showToast("Logged out successfully.", "info");
     } catch (err) {
       showToast(`Logout failed: ${err.message}`, "error");
@@ -787,6 +877,15 @@ if (btnPlay) {
       return;
     }
 
+    // Presence is advisory. Warn on a known degraded state, but never make
+    // the status request part of the launch critical path.
+    if (latestServerStatus?.server.state === "starting") {
+      showToast("The server is still starting. Launch will continue.", "warning", 4500);
+    } else if (latestServerStatus?.server.state === "offline") {
+      showToast("The server appears offline. Launch will continue anyway.", "warning", 4500);
+    }
+    void refreshServerStatus();
+
     // Navigate to Console and Logs tab on play
     switchTab(navConsole, tabConsole);
 
@@ -911,6 +1010,7 @@ async function init() {
 
     // Load rich mod catalog
     await loadModCatalog();
+    startServerStatusPolling();
   } catch (err) {
     console.error("Initialization error:", err);
   }

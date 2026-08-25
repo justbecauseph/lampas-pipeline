@@ -128,6 +128,19 @@
           </div>
         </div>
 
+        <!-- Live server presence (informational; never blocks Play) -->
+        <section id="server-presence" class="server-presence" aria-live="polite" aria-label="Lampas server status">
+          <div class="server-presence-heading">
+            <div class="flex items-center gap-2 min-w-0">
+              <span id="server-presence-dot" class="presence-dot presence-dot-unknown" aria-hidden="true"></span>
+              <span id="server-presence-state" class="presence-state">STATUS UNAVAILABLE</span>
+            </div>
+            <span id="server-presence-count" class="presence-count">— players</span>
+          </div>
+          <p id="server-presence-detail" class="server-presence-detail">Unable to verify server status right now. You can still launch.</p>
+          <div id="server-presence-players" class="presence-players" aria-label="Players currently online"></div>
+        </section>
+
         <!-- Quick Spec Cards -->
         <div class="grid grid-cols-3 gap-4">
           <div class="p-4 rounded-2xl border border-slate-800/80 bg-slate-900/40 flex flex-col justify-between">
@@ -580,6 +593,7 @@
   <!-- Toast Notification Container -->
   <div id="toast-container"></div>
 
+  <script src="server-status-view.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
