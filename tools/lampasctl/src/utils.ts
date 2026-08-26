@@ -272,6 +272,22 @@ export function normalizeRelPath(p: string): string {
   return p.replace(/\\/g, "/").replace(/^\/+/, "");
 }
 
+export function isSafeRelativePath(relPath: string): boolean {
+  if (!relPath || typeof relPath !== "string") return false;
+  const normalized = path.normalize(relPath).replace(/\\/g, "/");
+  if (
+    normalized.startsWith("../") ||
+    normalized === ".." ||
+    path.isAbsolute(normalized) ||
+    /^[a-zA-Z]:/.test(normalized) ||
+    normalized.startsWith("//") ||
+    normalized.startsWith("\\\\")
+  ) {
+    return false;
+  }
+  return true;
+}
+
 export function ensureDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });

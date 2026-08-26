@@ -103,6 +103,66 @@ describe("sync verification modes", () => {
       expect(propsContent).toContain("resource-pack-sha1=abc1234567890123456789012345678901234567");
       expect(propsContent).toContain("require-resource-pack=true");
       expect(propsContent).toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
+
+      // Test subsequent sync where resource pack is removed
+      const manifestWithoutPack = path.join(dir, "server-manifest-nopack.json");
+      fs.writeFileSync(
+        manifestWithoutPack,
+        JSON.stringify({
+          schemaVersion: 1,
+          pack: "Lampas 2",
+          version: "2.1.0",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          protocol: 2,
+          files: [],
+        })
+      );
+
+      await syncInstance({ manifestPath: manifestWithoutPack, targetDir: target });
+      const resetPropsContent = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(resetPropsContent).toContain("server-port=25565");
+      expect(resetPropsContent).toContain("resource-pack=");
+      expect(resetPropsContent).toContain("resource-pack-sha1=");
+      expect(resetPropsContent).toContain("require-resource-pack=false");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects path traversal in syncInstance", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-traversal-sync-"));
+    const target = path.join(dir, "instance");
+    fs.mkdirSync(target, { recursive: true });
+
+    const manifestPath = path.join(dir, "evil-manifest.json");
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        schemaVersion: 1,
+        pack: "Evil",
+        version: "1.0.0",
+        target: "server",
+        minecraft: "26.2",
+        loader: { type: "fabric", version: "0.19.3" },
+        protocol: 1,
+        files: [
+          {
+            path: "../../escaped.txt",
+            size: 5,
+            hashes: { sha256: "a".repeat(64) },
+            download: { url: "http://example.com/evil", provider: "direct" },
+            policy: "MANAGED",
+          },
+        ],
+      })
+    );
+
+    try {
+      await expect(syncInstance({ manifestPath, targetDir: target })).rejects.toThrow(
+        /Unsafe relative path in manifest/
+      );
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

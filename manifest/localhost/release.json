@@ -9,22 +9,15 @@
   },
   "minimumLauncherVersion": "1.1.0",
   "protocol": 2,
-  "created": "2026-08-23T19:07:44.529Z",
+  "created": "2026-08-26T08:55:26.513Z",
   "clientManifest": "http://localhost:3000/api/v1/releases/2.0.0/client-manifest",
   "serverManifest": "http://localhost:3000/api/v1/releases/2.0.0/server-manifest",
-  "totalMods": 190,
-  "totalFiles": 358,
+  "totalMods": 214,
+  "totalFiles": 386,
   "launch": {
-    "autoConnect": false,
-    "server": "localhost:25576",
+    "autoConnect": true,
+    "server": "play.lampas.town:25576",
     "requiredResourcePacks": [
-      {
-        "id": "lampas2",
-        "filename": "lampas2-resource-pack.zip",
-        "path": "resourcepacks/lampas2-resource-pack.zip",
-        "sha256": "f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
-        "sha1": "45c0bdec3a7c862c233ebfd00c2fa0656752137d"
-      },
       {
         "id": "fa-player-extension",
         "filename": "FA+Player-v1.1.zip",
@@ -39,10 +32,10 @@
     "required": true,
     "filename": "lampas2-resource-pack.zip",
     "path": "resourcepacks/lampas2-resource-pack.zip",
-    "url": "http://localhost:3000/api/v1/blobs/f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
-    "sha1": "45c0bdec3a7c862c233ebfd00c2fa0656752137d",
-    "sha256": "f27ef505777dca1729ac79d3d5cd5e027f938fb4d728aab103b2394ba166a1e5",
+    "url": "http://localhost:3000/api/v1/blobs/47ce079bb26176a1bc869e79fe5d49a9cbbba8fd2be4e5ec8381e44aeff560b0",
+    "sha1": "6f087e5414025491e079bd60b9bb43623cc7e337",
+    "sha256": "47ce079bb26176a1bc869e79fe5d49a9cbbba8fd2be4e5ec8381e44aeff560b0",
     "prompt": "{\"text\":\"The Lampas 2 resource pack\"}",
-    "id": "2a6fb9c0-3063-42f6-8585-2bb8000fdf56"
+    "id": "7af14f5a-e521-443a-9275-265decab3edc"
   }
 }

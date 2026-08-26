@@ -4,24 +4,38 @@ import { ConfigManager, normalizePortalUrl } from "./config";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
 import { copyAtomic, copyVerified, downloadVerified, fetchJsonWithRetry, hashFile, HttpResponseError } from "./file-transfer";
-import { ensureRequiredResourcePacks } from "./resource-packs";
+import { reconcileRequiredResourcePacks } from "./resource-packs";
 import { LauncherLogger } from "./logger";
-import type { InstallationState, SyncProgress } from "./types";
+import type { InstallationState, RequiredResourcePack, SyncProgress } from "./types";
 
 const PROTECTED_PREFIXES = [
   "saves/",
   "screenshots/",
-  "resourcepacks/",
-  "shaderpacks/",
   "logs/",
   "crash-reports/",
   "options.txt",
   "servers.dat",
 ];
 
-function isPathProtected(relPath: string): boolean {
+export function isPathProtected(relPath: string): boolean {
   const norm = relPath.replace(/\\/g, "/").replace(/^\/+/, "");
   return PROTECTED_PREFIXES.some((p) => norm === p || norm.startsWith(p));
+}
+
+export function isSafeRelativePath(relPath: string): boolean {
+  if (!relPath || typeof relPath !== "string") return false;
+  const normalized = path.normalize(relPath).replace(/\\/g, "/");
+  if (
+    normalized.startsWith("../") ||
+    normalized === ".." ||
+    path.isAbsolute(normalized) ||
+    /^[a-zA-Z]:/.test(normalized) ||
+    normalized.startsWith("//") ||
+    normalized.startsWith("\\\\")
+  ) {
+    return false;
+  }
+  return true;
 }
 
 export class LauncherSync {
@@ -121,6 +135,13 @@ export class LauncherSync {
       !disabledFilenames.has(path.basename(file.path))
     );
 
+    // Validate relative paths in manifest
+    for (const file of manifestFiles) {
+      if (!isSafeRelativePath(file.path)) {
+        throw new Error(`Unsafe relative path in manifest: '${file.path}'`);
+      }
+    }
+
     // 4. Reconcile with local files
     let prevState: InstallationState = { pack: "", version: "", installedAt: "", files: {} };
     if (fs.existsSync(stateFile)) {
@@ -166,10 +187,14 @@ export class LauncherSync {
         }
 
         const hash = await hashFile(localPath, "sha256");
-        if (hash === file.hashes.sha256) {
+        if (hash === file.hashes.sha256 && stat.size === file.size) {
           upToDateCount++;
           verifiedAt.set(file.path, new Date().toISOString());
           continue;
+        } else {
+          LauncherLogger.info(
+            `  ⚠️ [Hash Mismatch] ${file.path} (expected: ${file.hashes.sha256.slice(0, 10)}..., actual: ${hash.slice(0, 10)}...)`
+          );
         }
       }
 
@@ -314,6 +339,7 @@ export class LauncherSync {
       for (const file of toDownload) {
         const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
         await copyAtomic(cachePath, path.join(gameDir, file.path));
+        LauncherLogger.info(`  ✓ [Replaced] ${file.path}`);
       }
 
     }
@@ -327,20 +353,43 @@ export class LauncherSync {
       }
     }
 
-    // 7. Write release descriptor and installation state
+    // 7. Reconcile required resource packs
+    const currentReqPacks: RequiredResourcePack[] = releaseData?.launch?.requiredResourcePacks || [];
+    const previousManaged = prevState.managedResourcePacks || [];
+    let updatedManagedPacks = previousManaged;
+    try {
+      updatedManagedPacks = await reconcileRequiredResourcePacks(gameDir, {
+        required: currentReqPacks,
+        previousManaged,
+      });
+      if (updatedManagedPacks.length > 0) {
+        LauncherLogger.info(`  [Resource Pack Enabled] ${updatedManagedPacks.join(", ")}`);
+      }
+    } catch (packErr: any) {
+      console.warn(`[Sync Warning] Could not activate required resource packs: ${packErr.message}`);
+    }
+
+    // 8. Verify all final managed files on disk
+    for (const file of manifestFiles) {
+      if ((file.policy || "MANAGED") === "MANAGED") {
+        const localPath = path.join(gameDir, file.path);
+        if (!fs.existsSync(localPath)) {
+          throw new Error(`Verification failed: managed file '${file.path}' is missing on disk.`);
+        }
+      }
+    }
+
+    // 9. Write release descriptor and installation state only after successful mutations
     const releaseFilePath = path.join(stateDir, "release.json");
     try {
       fs.writeFileSync(releaseFilePath, JSON.stringify(releaseData, null, 2), "utf-8");
     } catch {}
 
-    const currentReqPacks = releaseData?.launch?.requiredResourcePacks;
-    const currentReqFilenames = currentReqPacks ? currentReqPacks.map((p: any) => p.filename) : undefined;
-
     const newState: InstallationState = {
       pack: manifest.pack || releaseData.pack || "Lampas 2",
       version: targetVersion,
       installedAt: new Date().toISOString(),
-      managedResourcePacks: currentReqFilenames || prevState.managedResourcePacks,
+      managedResourcePacks: updatedManagedPacks,
       files: {} as Record<string, any>,
     };
 
@@ -351,22 +400,13 @@ export class LauncherSync {
       newState.files[file.path] = {
         sha256: file.hashes.sha256,
         size: file.size,
-        policy: file.policy,
+        policy: file.policy || "MANAGED",
         mtimeMs: stat?.mtimeMs,
         verifiedAt: verifiedAt.get(file.path) || previous?.verifiedAt,
       };
     }
 
     fs.writeFileSync(stateFile, JSON.stringify(newState, null, 2), "utf-8");
-
-    // 8. Ensure required resource packs are active
-    if (currentReqPacks && currentReqPacks.length > 0) {
-      try {
-        await ensureRequiredResourcePacks(gameDir, currentReqPacks);
-      } catch (packErr: any) {
-        console.warn(`[Sync Warning] Could not activate required resource packs immediately: ${packErr.message}`);
-      }
-    }
 
     LauncherLogger.info(
       `[OK] Client successfully synchronized to ${newState.pack} v${targetVersion}!`

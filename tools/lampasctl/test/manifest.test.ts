@@ -60,7 +60,7 @@ describe("server address validation", () => {
 });
 
 describe("manifest generation with launch & required resource packs", () => {
-  test("generates launch metadata and server resource-pack properties for valid configuration", async () => {
+  test("generates launch metadata for valid launcher resource pack configuration", async () => {
     const packToml = `
 [pack]
 name = "Lampas 2"
@@ -130,21 +130,9 @@ required = ["lampas-resources"]
       expect(clientResourcePackFile).toBeDefined();
       expect(clientResourcePackFile?.policy).toBe("MANAGED");
 
-      // Server resource pack properties check
-      const serverPropsPath = path.join(fixture.outDir, "server-resource-pack.properties");
-      expect(fs.existsSync(serverPropsPath)).toBe(true);
-      const propsContent = fs.readFileSync(serverPropsPath, "utf-8");
-      expect(propsContent).toContain("resource-pack=https://portal.lampas.town/api/v1/blobs/aaaaaaaa");
-      expect(propsContent).toContain(`resource-pack-sha1=${"b".repeat(40)}`);
-      expect(propsContent).toContain("require-resource-pack=true");
-
-      // Server resource pack JSON check
-      const serverJsonPath = path.join(fixture.outDir, "server-resource-pack.json");
-      expect(fs.existsSync(serverJsonPath)).toBe(true);
-      const jsonContent = JSON.parse(fs.readFileSync(serverJsonPath, "utf-8"));
-      expect(jsonContent.required).toBe(true);
-      expect(jsonContent.artifact).toBe("lampas-resources");
-      expect(jsonContent.url).toBe("https://portal.lampas.town/api/v1/blobs/aaaaaaaa");
+      // Server resource pack should NOT be generated implicitly for launcher-only packs
+      expect(result.serverManifest.resourcePack).toBeUndefined();
+      expect(result.release.serverResourcePack).toBeUndefined();
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -429,10 +417,11 @@ artifact = "client-pack"
         filename: "Client-Pack.zip",
         size: 1024,
         sha256: "f".repeat(64),
+        sha1: "1".repeat(40),
         downloadUrl: "https://example.com/client.zip",
         artifactType: "resourcepack",
         targetDir: "resourcepacks",
-        provider: { type: "direct", url: "https://example.com/client.zip", sha256: "f".repeat(64) },
+        provider: { type: "direct", url: "https://example.com/client.zip", sha256: "f".repeat(64), sha1: "1".repeat(40) },
       },
     };
 
@@ -446,6 +435,106 @@ artifact = "client-pack"
       });
       expect(result.serverManifest.resourcePack).toBeDefined();
       expect(result.serverManifest.resourcePack?.artifact).toBe("client-pack");
+      expect(result.serverManifest.resourcePack?.sha1).toBe("1".repeat(40));
+
+      // Client-only artifact must not be in server manifest files[]
+      const serverFile = result.serverManifest.files.find((f) => f.path === "resourcepacks/Client-Pack.zip");
+      expect(serverFile).toBeUndefined();
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("fails build when [server.resourcepack] artifact has missing sha1", async () => {
+    const packToml = `
+[pack]
+name = "Lampas 2"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+
+[server.resourcepack]
+artifact = "missing-sha1-pack"
+`;
+
+    const artifacts = {
+      "missing-sha1-pack": {
+        id: "missing-sha1-pack",
+        name: "Missing SHA-1 Pack",
+        side: "client",
+        filename: "Missing-Sha1.zip",
+        size: 1024,
+        sha256: "f".repeat(64),
+        downloadUrl: "https://example.com/missing-sha1.zip",
+        artifactType: "resourcepack",
+        targetDir: "resourcepacks",
+        provider: { type: "direct", url: "https://example.com/missing-sha1.zip", sha256: "f".repeat(64) },
+      },
+    };
+
+    const fixture = setupFixture({ packTomlContent: packToml, lockArtifacts: artifacts });
+
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        })
+      ).rejects.toThrow(/requires a valid 40-character SHA-1 hash/);
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("fails build when same pack is configured for both launcher and server delivery (dual-delivery error)", async () => {
+    const packToml = `
+[pack]
+name = "Lampas 2"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+
+[launcher.resourcepacks]
+required = ["lampas2"]
+
+[server.resourcepack]
+artifact = "lampas2"
+required = true
+`;
+
+    const artifacts = {
+      lampas2: {
+        id: "lampas2",
+        name: "Lampas 2 Resources",
+        side: "client",
+        filename: "lampas2-resource-pack.zip",
+        size: 1024,
+        sha256: "f".repeat(64),
+        sha1: "1".repeat(40),
+        downloadUrl: "/api/v1/blobs/" + "f".repeat(64),
+        artifactType: "resourcepack",
+        targetDir: "resourcepacks",
+        provider: { type: "lampas", file: "custom/lampas2-resource-pack.zip" },
+      },
+    };
+
+    const fixture = setupFixture({ packTomlContent: packToml, lockArtifacts: artifacts });
+
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        })
+      ).rejects.toThrow("Resource pack 'lampas2' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }

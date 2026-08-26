@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { EventEmitter } from "node:events";
+import * as crypto from "node:crypto";
 import type { ReleaseDescriptor, UserProfile } from "../src/types";
 
 const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-runner-test-"));
@@ -254,7 +255,9 @@ describe("GameRunner launch flow & Quick Play", () => {
     spawnedCalls = [];
     const rpDir = path.join(gameDir, "resourcepacks");
     fs.mkdirSync(rpDir, { recursive: true });
-    fs.writeFileSync(path.join(rpDir, "Lampas-Resources-2.0.0.zip"), "dummy zip");
+    const content = "dummy zip";
+    fs.writeFileSync(path.join(rpDir, "Lampas-Resources-2.0.0.zip"), content);
+    const hash = crypto.createHash("sha256").update(content).digest("hex");
 
     const release: ReleaseDescriptor = {
       schemaVersion: 1,
@@ -275,7 +278,7 @@ describe("GameRunner launch flow & Quick Play", () => {
             id: "lampas-resources",
             filename: "Lampas-Resources-2.0.0.zip",
             path: "resourcepacks/Lampas-Resources-2.0.0.zip",
-            sha256: "a".repeat(64),
+            sha256: hash,
           },
         ],
       },

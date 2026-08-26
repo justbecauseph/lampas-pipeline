@@ -7,6 +7,7 @@ import {
   downloadFileVerified,
   ensureDir,
   formatPromptJson,
+  isSafeRelativePath,
   readJsonFile,
   writeJsonFile,
 } from "./utils";
@@ -23,8 +24,6 @@ export interface SyncOptions {
 const PROTECTED_PREFIXES = [
   "saves/",
   "screenshots/",
-  "resourcepacks/",
-  "shaderpacks/",
   "logs/",
   "crash-reports/",
   "options.txt",
@@ -57,6 +56,13 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
       prevState = readJsonFile<InstallationState>(stateFile);
     } catch {
       // fresh or corrupted state
+    }
+  }
+
+  // Validate relative paths
+  for (const file of manifest.files) {
+    if (!isSafeRelativePath(file.path)) {
+      throw new Error(`Unsafe relative path in manifest: '${file.path}'`);
     }
   }
 
@@ -222,6 +228,16 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     }
   }
 
+  // Apply server-side resource pack configuration to server.properties
+  if (manifest.target === "server") {
+    if (manifest.resourcePack) {
+      applyServerResourcePackProperties(targetDir, manifest.resourcePack);
+    } else if (prevState.serverResourcePack?.managed) {
+      // Clear/reset managed properties
+      resetServerResourcePackProperties(targetDir);
+    }
+  }
+
   // Update installation state
   const newState: InstallationState = {
     pack: manifest.pack,
@@ -243,12 +259,21 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     };
   }
 
-  writeJsonFile(stateFile, newState, true);
-
-  // Apply server-side resource pack configuration to server.properties
   if (manifest.target === "server" && manifest.resourcePack) {
-    applyServerResourcePackProperties(targetDir, manifest.resourcePack);
+    newState.serverResourcePack = {
+      managed: true,
+      artifact: manifest.resourcePack.artifact,
+      url: manifest.resourcePack.url,
+      sha1: manifest.resourcePack.sha1,
+      sha256: manifest.resourcePack.sha256,
+      id: manifest.resourcePack.id || manifest.resourcePack.uuid,
+      required: manifest.resourcePack.required,
+    };
+  } else if (manifest.target === "server" && prevState.serverResourcePack?.managed) {
+    newState.serverResourcePack = { managed: false };
   }
+
+  writeJsonFile(stateFile, newState, true);
 
   console.log(`\n[Sync Complete] Successfully synchronized ${manifest.pack} v${manifest.version}`);
 }
@@ -300,4 +325,35 @@ export function applyServerResourcePackProperties(
 
   fs.writeFileSync(propsPath, newLines.join("\n"), "utf-8");
   console.log(`  ⚙ [Server Config] Configured resource-pack settings in server.properties`);
+}
+
+export function resetServerResourcePackProperties(targetDir: string): void {
+  const propsPath = path.join(targetDir, "server.properties");
+  if (!fs.existsSync(propsPath)) return;
+
+  const content = fs.readFileSync(propsPath, "utf-8");
+  const lines = content.split(/\r?\n/);
+  const keysToReset: Record<string, string> = {
+    "resource-pack": "",
+    "resource-pack-sha1": "",
+    "resource-pack-id": "",
+    "resource-pack-prompt": "",
+    "require-resource-pack": "false",
+  };
+
+  const newLines = lines.map((line) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("#") || !trimmed.includes("=")) {
+      return line;
+    }
+    const eqIdx = line.indexOf("=");
+    const key = line.substring(0, eqIdx).trim();
+    if (key in keysToReset) {
+      return `${key}=${keysToReset[key]}`;
+    }
+    return line;
+  });
+
+  fs.writeFileSync(propsPath, newLines.join("\n"), "utf-8");
+  console.log(`  ⚙ [Server Config] Reset Lampas resource-pack settings in server.properties`);
 }

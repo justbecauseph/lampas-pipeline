@@ -341,72 +341,77 @@ Normal installs use the `fast` verification mode, which trusts unchanged size an
 
 ---
 
-## 🌐 Direct Connect & Required Resource Packs
+## 🌐 Resource Pack Delivery Architecture & Direct Connect
 
-Lampas releases can declaratively configure automatic server connection and required resource packs directly in `pack/pack.toml`:
+Lampas implements two clearly separated delivery mechanisms for resource packs to ensure clean asset ownership, immutable CAS hashing, and zero duplicate downloads:
+
+```text
+Launcher-Managed Resource Packs
+    ↓
+Downloaded into <gameDir>/resourcepacks/
+    ↓
+SHA-256 validated by Lampas sync engine
+    ↓
+Enabled deterministically in options.txt
+
+Server-Enforced Resource Pack
+    ↓
+Published as immutable CAS blob (SHA-256 + SHA-1)
+    ↓
+deploy-pack.py / lampasctl configures server.properties
+    ↓
+Minecraft native server-resource-pack protocol downloads on join
+```
+
+> [!IMPORTANT]
+> **Dual-Delivery Prohibition**: Every managed resource pack has exactly one delivery owner. The same resource pack must never be configured for both launcher-local and server-resource-pack delivery.
+
+### Current Configuration
+
+| Resource Pack | Delivery Owner | Target Location | Configuration |
+|---|---|---|---|
+| `fa-player-extension` | **Launcher-Managed** | `<gameDir>/resourcepacks/` | `[launcher.resourcepacks] required = ["fa-player-extension"]` |
+| `lampas2` | **Server-Enforced** | `server.properties` | `[server.resourcepack] artifact = "lampas2"` |
+
+### 1. Launcher-Managed Resource Packs (`[launcher.resourcepacks]`)
+
+Configured in `pack/pack.toml`:
+```toml
+[launcher.resourcepacks]
+required = ["fa-player-extension"]
+```
+- **Sync & Verification**: The launcher synchronizes required packs into `<gameDir>/resourcepacks/` and validates their SHA-256 checksums. If a local file has modified content with the same filename, the launcher detects the hash mismatch, downloads the updated revision, and replaces it atomically.
+- **Activation in `options.txt`**: Prior to bootstrapping the game, the launcher reconciles `options.txt`, deterministically placing managed packs into the active resource pack array while strictly preserving user-installed packs, ordering, comments, and game settings.
+- **Cleanup**: If a pack is removed from the required set, it is cleanly removed from `options.txt` on the next launch.
+
+### 2. Server-Enforced Resource Pack (`[server.resourcepack]`)
+
+Configured in `pack/pack.toml`:
+```toml
+[server.resourcepack]
+artifact = "lampas2"
+required = true
+prompt = '{"text":"The Lampas 2 resource pack"}'
+```
+- **CAS Blob Address**: Published to the Portal under immutable URL `/api/v1/blobs/<sha256>`.
+- **`server.properties` Reconciliation**: During server deployment (`deploy_pack.py` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
+  - `resource-pack=<url>`
+  - `resource-pack-sha1=<sha1>` (40-char SHA-1 required by vanilla Minecraft server)
+  - `resource-pack-id=<uuid>` (stable deterministic UUID)
+  - `resource-pack-prompt=<json>`
+  - `require-resource-pack=true`
+- **Zero Local Client Footprint**: The client does not download the server resource pack into `resourcepacks/`. Instead, the vanilla Minecraft client downloads it directly from the dedicated server prompt on join.
+
+### 3. Direct Connect Auto-Connection (`[launcher.play]`)
 
 ```toml
 [launcher.play]
 auto_connect = true
-server = "play.lampas.town:25565"
-
-[launcher.resourcepacks]
-required = ["lampas2"]
+server = "play.lampas.town:25576"
 ```
-
-### Resource Pack Definitions
-
-Resource packs are declared under `pack/resourcepacks/`:
-
-```text
-pack/
-├── pack.toml
-├── resourcepacks/
-│   ├── lampas2.toml
-│   └── fa-player-extension.toml
-```
-
-#### Lampas Blob Provider (Recommended for local/in-house assets):
-```toml
-name = "Lampas Official Resources"
-side = "client"
-type = "resourcepack"
-
-[provider]
-type = "lampas"
-file = "custom/lampas2-resource-pack.zip"
-```
-
-#### Direct URL Provider (For external hosted assets):
-```toml
-name = "External Resource Pack"
-side = "client"
-type = "resourcepack"
-
-[provider]
-type = "direct"
-url = "https://example.com/resources/Example-Resources.zip"
-sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-filename = "Example-Resources.zip"
-size = 1048576
-```
-
-### Managed vs. Required Resource Packs
-
-- **Managed Resource Packs**: Any resource pack resolved in `pack.lock.json` and distributed to `resourcepacks/`. It is synchronized and kept up to date by the pipeline and launcher.
-- **Required Resource Packs**: Defined in `[launcher.resourcepacks] required = ["<artifact-id>"]`. A required pack is synchronized **and automatically enabled** in Minecraft's `options.txt` prior to launch. If the player disables, deletes, or modifies it, the launcher safely re-enables or repairs it without altering any user-installed custom resource packs or player settings.
-
-### Direct Connect Auto-Connection
-
-When `[launcher.play] auto_connect = true` and a valid server address is configured:
-- The launcher UI indicates the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.town:25565`).
-- The game runner launches modern Minecraft Java Edition passing `--quickPlayMultiplayer <server>` to instantly join the server on boot without requiring client-side mods.
-
-### Server-Side Resource Pack Enforcement
-
-When generating release manifests (`lampasctl manifest`), the pipeline automatically exports:
-- `manifest/server-resource-pack.properties` containing `resource-pack=<url>`, `resource-pack-sha1=<sha1>`, and `require-resource-pack=true` for vanilla dedicated servers.
-- `manifest/server-resource-pack.json` for custom server plugins and backend infrastructure.
+When `auto_connect = true` and a valid server address is specified:
+- The launcher UI displays the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.town:25576`).
+- The game runner launches Minecraft Java Edition passing `--quickPlayMultiplayer <server>` to join the server automatically on boot.
 
 ---
 

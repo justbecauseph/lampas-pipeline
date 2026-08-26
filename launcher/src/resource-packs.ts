@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { InstallationState, RequiredResourcePack } from "./types";
+import { hashFile } from "./file-transfer";
+import type { RequiredResourcePack } from "./types";
 
 /**
  * Validates whether a Minecraft server address string is well-formed.
@@ -82,7 +83,7 @@ export function isValidServerAddress(server: string): boolean {
  * Reconciles the resource pack list for options.txt:
  * - Removes old Lampas-managed packs that are no longer in the current required list.
  * - Preserves all existing user-selected resource packs and their relative order.
- * - Ensures all current required packs are included (appending if missing).
+ * - Ensures all current required packs are included in deterministic manifest order.
  */
 export function reconcileResourcePacks(
   existingPacks: string[],
@@ -91,86 +92,102 @@ export function reconcileResourcePacks(
 ): string[] {
   const currentSet = new Set(currentRequired);
   const oldSet = new Set(oldManaged);
+  const dedupedRequired = Array.from(new Set(currentRequired));
 
-  // 1. Remove old managed packs that are no longer required
-  const reconciled = existingPacks.filter((item) => {
-    if (oldSet.has(item) && !currentSet.has(item)) {
-      return false;
-    }
-    return true;
-  });
+  // 1. Preserve existing user-selected packs that were never managed and aren't in the new required list
+  const userPacks = existingPacks.filter((item) => !oldSet.has(item) && !currentSet.has(item));
 
-  // 2. Add current required packs if missing
-  for (const req of currentRequired) {
+  // 2. Build reconciled list: user packs + deterministic required packs
+  const reconciled = [...userPacks];
+  for (const req of dedupedRequired) {
     if (!reconciled.includes(req)) {
       reconciled.push(req);
     }
+  }
+
+  // If user had no packs at all and existing had vanilla, ensure vanilla is kept at top if present
+  if (existingPacks.includes("vanilla") && !reconciled.includes("vanilla")) {
+    reconciled.unshift("vanilla");
   }
 
   return reconciled;
 }
 
 /**
- * Ensures all required Lampas resource packs are downloaded, present on disk,
- * and enabled in <gameDir>/options.txt. Obsolete managed entries are removed cleanly.
+ * Verifies that all required Lampas resource packs exist on disk, match size, and pass SHA-256 hash checks.
  */
-export async function ensureRequiredResourcePacks(
+export async function verifyRequiredResourcePacks(
   gameDir: string,
   requiredPacks: RequiredResourcePack[]
 ): Promise<void> {
-  if (!requiredPacks || requiredPacks.length === 0) {
-    return;
-  }
+  if (!requiredPacks || requiredPacks.length === 0) return;
 
-  // 1. Verify that all required resource pack files exist on disk
   for (const pack of requiredPacks) {
     const candidatePaths = [
       path.join(gameDir, pack.path || ""),
       path.join(gameDir, "resourcepacks", pack.filename),
     ];
-    const exists = candidatePaths.some((p) => fs.existsSync(p));
-    if (!exists) {
+    const resolvedPath = candidatePaths.find((p) => fs.existsSync(p));
+    if (!resolvedPath) {
       throw new Error(
         `Unable to prepare required Lampas resource pack (${pack.id}): File missing at ${pack.path || pack.filename}. Run Repair and try again.`
       );
     }
-  }
 
-  // 2. Read previous installation state to find previously managed resource packs
-  const stateDir = path.join(gameDir, ".lampas");
-  const stateFile = path.join(stateDir, "installation.json");
-  let prevState: InstallationState = {
-    pack: "",
-    version: "",
-    installedAt: "",
-    files: {},
-  };
-
-  if (fs.existsSync(stateFile)) {
-    try {
-      prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
-    } catch {
-      // fresh or invalid state
+    if (pack.sha256) {
+      const actualHash = await hashFile(resolvedPath, "sha256");
+      if (actualHash.toLowerCase() !== pack.sha256.toLowerCase()) {
+        throw new Error(
+          `Required resource pack '${pack.id}' failed integrity verification.\nExpected: ${pack.sha256}\nActual:   ${actualHash}\nRun Repair.`
+        );
+      }
     }
   }
+}
 
-  const oldManagedFilenames = prevState.managedResourcePacks || [];
-  const oldManagedIdentifiers = oldManagedFilenames.map((f) =>
+export interface ReconcileRequiredOptions {
+  required: RequiredResourcePack[];
+  previousManaged: string[];
+}
+
+/**
+ * Reconciles required resource packs in options.txt with explicit previous ownership state.
+ * Does NOT mutate installation.json directly.
+ */
+export async function reconcileRequiredResourcePacks(
+  gameDir: string,
+  options: ReconcileRequiredOptions
+): Promise<string[]> {
+  const { required = [], previousManaged = [] } = options;
+
+  // 1. Real SHA-256 verification on required packs
+  if (required.length > 0) {
+    await verifyRequiredResourcePacks(gameDir, required);
+  }
+
+  const oldManagedIdentifiers = previousManaged.map((f) =>
     f.startsWith("file/") ? f : `file/${f}`
   );
-  const currentRequiredIdentifiers = requiredPacks.map((p) =>
+  const currentRequiredIdentifiers = required.map((p) =>
     p.filename.startsWith("file/") ? p.filename : `file/${p.filename}`
   );
-  const currentFilenames = requiredPacks.map((p) => p.filename);
+  const currentFilenames = required.map((p) => p.filename);
 
-  // 3. Locate and safely update <gameDir>/options.txt
+  // If there are no required packs AND no previous managed packs, nothing to change in options.txt
+  if (required.length === 0 && previousManaged.length === 0) {
+    return [];
+  }
+
+  // 2. Locate and safely update <gameDir>/options.txt
   const optionsPath = path.join(gameDir, "options.txt");
 
   if (!fs.existsSync(optionsPath)) {
-    const defaultPacks = ["vanilla", ...currentRequiredIdentifiers];
-    const uniquePacks = Array.from(new Set(defaultPacks));
-    const content = `resourcePacks:${JSON.stringify(uniquePacks)}\n`;
-    fs.writeFileSync(optionsPath, content, "utf-8");
+    if (required.length > 0) {
+      const defaultPacks = ["vanilla", ...currentRequiredIdentifiers];
+      const uniquePacks = Array.from(new Set(defaultPacks));
+      const content = `resourcePacks:${JSON.stringify(uniquePacks)}\n`;
+      fs.writeFileSync(optionsPath, content, "utf-8");
+    }
   } else {
     const content = fs.readFileSync(optionsPath, "utf-8");
     const eol = content.includes("\r\n") ? "\r\n" : "\n";
@@ -178,15 +195,16 @@ export async function ensureRequiredResourcePacks(
     const lineIndex = lines.findIndex((l) => l.startsWith("resourcePacks:"));
 
     if (lineIndex === -1) {
-      // Line not present in existing options.txt -> append it
-      const defaultPacks = ["vanilla", ...currentRequiredIdentifiers];
-      const uniquePacks = Array.from(new Set(defaultPacks));
-      const newLine = `resourcePacks:${JSON.stringify(uniquePacks)}`;
-      const newContent =
-        content.endsWith("\n") || content.endsWith("\r")
-          ? `${content}${newLine}${eol}`
-          : `${content}${eol}${newLine}${eol}`;
-      fs.writeFileSync(optionsPath, newContent, "utf-8");
+      if (required.length > 0) {
+        const defaultPacks = ["vanilla", ...currentRequiredIdentifiers];
+        const uniquePacks = Array.from(new Set(defaultPacks));
+        const newLine = `resourcePacks:${JSON.stringify(uniquePacks)}`;
+        const newContent =
+          content.endsWith("\n") || content.endsWith("\r")
+            ? `${content}${newLine}${eol}`
+            : `${content}${eol}${newLine}${eol}`;
+        fs.writeFileSync(optionsPath, newContent, "utf-8");
+      }
     } else {
       const rawLine = lines[lineIndex];
       const rawVal = rawLine.substring("resourcePacks:".length).trim();
@@ -225,8 +243,39 @@ export async function ensureRequiredResourcePacks(
     }
   }
 
-  // 4. Update installation state with currently managed resource packs
-  prevState.managedResourcePacks = currentFilenames;
+  return currentFilenames;
+}
+
+/**
+ * Backward-compatible helper for callers passing (gameDir, requiredPacks).
+ */
+export async function ensureRequiredResourcePacks(
+  gameDir: string,
+  requiredPacks: RequiredResourcePack[]
+): Promise<void> {
+  const stateDir = path.join(gameDir, ".lampas");
+  const stateFile = path.join(stateDir, "installation.json");
+  let previousManaged: string[] = [];
+  let prevState: any = {
+    pack: "",
+    version: "",
+    installedAt: "",
+    files: {},
+  };
+
+  if (fs.existsSync(stateFile)) {
+    try {
+      prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
+      previousManaged = prevState.managedResourcePacks || [];
+    } catch {}
+  }
+
+  const newManaged = await reconcileRequiredResourcePacks(gameDir, {
+    required: requiredPacks,
+    previousManaged,
+  });
+
+  prevState.managedResourcePacks = newManaged;
   if (!fs.existsSync(stateDir)) {
     fs.mkdirSync(stateDir, { recursive: true });
   }

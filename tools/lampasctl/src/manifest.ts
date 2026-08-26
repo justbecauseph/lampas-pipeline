@@ -73,6 +73,15 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     }
   }
 
+  // Dual-delivery validation: an artifact must not be both launcher-managed and server-enforced
+  const launcherRequiredPacks = packConfig.launcher?.resourcepacks?.required || [];
+  const srpDef = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
+  if (srpDef?.artifact && launcherRequiredPacks.includes(srpDef.artifact)) {
+    throw new Error(
+      `Resource pack '${srpDef.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`
+    );
+  }
+
   // Validate and resolve launcher required resource packs
   const requiredResourcePacks: ReleaseRequiredResourcePack[] = [];
   if (packConfig.launcher?.resourcepacks?.required) {
@@ -94,6 +103,9 @@ export async function buildManifests(options: ManifestOptions): Promise<{
       const targetDir = artifact.targetDir || "resourcepacks";
       if (targetDir !== "resourcepacks") {
         throw new Error(`Artifact '${packId}' is configured as a required resource pack but its path does not resolve to resourcepacks/ (${targetDir}/${artifact.filename}).`);
+      }
+      if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
+        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has invalid SHA-256: '${artifact.sha256}'.`);
       }
 
       requiredResourcePacks.push({
@@ -214,7 +226,6 @@ export async function buildManifests(options: ManifestOptions): Promise<{
 
   // Build server resource pack configuration
   let serverResourcePackConfig: ServerResourcePackConfig | undefined = undefined;
-  const srpDef = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
   const portalBase = options.portalBaseUrl || "";
 
   if (srpDef?.artifact) {
@@ -226,39 +237,26 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     if (artifactType !== "resourcepack") {
       throw new Error(`Artifact '${srpDef.artifact}' is configured as server resource pack but has type '${artifactType}'.`);
     }
+    if (!artifact.sha1 || !/^[0-9a-fA-F]{40}$/.test(artifact.sha1)) {
+      throw new Error(`Server resource pack artifact '${srpDef.artifact}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`);
+    }
+    if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
+      throw new Error(`Server resource pack artifact '${srpDef.artifact}' has invalid SHA-256: '${artifact.sha256}'.`);
+    }
     let downloadUrl = artifact.downloadUrl;
     if (downloadUrl.startsWith("/") && portalBase) {
       downloadUrl = `${portalBase}${downloadUrl}`;
     }
-    const packId = srpDef.id || (srpDef as any).uuid || (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${artifact.id}:${artifact.sha256}`);
+    const packId = srpDef.id || (srpDef as any).uuid || (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${artifact.id}`);
     serverResourcePackConfig = {
       artifact: srpDef.artifact,
       required: srpDef.required !== false,
       filename: artifact.filename,
       path: `resourcepacks/${artifact.filename}`,
       url: downloadUrl,
-      ...(artifact.sha1 ? { sha1: artifact.sha1 } : {}),
+      sha1: artifact.sha1,
       sha256: artifact.sha256,
       ...(srpDef.prompt ? { prompt: formatPromptJson(srpDef.prompt) } : {}),
-      id: packId,
-    };
-  } else if (requiredResourcePacks.length > 0) {
-    // If launcher has required resource pack, also create server resource pack config for seamless enforcement
-    const primaryPack = requiredResourcePacks[0];
-    const artifact = lock.artifacts[primaryPack.id];
-    let downloadUrl = artifact.downloadUrl;
-    if (downloadUrl.startsWith("/") && portalBase) {
-      downloadUrl = `${portalBase}${downloadUrl}`;
-    }
-    const packId = (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${primaryPack.id}:${primaryPack.sha256}`);
-    serverResourcePackConfig = {
-      artifact: primaryPack.id,
-      required: true,
-      filename: primaryPack.filename,
-      path: primaryPack.path,
-      url: downloadUrl,
-      ...(primaryPack.sha1 ? { sha1: primaryPack.sha1 } : {}),
-      sha256: primaryPack.sha256,
       id: packId,
     };
   }

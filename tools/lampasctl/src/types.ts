@@ -217,6 +217,15 @@ export interface InstallationState {
   version: string;
   installedAt: string;
   managedResourcePacks?: string[];
+  serverResourcePack?: {
+    managed: boolean;
+    artifact?: string;
+    url?: string;
+    sha1?: string;
+    sha256?: string;
+    id?: string;
+    required?: boolean;
+  };
   files: Record<
     string,
     {

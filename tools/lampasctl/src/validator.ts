@@ -63,6 +63,14 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     }
   }
 
+  // Check dual-delivery conflict
+  const launcherRequiredPacks = packConfig.launcher?.resourcepacks?.required || [];
+  const serverResourcePack = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
+  if (serverResourcePack?.artifact && launcherRequiredPacks.includes(serverResourcePack.artifact)) {
+    console.error(`  ✗ [Dual-Delivery Conflict] Resource pack '${serverResourcePack.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`);
+    hasErrors = true;
+  }
+
   // Check launcher required resource packs
   if (packConfig.launcher?.resourcepacks?.required) {
     for (const packId of packConfig.launcher.resourcepacks.required) {
@@ -85,12 +93,15 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
           console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as a required resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
           hasErrors = true;
         }
+        if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
+          console.error(`  ✗ [Invalid Hash] Required resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`);
+          hasErrors = true;
+        }
       }
     }
   }
 
   // Check server resourcepack configuration
-  const serverResourcePack = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
   if (serverResourcePack?.artifact) {
     const packId = serverResourcePack.artifact;
     const artifact = lock.artifacts[packId];
@@ -106,6 +117,14 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
       const targetDir = artifact.targetDir || "resourcepacks";
       if (targetDir !== "resourcepacks") {
         console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as server resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
+        hasErrors = true;
+      }
+      if (!artifact.sha1 || !/^[0-9a-fA-F]{40}$/.test(artifact.sha1)) {
+        console.error(`  ✗ [Missing SHA-1] Server resource pack '${packId}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`);
+        hasErrors = true;
+      }
+      if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
+        console.error(`  ✗ [Invalid SHA-256] Server resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`);
         hasErrors = true;
       }
     }
