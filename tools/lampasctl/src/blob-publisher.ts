@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { PackManifest } from "./types";
+import type { PackManifest, ReleaseDescriptor } from "./types";
 import { computeFileHashesStreaming } from "./utils";
 
 export interface LocalPublishBlob {
@@ -28,17 +28,19 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
- * Discovers and validates all Lampas-provided files declared in manifests without loading binary content into memory.
+ * Discovers and validates all Lampas-provided files declared in manifests and release descriptors
+ * without loading binary content into memory.
  * Ensures local files exist, match declared sizes, and match declared SHA-256 hashes.
  */
 export async function discoverLocalLampasBlobs(params: {
   clientManifest: PackManifest;
   serverManifest: PackManifest;
   packDir: string;
+  release?: ReleaseDescriptor;
 }): Promise<LocalPublishBlob[]> {
-  const { clientManifest, serverManifest, packDir } = params;
+  const { clientManifest, serverManifest, packDir, release } = params;
   const allFiles = [...clientManifest.files, ...serverManifest.files];
-  const uniqueBlobs = new Map<string, { path: string; size: number }>();
+  const uniqueBlobs = new Map<string, { path: string; size?: number }>();
 
   for (const f of allFiles) {
     if (f.download?.provider === "lampas") {
@@ -52,6 +54,17 @@ export async function discoverLocalLampasBlobs(params: {
     }
   }
 
+  // Also include server-enforced resource pack if it is a Lampas CAS blob
+  const srp = release?.serverResourcePack || serverManifest.resourcePack;
+  if (srp?.sha256) {
+    const sha = srp.sha256.toLowerCase().trim();
+    const isLampasBlob = srp.url.includes("/api/v1/blobs/") || !srp.url.startsWith("http");
+    if (isLampasBlob && !uniqueBlobs.has(sha)) {
+      const relPath = srp.path || (srp.filename ? `resourcepacks/${srp.filename}` : `resourcepacks/${srp.artifact}.zip`);
+      uniqueBlobs.set(sha, { path: relPath, size: undefined });
+    }
+  }
+
   const discoveredBlobs: LocalPublishBlob[] = [];
 
   for (const [sha, info] of uniqueBlobs.entries()) {
@@ -60,6 +73,9 @@ export async function discoverLocalLampasBlobs(params: {
       path.resolve(packDir, "client", info.path),
       path.resolve(packDir, "server", info.path),
       path.resolve(packDir, "custom", path.basename(info.path)),
+      path.resolve(packDir, "resourcepacks", path.basename(info.path)),
+      path.resolve(packDir, "custom", info.path),
+      path.resolve(packDir, info.path),
     ];
 
     const foundPath = candidatePaths.find((p) => fs.existsSync(p));

@@ -6,7 +6,7 @@ import { ConfigManager } from "./config";
 import { LauncherAuth } from "./auth";
 import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
-import { ensureRequiredResourcePacks, isValidServerAddress } from "./resource-packs";
+import { isValidServerAddress, verifyRequiredResourcePacks } from "./resource-packs";
 import type { GameLogEntry, ReleaseDescriptor, UserProfile } from "./types";
 
 function generateOfflineUuid(username: string): string {
@@ -87,14 +87,14 @@ export class GameRunner {
       }
     }
 
-    // Verify & ensure required resource packs before bootstrapping
+    // Verify required resource packs before bootstrapping
     if (release?.launch?.requiredResourcePacks && release.launch.requiredResourcePacks.length > 0) {
       log("INFO", `Verifying ${release.launch.requiredResourcePacks.length} required Lampas resource pack(s)...`);
       try {
-        await ensureRequiredResourcePacks(gameDir, release.launch.requiredResourcePacks);
-        log("INFO", "Required resource pack(s) verified and enabled.");
+        await verifyRequiredResourcePacks(gameDir, release.launch.requiredResourcePacks);
+        log("INFO", "Required resource pack(s) verified.");
       } catch (err: any) {
-        log("ERROR", `Failed to prepare required Lampas resource pack: ${err.message}`);
+        log("ERROR", `Failed to verify required Lampas resource pack: ${err.message}`);
         throw new Error("Unable to prepare required Lampas resource pack. Run Repair and try again.");
       }
     }

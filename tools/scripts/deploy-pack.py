@@ -436,13 +436,10 @@ def reconcile_server_properties(server_dir, srp_config, prev_srp_state=None):
 
     keys_to_set = {}
     if srp_config:
-        keys_to_set["resource-pack"] = srp_config["url"]
+        keys_to_set["resource-pack"] = srp_config.get("url", "")
         keys_to_set["resource-pack-sha1"] = srp_config.get("sha1", "")
-        pack_id = srp_config.get("id") or srp_config.get("uuid", "")
-        if pack_id:
-            keys_to_set["resource-pack-id"] = pack_id
-        if srp_config.get("prompt"):
-            keys_to_set["resource-pack-prompt"] = srp_config["prompt"]
+        keys_to_set["resource-pack-id"] = srp_config.get("id") or srp_config.get("uuid", "")
+        keys_to_set["resource-pack-prompt"] = srp_config.get("prompt", "")
         keys_to_set["require-resource-pack"] = str(srp_config.get("required", True)).lower()
     elif prev_srp_state and prev_srp_state.get("managed"):
         # Server resource pack removed: cleanly reset managed properties
@@ -632,10 +629,19 @@ def sync_server(manifest, server_dir, portal_url, pipeline_dir, max_workers=8, s
 
     if srp_config:
         props = read_server_properties_map(server_dir)
-        if props.get("resource-pack") != srp_config["url"]:
+        if props.get("resource-pack") != srp_config.get("url", ""):
             raise RuntimeError("Final verification failed: server.properties 'resource-pack' mismatch")
         if props.get("resource-pack-sha1") != srp_config.get("sha1", ""):
             raise RuntimeError("Final verification failed: server.properties 'resource-pack-sha1' mismatch")
+        expected_id = srp_config.get("id") or srp_config.get("uuid", "")
+        if props.get("resource-pack-id") != expected_id:
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack-id' mismatch")
+        expected_prompt = srp_config.get("prompt", "")
+        if props.get("resource-pack-prompt") != expected_prompt:
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack-prompt' mismatch")
+        expected_req = str(srp_config.get("required", True)).lower()
+        if props.get("require-resource-pack") != expected_req:
+            raise RuntimeError("Final verification failed: server.properties 'require-resource-pack' mismatch")
 
     # 7. Write installation state LAST (only after all mutations & verification succeed)
     new_state = {

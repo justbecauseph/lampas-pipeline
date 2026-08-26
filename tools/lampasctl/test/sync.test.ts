@@ -104,6 +104,37 @@ describe("sync verification modes", () => {
       expect(propsContent).toContain("require-resource-pack=true");
       expect(propsContent).toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
 
+      // Test sync where prompt is removed
+      const manifestNoPrompt = path.join(dir, "server-manifest-noprompt.json");
+      fs.writeFileSync(
+        manifestNoPrompt,
+        JSON.stringify({
+          schemaVersion: 1,
+          pack: "Lampas 2",
+          version: "2.0.1",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          protocol: 2,
+          resourcePack: {
+            artifact: "lampas",
+            required: true,
+            filename: "Lampas-Resources-2.0.0.zip",
+            path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+            url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+            sha1: "abc1234567890123456789012345678901234567",
+            sha256: "a".repeat(64),
+            // prompt omitted
+          },
+          files: [],
+        })
+      );
+
+      await syncInstance({ manifestPath: manifestNoPrompt, targetDir: target });
+      const noPromptProps = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(noPromptProps).toContain("resource-pack-prompt=");
+      expect(noPromptProps).not.toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
+
       // Test subsequent sync where resource pack is removed
       const manifestWithoutPack = path.join(dir, "server-manifest-nopack.json");
       fs.writeFileSync(

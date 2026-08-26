@@ -247,37 +247,25 @@ export async function reconcileRequiredResourcePacks(
 }
 
 /**
- * Backward-compatible helper for callers passing (gameDir, requiredPacks).
+ * Backward-compatible helper for verifying and reconciling required packs in options.txt.
+ * NOTE: Sync is the sole owner of installation state; this helper does NOT write installation.json.
  */
 export async function ensureRequiredResourcePacks(
   gameDir: string,
   requiredPacks: RequiredResourcePack[]
-): Promise<void> {
-  const stateDir = path.join(gameDir, ".lampas");
-  const stateFile = path.join(stateDir, "installation.json");
+): Promise<string[]> {
+  const stateFile = path.join(gameDir, ".lampas", "installation.json");
   let previousManaged: string[] = [];
-  let prevState: any = {
-    pack: "",
-    version: "",
-    installedAt: "",
-    files: {},
-  };
 
   if (fs.existsSync(stateFile)) {
     try {
-      prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
+      const prevState = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
       previousManaged = prevState.managedResourcePacks || [];
     } catch {}
   }
 
-  const newManaged = await reconcileRequiredResourcePacks(gameDir, {
+  return reconcileRequiredResourcePacks(gameDir, {
     required: requiredPacks,
     previousManaged,
   });
-
-  prevState.managedResourcePacks = newManaged;
-  if (!fs.existsSync(stateDir)) {
-    fs.mkdirSync(stateDir, { recursive: true });
-  }
-  fs.writeFileSync(stateFile, JSON.stringify(prevState, null, 2), "utf-8");
 }

@@ -75,6 +75,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     clientManifest,
     serverManifest,
     packDir: options.packDir,
+    release,
   });
 
   const totalBytes = localBlobs.reduce((acc, b) => acc + b.size, 0);

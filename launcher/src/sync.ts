@@ -353,28 +353,38 @@ export class LauncherSync {
       }
     }
 
-    // 7. Reconcile required resource packs
+    // 7. Reconcile required resource packs (fail hard if reconciliation fails)
     const currentReqPacks: RequiredResourcePack[] = releaseData?.launch?.requiredResourcePacks || [];
     const previousManaged = prevState.managedResourcePacks || [];
-    let updatedManagedPacks = previousManaged;
-    try {
-      updatedManagedPacks = await reconcileRequiredResourcePacks(gameDir, {
-        required: currentReqPacks,
-        previousManaged,
-      });
-      if (updatedManagedPacks.length > 0) {
-        LauncherLogger.info(`  [Resource Pack Enabled] ${updatedManagedPacks.join(", ")}`);
-      }
-    } catch (packErr: any) {
-      console.warn(`[Sync Warning] Could not activate required resource packs: ${packErr.message}`);
+    const updatedManagedPacks = await reconcileRequiredResourcePacks(gameDir, {
+      required: currentReqPacks,
+      previousManaged,
+    });
+    if (updatedManagedPacks.length > 0) {
+      LauncherLogger.info(`  [Resource Pack Enabled] ${updatedManagedPacks.join(", ")}`);
     }
 
-    // 8. Verify all final managed files on disk
+    // 8. Post-mutation verification pass: verify existence, size, and SHA-256 for managed files
     for (const file of manifestFiles) {
       if ((file.policy || "MANAGED") === "MANAGED") {
         const localPath = path.join(gameDir, file.path);
         if (!fs.existsSync(localPath)) {
           throw new Error(`Verification failed: managed file '${file.path}' is missing on disk.`);
+        }
+        const stat = fs.statSync(localPath);
+        if (typeof file.size === "number" && stat.size !== file.size) {
+          throw new Error(
+            `Verification failed: size mismatch for '${file.path}' (expected ${file.size}, got ${stat.size})`
+          );
+        }
+        const wasDownloaded = toDownload.some((f) => f.path === file.path);
+        if (verificationMode === "full" || wasDownloaded) {
+          const actualHash = await hashFile(localPath, "sha256");
+          if (actualHash.toLowerCase() !== file.hashes.sha256.toLowerCase()) {
+            throw new Error(
+              `Verification failed: SHA-256 mismatch for '${file.path}' (expected ${file.hashes.sha256}, got ${actualHash})`
+            );
+          }
         }
       }
     }

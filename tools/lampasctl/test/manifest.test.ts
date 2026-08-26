@@ -584,4 +584,114 @@ artifact = "some-mod"
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
   });
+
+  test("server.resourcepack artifact is absent from client and server installation files", async () => {
+    const packToml = `
+[pack]
+name = "Lampas 2"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+
+[server.resourcepack]
+artifact = "lampas2-srp"
+required = true
+`;
+
+    const artifacts = {
+      "lampas2-srp": {
+        id: "lampas2-srp",
+        name: "Lampas 2 Resources",
+        side: "client",
+        filename: "lampas2-resource-pack.zip",
+        size: 1024,
+        sha256: "f".repeat(64),
+        sha1: "1".repeat(40),
+        downloadUrl: "/api/v1/blobs/" + "f".repeat(64),
+        artifactType: "resourcepack",
+        targetDir: "resourcepacks",
+        provider: { type: "lampas", file: "custom/lampas2-resource-pack.zip" },
+      },
+    };
+
+    const fixture = setupFixture({ packTomlContent: packToml, lockArtifacts: artifacts });
+
+    try {
+      const result = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+
+      // Server resource pack must be in serverManifest.resourcePack and release.serverResourcePack
+      expect(result.serverManifest.resourcePack).toBeDefined();
+      expect(result.serverManifest.resourcePack?.artifact).toBe("lampas2-srp");
+      expect(result.release.serverResourcePack?.artifact).toBe("lampas2-srp");
+
+      // But strictly ABSENT from clientManifest.files and serverManifest.files
+      const clientFile = result.clientManifest.files.find((f) => f.path === "resourcepacks/lampas2-resource-pack.zip");
+      expect(clientFile).toBeUndefined();
+      const serverFile = result.serverManifest.files.find((f) => f.path === "resourcepacks/lampas2-resource-pack.zip");
+      expect(serverFile).toBeUndefined();
+
+      // And absent from mod catalogs
+      expect(result.clientManifest.mods?.find((m) => m.id === "lampas2-srp")).toBeUndefined();
+      expect(result.serverManifest.mods?.find((m) => m.id === "lampas2-srp")).toBeUndefined();
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("server-resource-pack.properties has empty prompt when prompt is not configured", async () => {
+    const packToml = `
+[pack]
+name = "Lampas 2"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+
+[server.resourcepack]
+artifact = "srp-no-prompt"
+required = true
+`;
+
+    const artifacts = {
+      "srp-no-prompt": {
+        id: "srp-no-prompt",
+        name: "SRP No Prompt",
+        side: "client",
+        filename: "no-prompt.zip",
+        size: 1024,
+        sha256: "f".repeat(64),
+        sha1: "1".repeat(40),
+        downloadUrl: "https://example.com/no-prompt.zip",
+        artifactType: "resourcepack",
+        targetDir: "resourcepacks",
+        provider: { type: "direct", url: "https://example.com/no-prompt.zip", sha256: "f".repeat(64), sha1: "1".repeat(40) },
+      },
+    };
+
+    const fixture = setupFixture({ packTomlContent: packToml, lockArtifacts: artifacts });
+
+    try {
+      await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+
+      const serverPropsPath = path.join(fixture.outDir, "server-resource-pack.properties");
+      const props = fs.readFileSync(serverPropsPath, "utf-8");
+      expect(props).toContain("resource-pack-prompt=");
+      expect(props).not.toContain("resource-pack-prompt=undefined");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
 });

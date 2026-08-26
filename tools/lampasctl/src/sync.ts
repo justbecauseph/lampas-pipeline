@@ -238,7 +238,51 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     }
   }
 
-  // Update installation state
+  // Final verification pass before writing installation state
+  for (const file of manifest.files) {
+    if (file.policy === "MANAGED") {
+      const localPath = path.join(targetDir, file.path);
+      if (!fs.existsSync(localPath)) {
+        throw new Error(`Final verification failed: managed file '${file.path}' is missing on disk.`);
+      }
+      const stat = fs.statSync(localPath);
+      if (typeof file.size === "number" && stat.size !== file.size) {
+        throw new Error(`Final verification failed: size mismatch for '${file.path}' (expected ${file.size}, got ${stat.size})`);
+      }
+      const wasDownloaded = toDownload.some((f) => f.path === file.path);
+      if (options.verificationMode === "full" || wasDownloaded) {
+        const hashes = await computeFileHashesStreaming(localPath);
+        if (hashes.sha256.toLowerCase() !== file.hashes.sha256.toLowerCase()) {
+          throw new Error(`Final verification failed: SHA-256 mismatch for '${file.path}' (expected ${file.hashes.sha256}, got ${hashes.sha256})`);
+        }
+      }
+    }
+  }
+
+  if (manifest.target === "server" && manifest.resourcePack) {
+    const props = readServerPropertiesMap(targetDir);
+    const srp = manifest.resourcePack;
+    if (props["resource-pack"] !== srp.url) {
+      throw new Error(`Final verification failed: server.properties 'resource-pack' mismatch (expected '${srp.url}', got '${props["resource-pack"]}')`);
+    }
+    if (props["resource-pack-sha1"] !== (srp.sha1 || "")) {
+      throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' mismatch (expected '${srp.sha1 || ""}', got '${props["resource-pack-sha1"]}')`);
+    }
+    const expectedId = srp.id || srp.uuid || "";
+    if (props["resource-pack-id"] !== expectedId) {
+      throw new Error(`Final verification failed: server.properties 'resource-pack-id' mismatch (expected '${expectedId}', got '${props["resource-pack-id"]}')`);
+    }
+    const expectedPrompt = srp.prompt ? formatPromptJson(srp.prompt) : "";
+    if (props["resource-pack-prompt"] !== expectedPrompt) {
+      throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' mismatch (expected '${expectedPrompt}', got '${props["resource-pack-prompt"]}')`);
+    }
+    const expectedReq = String(srp.required ?? true).toLowerCase();
+    if (props["require-resource-pack"] !== expectedReq) {
+      throw new Error(`Final verification failed: server.properties 'require-resource-pack' mismatch (expected '${expectedReq}', got '${props["require-resource-pack"]}')`);
+    }
+  }
+
+  // Update installation state LAST (only after all mutations & verification succeed)
   const newState: InstallationState = {
     pack: manifest.pack,
     version: manifest.version,
@@ -278,34 +322,58 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   console.log(`\n[Sync Complete] Successfully synchronized ${manifest.pack} v${manifest.version}`);
 }
 
+export function readServerPropertiesMap(targetDir: string): Record<string, string> {
+  const propsPath = path.join(targetDir, "server.properties");
+  if (!fs.existsSync(propsPath)) return {};
+  const content = fs.readFileSync(propsPath, "utf-8");
+  const res: Record<string, string> = {};
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("#") || trimmed.startsWith("!") || !line.includes("=")) continue;
+    const eqIdx = line.indexOf("=");
+    const k = line.substring(0, eqIdx).trim();
+    const v = line.substring(eqIdx + 1).trim();
+    res[k] = v;
+  }
+  return res;
+}
+
 export function applyServerResourcePackProperties(
   targetDir: string,
   srp: { url: string; sha1?: string; required: boolean; prompt?: string; id?: string; uuid?: string }
 ): void {
   const propsPath = path.join(targetDir, "server.properties");
   let content = "";
+  let eol = "\n";
   if (fs.existsSync(propsPath)) {
-    content = fs.readFileSync(propsPath, "utf-8");
+    const raw = fs.readFileSync(propsPath);
+    if (raw.includes(Buffer.from("\r\n"))) {
+      eol = "\r\n";
+    }
+    content = raw.toString("utf-8");
+
+    // Backup existing server.properties
+    const backupsDir = path.join(targetDir, ".lampas", "backups");
+    if (!fs.existsSync(backupsDir)) {
+      fs.mkdirSync(backupsDir, { recursive: true });
+    }
+    const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+    fs.copyFileSync(propsPath, path.join(backupsDir, `server.properties.${ts}`));
   }
 
   const lines = content ? content.split(/\r?\n/) : [];
   const keysToSet: Record<string, string> = {
     "resource-pack": srp.url,
     "resource-pack-sha1": srp.sha1 || "",
-    "require-resource-pack": String(srp.required),
+    "resource-pack-id": srp.id || srp.uuid || "",
+    "resource-pack-prompt": srp.prompt ? formatPromptJson(srp.prompt) : "",
+    "require-resource-pack": String(srp.required ?? true).toLowerCase(),
   };
-  if (srp.prompt) {
-    keysToSet["resource-pack-prompt"] = formatPromptJson(srp.prompt);
-  }
-  const packId = srp.id || srp.uuid;
-  if (packId) {
-    keysToSet["resource-pack-id"] = packId;
-  }
 
   const seenKeys = new Set<string>();
   const newLines = lines.map((line) => {
     const trimmed = line.trim();
-    if (trimmed.startsWith("#") || !trimmed.includes("=")) {
+    if (trimmed.startsWith("#") || trimmed.startsWith("!") || !trimmed.includes("=")) {
       return line;
     }
     const eqIdx = line.indexOf("=");
@@ -323,7 +391,9 @@ export function applyServerResourcePackProperties(
     }
   }
 
-  fs.writeFileSync(propsPath, newLines.join("\n"), "utf-8");
+  const tmpPath = `${propsPath}.tmp.${process.pid}.${Date.now()}`;
+  fs.writeFileSync(tmpPath, newLines.join(eol) + eol, "utf-8");
+  fs.renameSync(tmpPath, propsPath);
   console.log(`  ⚙ [Server Config] Configured resource-pack settings in server.properties`);
 }
 
@@ -331,7 +401,21 @@ export function resetServerResourcePackProperties(targetDir: string): void {
   const propsPath = path.join(targetDir, "server.properties");
   if (!fs.existsSync(propsPath)) return;
 
-  const content = fs.readFileSync(propsPath, "utf-8");
+  let eol = "\n";
+  const raw = fs.readFileSync(propsPath);
+  if (raw.includes(Buffer.from("\r\n"))) {
+    eol = "\r\n";
+  }
+  const content = raw.toString("utf-8");
+
+  // Backup existing server.properties
+  const backupsDir = path.join(targetDir, ".lampas", "backups");
+  if (!fs.existsSync(backupsDir)) {
+    fs.mkdirSync(backupsDir, { recursive: true });
+  }
+  const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
+  fs.copyFileSync(propsPath, path.join(backupsDir, `server.properties.${ts}`));
+
   const lines = content.split(/\r?\n/);
   const keysToReset: Record<string, string> = {
     "resource-pack": "",
@@ -341,19 +425,29 @@ export function resetServerResourcePackProperties(targetDir: string): void {
     "require-resource-pack": "false",
   };
 
+  const seenKeys = new Set<string>();
   const newLines = lines.map((line) => {
     const trimmed = line.trim();
-    if (trimmed.startsWith("#") || !trimmed.includes("=")) {
+    if (trimmed.startsWith("#") || trimmed.startsWith("!") || !trimmed.includes("=")) {
       return line;
     }
     const eqIdx = line.indexOf("=");
     const key = line.substring(0, eqIdx).trim();
     if (key in keysToReset) {
+      seenKeys.add(key);
       return `${key}=${keysToReset[key]}`;
     }
     return line;
   });
 
-  fs.writeFileSync(propsPath, newLines.join("\n"), "utf-8");
+  for (const [key, value] of Object.entries(keysToReset)) {
+    if (!seenKeys.has(key)) {
+      newLines.push(`${key}=${value}`);
+    }
+  }
+
+  const tmpPath = `${propsPath}.tmp.${process.pid}.${Date.now()}`;
+  fs.writeFileSync(tmpPath, newLines.join(eol) + eol, "utf-8");
+  fs.renameSync(tmpPath, propsPath);
   console.log(`  ⚙ [Server Config] Reset Lampas resource-pack settings in server.properties`);
 }

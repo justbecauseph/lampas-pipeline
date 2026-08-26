@@ -254,6 +254,82 @@ describe("LauncherSync client sync integration", () => {
     }
   });
 
+  test("fails client sync and leaves installation state untouched when required pack integrity fails", async () => {
+    const stateFile = path.join(gameDir, ".lampas", "installation.json");
+    fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+    const initialInstallation = {
+      pack: "Lampas 2",
+      version: "1.0.0",
+      installedAt: "2026-01-01T00:00:00Z",
+      files: {},
+      managedResourcePacks: [],
+    };
+    fs.writeFileSync(stateFile, JSON.stringify(initialInstallation, null, 2), "utf-8");
+
+    // Required pack declares sha256 of "aaa..." but downloaded file has "bbb..."
+    const packContent = Buffer.from("pack-content-bbb");
+    const packSha = crypto.createHash("sha256").update(packContent).digest("hex");
+
+    const server = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/stable") {
+          return Response.json({ channel: "stable", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            pack: "Lampas 2",
+            version: "2.0.0",
+            launch: {
+              requiredResourcePacks: [
+                {
+                  id: "corrupted-required-pack",
+                  filename: "corrupted.zip",
+                  path: "resourcepacks/corrupted.zip",
+                  // Mismatched expected hash
+                  sha256: "a".repeat(64),
+                },
+              ],
+            },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/client-manifest") {
+          return Response.json({
+            pack: "Lampas 2",
+            version: "2.0.0",
+            files: [
+              {
+                path: "resourcepacks/corrupted.zip",
+                hashes: { sha256: packSha },
+                size: packContent.length,
+                download: { url: `/api/v1/blobs/${packSha}` },
+                policy: "MANAGED",
+              },
+            ],
+            mods: [],
+          });
+        }
+        if (url.pathname === `/api/v1/blobs/${packSha}`) {
+          return new Response(packContent);
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    ConfigManager.set({ portalUrl: `http://127.0.0.1:${server.port}` });
+
+    try {
+      await expect(LauncherSync.syncClient(() => {})).rejects.toThrow(/failed integrity verification/);
+
+      // State remains previous version
+      const currentInstallation = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
+      expect(currentInstallation.version).toBe("1.0.0");
+    } finally {
+      server.stop(true);
+    }
+  });
+
   test("rejects manifests containing path traversal entries", async () => {
     const server = Bun.serve({
       port: 0,

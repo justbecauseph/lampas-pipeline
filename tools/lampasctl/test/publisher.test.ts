@@ -226,6 +226,42 @@ describe("discoverLocalLampasBlobs", () => {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
   });
+
+  test("discovers server-enforced Lampas blob when absent from client/server files", async () => {
+    const fixture = setupPublishFixture();
+    const srpContent = "dummy server resource pack zip bytes";
+    const srpSha = crypto.createHash("sha256").update(srpContent).digest("hex");
+    fs.writeFileSync(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"), srpContent, "utf-8");
+
+    const releaseWithSrp: any = {
+      serverResourcePack: {
+        artifact: "lampas2",
+        filename: "lampas2-resource-pack.zip",
+        path: "resourcepacks/lampas2-resource-pack.zip",
+        url: `https://portal.lampas.town/api/v1/blobs/${srpSha}`,
+        sha256: srpSha,
+        sha1: "1".repeat(40),
+        id: "7af14f5a-e521-443a-9275-265decab3edc",
+        required: true,
+      },
+    };
+
+    try {
+      const blobs = await discoverLocalLampasBlobs({
+        clientManifest: fixture.clientManifest as any,
+        serverManifest: fixture.serverManifest as any,
+        packDir: fixture.packDir,
+        release: releaseWithSrp,
+      });
+
+      const srpBlob = blobs.find((b) => b.sha256 === srpSha);
+      expect(srpBlob).toBeDefined();
+      expect(srpBlob?.manifestPath).toBe("resourcepacks/lampas2-resource-pack.zip");
+      expect(srpBlob?.localPath).toBe(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"));
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("uploadSingleBlob", () => {

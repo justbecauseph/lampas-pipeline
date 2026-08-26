@@ -128,7 +128,16 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   const clientModsCatalog: ModCatalogEntry[] = [];
   const serverModsCatalog: ModCatalogEntry[] = [];
 
+  const srpArtifactId = srpDef?.artifact;
+
   for (const [modId, artifact] of Object.entries(lock.artifacts)) {
+    // If an artifact is designated as the server-enforced resource pack, it must NOT be
+    // included in client or server installation file lists (launcher-local files).
+    // The server resource pack is delivered exclusively on-demand over Minecraft's server protocol.
+    if (srpArtifactId && modId === srpArtifactId) {
+      continue;
+    }
+
     const targetDir = artifact.targetDir || (artifact.artifactType === "shader" ? "shaderpacks" : artifact.artifactType === "resourcepack" ? "resourcepacks" : "mods");
     const fileEntry: ManifestFile = {
       path: `${targetDir}/${artifact.filename}`,
@@ -304,15 +313,11 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     const serverPropsLines = [
       `resource-pack=${serverResourcePackConfig.url}`,
       `resource-pack-sha1=${serverResourcePackConfig.sha1 || ""}`,
+      `resource-pack-prompt=${serverResourcePackConfig.prompt || ""}`,
+      `resource-pack-id=${serverResourcePackConfig.id || ""}`,
+      `require-resource-pack=${serverResourcePackConfig.required}`,
+      "",
     ];
-    if (serverResourcePackConfig.prompt) {
-      serverPropsLines.push(`resource-pack-prompt=${serverResourcePackConfig.prompt}`);
-    }
-    if (serverResourcePackConfig.id) {
-      serverPropsLines.push(`resource-pack-id=${serverResourcePackConfig.id}`);
-    }
-    serverPropsLines.push(`require-resource-pack=${serverResourcePackConfig.required}`);
-    serverPropsLines.push("");
     fs.writeFileSync(serverPropsOut, serverPropsLines.join("\n"), "utf-8");
 
     const serverJsonOut = path.join(options.outDir, "server-resource-pack.json");

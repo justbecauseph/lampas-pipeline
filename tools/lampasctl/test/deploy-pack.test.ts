@@ -175,6 +175,56 @@ describe("deploy-pack.py server deployment engine", () => {
       expect(state.serverResourcePack.sha1).toBe(srpSha1);
       expect(state.serverResourcePack.sha256).toBe(srpSha256);
       expect(state.serverResourcePack.id).toBe(srpUuid);
+
+      // Test subsequent deploy where prompt is removed
+      const manifestNoPromptPath = path.join(dir, "server-manifest-noprompt.json");
+      fs.writeFileSync(
+        manifestNoPromptPath,
+        JSON.stringify({
+          schemaVersion: 1,
+          pack: "Lampas 2",
+          version: "2.1.0",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          resourcePack: {
+            artifact: "lampas2",
+            url: "https://portal.lampas.town/api/v1/blobs/" + srpSha256,
+            sha1: srpSha1,
+            sha256: srpSha256,
+            id: srpUuid,
+            required: true,
+            // Prompt omitted / removed in v2.1.0
+          },
+          files: [
+            {
+              path: "config/test.txt",
+              hashes: { sha256: testSha256 },
+              size: 11,
+              download: { url: "http://example.com/test.txt" },
+              policy: "MANAGED",
+            },
+          ],
+        })
+      );
+
+      const res2 = spawnSync(
+        "python",
+        [
+          scriptPath,
+          "--manifest",
+          manifestNoPromptPath,
+          "--pipeline-dir",
+          path.join(dir, "fake-pipeline"),
+          "--skip-backup",
+        ],
+        { cwd: dir, encoding: "utf-8" }
+      );
+      expect(res2.status).toBe(0);
+
+      const props2 = fs.readFileSync(path.join(dir, "server.properties"), "utf-8");
+      expect(props2).toContain("resource-pack-prompt=");
+      expect(props2).not.toContain('resource-pack-prompt={"text":"Custom textures"}');
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

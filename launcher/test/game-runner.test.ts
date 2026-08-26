@@ -251,13 +251,16 @@ describe("GameRunner launch flow & Quick Play", () => {
     ).rejects.toThrow("Unable to prepare required Lampas resource pack. Run Repair and try again.");
   });
 
-  test("enables required resource pack and launches when pack file is present", async () => {
+  test("verifies required resource pack and launches when pack file is present without mutating state", async () => {
     spawnedCalls = [];
     const rpDir = path.join(gameDir, "resourcepacks");
     fs.mkdirSync(rpDir, { recursive: true });
     const content = "dummy zip";
     fs.writeFileSync(path.join(rpDir, "Lampas-Resources-2.0.0.zip"), content);
     const hash = crypto.createHash("sha256").update(content).digest("hex");
+
+    const stateFile = path.join(gameDir, ".lampas", "installation.json");
+    if (fs.existsSync(stateFile)) fs.unlinkSync(stateFile);
 
     const release: ReleaseDescriptor = {
       schemaVersion: 1,
@@ -292,10 +295,8 @@ describe("GameRunner launch flow & Quick Play", () => {
     );
 
     expect(launched).toBe(true);
-    const optionsPath = path.join(gameDir, "options.txt");
-    expect(fs.existsSync(optionsPath)).toBe(true);
-    const optionsContent = fs.readFileSync(optionsPath, "utf-8");
-    expect(optionsContent).toContain('resourcePacks:["vanilla","file/Lampas-Resources-2.0.0.zip"]');
+    // GameRunner must NOT write or mutate installation.json
+    expect(fs.existsSync(stateFile)).toBe(false);
   });
 
   test("rejects launch if user has no bound Minecraft UUID", async () => {
