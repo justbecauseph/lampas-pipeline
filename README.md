@@ -21,7 +21,7 @@ graph TD
     end
 
     subgraph CI ["2. CI & Manifest Build"]
-        Lampasctl["lampasctl manifest<br/>• SHA-256 Checksums<br/>• JiJ Validation<br/>• File Policy Engine"]
+        Lampasctl["lampasctl validate + manifest<br/>• SHA-256 Checksums<br/>• Dependency/JiJ Validation<br/>• File Policy Engine"]
     end
 
     subgraph PortalLayer ["3. Lampas Portal (lampas2-portal)"]
@@ -118,7 +118,7 @@ flowchart LR
 2. **Prepare**: Sends `POST /api/v1/blobs/prepare` to the Portal. The Portal checks object storage and returns presigned PUT URLs *only* for missing SHA-256 hashes.
 3. **Direct Upload**: `lampasctl` uploads missing blobs directly to Railway Bucket via presigned PUT with bounded concurrency and retry logic.
 4. **Publish Release**: Sends `POST /api/v1/releases/publish` with release metadata and target channels.
-5. **Atomic Commit**: The Portal HEAD-verifies that all referenced blobs exist in object storage, records the release, and atomically updates the target channel pointers.
+5. **Atomic Commit**: The Portal verifies that all referenced blobs exist in object storage with the declared sizes, records the release, and atomically updates the target channel pointers.
 
 ### 2. Client & Server Sync Flow
 
@@ -131,7 +131,11 @@ sequenceDiagram
     participant Upstream as Modrinth / CurseForge
 
     Runtime->>Portal: GET /api/v1/channels/{channel}
-    Portal-->>Runtime: 200 OK (Active Pack Manifest)
+    Portal-->>Runtime: 200 OK (channel pointer: version + release URL)
+    Runtime->>Portal: GET /api/v1/releases/{version}
+    Portal-->>Runtime: Release descriptor
+    Runtime->>Portal: GET /api/v1/releases/{version}/{target}-manifest
+    Portal-->>Runtime: Target manifest
 
     par Stream Third-Party Mods
         Runtime->>Upstream: GET mod artifact URL
@@ -147,7 +151,7 @@ sequenceDiagram
     Note over Runtime: Write to content-addressed cache & link to instance
 ```
 
-1. **Manifest Retrieval**: The Launcher or `lampasctl deploy` queries `/api/v1/channels/<channel>` on the Portal to fetch the active release manifest.
+1. **Release Resolution**: The Launcher or `lampasctl deploy` queries `/api/v1/channels/<channel>` for a pointer, then fetches the immutable release descriptor and target manifest for the returned version.
 2. **Parallel Downloads**:
    - Upstream mods stream directly from Modrinth or CurseForge.
    - Lampas-owned artifacts query the stable Portal blob URL (`/api/v1/blobs/<sha256>`), receive a `302` redirect to a short-lived presigned GET URL on Railway Bucket, and stream the raw bytes.
@@ -161,7 +165,7 @@ sequenceDiagram
 ```text
 lampas-pipeline/
 ├── pack/
-│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack v2.0.0, [launcher.play], [launcher.resourcepacks])
+│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack vX.X.X, [launcher.play], [launcher.resourcepacks])
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
 │   ├── mods/                     # Declarative mod TOML definitions
 │   ├── resourcepacks/            # Declarative resource pack TOML definitions (e.g. lampas2.toml)
@@ -189,11 +193,12 @@ lampas-pipeline/
 ├── manifest/                     # Generated release artifacts
 │   ├── client-manifest.json      # Client distribution manifest
 │   ├── server-manifest.json      # Dedicated server distribution manifest
-│   └── release.json              # Release metadata & channel descriptor
+│   └── release.json              # Generated release descriptor
 │
 └── .github/workflows/
     ├── validate-pack.yml         # PR automated smoke testing & lockfile validation
     ├── release-pack.yml          # Tagged release compiler, blob uploader, & portal publisher
+    ├── release-lampasctl.yml     # Tagged lampasctl CLI builds, smoke tests, & GitHub release
     └── update-check.yml          # Daily cron job for upstream mod update PRs
 ```
 
@@ -306,23 +311,30 @@ sequenceDiagram
     end
 
     CLI->>Portal: POST /api/v1/releases/publish (release metadata + target channels)
-    Portal->>S3: HEAD-verify all referenced Lampas blobs exist
-    S3-->>Portal: 200 OK (all blobs verified)
+    Portal->>S3: Verify storage metadata for all referenced Lampas blobs
+    S3-->>Portal: Presence and declared sizes verified
     Portal->>DB: Atomic transaction: create PackRelease & update channel pointers
     Portal-->>CLI: 200 OK (channels updated: dev, beta, stable)
     CLI-->>CI: ✓ Release Published
 ```
 
 #### Multi-Channel Publishing:
-Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publishes the release metadata once and atomically points `dev`, `beta`, and `stable` to the new release in a single operation, eliminating redundant uploads or separate release records.
+Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publishes the release metadata once and atomically points `dev`, `beta`, and `stable` to the new release in a single operation. `--channel dev,beta` selects multiple channels. The tag-triggered pack workflow explicitly targets `stable`; its manual dispatch input defaults to `stable`.
 
 #### Publishing Guarantees:
 - **Local Pre-validation**: Lampas blobs are verified for existence, byte size, and SHA-256 hash before any network transfer.
 - **Content-Addressed Deduplication**: Existing SHA-256 objects in object storage are detected during prepare and never re-uploaded.
 - **Direct Object Storage Upload**: Missing blobs upload directly to object storage via presigned PUT URLs.
 - **Resilient Transfers**: Blob uploads use bounded concurrency and automatically retry transient network errors with backoff.
-- **Integrity Gate**: Release metadata is committed only after the Portal HEAD-verifies that every referenced Lampas blob exists.
+- **Integrity Gate**: Release metadata is committed only after the Portal verifies storage metadata for every referenced Lampas blob (existence and declared size).
 - **Atomic Pointer Updates**: Release creation and channel pointer updates are committed in a single atomic database transaction.
+
+#### Immutable Portal Publication Contract:
+- `lampasctl publish` sends a bearer token to `/api/v1/blobs/prepare` and `/api/v1/releases/publish`; inline/base64 blob publishing is not supported.
+- The prepare response identifies missing SHA-256 blobs and supplies short-lived presigned PUT URLs. Existing content-addressed objects are reused.
+- The publish request contains the release metadata plus both schema-version-1 manifests. The Portal validates target/version parity, verifies every Lampas blob reference and declared size in object storage, then commits the release and requested channel pointers atomically.
+- A release version is immutable: publishing different content under an existing version returns HTTP 409. Repeating an identical publication is idempotent and may move channel pointers without rewriting the release.
+- Blob URLs are stable and content-addressed (`/api/v1/blobs/<sha256>`). The redirect response is not cached because its presigned `Location` expires; the underlying blob identity remains the SHA-256 path. Bucket credentials remain in the Portal; `lampasctl` receives only presigned upload URLs, and launchers/server deployments use public blob redirects without publish credentials.
 
 #### Blob Storage Security Model:
 - **Railway Bucket Credentials**: Held exclusively by the Portal backend.
@@ -393,14 +405,15 @@ artifact = "lampas2"
 required = true
 prompt = '{"text":"The Lampas 2 resource pack"}'
 ```
-- **CAS Blob Address**: Published to the Portal under immutable URL `/api/v1/blobs/<sha256>`.
+- **Server-only CAS descriptor**: The generated `server-manifest.json` is the authoritative desired server state and carries the resource pack descriptor; it is deliberately absent from `files[]` and from the client manifest. For a Lampas resource pack, the descriptor must include `provider = "lampas"`, a safe `path` under `resourcepacks/`, `size` in bytes, a 40-character `sha1`, a 64-character `sha256`, and a URL whose path is exactly `/api/v1/blobs/<sha256>`. See [`manifest/server-resource-pack.json`](manifest/server-resource-pack.json) for the generated descriptor and current values.
+- **CAS Blob Address**: Published to the Portal under stable, content-addressed URL `/api/v1/blobs/<sha256>`; the redirect target is short-lived. The Portal release descriptor links consumers to the published server manifest rather than maintaining a separate resource-pack definition. The pipeline's generated `release.json` may mirror build metadata, including the resource-pack descriptor, for publication and artifact inspection.
 - **`server.properties` Reconciliation**: During server deployment (`lampasctl deploy` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
   - `resource-pack=<url>`
   - `resource-pack-sha1=<sha1>` (40-char SHA-1 required by vanilla Minecraft server)
   - `resource-pack-id=<uuid>` (stable deterministic UUID)
   - `resource-pack-prompt=<json>`
   - `require-resource-pack=true`
-- **Zero Local Client Footprint**: The client does not download the server resource pack into `resourcepacks/`. Instead, the vanilla Minecraft client downloads it directly from the dedicated server prompt on join.
+- **Zero Local Client Footprint**: The launcher does not manage this pack in its local `resourcepacks/` directory. The vanilla Minecraft client downloads it through the dedicated server resource-pack prompt on join.
 
 ### 3. Direct Connect Auto-Connection (`[launcher.play]`)
 
@@ -472,15 +485,17 @@ lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --c
 lampasctl deploy --target /srv/minecraft --no-backup
 
 # Deploy specific release version
-lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --version 2.0.0
+lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --version 2.0.1
 ```
+
+When `--version` is omitted, `deploy` resolves the selected channel (default: `dev`) through the Portal, then fetches that exact release descriptor and server manifest. Resolution is fail-closed: an invalid channel, non-success response, missing channel pointer/version, missing release, or missing manifest aborts deployment. There is no fallback to a latest release. Supplying `--version` bypasses the channel pointer but still fetches and validates the immutable release from the Portal.
 
 ### Safeguards:
 - **Chunked Streaming**: Downloads are streamed directly to temporary files.
 - **Dual Validation**: Validates both total byte count and SHA-256 hash before replacing files.
 - **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
 - **Automatic Recovery**: Corrupted or truncated files (e.g. incomplete network aborts) are detected on disk and automatically re-downloaded.
-- **Protected Paths**: Never overwrites `world/`, `server.properties`, `whitelist.json`, `ops.json`, or player logs.
+- **Protected Paths**: Never overwrites runtime data such as `world/`, `whitelist.json`, `ops.json`, or player logs. `server.properties` is preserved except for the five explicitly managed server-resource-pack keys, which are reconciled and verified from the manifest.
 
 ---
 
@@ -496,8 +511,25 @@ Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verific
 ## 🤖 CI/CD Automation
 
 - **[`validate-pack.yml`](.github/workflows/validate-pack.yml)**: Validates every pull request, ensuring all mod descriptors resolve, dependencies match, and hashes verify.
-- **[`release-pack.yml`](.github/workflows/release-pack.yml)**: Triggers on Git tags (`v*`). Validates pack definitions, builds release manifests, publishes missing content-addressed blobs to Railway Bucket, atomically publishes release metadata and channel pointers to the Lampas Portal, compiles the standalone `lampasctl` binary, and builds Windows/Linux launcher installers.
+- **[`release-pack.yml`](.github/workflows/release-pack.yml)**: Builds the pack release from a tag or manual dispatch. It installs with the frozen Bun lockfile, runs `lampasctl validate`, generates the client/server/release artifacts, publishes to the Portal when `PORTAL_URL` and `PACK_PUBLISH_SECRET` are configured, and builds Linux and Windows launcher packages. The tag-triggered path publishes to `stable`; manual dispatch selects `stable`, `beta`, or `dev`.
+- **[`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml)**: Builds and publishes the standalone `lampasctl` CLI for Linux and Windows, with typecheck, full Bun tests, CLI sanity checks, artifact smoke tests, and SHA-256 checksums.
 - **[`update-check.yml`](.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs. Configure the repository secret `CURSEFORGE_API_KEY` before adding CurseForge-backed descriptors.
+
+### Release gates and version tags
+
+The pack version is authoritative in `pack/pack.toml` and must match the generated lockfile and manifests. For a pack release, run the same gates locally before authorizing publication:
+
+```bash
+bun install --frozen-lockfile
+bun run typecheck
+bun test
+bun run lampasctl validate
+bun run lampasctl manifest
+```
+
+The canonical pack tag is `lampas-pack-v<pack-version>` (for example, `lampas-pack-v2.0.1`). The canonical CLI tag is `lampasctl-v<cli-version>` (for example, `lampasctl-v1.0.0`). `release-pack.yml` still contains a legacy `v*` matcher, so do not push both a generic `v<version>` tag and the namespaced pack tag for the same commit; that can start duplicate pack runs. `lampasctl-v*` is routed to the CLI workflow and is excluded from the pack workflow.
+
+Commit, tag, push, Portal publication, and server deployment are separate authorization boundaries. A successful validation or build does not authorize any of the others. Publishing requires the Portal URL and `PACK_PUBLISH_SECRET`; deployment requires its own explicit `lampasctl deploy` action against a target server.
 
 ---
 
