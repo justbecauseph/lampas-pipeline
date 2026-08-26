@@ -290,37 +290,10 @@ bun run lampasctl install \
 
 ---
 
-## 5. Desktop Launcher Workflows
+## 5. Desktop Launcher
 
-### Workflow L: Running the Launcher in Development
+The Desktop Launcher has moved to its own repository:
+👉 **[justbecauseph/lampas-launcher](https://github.com/justbecauseph/lampas-launcher)**
 
-```bash
-cd launcher
+Refer to `justbecauseph/lampas-launcher` for development instructions, packaging commands, and releases.
 
-# Install dependencies using Bun
-bun install
-
-# Start Electron in development mode
-bun run start
-```
-
----
-
-### Workflow M: Packaging Windows & Linux Binaries
-
-```bash
-cd launcher
-
-# 1. Compile TypeScript
-bun run build
-
-# 2. Package Windows 1-Click NSIS Installer (.exe) & Portable Executable
-bun run package:win
-
-# 3. Package Linux AppImage & tar.gz
-bun run package:linux
-
-# 4. Package all target platforms concurrently
-bun run package:all
-```
-All binaries will be generated inside [`launcher/release/`](file:///C:/Users/markj/source/repos/lampas-pipeline/launcher/release).

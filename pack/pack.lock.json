@@ -7,7 +7,7 @@
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-08-26T12:10:07.905Z",
+  "updated": "2026-08-26T13:10:57.151Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -1659,6 +1659,23 @@
         "file": "custom/distant-decorations-0.1.0.jar"
       }
     },
+    "apothicspawners-26_2-3_0_0": {
+      "id": "apothicspawners-26_2-3_0_0",
+      "name": "ApothicSpawners-26.2-3.0.0",
+      "side": "both",
+      "filename": "ApothicSpawners-26.2-3.0.0.jar",
+      "size": 151958,
+      "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+      "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9",
+      "sha1": "4825590b8261a7adbf2d1e6b7b67eb54bbd623b0",
+      "downloadUrl": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/ApothicSpawners-26.2-3.0.0.jar"
+      }
+    },
     "forgeconfigapiport": {
       "id": "forgeconfigapiport",
       "name": "Forge Config API Port",
@@ -1860,21 +1877,21 @@
         "serverSide": "required"
       }
     },
-    "apothicspawners-26_2-3_0_0": {
-      "id": "apothicspawners-26_2-3_0_0",
-      "name": "ApothicSpawners-26.2-3.0.0",
+    "apothicattributes-26_2-4_0_0": {
+      "id": "apothicattributes-26_2-4_0_0",
+      "name": "ApothicAttributes-26.2-4.0.0",
       "side": "both",
-      "filename": "ApothicSpawners-26.2-3.0.0.jar",
-      "size": 151958,
-      "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
-      "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9",
-      "sha1": "4825590b8261a7adbf2d1e6b7b67eb54bbd623b0",
-      "downloadUrl": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+      "filename": "ApothicAttributes-26.2-4.0.0.jar",
+      "size": 324221,
+      "sha256": "abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
+      "sha512": "f443f393001c424094ebed0ab3845b6c2906cbb3e3f5b051b7a7a0b279c281a019284ce966e07a72524e4c2a5659452547f0f141e266a3fe39ad3505bee823c1",
+      "sha1": "522d16cdd41ffd6a4b22cb9abf853c271456b756",
+      "downloadUrl": "/api/v1/blobs/abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/ApothicSpawners-26.2-3.0.0.jar"
+        "file": "custom/ApothicAttributes-26.2-4.0.0.jar"
       }
     },
     "geckolib": {
@@ -2372,23 +2389,6 @@
         "serverSide": "unsupported"
       }
     },
-    "apothicattributes-26_2-4_0_0": {
-      "id": "apothicattributes-26_2-4_0_0",
-      "name": "ApothicAttributes-26.2-4.0.0",
-      "side": "both",
-      "filename": "ApothicAttributes-26.2-4.0.0.jar",
-      "size": 324221,
-      "sha256": "abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
-      "sha512": "f443f393001c424094ebed0ab3845b6c2906cbb3e3f5b051b7a7a0b279c281a019284ce966e07a72524e4c2a5659452547f0f141e266a3fe39ad3505bee823c1",
-      "sha1": "522d16cdd41ffd6a4b22cb9abf853c271456b756",
-      "downloadUrl": "/api/v1/blobs/abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicAttributes-26.2-4.0.0.jar"
-      }
-    },
     "lampas-aria-0_1_0-alpha_1": {
       "id": "lampas-aria-0_1_0-alpha_1",
       "name": "lampas-aria-0.1.0-alpha.1",
@@ -2404,6 +2404,32 @@
       "provider": {
         "type": "lampas",
         "file": "custom/lampas-aria-0.1.0-alpha.1.jar"
+      }
+    },
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
+      "side": "both",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 148949,
+      "sha256": "7d1418f7f00435a394478c0de4f2a62734e413bbccc9c0db07ebd9cc6b02c8b1",
+      "sha512": "1ab3681f58b789a300df479258e5683eee2a9d460c9039eadc6f51a0b747a3abc6e38c15d089191ea7568a91bdc623d797c6942113d8dd87d1dec23e2de67992",
+      "sha1": "c5a3b03388b7674014f0a23ec087b6c43f36532b",
+      "downloadUrl": "/api/v1/blobs/7d1418f7f00435a394478c0de4f2a62734e413bbccc9c0db07ebd9cc6b02c8b1",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas2-overrides-1.0.0.jar"
+      },
+      "metadata": {
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+        "categories": [
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "leavesbegone": {
@@ -2451,30 +2477,21 @@
         "file": "custom/levelledmobs-apotheosis-1.0.0.jar"
       }
     },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
+    "gatewaystoeternity-26_2-7_0_0": {
+      "id": "gatewaystoeternity-26_2-7_0_0",
+      "name": "GatewaysToEternity-26.2-7.0.0",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 148949,
-      "sha256": "7d1418f7f00435a394478c0de4f2a62734e413bbccc9c0db07ebd9cc6b02c8b1",
-      "sha512": "1ab3681f58b789a300df479258e5683eee2a9d460c9039eadc6f51a0b747a3abc6e38c15d089191ea7568a91bdc623d797c6942113d8dd87d1dec23e2de67992",
-      "sha1": "c5a3b03388b7674014f0a23ec087b6c43f36532b",
-      "downloadUrl": "/api/v1/blobs/7d1418f7f00435a394478c0de4f2a62734e413bbccc9c0db07ebd9cc6b02c8b1",
+      "filename": "GatewaysToEternity-26.2-7.0.0.jar",
+      "size": 661344,
+      "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+      "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856",
+      "sha1": "7fb6cdbd57125c3eb9134a41c371faad8c48ea78",
+      "downloadUrl": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+        "file": "custom/GatewaysToEternity-26.2-7.0.0.jar"
       }
     },
     "libipn": {
@@ -3160,21 +3177,21 @@
         "serverSide": "required"
       }
     },
-    "levelledmobs-fabric-1_0_0": {
-      "id": "levelledmobs-fabric-1_0_0",
-      "name": "levelledmobs-fabric-1.0.0",
+    "modern-player-ladder-1_0_0": {
+      "id": "modern-player-ladder-1_0_0",
+      "name": "modern-player-ladder-1.0.0",
       "side": "both",
-      "filename": "levelledmobs-fabric-1.0.0.jar",
-      "size": 160823,
-      "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
-      "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d",
-      "sha1": "267a5b8613b5370aeb76bb0047ca5e69c24e74c2",
-      "downloadUrl": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+      "filename": "modern-player-ladder-1.0.0.jar",
+      "size": 31067,
+      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
+      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
+      "downloadUrl": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/levelledmobs-fabric-1.0.0.jar"
+        "file": "custom/modern-player-ladder-1.0.0.jar"
       }
     },
     "modmenu": {
@@ -3609,38 +3626,38 @@
         "serverSide": "unsupported"
       }
     },
-    "modern-player-ladder-1_0_0": {
-      "id": "modern-player-ladder-1_0_0",
-      "name": "modern-player-ladder-1.0.0",
+    "levelledmobs-fabric-1_0_0": {
+      "id": "levelledmobs-fabric-1_0_0",
+      "name": "levelledmobs-fabric-1.0.0",
       "side": "both",
-      "filename": "modern-player-ladder-1.0.0.jar",
-      "size": 31067,
-      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
-      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
-      "downloadUrl": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "filename": "levelledmobs-fabric-1.0.0.jar",
+      "size": 160823,
+      "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+      "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d",
+      "sha1": "267a5b8613b5370aeb76bb0047ca5e69c24e74c2",
+      "downloadUrl": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/modern-player-ladder-1.0.0.jar"
+        "file": "custom/levelledmobs-fabric-1.0.0.jar"
       }
     },
-    "gatewaystoeternity-26_2-7_0_0": {
-      "id": "gatewaystoeternity-26_2-7_0_0",
-      "name": "GatewaysToEternity-26.2-7.0.0",
+    "eastersdelight-fabric-26_2-1_3_1": {
+      "id": "eastersdelight-fabric-26_2-1_3_1",
+      "name": "eastersdelight-fabric-26.2-1.3.1",
       "side": "both",
-      "filename": "GatewaysToEternity-26.2-7.0.0.jar",
-      "size": 661344,
-      "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
-      "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856",
-      "sha1": "7fb6cdbd57125c3eb9134a41c371faad8c48ea78",
-      "downloadUrl": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
+      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
+      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/GatewaysToEternity-26.2-7.0.0.jar"
+        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
       }
     },
     "placeholder-api": {
@@ -5779,23 +5796,6 @@
         "serverSide": "unsupported"
       }
     },
-    "eastersdelight-fabric-26_2-1_3_1": {
-      "id": "eastersdelight-fabric-26_2-1_3_1",
-      "name": "eastersdelight-fabric-26.2-1.3.1",
-      "side": "both",
-      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
-      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
-      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
-      }
-    },
     "lampas2": {
       "id": "lampas2",
       "name": "Lampas Official Resources",
@@ -5830,23 +5830,6 @@
         "file": "custom/Placebo-26.2-11.0.0.jar"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
-      "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
-      }
-    },
     "crazy_chambers-1_0_0_26_2": {
       "id": "crazy_chambers-1_0_0_26_2",
       "name": "crazy_chambers-1.0.0+26.2",
@@ -5862,6 +5845,23 @@
       "provider": {
         "type": "lampas",
         "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+      }
+    },
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
+      "side": "both",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
       }
     },
     "camerapture-2_0_0_mc26_2": {
@@ -5961,6 +5961,35 @@
       "provider": {
         "type": "lampas",
         "file": "custom/Apotheosis-26.2-10.0.0.jar"
+      }
+    },
+    "forcecloseworldloadingscreen": {
+      "id": "forcecloseworldloadingscreen",
+      "name": "kennytvs-epic-force-close-loading-screen-mod-for-fabric",
+      "side": "client",
+      "filename": "forcecloseloadingscreen-2.3.6.jar",
+      "size": 120931,
+      "sha256": "da083b0d3a411e3feb11b54d8fdc910492d8ac599b9501dc2c73b8b1d5960272",
+      "sha512": "0c5c333d05a518819896efb10b685184f110bbe90bacaebe465a8b85676f96fd8e54147d727f1220432c795090cac72741aae2bbee094235d84f79904d3c1e18",
+      "sha1": "19629eb45c00005a8f71c831df4e5d59b4dda54d",
+      "downloadUrl": "https://cdn.modrinth.com/data/blWBX5n1/versions/KpFKKs8P/forcecloseloadingscreen-2.3.6.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "blWBX5n1",
+        "versionId": "KpFKKs8P"
+      },
+      "metadata": {
+        "description": "Instantly closes the loading terrain screen on world changing and drastically reduces the resource pack loading screen duration",
+        "iconUrl": "https://cdn.modrinth.com/data/blWBX5n1/d492b6615d766b09e2e5a274f224e1649dbeea21_96.webp",
+        "categories": [
+          "cursed",
+          "optimization"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/forcecloseworldloadingscreen",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     }
   }

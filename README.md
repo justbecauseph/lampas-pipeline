@@ -172,12 +172,10 @@ lampas-pipeline/
 │   ├── common/                   # Shared configs, scripts, and assets (synced to both client & server)
 │   ├── client/                   # Client-only mods and configs
 │   ├── server/                   # Server-only mods and configs
-│   └── custom/                   # Packaged custom override JARs & assets (e.g. lampas2-overrides)
-│
-├── launcher/                     # Standalone Electron Desktop Launcher
-│   ├── src/                      # TypeScript main, preload, JVM executor, & sync engine
-│   ├── ui/                       # Modern dark-mode UI with live console & RAM allocation slider
-│   └── package.json              # Electron-builder configuration (NSIS .exe, AppImage)
+├── manifest/                     # Generated release artifacts
+│   ├── client-manifest.json      # Client distribution manifest
+│   ├── server-manifest.json      # Dedicated server distribution manifest
+│   └── release.json              # Canonical release descriptor
 │
 ├── tools/lampasctl/              # High-performance pipeline CLI (Bun + TypeScript)
 │   └── src/
@@ -186,13 +184,14 @@ lampas-pipeline/
 │       ├── diff.ts               # Release & manifest visual diff tool
 │       ├── manifest.ts           # Manifest builder for client/server distribution
 │       ├── publisher.ts          # Release publication and multi-channel metadata publishing
+│       ├── release-resolver.ts   # Remote Portal channel and release resolver
 │       ├── resolver.ts           # Upstream API dependency resolver
 │       ├── validator.ts          # Fabric metadata & JiJ integrity validator
-│       └── sync.ts               # Headless installation and sync engine
+│       ├── sync.ts               # Headless installation and server deployment engine
+│       └── backup.ts             # World backup utility
 │
-├── manifest/                     # Generated release artifacts
-│   ├── client-manifest.json      # Client distribution manifest
-│   ├── server-manifest.json      # Dedicated server distribution manifest
+└── tools/scripts/                # Server operations & automation scripts
+    └── start.py                  # Dedicated server launcher & auto-deployer
 │   └── release.json              # Generated release descriptor
 │
 └── .github/workflows/
@@ -428,39 +427,20 @@ When `auto_connect = true` and a valid server address is specified:
 
 ---
 
-## 🎮 Desktop Launcher
+## 🎮 Desktop Launcher (`lampas-launcher`)
 
-The desktop launcher is built with **Electron + TypeScript** and packaged with **`electron-builder`**.
+The official desktop client launcher is maintained in its dedicated repository:
+👉 **[justbecauseph/lampas-launcher](https://github.com/justbecauseph/lampas-launcher)**
 
 ### Features:
-- **Zero Third-Party Dependencies**: Completely standalone. No PrismLauncher, MultiMC, or vanilla launcher required.
+- **Zero Third-Party Dependencies**: Completely standalone Electron + TypeScript desktop app. No PrismLauncher, MultiMC, or vanilla launcher required.
 - **Embedded OpenJDK 25 Discovery**: Auto-detects local Java 25 or seamlessly provisions Mojang's official `java-runtime-epsilon` on first boot.
 - **One-Click Portal Login**: Single unified login button using OAuth2 PKCE via the default web browser.
+- **Direct JVM Spawner**: Direct `KnotClient` boot with automatic argument parsing, asset hashing, and memory allocation.
 - **Built-in Console**: Real-time log streaming with search and error highlighting.
 - **Channel Switching**: Instant switching between `Stable`, `Beta`, and `Dev` channels based on player roles.
 - **Stable Blob URL Resolution**: Queries `/api/v1/blobs/<sha256>` and transparently follows `302` redirects to presigned object storage URLs.
 - **Verified Content Reconciliation**: Performs chunked streaming, file size verification, SHA-256 hash checks, content-addressed caching, and atomic file replacement on disk.
-
-### Running Locally:
-```bash
-cd launcher
-bun install
-bun run start
-```
-
-### Packaging Binaries:
-```bash
-cd launcher
-
-# Package unpacked directory for testing
-bun run package:dir
-
-# Build Windows 1-Click NSIS Installer (.exe) & Portable Executable
-bun run package:win
-
-# Build Linux AppImage / tar.gz
-bun run package:linux
-```
 
 ---
 
