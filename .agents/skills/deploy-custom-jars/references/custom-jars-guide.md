@@ -60,7 +60,7 @@ When `lampasctl resolve` runs, the resolver:
 
 ## 3. Dual Manifest Generation
 
-Because releases can be published to both local development portal instances (`http://localhost:3000`) and the cloud development environment (`https://dev.portal.town`), manifests must be generated with appropriate base URLs:
+Because releases can be published to both local development portal instances (`http://localhost:3000`) and the cloud development environment (`https://dev.lampas.town`), manifests must be generated with appropriate base URLs:
 
 ### Localhost 3000:
 - Portal URL: `http://localhost:3000`
@@ -71,12 +71,12 @@ Because releases can be published to both local development portal instances (`h
   - Server Resource Pack: `http://localhost:3000/api/v1/blobs/<sha256>`
 
 ### Dev Portal:
-- Portal URL: `https://dev.portal.town`
+- Portal URL: `https://dev.lampas.town`
 - Manifest Output: `manifest/dev/`
 - Pointers generated:
-  - `clientManifest`: `https://dev.portal.town/api/v1/releases/<ver>/client-manifest`
-  - `serverManifest`: `https://dev.portal.town/api/v1/releases/<ver>/server-manifest`
-  - Server Resource Pack: `https://dev.portal.town/api/v1/blobs/<sha256>`
+  - `clientManifest`: `https://dev.lampas.town/api/v1/releases/<ver>/client-manifest`
+  - `serverManifest`: `https://dev.lampas.town/api/v1/releases/<ver>/server-manifest`
+  - Server Resource Pack: `https://dev.lampas.town/api/v1/blobs/<sha256>`
 
 ---
 

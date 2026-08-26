@@ -1,12 +1,12 @@
 ---
 name: deploy-custom-jars
 description: >-
-  Deploy custom JAR mods and override libraries to the Lampas modpack pipeline and generate release manifests for both localhost:3000 and https://dev.portal.town. Use this skill when adding, updating, or packaging local or in-house custom JAR files, resolving lockfiles, generating dual-target manifests (localhost and dev.portal.town), and publishing to portal environments.
+  Deploy custom JAR mods and override libraries to the Lampas modpack pipeline and generate release manifests for both localhost:3000 and https://dev.lampas.town. Use this skill when adding, updating, or packaging local or in-house custom JAR files, resolving lockfiles, generating dual-target manifests (localhost and dev.lampas.town), and publishing to portal environments.
 ---
 
 # Deploy Custom JARs Skill
 
-This skill guides the process of adding, updating, and deploying custom or in-house `.jar` mods to the Lampas Modpack Pipeline, and generating distribution manifests for both **`localhost:3000`** and **`https://dev.portal.town`**.
+This skill guides the process of adding, updating, and deploying custom or in-house `.jar` mods to the Lampas Modpack Pipeline, and generating distribution manifests for both **`localhost:3000`** and **`https://dev.lampas.town`**.
 
 ---
 
@@ -18,7 +18,7 @@ To deploy a custom JAR and generate manifests for both environments in one step:
 bun run .agents/skills/deploy-custom-jars/scripts/deploy-custom-jar.ts <path-to-jar> --side <client|server|both>
 ```
 
-Or to regenerate manifests for both `localhost:3000` and `https://dev.portal.town` without adding a new JAR:
+Or to regenerate manifests for both `localhost:3000` and `https://dev.lampas.town` without adding a new JAR:
 
 ```bash
 bun run .agents/skills/deploy-custom-jars/scripts/generate-manifests.ts
@@ -79,17 +79,17 @@ bun run lampasctl validate
 
 ### Step 5: Dual Manifest Generation
 
-Generate release manifests for **both** the local portal instance (`http://localhost:3000`) and the dev cloud portal (`https://dev.portal.town`):
+Generate release manifests for **both** the local portal instance (`http://localhost:3000`) and the dev cloud portal (`https://dev.lampas.town`):
 
 ```bash
 # 1. Generate for localhost:3000
 bun run lampasctl manifest --portal http://localhost:3000 --out ./manifest/localhost
 
-# 2. Generate for https://dev.portal.town
-bun run lampasctl manifest --portal https://dev.portal.town --out ./manifest/dev
+# 2. Generate for https://dev.lampas.town
+bun run lampasctl manifest --portal https://dev.lampas.town --out ./manifest/dev
 
 # 3. Update root manifest/ directory (targeting dev portal)
-bun run lampasctl manifest --portal https://dev.portal.town --out ./manifest
+bun run lampasctl manifest --portal https://dev.lampas.town --out ./manifest
 ```
 
 ### Step 6: Verify and Test Local Sync
@@ -113,7 +113,7 @@ Publish the release and upload custom JAR blobs to the target portal:
 bun run lampasctl publish --portal http://localhost:3000 --channel dev --secret "$LOCAL_PORTAL_SECRET"
 
 # Publish to Dev Portal
-bun run lampasctl publish --portal https://dev.portal.town --channel dev --secret "$DEV_PORTAL_SECRET"
+bun run lampasctl publish --portal https://dev.lampas.town --channel dev --secret "$DEV_PORTAL_SECRET"
 ```
 
 ---

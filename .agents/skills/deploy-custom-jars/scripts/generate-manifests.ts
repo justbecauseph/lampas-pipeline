@@ -16,7 +16,7 @@ const TARGET_ENVIRONMENTS: TargetEnv[] = [
   },
   {
     name: "Dev Portal Cloud",
-    portalUrl: "https://dev.portal.town",
+    portalUrl: "https://dev.lampas.town",
     outDir: path.resolve(process.cwd(), "manifest/dev"),
   },
 ];
@@ -57,16 +57,16 @@ async function main() {
   }
 
   // Also update root manifest/ with default dev portal URL for repo consistency
-  console.log(`\n📦 Updating root manifest directory (default dev portal: https://dev.portal.town)...`);
+  console.log(`\n📦 Updating root manifest directory (default dev portal: https://dev.lampas.town)...`);
   await buildManifests({
     packDir,
     lockFile,
     outDir: defaultManifestDir,
-    portalBaseUrl: "https://dev.portal.town",
+    portalBaseUrl: "https://dev.lampas.town",
   });
   console.log(`  ✓ Written to: ${defaultManifestDir}`);
 
-  console.log("\n✨ Dual manifest generation complete for localhost:3000 and https://dev.portal.town!");
+  console.log("\n✨ Dual manifest generation complete for localhost:3000 and https://dev.lampas.town!");
 }
 
 main().catch((err) => {

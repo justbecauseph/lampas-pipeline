@@ -75,7 +75,7 @@ async function main() {
   }
 
   // Step 3: Dual Manifest Generation
-  console.log("\n📑 [3/4] Generating manifests for localhost:3000 and https://dev.portal.town...");
+  console.log("\n📑 [3/4] Generating manifests for localhost:3000 and https://dev.lampas.town...");
   const rootDir = path.dirname(packDir);
   
   // Localhost
@@ -94,7 +94,7 @@ async function main() {
     packDir,
     lockFile,
     outDir: devOut,
-    portalBaseUrl: "https://dev.portal.town",
+    portalBaseUrl: "https://dev.lampas.town",
   });
   console.log(`  ✓ Dev portal manifests -> ${devOut}`);
 
@@ -104,7 +104,7 @@ async function main() {
     packDir,
     lockFile,
     outDir: rootOut,
-    portalBaseUrl: "https://dev.portal.town",
+    portalBaseUrl: "https://dev.lampas.town",
   });
   console.log(`  ✓ Default root manifests -> ${rootOut}`);
 
