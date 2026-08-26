@@ -4,7 +4,7 @@ import { importExistingMods } from "./importer";
 import { resolvePack } from "./resolver";
 import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
-import { syncInstance } from "./sync";
+import { deployServer, syncInstance } from "./sync";
 import { publishRelease } from "./publisher";
 import { checkPackUpdates } from "./checker";
 import { diffManifests } from "./diff";
@@ -65,6 +65,14 @@ Commands:
     -p, --pack <path>   Pack directory (default: ./pack)
     -m, --manifest <p>  Manifest directory (default: ./manifest)
 
+  deploy                Deploy a release from Portal to a dedicated Minecraft server
+    -t, --target <path> Target Minecraft server directory (default: current directory)
+    --portal <url>      Lampas Portal URL (default: https://dev.lampas.town)
+    -c, --channel <nam> Release channel pointer (e.g. dev | beta | stable)
+    -v, --version <ver> Specific release version to deploy (overrides channel)
+    --verify <mode>     Verification mode: fast | full (default: fast)
+    --no-backup         Skip automatic world backup before applying mutations
+
   install               Synchronize a Minecraft instance directory to a manifest
     -m, --manifest <p>  Path to client-manifest.json or server-manifest.json
     -t, --target <path> Target Minecraft instance directory
@@ -115,6 +123,7 @@ function parseArgs(args: string[]): { command: string; positional: string[]; fla
     m: "manifest",
     o: "out",
     t: "target",
+    c: "channel",
     h: "help",
   };
 
@@ -265,6 +274,28 @@ async function main() {
           portalUrl,
           publishSecret,
           channel,
+        });
+        break;
+      }
+
+      case "deploy": {
+        const targetDir = path.resolve(flags.target || positional[0] || rootDir);
+        const portalUrl = flags.portal || process.env.PORTAL_URL || "https://dev.lampas.town";
+        const channel = flags.channel;
+        const version = flags.version;
+        const verificationMode = (flags.verify as "fast" | "full") || "fast";
+        if (verificationMode !== "fast" && verificationMode !== "full") {
+          throw new Error("--verify must be either 'fast' or 'full'");
+        }
+        const backupWorld = flags["no-backup"] !== "true" && flags.backup !== "false";
+
+        await deployServer({
+          targetDir,
+          portalUrl,
+          channel,
+          version,
+          verificationMode,
+          backupWorld,
         });
         break;
       }

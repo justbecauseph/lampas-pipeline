@@ -43,7 +43,7 @@ graph TD
     end
 
     subgraph ServerLayer ["7. Dedicated Server Ecosystem"]
-        ServerScript["deploy_pack.py / Headless Sync<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
+        ServerScript["lampasctl deploy / Server Sync<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
         ServerMC["lampas-server-fabric<br/>• Fabric Dedicated Server<br/>• OpenJDK 25 JVM"]
     end
 
@@ -106,7 +106,7 @@ flowchart LR
     end
 
     subgraph Consumption ["4. Verified Runtimes"]
-        Portal -->|"Channel Pointer & Manifest"| Client["Launcher / deploy_pack.py"]
+        Portal -->|"Channel Pointer & Manifest"| Client["Launcher / lampasctl deploy"]
         CDNs -->|"Parallel Stream"| Client
         Bucket -->|"Presigned GET Stream"| Client
         Client -->|"Hash & Size Validated"| Instance["Minecraft Instance"]
@@ -125,7 +125,7 @@ flowchart LR
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Runtime as Launcher / deploy_pack.py
+    participant Runtime as Launcher / lampasctl deploy
     participant Portal as Lampas Portal
     participant S3 as Railway Bucket
     participant Upstream as Modrinth / CurseForge
@@ -147,7 +147,7 @@ sequenceDiagram
     Note over Runtime: Write to content-addressed cache & link to instance
 ```
 
-1. **Manifest Retrieval**: The Launcher or `deploy_pack.py` queries `/api/v1/channels/<channel>` on the Portal to fetch the active release manifest.
+1. **Manifest Retrieval**: The Launcher or `lampasctl deploy` queries `/api/v1/channels/<channel>` on the Portal to fetch the active release manifest.
 2. **Parallel Downloads**:
    - Upstream mods stream directly from Modrinth or CurseForge.
    - Lampas-owned artifacts query the stable Portal blob URL (`/api/v1/blobs/<sha256>`), receive a `302` redirect to a short-lived presigned GET URL on Railway Bucket, and stream the raw bytes.
@@ -327,7 +327,7 @@ Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publi
 #### Blob Storage Security Model:
 - **Railway Bucket Credentials**: Held exclusively by the Portal backend.
 - **`lampasctl`**: Requires `PACK_PUBLISH_SECRET`; receives short-lived presigned PUT URLs for missing hashes from `/api/v1/blobs/prepare`.
-- **Launcher / `deploy_pack.py`**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
+- **Launcher / Server Deployments**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
 
 ### 6. Headless Client / Server Sync
 ```bash
@@ -358,7 +358,7 @@ Server-Enforced Resource Pack
     ↓
 Published as immutable CAS blob (SHA-256 + SHA-1)
     ↓
-deploy-pack.py / lampasctl configures server.properties
+lampasctl deploy configures server.properties
     ↓
 Minecraft native server-resource-pack protocol downloads on join
 ```
@@ -394,7 +394,7 @@ required = true
 prompt = '{"text":"The Lampas 2 resource pack"}'
 ```
 - **CAS Blob Address**: Published to the Portal under immutable URL `/api/v1/blobs/<sha256>`.
-- **`server.properties` Reconciliation**: During server deployment (`deploy_pack.py` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
+- **`server.properties` Reconciliation**: During server deployment (`lampasctl deploy` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
   - `resource-pack=<url>`
   - `resource-pack-sha1=<sha1>` (40-char SHA-1 required by vanilla Minecraft server)
   - `resource-pack-id=<uuid>` (stable deterministic UUID)
@@ -451,11 +451,11 @@ bun run package:linux
 
 ---
 
-## 🖥️ Dedicated Server Deployment (`deploy_pack.py`)
+## 🖥️ Dedicated Server Deployment (`lampasctl deploy`)
 
-Dedicated servers synchronize using the self-contained, dependency-free Python deployment engine (or headless `lampasctl install`).
+Dedicated servers synchronize using the compiled, standalone `lampasctl deploy` command (or low-level `lampasctl install`).
 
-`deploy_pack.py` operates on a uniform download abstraction:
+`lampasctl deploy` operates on a uniform download abstraction:
 
 ```mermaid
 flowchart LR
@@ -465,18 +465,18 @@ flowchart LR
 It consumes manifest URLs directly, without needing to know whether bytes originate from Modrinth, CurseForge, or Lampas content-addressed blob storage.
 
 ```bash
-# Full deployment with automatic timestamped world backup
-python deploy_pack.py
+# Full deployment with automatic timestamped world backup from Portal channel
+lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev
 
 # Skip backup (for automated CI/CD runs)
-python deploy_pack.py --skip-backup
+lampasctl deploy --target /srv/minecraft --no-backup
 
-# Deploy directly from a remote Lampas Portal instance
-python deploy_pack.py --portal-url https://portal.lampas.town --channel stable
+# Deploy specific release version
+lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --version 2.0.0
 ```
 
 ### Safeguards:
-- **Chunked Streaming**: Downloads are streamed in 64 KB chunks directly to temporary files.
+- **Chunked Streaming**: Downloads are streamed directly to temporary files.
 - **Dual Validation**: Validates both total byte count and SHA-256 hash before replacing files.
 - **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
 - **Automatic Recovery**: Corrupted or truncated files (e.g. incomplete network aborts) are detected on disk and automatically re-downloaded.

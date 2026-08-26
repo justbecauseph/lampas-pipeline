@@ -111,7 +111,7 @@ bun run lampasctl publish --channel dev
 
 #### 3. Automatic Obsolete File Cleanup During Sync
 The sync engines on both the desktop launcher and dedicated server automatically prune obsolete files:
-- **Changed to `client`**: On the dedicated server, the next `deploy_pack.py` detects the mod is missing from `server-manifest.json` and **automatically deletes the old `.jar`** from `mods/`, preventing server crashes.
+- **Changed to `client`**: On the dedicated server, the next `lampasctl deploy` detects the mod is missing from `server-manifest.json` and **automatically deletes the old `.jar`** from `mods/`, preventing server crashes.
 - **Changed to `server`**: On the client launcher, the next sync detects the mod is missing from `client-manifest.json` and **automatically deletes the `.jar`** from `.minecraft/mods/`.
 - **Changed to `both`**: The missing side will download and install the `.jar` on its next sync.
 
@@ -259,17 +259,17 @@ bun run lampasctl publish \
 
 ### Workflow J: Live Server Deployment with World Backup
 
-Run the self-contained deployment engine on the dedicated server host:
+Run the compiled, standalone deployment engine on the dedicated server host:
 
 ```bash
-# 1. Full deployment with automatic timestamped world backup to world_backups/
-python deploy_pack.py
+# 1. Full deployment with automatic timestamped world backup to .backups/
+lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev
 
 # 2. Skip backup (for automated CI/CD deployments)
-python deploy_pack.py --skip-backup
+lampasctl deploy --target /srv/minecraft --no-backup
 
-# 3. Synchronize directly from a remote Lampas Portal instance and release channel
-python deploy_pack.py --portal-url https://portal.lampas.town --channel stable
+# 3. Synchronize specific release version
+lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --version 2.0.0
 ```
 
 ---

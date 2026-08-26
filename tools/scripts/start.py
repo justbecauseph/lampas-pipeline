@@ -57,30 +57,84 @@ def find_fabric_server_jar():
     if os.path.exists(server_jar):
         return server_jar
 
+def find_lampasctl():
+    """Locates the lampasctl executable (PATH, local directory, or bun source)."""
+    which_ctl = shutil.which("lampasctl")
+    if which_ctl:
+        return which_ctl
+
+    local_exe = os.path.join(SERVER_DIR, "lampasctl.exe" if sys.platform == "win32" else "lampasctl")
+    if os.path.exists(local_exe) and (sys.platform == "win32" or os.access(local_exe, os.X_OK)):
+        return local_exe
+
+    # Check if bun can run source CLI in development
+    bun_bin = shutil.which("bun")
+    source_cli = os.path.join(SERVER_DIR, "..", "lampasctl", "src", "cli.ts")
+    if not os.path.exists(source_cli):
+        source_cli = os.path.join(SERVER_DIR, "tools", "lampasctl", "src", "cli.ts")
+    if bun_bin and os.path.exists(source_cli):
+        return [bun_bin, "run", source_cli]
+
     return None
 
 
 def main():
     parser = argparse.ArgumentParser(description="Lampas Minecraft Server Starter")
     parser.add_argument("--no-sync", action="store_true", help="Skip automatic pack synchronization before launch")
+    parser.add_argument("--allow-stale", action="store_true", help="Allow server launch even if pack synchronization fails")
     parser.add_argument("--memory", default=os.getenv("JAVA_MEMORY", "2560M"), help="JVM heap memory (default: 2560M)")
     parser.add_argument("--portal-url", default=os.getenv("PORTAL_URL", "https://dev.lampas.town"), help="Lampas Portal URL for sync")
     parser.add_argument("--channel", default=os.getenv("RELEASE_CHANNEL", "dev"), help="Release channel (stable/beta/dev)")
+    parser.add_argument("--version", default=None, help="Specific pack release version to deploy (overrides --channel)")
+    parser.add_argument("--no-backup", action="store_true", help="Skip world backup during deployment")
+    parser.add_argument("--verify", choices=["fast", "full"], default="fast", help="Verification mode (default: fast)")
 
     args, extra_java_args = parser.parse_known_args()
 
-    # 1. Synchronize Pack if deploy_pack.py exists
+    # 1. Synchronize Pack via lampasctl deploy
     if not args.no_sync:
-        deploy_script = os.path.join(SERVER_DIR, "deploy_pack.py")
-        if os.path.exists(deploy_script):
-            sync_cmd = [sys.executable, deploy_script, "--channel", args.channel]
-            if args.portal_url:
-                sync_cmd.extend(["--portal-url", args.portal_url])
+        lampasctl = find_lampasctl()
+        if lampasctl:
+            sync_cmd = lampasctl if isinstance(lampasctl, list) else [lampasctl]
+            sync_cmd.extend([
+                "deploy",
+                "--target", SERVER_DIR,
+                "--portal", args.portal_url,
+            ])
+            if args.version:
+                sync_cmd.extend(["--version", args.version])
+            else:
+                sync_cmd.extend(["--channel", args.channel])
+            if args.no_backup:
+                sync_cmd.append("--no-backup")
+            if args.verify:
+                sync_cmd.extend(["--verify", args.verify])
 
-            print("[Starter] Checking for server pack updates...")
+            print(f"[Starter] Checking for server pack updates via lampasctl deploy...")
             ret = subprocess.call(sync_cmd)
             if ret != 0:
-                print(f"[Starter] Warning: Pack synchronization exited with code {ret}")
+                print(f"[Starter Error] Pack deployment failed with exit code {ret}.", file=sys.stderr)
+                if not args.allow_stale:
+                    print("[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)", file=sys.stderr)
+                    sys.exit(ret)
+                else:
+                    print("[Starter Warning] Continuing server launch despite deployment failure (--allow-stale enabled).")
+        else:
+            # Fallback check for deprecated deploy_pack.py
+            deploy_script = os.path.join(SERVER_DIR, "deploy_pack.py")
+            if os.path.exists(deploy_script):
+                print("[Starter Warning] 'lampasctl' not found. Falling back to deprecated deploy_pack.py...", file=sys.stderr)
+                sync_cmd = [sys.executable, deploy_script, "--channel", args.channel]
+                if args.portal_url:
+                    sync_cmd.extend(["--portal-url", args.portal_url])
+                ret = subprocess.call(sync_cmd)
+                if ret != 0 and not args.allow_stale:
+                    print(f"[Starter Error] Pack deployment failed with exit code {ret}.", file=sys.stderr)
+                    sys.exit(ret)
+            else:
+                print("[Starter Error] 'lampasctl' executable not found. Install lampasctl or launch with --no-sync.", file=sys.stderr)
+                if not args.allow_stale:
+                    sys.exit(1)
 
     # 2. Locate Java and Fabric Server JAR
     java_bin = find_java_binary()

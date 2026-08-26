@@ -11,14 +11,27 @@ import {
   readJsonFile,
   writeJsonFile,
 } from "./utils";
+import { backupDirectory } from "./backup";
+import { resolveRelease } from "./release-resolver";
 import type { InstallationState, ManifestFile, PackManifest } from "./types";
 
 export interface SyncOptions {
-  manifestPath: string;
+  manifestPath?: string;
+  manifest?: PackManifest;
   targetDir: string;
   portalBaseUrl?: string;
   concurrency?: number;
   verificationMode?: "fast" | "full";
+  backupWorld?: boolean;
+}
+
+export interface DeployOptions {
+  targetDir: string;
+  portalUrl?: string;
+  channel?: string;
+  version?: string;
+  verificationMode?: "fast" | "full";
+  backupWorld?: boolean;
 }
 
 const PROTECTED_PREFIXES = [
@@ -35,7 +48,10 @@ function isPathProtected(relPath: string): boolean {
 }
 
 export async function syncInstance(options: SyncOptions): Promise<void> {
-  const manifest = readJsonFile<PackManifest>(options.manifestPath);
+  const manifest = options.manifest || readJsonFile<PackManifest>(options.manifestPath!);
+  if (!manifest) {
+    throw new Error("syncInstance requires either 'manifest' or 'manifestPath'.");
+  }
   const targetDir = path.resolve(options.targetDir);
   ensureDir(targetDir);
 
@@ -142,6 +158,18 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   const toDelete = Array.from(toDeleteSet);
 
   console.log(`[Sync] Plan: ${toDownload.length} to download, ${toKeep.length} already up-to-date, ${toDelete.length} obsolete to remove.`);
+
+  // Perform world backup if requested and mutations are planned
+  if (options.backupWorld) {
+    const hasMutations = toDownload.length > 0 || toDelete.length > 0 || manifest.version !== prevState.version;
+    if (hasMutations) {
+      await backupDirectory({
+        source: path.join(targetDir, "world"),
+        destinationRoot: path.join(targetDir, ".backups"),
+        label: "world",
+      });
+    }
+  }
 
   // Download needed files
   const concurrency = options.concurrency || 6;
@@ -469,3 +497,28 @@ export function resetServerResourcePackProperties(targetDir: string): void {
   fs.renameSync(tmpPath, propsPath);
   console.log(`  ⚙ [Server Config] Reset Lampas resource-pack settings in server.properties`);
 }
+
+export async function deployServer(options: DeployOptions): Promise<void> {
+  const portalUrl = options.portalUrl || process.env.PORTAL_URL || "https://dev.lampas.town";
+  const { manifest } = await resolveRelease({
+    portalUrl,
+    channel: options.channel || (options.version ? undefined : "dev"),
+    version: options.version,
+    target: "server",
+  });
+
+  const targetDir = path.resolve(options.targetDir);
+  console.log(`[Deploy] Target Minecraft server directory: ${targetDir}`);
+  console.log(`[Deploy] Deploying ${manifest.pack} v${manifest.version}...`);
+
+  await syncInstance({
+    manifest,
+    targetDir,
+    portalBaseUrl: portalUrl,
+    verificationMode: options.verificationMode || "fast",
+    backupWorld: options.backupWorld !== false,
+  });
+
+  console.log(`\n[Deploy Complete] Successfully deployed ${manifest.pack} v${manifest.version} to ${targetDir}`);
+}
+
