@@ -8,14 +8,15 @@ export interface BackupOptions {
 }
 
 export function formatTimestamp(date = new Date()): string {
-  const pad = (n: number) => n.toString().padStart(2, "0");
+  const pad = (n: number, width = 2) => n.toString().padStart(width, "0");
   const year = date.getUTCFullYear();
   const month = pad(date.getUTCMonth() + 1);
   const day = pad(date.getUTCDate());
   const hours = pad(date.getUTCHours());
   const minutes = pad(date.getUTCMinutes());
   const seconds = pad(date.getUTCSeconds());
-  return `${year}-${month}-${day}_${hours}${minutes}${seconds}`;
+  const ms = pad(date.getUTCMilliseconds(), 3);
+  return `${year}-${month}-${day}_${hours}${minutes}${seconds}_${ms}`;
 }
 
 export async function backupDirectory(options: BackupOptions): Promise<string | undefined> {
@@ -35,11 +36,18 @@ export async function backupDirectory(options: BackupOptions): Promise<string | 
     return undefined;
   }
 
-  const timestamp = formatTimestamp();
-  const backupFolderName = `${label}_${timestamp}`;
-  const backupDest = path.join(destinationRoot, backupFolderName);
-
   fs.mkdirSync(destinationRoot, { recursive: true });
+
+  const timestamp = formatTimestamp();
+  let backupFolderName = `${label}_${timestamp}`;
+  let backupDest = path.join(destinationRoot, backupFolderName);
+  let counter = 1;
+
+  while (fs.existsSync(backupDest)) {
+    backupFolderName = `${label}_${timestamp}_${counter++}`;
+    backupDest = path.join(destinationRoot, backupFolderName);
+  }
+
   fs.cpSync(source, backupDest, { recursive: true });
 
   console.log(`[Backup] Created backup of '${path.basename(source)}' at: ${backupDest}`);

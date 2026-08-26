@@ -5,9 +5,9 @@ import * as path from "node:path";
 import { backupDirectory, formatTimestamp } from "../src/backup";
 
 describe("world backup utility", () => {
-  test("formatTimestamp outputs a valid timestamp format", () => {
-    const ts = formatTimestamp(new Date("2026-08-26T17:30:12Z"));
-    expect(ts).toBe("2026-08-26_173012");
+  test("formatTimestamp outputs a valid timestamp format with milliseconds", () => {
+    const ts = formatTimestamp(new Date("2026-08-26T17:30:12.456Z"));
+    expect(ts).toBe("2026-08-26_173012_456");
   });
 
   test("skips backup when source directory does not exist", async () => {

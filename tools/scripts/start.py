@@ -58,16 +58,18 @@ def find_fabric_server_jar():
         return server_jar
 
 def find_lampasctl():
-    """Locates the lampasctl executable (PATH, local directory, or bun source)."""
-    which_ctl = shutil.which("lampasctl")
-    if which_ctl:
-        return which_ctl
-
+    """Locates the lampasctl executable (co-located binary, PATH, or development Bun source)."""
+    # 1. Prefer co-located pinned binary in server directory
     local_exe = os.path.join(SERVER_DIR, "lampasctl.exe" if sys.platform == "win32" else "lampasctl")
     if os.path.exists(local_exe) and (sys.platform == "win32" or os.access(local_exe, os.X_OK)):
         return local_exe
 
-    # Check if bun can run source CLI in development
+    # 2. System PATH
+    which_ctl = shutil.which("lampasctl")
+    if which_ctl:
+        return which_ctl
+
+    # 3. Development Bun source fallback
     bun_bin = shutil.which("bun")
     source_cli = os.path.join(SERVER_DIR, "..", "lampasctl", "src", "cli.ts")
     if not os.path.exists(source_cli):

@@ -34,17 +34,142 @@ export interface DeployOptions {
   backupWorld?: boolean;
 }
 
-const PROTECTED_PREFIXES = [
+export const CLIENT_PROTECTED = [
   "saves/",
   "screenshots/",
   "logs/",
   "crash-reports/",
   "options.txt",
+  "servers.dat",
+  ".lampas/",
 ];
 
-function isPathProtected(relPath: string): boolean {
+export const SERVER_PROTECTED = [
+  "world/",
+  "saves/",
+  "logs/",
+  "crash-reports/",
+  "server.properties",
+  "usercache.json",
+  "whitelist.json",
+  "ops.json",
+  "banned-players.json",
+  "banned-ips.json",
+  "eula.txt",
+  "start.py",
+  "start.sh",
+  ".lampas/",
+  ".backups/",
+];
+
+export function isPathProtected(target: "client" | "server", relPath: string): boolean {
   const norm = relPath.replace(/\\/g, "/").replace(/^\/+/, "");
-  return PROTECTED_PREFIXES.some((prefix) => norm === prefix || norm.startsWith(prefix));
+  const prefixes = target === "server" ? SERVER_PROTECTED : CLIENT_PROTECTED;
+  return prefixes.some((prefix) => norm === prefix || norm.startsWith(prefix));
+}
+
+export function validateManifestForSync(
+  manifest: any,
+  options?: {
+    expectedTarget?: "client" | "server";
+    expectedVersion?: string;
+  }
+): void {
+  if (!manifest || typeof manifest !== "object") {
+    throw new Error("Invalid manifest: expected a JSON object");
+  }
+  if (manifest.schemaVersion !== 1) {
+    throw new Error(`Invalid manifest: unsupported schemaVersion ${manifest.schemaVersion} (expected 1)`);
+  }
+  if (!manifest.pack || typeof manifest.pack !== "string" || manifest.pack.trim() === "") {
+    throw new Error("Invalid manifest: 'pack' must be a non-empty string");
+  }
+  if (!manifest.version || typeof manifest.version !== "string" || manifest.version.trim() === "") {
+    throw new Error("Invalid manifest: 'version' must be a non-empty string");
+  }
+  if (options?.expectedVersion && manifest.version !== options.expectedVersion) {
+    throw new Error(`Manifest version mismatch: expected '${options.expectedVersion}', got '${manifest.version}'`);
+  }
+  if (manifest.target !== "client" && manifest.target !== "server") {
+    throw new Error(`Invalid manifest target '${manifest.target}': must be 'client' or 'server'`);
+  }
+  if (options?.expectedTarget && manifest.target !== options.expectedTarget) {
+    throw new Error(`Manifest target mismatch: expected '${options.expectedTarget}', got '${manifest.target}'`);
+  }
+  if (!manifest.minecraft || typeof manifest.minecraft !== "string") {
+    throw new Error("Invalid manifest: 'minecraft' version is required");
+  }
+  if (!manifest.loader || typeof manifest.loader !== "object" || manifest.loader.type !== "fabric" || !manifest.loader.version) {
+    throw new Error("Invalid manifest: 'loader' must be a valid Fabric configuration");
+  }
+  if (!Array.isArray(manifest.files)) {
+    throw new Error("Invalid manifest: 'files' must be an array");
+  }
+
+  const seenPaths = new Set<string>();
+  for (const file of manifest.files) {
+    if (!file || typeof file !== "object") {
+      throw new Error("Invalid manifest: file entry must be an object");
+    }
+    if (!file.path || typeof file.path !== "string") {
+      throw new Error("Invalid manifest: file entry missing 'path'");
+    }
+    if (!isSafeRelativePath(file.path)) {
+      throw new Error(`Unsafe relative path in manifest: '${file.path}'`);
+    }
+    if (seenPaths.has(file.path)) {
+      throw new Error(`Duplicate file path in manifest: '${file.path}'`);
+    }
+    seenPaths.add(file.path);
+
+    if (file.policy !== "MANAGED" && file.policy !== "PRESERVE") {
+      throw new Error(`Invalid file policy '${file.policy}' for '${file.path}' (must be MANAGED or PRESERVE)`);
+    }
+
+    if (isPathProtected(manifest.target, file.path) && file.policy === "MANAGED") {
+      throw new Error(`${manifest.target === "server" ? "Server" : "Client"} manifest attempts to manage protected path '${file.path}'`);
+    }
+
+    if (typeof file.size !== "number" || file.size < 0) {
+      throw new Error(`Invalid size for file '${file.path}': must be a non-negative number`);
+    }
+
+    const sha256 = file.hashes?.sha256;
+    if (!sha256 || !/^[0-9a-f]{64}$/i.test(sha256)) {
+      throw new Error(`Invalid or missing SHA-256 hash for file '${file.path}'`);
+    }
+
+    if (!file.download || typeof file.download.url !== "string" || file.download.url.trim() === "") {
+      throw new Error(`Missing or empty download URL for file '${file.path}'`);
+    }
+  }
+
+  if (manifest.resourcePack) {
+    const srp = manifest.resourcePack;
+    if (!srp.artifact || typeof srp.artifact !== "string") {
+      throw new Error("Invalid server resourcePack: missing 'artifact' identifier");
+    }
+    if (!srp.url || typeof srp.url !== "string") {
+      throw new Error("Invalid server resourcePack: missing 'url'");
+    }
+    if (!srp.sha256 || !/^[0-9a-f]{64}$/i.test(srp.sha256)) {
+      throw new Error("Invalid server resourcePack: invalid or missing SHA-256 hash");
+    }
+    if (srp.sha1 && !/^[0-9a-f]{40}$/i.test(srp.sha1)) {
+      throw new Error("Invalid server resourcePack: invalid SHA-1 hash (expected 40 hex characters)");
+    }
+    const packId = srp.id || srp.uuid;
+    if (packId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packId)) {
+      throw new Error(`Invalid server resourcePack ID '${packId}': expected valid UUID`);
+    }
+    if (srp.prompt) {
+      try {
+        JSON.parse(formatPromptJson(srp.prompt));
+      } catch {
+        throw new Error("Invalid server resourcePack prompt: must be valid JSON text component");
+      }
+    }
+  }
 }
 
 export async function syncInstance(options: SyncOptions): Promise<void> {
@@ -52,6 +177,8 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   if (!manifest) {
     throw new Error("syncInstance requires either 'manifest' or 'manifestPath'.");
   }
+  validateManifestForSync(manifest);
+
   const targetDir = path.resolve(options.targetDir);
   ensureDir(targetDir);
 
@@ -75,13 +202,6 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     }
   }
 
-  // Validate relative paths
-  for (const file of manifest.files) {
-    if (!isSafeRelativePath(file.path)) {
-      throw new Error(`Unsafe relative path in manifest: '${file.path}'`);
-    }
-  }
-
   console.log(`[Sync] Synchronizing ${manifest.pack} (${manifest.target}) v${manifest.version} to: ${targetDir}`);
 
   const desiredFilesMap = new Map<string, ManifestFile>();
@@ -96,7 +216,7 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   for (const file of manifest.files) {
     const localPath = path.join(targetDir, file.path);
 
-    if (file.policy === "PRESERVE" || isPathProtected(file.path)) {
+    if (file.policy === "PRESERVE" || isPathProtected(manifest.target, file.path)) {
       if (fs.existsSync(localPath)) {
         toKeep.push(file.path);
         continue;
@@ -132,7 +252,7 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   // Identify obsolete managed files from previous installation AND unmanifested mods on disk
   const toDeleteSet = new Set<string>();
   for (const [prevPath, info] of Object.entries(prevState.files)) {
-    if (info.policy === "MANAGED" && !desiredFilesMap.has(prevPath) && !isPathProtected(prevPath)) {
+    if (info.policy === "MANAGED" && !desiredFilesMap.has(prevPath) && !isPathProtected(manifest.target, prevPath)) {
       toDeleteSet.add(prevPath);
     }
   }
@@ -145,7 +265,7 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
       for (const file of diskFiles) {
         if (file.endsWith(".jar")) {
           const relModPath = `mods/${file}`;
-          if (!desiredFilesMap.has(relModPath) && !isPathProtected(relModPath)) {
+          if (!desiredFilesMap.has(relModPath) && !isPathProtected(manifest.target, relModPath)) {
             toDeleteSet.add(relModPath);
           }
         }
@@ -500,11 +620,16 @@ export function resetServerResourcePackProperties(targetDir: string): void {
 
 export async function deployServer(options: DeployOptions): Promise<void> {
   const portalUrl = options.portalUrl || process.env.PORTAL_URL || "https://dev.lampas.town";
-  const { manifest } = await resolveRelease({
+  const { version, manifest } = await resolveRelease({
     portalUrl,
     channel: options.channel || (options.version ? undefined : "dev"),
     version: options.version,
     target: "server",
+  });
+
+  validateManifestForSync(manifest, {
+    expectedTarget: "server",
+    expectedVersion: version,
   });
 
   const targetDir = path.resolve(options.targetDir);

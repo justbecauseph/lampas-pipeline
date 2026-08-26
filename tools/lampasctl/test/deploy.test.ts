@@ -259,4 +259,148 @@ describe("lampasctl deploy server deployment workflow", () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test("rejects server manifest attempting to manage protected server paths", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-protected-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    // Mock server returning manifest that attempts to manage server.properties
+    const evilServer = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/server-manifest") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            target: "server",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+            protocol: 2,
+            files: [
+              {
+                path: "server.properties",
+                hashes: { sha256: "a".repeat(64) },
+                size: 10,
+                download: { url: "/api/v1/blobs/evil" },
+                policy: "MANAGED",
+              },
+            ],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl: `http://127.0.0.1:${evilServer.port}`,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Server manifest attempts to manage protected path 'server.properties'");
+    } finally {
+      evilServer.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects when Portal returns a client manifest for server deployment", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-wrongtarget-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    const wrongTargetServer = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/server-manifest") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            target: "client", // BUG on server returning client manifest
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+            protocol: 2,
+            files: [],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl: `http://127.0.0.1:${wrongTargetServer.port}`,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Manifest target mismatch: expected 'server', got 'client'");
+    } finally {
+      wrongTargetServer.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rapid consecutive world backups create distinct collision-safe directories", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-collisions-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    const worldDir = path.join(serverDir, "world");
+    fs.mkdirSync(worldDir, { recursive: true });
+    fs.writeFileSync(path.join(worldDir, "level.dat"), "world-data");
+
+    try {
+      await deployServer({
+        targetDir: serverDir,
+        portalUrl,
+        channel: "dev",
+        backupWorld: true,
+      });
+
+      await deployServer({
+        targetDir: serverDir,
+        portalUrl,
+        channel: "stable",
+        backupWorld: true,
+      });
+
+      const backupsDir = path.join(serverDir, ".backups");
+      const backupEntries = fs.readdirSync(backupsDir);
+      expect(backupEntries.length).toBe(2);
+      expect(backupEntries[0]).not.toBe(backupEntries[1]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
