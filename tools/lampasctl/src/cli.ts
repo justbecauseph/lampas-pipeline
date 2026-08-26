@@ -11,14 +11,24 @@ import { diffManifests } from "./diff";
 import { addMod, removeMod } from "./manager";
 import { enrichPackLock } from "./enricher";
 
+declare const LAMPASCTL_VERSION: string | undefined;
+
+export function getLampasctlVersion(): string {
+  if (typeof LAMPASCTL_VERSION !== "undefined" && LAMPASCTL_VERSION) {
+    return LAMPASCTL_VERSION;
+  }
+  return process.env.LAMPASCTL_VERSION || "dev";
+}
+
 function printUsage() {
   console.log(`
-Lampas Modpack Distribution CLI (lampasctl)
+Lampas Modpack Distribution CLI (lampasctl v${getLampasctlVersion()})
 
 Usage:
   lampasctl <command> [options]
 
 Commands:
+  version               Show lampasctl version (aliases: -v, --version)
   add <slug|url|jar>    Add a mod to the pack and auto-update lockfile & manifests
                         Supports:
                           lampasctl add appleskin
@@ -81,7 +91,19 @@ Commands:
 }
 
 function parseArgs(args: string[]): { command: string; positional: string[]; flags: Record<string, string> } {
-  const command = args[0] || "help";
+  if (args.length === 0) {
+    return { command: "help", positional: [], flags: {} };
+  }
+
+  const first = args[0];
+  if (first === "--version" || first === "-v" || first === "-V" || first === "version") {
+    return { command: "version", positional: [], flags: {} };
+  }
+  if (first === "--help" || first === "-h" || first === "help") {
+    return { command: "help", positional: [], flags: {} };
+  }
+
+  const command = first;
   const positional: string[] = [];
   const flags: Record<string, string> = {};
 
@@ -131,6 +153,11 @@ async function main() {
 
   try {
     switch (command) {
+      case "version": {
+        console.log(`lampasctl ${getLampasctlVersion()}`);
+        break;
+      }
+
       case "add": {
         const query = positional[0] || flags.query;
         if (!query) {

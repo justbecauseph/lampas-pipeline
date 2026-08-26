@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"
+      - "!lampasctl-v*"
       - "lampas-pack-v*"
   workflow_dispatch:
     inputs:
@@ -24,24 +25,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.0
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Validate pack definitions
         run: bun run lampasctl validate
 
       - name: Build published manifests
         run: bun run lampasctl manifest
-
-      - name: Compile standalone lampasctl binary
-        run: bun run build:cli
 
       - name: Publish to Lampas Portal
         if: vars.PORTAL_URL != ''
@@ -66,8 +64,6 @@ jobs:
             manifest/client-manifest.json
             manifest/server-manifest.json
             manifest/release.json
-            lampasctl
-            lampasctl.exe
             launcher/release/*.AppImage
             launcher/release/*.tar.gz
           generate_release_notes: true

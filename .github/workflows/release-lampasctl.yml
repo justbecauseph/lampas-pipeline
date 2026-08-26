@@ -1,0 +1,270 @@
+name: Release lampasctl CLI
+
+on:
+  push:
+    tags:
+      - "lampasctl-v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. lampasctl-v0.1.0)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate-tag:
+    name: Validate Tag & Semantic Version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.parse.outputs.tag }}
+      version: ${{ steps.parse.outputs.version }}
+      prerelease: ${{ steps.parse.outputs.prerelease }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Parse & Validate Tag
+        id: parse
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "Validating tag: $TAG"
+
+          # Validate lampasctl-v<semver> pattern
+          SEMVER_REGEX="^lampasctl-v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-([0-9A-Za-z.-]+))?(\+([0-9A-Za-z.-]+))?$"
+          if [[ ! "$TAG" =~ $SEMVER_REGEX ]]; then
+            echo "::error::Tag '$TAG' is not a valid lampasctl semantic version tag (e.g. lampasctl-v1.0.0, lampasctl-v0.1.0-rc.1)"
+            exit 1
+          fi
+
+          VERSION="${TAG#lampasctl-v}"
+          echo "Extracted version: $VERSION"
+
+          # Check if prerelease
+          if [[ "$VERSION" == *"-"* ]]; then
+            PRERELEASE="true"
+          else
+            PRERELEASE="false"
+          fi
+
+          # Verify the tagged commit belongs to main
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::warning::The release commit is not an ancestor of origin/main. Proceeding with caution."
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+  test-gate:
+    name: Test & Quality Gate
+    runs-on: ubuntu-latest
+    needs: validate-tag
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun (pinned)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Run Full Test Suite
+        run: bun test
+
+      - name: CLI Source Sanity Check
+        run: |
+          bun run lampasctl --help
+          bun run lampasctl version
+
+  build-matrix:
+    name: Build ${{ matrix.artifact }}
+    runs-on: ubuntu-latest
+    needs: [validate-tag, test-gate]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: bun-linux-x64-baseline
+            artifact: linux_x64
+          - target: bun-linux-arm64
+            artifact: linux_arm64
+          - target: bun-linux-x64-baseline-musl
+            artifact: linux_x64_musl
+          - target: bun-linux-arm64-musl
+            artifact: linux_arm64_musl
+          - target: bun-windows-x64-baseline
+            artifact: windows_x64
+          - target: bun-windows-arm64
+            artifact: windows_arm64
+          - target: bun-darwin-x64
+            artifact: darwin_x64
+          - target: bun-darwin-arm64
+            artifact: darwin_arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun (pinned)
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build & Package Binary
+        run: |
+          bun run tools/lampasctl/scripts/build-release.ts \
+            --target "${{ matrix.artifact }}" \
+            --version "${{ needs.validate-tag.outputs.version }}" \
+            --out dist \
+            --package
+
+      - name: Upload Artifact Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: lampasctl-${{ matrix.artifact }}
+          path: dist/lampasctl_${{ needs.validate-tag.outputs.version }}_${{ matrix.artifact }}.*
+          if-no-files-found: error
+
+  smoke-test-linux:
+    name: Smoke Test (Linux x64)
+    runs-on: ubuntu-latest
+    needs: [validate-tag, build-matrix]
+    steps:
+      - name: Download Linux x64 Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lampasctl-linux_x64
+          path: dist
+
+      - name: Extract & Smoke Test
+        run: |
+          cd dist
+          tar -xzf lampasctl_${{ needs.validate-tag.outputs.version }}_linux_x64.tar.gz
+          chmod +x lampasctl
+          OUTPUT=$(./lampasctl --version)
+          echo "Output: $OUTPUT"
+          if [[ "$OUTPUT" != "lampasctl ${{ needs.validate-tag.outputs.version }}" ]]; then
+            echo "Expected 'lampasctl ${{ needs.validate-tag.outputs.version }}', got '$OUTPUT'"
+            exit 1
+          fi
+          ./lampasctl help
+
+  smoke-test-windows:
+    name: Smoke Test (Windows x64)
+    runs-on: windows-latest
+    needs: [validate-tag, build-matrix]
+    steps:
+      - name: Download Windows x64 Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lampasctl-windows_x64
+          path: dist
+
+      - name: Extract & Smoke Test
+        shell: pwsh
+        run: |
+          cd dist
+          Expand-Archive -Path "lampasctl_${{ needs.validate-tag.outputs.version }}_windows_x64.zip" -DestinationPath .
+          $output = .\lampasctl.exe --version
+          Write-Host "Output: $output"
+          if ($output -ne "lampasctl ${{ needs.validate-tag.outputs.version }}") {
+            Write-Error "Expected 'lampasctl ${{ needs.validate-tag.outputs.version }}', got '$output'"
+            exit 1
+          }
+          .\lampasctl.exe help
+
+  smoke-test-macos:
+    name: Smoke Test (macOS ARM64)
+    runs-on: macos-latest
+    needs: [validate-tag, build-matrix]
+    steps:
+      - name: Download macOS ARM64 Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lampasctl-darwin_arm64
+          path: dist
+
+      - name: Extract & Smoke Test
+        run: |
+          cd dist
+          tar -xzf lampasctl_${{ needs.validate-tag.outputs.version }}_darwin_arm64.tar.gz
+          chmod +x lampasctl
+          OUTPUT=$(./lampasctl --version)
+          echo "Output: $OUTPUT"
+          if [[ "$OUTPUT" != "lampasctl ${{ needs.validate-tag.outputs.version }}" ]]; then
+            echo "Expected 'lampasctl ${{ needs.validate-tag.outputs.version }}', got '$OUTPUT'"
+            exit 1
+          fi
+          ./lampasctl help
+
+  publish-release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - validate-tag
+      - test-gate
+      - build-matrix
+      - smoke-test-linux
+      - smoke-test-windows
+      - smoke-test-macos
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download All Release Packages
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: lampasctl-*
+          merge-multiple: true
+
+      - name: Generate Checksums & Release Notes
+        id: prep
+        run: |
+          cd dist
+          sha256sum lampasctl_* > SHA256SUMS
+          cat SHA256SUMS
+
+          VERSION="${{ needs.validate-tag.outputs.version }}"
+          CHANGELOG_FILE="../tools/lampasctl/CHANGELOG.md"
+          BODY="Release **lampasctl v${VERSION}**"
+
+          if [ -f "$CHANGELOG_FILE" ]; then
+            # Extract notes for this version from CHANGELOG.md
+            NOTES=$(awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" "$CHANGELOG_FILE")
+            if [ -n "$NOTES" ]; then
+              BODY="$NOTES"
+            fi
+          fi
+
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$BODY" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.validate-tag.outputs.tag }}
+          name: lampasctl v${{ needs.validate-tag.outputs.version }}
+          body: ${{ steps.prep.outputs.body }}
+          prerelease: ${{ needs.validate-tag.outputs.prerelease == 'true' }}
+          files: |
+            dist/lampasctl_*
+            dist/SHA256SUMS
+          generate_release_notes: true
