@@ -35,21 +35,6 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Validate pack definitions
-        run: bun run lampasctl validate
-
-      - name: Build published manifests
-        run: bun run lampasctl manifest
-
-      - name: Publish to Lampas Portal
-        if: vars.PORTAL_URL != ''
-        env:
-          PORTAL_URL: ${{ vars.PORTAL_URL }}
-          PACK_PUBLISH_SECRET: ${{ secrets.PACK_PUBLISH_SECRET }}
-        run: |
-          CHANNEL="${{ github.event.inputs.channel || 'stable' }}"
-          bun run lampasctl publish --portal "$PORTAL_URL" --secret "$PACK_PUBLISH_SECRET" --channel "$CHANNEL"
-
       - name: Build Linux Launcher Package
         working-directory: ./launcher
         run: |
