@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -43,7 +43,7 @@ jobs:
         run: |
           bun run tools/lampasctl/src/cli.ts resolve
           bun run tools/lampasctl/src/cli.ts validate
-          bun run tools/lampasctl/src/cli.ts manifest
+          bun run tools/lampasctl/src/cli.ts manifest --portal https://dev.lampas.town
 
       - name: Create Pull Request with Updates
         if: steps.check_updates.outputs.updates_found == 'true'
