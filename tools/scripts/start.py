@@ -122,21 +122,9 @@ def main():
                 else:
                     print("[Starter Warning] Continuing server launch despite deployment failure (--allow-stale enabled).")
         else:
-            # Fallback check for deprecated deploy_pack.py
-            deploy_script = os.path.join(SERVER_DIR, "deploy_pack.py")
-            if os.path.exists(deploy_script):
-                print("[Starter Warning] 'lampasctl' not found. Falling back to deprecated deploy_pack.py...", file=sys.stderr)
-                sync_cmd = [sys.executable, deploy_script, "--channel", args.channel]
-                if args.portal_url:
-                    sync_cmd.extend(["--portal-url", args.portal_url])
-                ret = subprocess.call(sync_cmd)
-                if ret != 0 and not args.allow_stale:
-                    print(f"[Starter Error] Pack deployment failed with exit code {ret}.", file=sys.stderr)
-                    sys.exit(ret)
-            else:
-                print("[Starter Error] 'lampasctl' executable not found. Install lampasctl or launch with --no-sync.", file=sys.stderr)
-                if not args.allow_stale:
-                    sys.exit(1)
+            print("[Starter Error] 'lampasctl' executable not found. Install lampasctl or launch with --no-sync.", file=sys.stderr)
+            if not args.allow_stale:
+                sys.exit(1)
 
     # 2. Locate Java and Fabric Server JAR
     java_bin = find_java_binary()

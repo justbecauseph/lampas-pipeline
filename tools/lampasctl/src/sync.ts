@@ -122,8 +122,9 @@ export function validateManifestForSync(
     }
     seenPaths.add(file.path);
 
-    if (file.policy !== "MANAGED" && file.policy !== "PRESERVE") {
-      throw new Error(`Invalid file policy '${file.policy}' for '${file.path}' (must be MANAGED or PRESERVE)`);
+    const validPolicies = new Set(["MANAGED", "PRESERVE", "OPTIONAL", "GENERATED"]);
+    if (!validPolicies.has(file.policy)) {
+      throw new Error(`Invalid file policy '${file.policy}' for '${file.path}' (must be MANAGED, PRESERVE, OPTIONAL, or GENERATED)`);
     }
 
     if (isPathProtected(manifest.target, file.path) && file.policy === "MANAGED") {
@@ -149,14 +150,17 @@ export function validateManifestForSync(
     if (!srp.artifact || typeof srp.artifact !== "string") {
       throw new Error("Invalid server resourcePack: missing 'artifact' identifier");
     }
+    if (typeof srp.required !== "boolean") {
+      throw new Error("Invalid server resourcePack: 'required' must be a boolean");
+    }
     if (!srp.url || typeof srp.url !== "string") {
       throw new Error("Invalid server resourcePack: missing 'url'");
     }
     if (!srp.sha256 || !/^[0-9a-f]{64}$/i.test(srp.sha256)) {
       throw new Error("Invalid server resourcePack: invalid or missing SHA-256 hash");
     }
-    if (srp.sha1 && !/^[0-9a-f]{40}$/i.test(srp.sha1)) {
-      throw new Error("Invalid server resourcePack: invalid SHA-1 hash (expected 40 hex characters)");
+    if (!srp.sha1 || !/^[0-9a-f]{40}$/i.test(srp.sha1)) {
+      throw new Error("Invalid server resourcePack: SHA-1 is required and must be 40 hex characters");
     }
     const packId = srp.id || srp.uuid;
     if (packId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packId)) {

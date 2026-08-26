@@ -403,4 +403,65 @@ describe("lampasctl deploy server deployment workflow", () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test("rejects server resource pack when SHA-1 is missing or required is non-boolean", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-srp-validate-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    const missingSha1Server = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/server-manifest") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            target: "server",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+            protocol: 2,
+            resourcePack: {
+              artifact: "lampas2-resources",
+              required: true,
+              filename: "lampas2.zip",
+              path: "resourcepacks/lampas2.zip",
+              url: "/api/v1/blobs/srp",
+              sha256: "a".repeat(64),
+              // sha1 intentionally omitted
+            },
+            files: [],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl: `http://127.0.0.1:${missingSha1Server.port}`,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Invalid server resourcePack: SHA-1 is required and must be 40 hex characters");
+    } finally {
+      missingSha1Server.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
+
