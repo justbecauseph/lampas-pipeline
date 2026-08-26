@@ -5,6 +5,7 @@ import { MinecraftBootstrap } from "./minecraft-bootstrap";
 import { JavaRuntimeManager } from "./java-runtime";
 import { copyAtomic, copyVerified, downloadVerified, fetchJsonWithRetry, hashFile, HttpResponseError } from "./file-transfer";
 import { ensureRequiredResourcePacks } from "./resource-packs";
+import { LauncherLogger } from "./logger";
 import type { InstallationState, SyncProgress } from "./types";
 
 const PROTECTED_PREFIXES = [
@@ -204,6 +205,10 @@ export class LauncherSync {
 
     const toDelete = Array.from(toDeleteSet);
 
+    LauncherLogger.info(
+      `[Sync] Synchronizing client: ${toDownload.length} to download, ${upToDateCount} up-to-date, ${toDelete.length} obsolete to delete.`
+    );
+
     // 5. Download missing/modified files
     const totalFiles = manifestFiles.length;
     let completedCount = upToDateCount;
@@ -225,19 +230,29 @@ export class LauncherSync {
           }
 
           // Check blob cache first
+          let cached = false;
           const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
           if (fs.existsSync(cachePath)) {
             const cachedHash = await hashFile(cachePath, "sha256");
-            if (cachedHash !== file.hashes.sha256 || fs.statSync(cachePath).size !== file.size) {
+            if (cachedHash === file.hashes.sha256 && fs.statSync(cachePath).size === file.size) {
+              cached = true;
+            } else {
               await fs.promises.rm(cachePath, { force: true });
             }
           }
 
           let networkBytes = 0;
-          if (!fs.existsSync(cachePath)) networkBytes = await cacheFile(file, cachePath);
+          if (!cached) {
+            networkBytes = await cacheFile(file, cachePath);
+          }
           verifiedAt.set(file.path, new Date().toISOString());
           completedCount++;
           bytesDownloaded += networkBytes;
+
+          const status = cached ? "⚡ [Cache Hit]" : "✓ [Downloaded]";
+          const sizeBytes = fs.existsSync(cachePath) ? fs.statSync(cachePath).size : (file.size || 0);
+          const sizeKb = sizeBytes / 1024;
+          LauncherLogger.info(`  ${status} ${file.path} (${sizeKb.toFixed(1)} KB)`);
 
           const percent = Math.min(95, Math.round(15 + (completedCount / totalFiles) * 80));
           onProgress({
@@ -308,6 +323,7 @@ export class LauncherSync {
       const fullPath = path.join(gameDir, relPath);
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
+        LauncherLogger.info(`  🗑 [Deleted Obsolete] ${relPath}`);
       }
     }
 
@@ -351,6 +367,10 @@ export class LauncherSync {
         console.warn(`[Sync Warning] Could not activate required resource packs immediately: ${packErr.message}`);
       }
     }
+
+    LauncherLogger.info(
+      `[OK] Client successfully synchronized to ${newState.pack} v${targetVersion}!`
+    );
 
     onProgress({
       status: "complete",

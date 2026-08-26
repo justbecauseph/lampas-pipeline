@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ConfigManager } from "./config";
+import { LauncherLogger } from "./logger";
 import type { CustomClientMod } from "./types";
 
 function assertJar(sourcePath: string): void {
@@ -48,8 +49,11 @@ export class ClientModManager {
         existing.enabled = true;
         existing.addedAt = new Date().toISOString();
         existing.size = fs.statSync(destination).size;
+        LauncherLogger.info(`[Client Mods] Replaced custom mod: ${filename} (${(existing.size / 1024).toFixed(1)} KB)`);
       } else {
-        mods.push({ filename, enabled: true, addedAt: new Date().toISOString(), size: fs.statSync(destination).size });
+        const size = fs.statSync(destination).size;
+        mods.push({ filename, enabled: true, addedAt: new Date().toISOString(), size });
+        LauncherLogger.info(`[Client Mods] Added custom mod: ${filename} (${(size / 1024).toFixed(1)} KB)`);
       }
     }
 
@@ -70,6 +74,7 @@ export class ClientModManager {
     if (fs.existsSync(destination)) throw new Error(`Cannot toggle ${filename}: destination already exists.`);
     fs.renameSync(source, destination);
     mod.enabled = enabled;
+    LauncherLogger.info(`[Client Mods] ${enabled ? "Enabled" : "Disabled"} custom mod: ${filename}`);
     ConfigManager.set({ customClientMods: mods });
     return mods;
   }
@@ -80,6 +85,7 @@ export class ClientModManager {
     const mod = mods.find((entry) => entry.filename === filename);
     if (!mod) throw new Error(`Unknown local mod: ${filename}`);
     fs.rmSync(modPath(config.gameDir, filename, mod.enabled), { force: true });
+    LauncherLogger.info(`[Client Mods] Removed custom mod: ${filename}`);
     const updated = mods.filter((entry) => entry.filename !== filename);
     ConfigManager.set({ customClientMods: updated });
     return updated;
@@ -89,6 +95,7 @@ export class ClientModManager {
     const disabled = new Set(ConfigManager.get().disabledClientMods || []);
     if (enabled) disabled.delete(modId);
     else disabled.add(modId);
+    LauncherLogger.info(`[Client Mods] ${enabled ? "Enabled" : "Disabled"} official mod: ${modId}`);
     const updated = Array.from(disabled).sort();
     ConfigManager.set({ disabledClientMods: updated });
     return updated;
