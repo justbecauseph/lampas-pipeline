@@ -267,6 +267,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
       sha256: artifact.sha256,
       ...(srpDef.prompt ? { prompt: formatPromptJson(srpDef.prompt) } : {}),
       id: packId,
+      provider: artifact.provider.type,
     };
   }
 

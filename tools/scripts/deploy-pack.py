@@ -642,6 +642,18 @@ def sync_server(manifest, server_dir, portal_url, pipeline_dir, max_workers=8, s
         expected_req = str(srp_config.get("required", True)).lower()
         if props.get("require-resource-pack") != expected_req:
             raise RuntimeError("Final verification failed: server.properties 'require-resource-pack' mismatch")
+    elif prev_srp_state and prev_srp_state.get("managed"):
+        props = read_server_properties_map(server_dir)
+        if props.get("resource-pack", "") != "":
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack' was not cleared on pack removal")
+        if props.get("resource-pack-sha1", "") != "":
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack-sha1' was not cleared on pack removal")
+        if props.get("resource-pack-id", "") != "":
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack-id' was not cleared on pack removal")
+        if props.get("resource-pack-prompt", "") != "":
+            raise RuntimeError("Final verification failed: server.properties 'resource-pack-prompt' was not cleared on pack removal")
+        if props.get("require-resource-pack", "false").lower() != "false":
+            raise RuntimeError("Final verification failed: server.properties 'require-resource-pack' was not reset to false on pack removal")
 
     # 7. Write installation state LAST (only after all mutations & verification succeed)
     new_state = {

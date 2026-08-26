@@ -66,6 +66,7 @@ export interface ServerResourcePackConfig {
   prompt?: string;
   id?: string;
   uuid?: string;
+  provider?: "modrinth" | "curseforge" | "lampas" | "direct" | string;
 }
 
 export type ProviderConfig =

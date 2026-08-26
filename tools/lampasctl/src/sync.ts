@@ -259,26 +259,44 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     }
   }
 
-  if (manifest.target === "server" && manifest.resourcePack) {
+  if (manifest.target === "server") {
     const props = readServerPropertiesMap(targetDir);
-    const srp = manifest.resourcePack;
-    if (props["resource-pack"] !== srp.url) {
-      throw new Error(`Final verification failed: server.properties 'resource-pack' mismatch (expected '${srp.url}', got '${props["resource-pack"]}')`);
-    }
-    if (props["resource-pack-sha1"] !== (srp.sha1 || "")) {
-      throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' mismatch (expected '${srp.sha1 || ""}', got '${props["resource-pack-sha1"]}')`);
-    }
-    const expectedId = srp.id || srp.uuid || "";
-    if (props["resource-pack-id"] !== expectedId) {
-      throw new Error(`Final verification failed: server.properties 'resource-pack-id' mismatch (expected '${expectedId}', got '${props["resource-pack-id"]}')`);
-    }
-    const expectedPrompt = srp.prompt ? formatPromptJson(srp.prompt) : "";
-    if (props["resource-pack-prompt"] !== expectedPrompt) {
-      throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' mismatch (expected '${expectedPrompt}', got '${props["resource-pack-prompt"]}')`);
-    }
-    const expectedReq = String(srp.required ?? true).toLowerCase();
-    if (props["require-resource-pack"] !== expectedReq) {
-      throw new Error(`Final verification failed: server.properties 'require-resource-pack' mismatch (expected '${expectedReq}', got '${props["require-resource-pack"]}')`);
+    if (manifest.resourcePack) {
+      const srp = manifest.resourcePack;
+      if (props["resource-pack"] !== srp.url) {
+        throw new Error(`Final verification failed: server.properties 'resource-pack' mismatch (expected '${srp.url}', got '${props["resource-pack"]}')`);
+      }
+      if (props["resource-pack-sha1"] !== (srp.sha1 || "")) {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' mismatch (expected '${srp.sha1 || ""}', got '${props["resource-pack-sha1"]}')`);
+      }
+      const expectedId = srp.id || srp.uuid || "";
+      if (props["resource-pack-id"] !== expectedId) {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-id' mismatch (expected '${expectedId}', got '${props["resource-pack-id"]}')`);
+      }
+      const expectedPrompt = srp.prompt ? formatPromptJson(srp.prompt) : "";
+      if (props["resource-pack-prompt"] !== expectedPrompt) {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' mismatch (expected '${expectedPrompt}', got '${props["resource-pack-prompt"]}')`);
+      }
+      const expectedReq = String(srp.required ?? true).toLowerCase();
+      if (props["require-resource-pack"] !== expectedReq) {
+        throw new Error(`Final verification failed: server.properties 'require-resource-pack' mismatch (expected '${expectedReq}', got '${props["require-resource-pack"]}')`);
+      }
+    } else if (prevState.serverResourcePack?.managed) {
+      if (props["resource-pack"] && props["resource-pack"] !== "") {
+        throw new Error(`Final verification failed: server.properties 'resource-pack' was not cleared on pack removal`);
+      }
+      if (props["resource-pack-sha1"] && props["resource-pack-sha1"] !== "") {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' was not cleared on pack removal`);
+      }
+      if (props["resource-pack-id"] && props["resource-pack-id"] !== "") {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-id' was not cleared on pack removal`);
+      }
+      if (props["resource-pack-prompt"] && props["resource-pack-prompt"] !== "") {
+        throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' was not cleared on pack removal`);
+      }
+      if (props["require-resource-pack"] && props["require-resource-pack"].toLowerCase() !== "false") {
+        throw new Error(`Final verification failed: server.properties 'require-resource-pack' was not reset to false on pack removal`);
+      }
     }
   }
 

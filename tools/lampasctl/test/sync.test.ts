@@ -156,6 +156,8 @@ describe("sync verification modes", () => {
       expect(resetPropsContent).toContain("server-port=25565");
       expect(resetPropsContent).toContain("resource-pack=");
       expect(resetPropsContent).toContain("resource-pack-sha1=");
+      expect(resetPropsContent).toContain("resource-pack-id=");
+      expect(resetPropsContent).toContain("resource-pack-prompt=");
       expect(resetPropsContent).toContain("require-resource-pack=false");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });

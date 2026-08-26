@@ -225,6 +225,54 @@ describe("deploy-pack.py server deployment engine", () => {
       const props2 = fs.readFileSync(path.join(dir, "server.properties"), "utf-8");
       expect(props2).toContain("resource-pack-prompt=");
       expect(props2).not.toContain('resource-pack-prompt={"text":"Custom textures"}');
+
+      // Test third deploy where server resource pack is completely removed
+      const manifestNoPackPath = path.join(dir, "server-manifest-nopack.json");
+      fs.writeFileSync(
+        manifestNoPackPath,
+        JSON.stringify({
+          schemaVersion: 1,
+          pack: "Lampas 2",
+          version: "2.2.0",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          files: [
+            {
+              path: "config/test.txt",
+              hashes: { sha256: testSha256 },
+              size: 11,
+              download: { url: "http://example.com/test.txt" },
+              policy: "MANAGED",
+            },
+          ],
+        })
+      );
+
+      const res3 = spawnSync(
+        "python",
+        [
+          scriptPath,
+          "--manifest",
+          manifestNoPackPath,
+          "--pipeline-dir",
+          path.join(dir, "fake-pipeline"),
+          "--skip-backup",
+        ],
+        { cwd: dir, encoding: "utf-8" }
+      );
+      expect(res3.status).toBe(0);
+
+      const props3 = fs.readFileSync(path.join(dir, "server.properties"), "utf-8");
+      expect(props3).toContain("resource-pack=");
+      expect(props3).toContain("resource-pack-sha1=");
+      expect(props3).toContain("resource-pack-id=");
+      expect(props3).toContain("resource-pack-prompt=");
+      expect(props3).toContain("require-resource-pack=false");
+
+      const state3 = JSON.parse(fs.readFileSync(path.join(dir, ".lampas", "installation.json"), "utf-8"));
+      expect(state3.version).toBe("2.2.0");
+      expect(state3.serverResourcePack).toEqual({ managed: false });
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

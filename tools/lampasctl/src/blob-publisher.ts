@@ -58,7 +58,7 @@ export async function discoverLocalLampasBlobs(params: {
   const srp = release?.serverResourcePack || serverManifest.resourcePack;
   if (srp?.sha256) {
     const sha = srp.sha256.toLowerCase().trim();
-    const isLampasBlob = srp.url.includes("/api/v1/blobs/") || !srp.url.startsWith("http");
+    const isLampasBlob = srp.provider === "lampas" || srp.url.includes("/api/v1/blobs/") || !srp.url.startsWith("http");
     if (isLampasBlob && !uniqueBlobs.has(sha)) {
       const relPath = srp.path || (srp.filename ? `resourcepacks/${srp.filename}` : `resourcepacks/${srp.artifact}.zip`);
       uniqueBlobs.set(sha, { path: relPath, size: undefined });
