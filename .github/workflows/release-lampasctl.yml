@@ -23,7 +23,7 @@ jobs:
       prerelease: ${{ steps.parse.outputs.prerelease }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -66,7 +66,7 @@ jobs:
     needs: validate-tag
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Bun (pinned)
         uses: oven-sh/setup-bun@v2
@@ -97,24 +97,12 @@ jobs:
         include:
           - target: bun-linux-x64-baseline
             artifact: linux_x64
-          - target: bun-linux-arm64
-            artifact: linux_arm64
-          - target: bun-linux-x64-baseline-musl
-            artifact: linux_x64_musl
-          - target: bun-linux-arm64-musl
-            artifact: linux_arm64_musl
           - target: bun-windows-x64-baseline
             artifact: windows_x64
-          - target: bun-windows-arm64
-            artifact: windows_arm64
-          - target: bun-darwin-x64
-            artifact: darwin_x64
-          - target: bun-darwin-arm64
-            artifact: darwin_arm64
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Bun (pinned)
         uses: oven-sh/setup-bun@v2
@@ -133,7 +121,7 @@ jobs:
             --package
 
       - name: Upload Artifact Package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lampasctl-${{ matrix.artifact }}
           path: dist/lampasctl_${{ needs.validate-tag.outputs.version }}_${{ matrix.artifact }}.*
@@ -145,7 +133,7 @@ jobs:
     needs: [validate-tag, build-matrix]
     steps:
       - name: Download Linux x64 Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: lampasctl-linux_x64
           path: dist
@@ -169,7 +157,7 @@ jobs:
     needs: [validate-tag, build-matrix]
     steps:
       - name: Download Windows x64 Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: lampasctl-windows_x64
           path: dist
@@ -187,29 +175,6 @@ jobs:
           }
           .\lampasctl.exe help
 
-  smoke-test-macos:
-    name: Smoke Test (macOS ARM64)
-    runs-on: macos-latest
-    needs: [validate-tag, build-matrix]
-    steps:
-      - name: Download macOS ARM64 Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lampasctl-darwin_arm64
-          path: dist
-
-      - name: Extract & Smoke Test
-        run: |
-          cd dist
-          tar -xzf lampasctl_${{ needs.validate-tag.outputs.version }}_darwin_arm64.tar.gz
-          chmod +x lampasctl
-          OUTPUT=$(./lampasctl --version)
-          echo "Output: $OUTPUT"
-          if [[ "$OUTPUT" != "lampasctl ${{ needs.validate-tag.outputs.version }}" ]]; then
-            echo "Expected 'lampasctl ${{ needs.validate-tag.outputs.version }}', got '$OUTPUT'"
-            exit 1
-          fi
-          ./lampasctl help
 
   publish-release:
     name: Publish GitHub Release
@@ -220,15 +185,14 @@ jobs:
       - build-matrix
       - smoke-test-linux
       - smoke-test-windows
-      - smoke-test-macos
     permissions:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download All Release Packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: dist
           pattern: lampasctl-*

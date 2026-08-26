@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1317,6 +1317,21 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/malilib"
+    },
+    {
+      "id": "mingen",
+      "name": "Minimal Structures (Mingen)",
+      "side": "both",
+      "filename": "mingen-v7.2.3.jar",
+      "size": 1029532,
+      "description": "Adds new structures to your world",
+      "iconUrl": "https://cdn.modrinth.com/data/FyLFHdlz/e3c6cb602e2a74e42606134533001f9e3641a7b8_96.webp",
+      "categories": [
+        "adventure",
+        "decoration",
+        "worldgen"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/mingen"
     },
     {
       "id": "modmenu",
@@ -3408,6 +3423,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/C7I0BCni/versions/sNXCQQn1/mcw-windows-2.4.2-mc26.2fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/mingen-v7.2.3.jar",
+      "size": 1029532,
+      "hashes": {
+        "sha256": "756a1c7d98523bfd65c3b89b4f37856a97ab4cf2f4e81cad095ee278b1d0586d",
+        "sha512": "95d5063b821e8920db210ad221ab17443fe5089b6b9167e45239ec3effc6069bb69eeba69e014e7e8394cc8d372d8a2529d1b6bf603d4c34adb43b24e38d1f46"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/FyLFHdlz/versions/N4KCFqwj/mingen-v7.2.3.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

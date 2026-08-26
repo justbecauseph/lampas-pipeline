@@ -379,8 +379,10 @@ prompt = "Lampas requires its custom textures."
       expect(result.serverManifest.resourcePack).toBeDefined();
       expect(result.serverManifest.resourcePack?.artifact).toBe("lampas-server-pack");
       expect(result.serverManifest.resourcePack?.required).toBe(true);
+      expect(result.serverManifest.resourcePack?.size).toBe(2097152);
       expect(result.serverManifest.resourcePack?.prompt).toBe('{"text":"Lampas requires its custom textures."}');
       expect(result.release.serverResourcePack).toBeDefined();
+      expect(result.release.serverResourcePack?.size).toBe(2097152);
       expect(result.release.serverResourcePack?.url).toBe("https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip");
 
       const serverPropsPath = path.join(fixture.outDir, "server-resource-pack.properties");
@@ -435,6 +437,7 @@ artifact = "client-pack"
       });
       expect(result.serverManifest.resourcePack).toBeDefined();
       expect(result.serverManifest.resourcePack?.artifact).toBe("client-pack");
+      expect(result.serverManifest.resourcePack?.size).toBe(1024);
       expect(result.serverManifest.resourcePack?.sha1).toBe("1".repeat(40));
 
       // Client-only artifact must not be in server manifest files[]
@@ -629,7 +632,9 @@ required = true
       // Server resource pack must be in serverManifest.resourcePack and release.serverResourcePack
       expect(result.serverManifest.resourcePack).toBeDefined();
       expect(result.serverManifest.resourcePack?.artifact).toBe("lampas2-srp");
+      expect(result.serverManifest.resourcePack?.size).toBe(1024);
       expect(result.release.serverResourcePack?.artifact).toBe("lampas2-srp");
+      expect(result.release.serverResourcePack?.size).toBe(1024);
 
       // But strictly ABSENT from clientManifest.files and serverManifest.files
       const clientFile = result.clientManifest.files.find((f) => f.path === "resourcepacks/lampas2-resource-pack.zip");

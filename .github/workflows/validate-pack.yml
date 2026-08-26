@@ -34,9 +34,3 @@ jobs:
 
       - name: Test headless installation
         run: bun run lampasctl install --manifest ./manifest/client-manifest.json --target ./ci-test-instance
-
-      - name: Upload generated manifests
-        uses: actions/upload-artifact@v4
-        with:
-          name: manifests
-          path: manifest/

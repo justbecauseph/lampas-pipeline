@@ -60,6 +60,7 @@ export interface ServerResourcePackConfig {
   required: boolean;
   filename: string;
   path: string;
+  size: number;
   url: string;
   sha1?: string;
   sha256: string;

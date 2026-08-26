@@ -62,6 +62,7 @@ describe("lampasctl deploy server deployment workflow", () => {
               required: true,
               filename: "lampas2-resource-pack.zip",
               path: "resourcepacks/lampas2-resource-pack.zip",
+              size: srpContent.length,
               url: `http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`,
               sha1: srpSha1,
               sha256: srpSha256,
@@ -439,6 +440,7 @@ describe("lampasctl deploy server deployment workflow", () => {
               required: true,
               filename: "lampas2.zip",
               path: "resourcepacks/lampas2.zip",
+              size: 1,
               url: "/api/v1/blobs/srp",
               sha256: "a".repeat(64),
               // sha1 intentionally omitted
@@ -464,4 +466,3 @@ describe("lampasctl deploy server deployment workflow", () => {
     }
   });
 });
-

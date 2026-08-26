@@ -238,6 +238,7 @@ describe("discoverLocalLampasBlobs", () => {
         artifact: "lampas2",
         filename: "lampas2-resource-pack.zip",
         path: "resourcepacks/lampas2-resource-pack.zip",
+        size: srpContent.length,
         url: `https://portal.lampas.town/api/v1/blobs/${srpSha}`,
         sha256: srpSha,
         sha1: "1".repeat(40),
@@ -258,6 +259,41 @@ describe("discoverLocalLampasBlobs", () => {
       expect(srpBlob).toBeDefined();
       expect(srpBlob?.manifestPath).toBe("resourcepacks/lampas2-resource-pack.zip");
       expect(srpBlob?.localPath).toBe(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"));
+      expect(srpBlob?.mimeType).toBe("application/zip");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects a server-enforced Lampas blob when its declared size is stale", async () => {
+    const fixture = setupPublishFixture();
+    const srpContent = "dummy server resource pack zip bytes";
+    const srpSha = crypto.createHash("sha256").update(srpContent).digest("hex");
+    fs.writeFileSync(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"), srpContent, "utf-8");
+
+    const releaseWithSrp: any = {
+      serverResourcePack: {
+        artifact: "lampas2",
+        filename: "lampas2-resource-pack.zip",
+        path: "resourcepacks/lampas2-resource-pack.zip",
+        size: srpContent.length + 1,
+        url: `https://portal.lampas.town/api/v1/blobs/${srpSha}`,
+        sha256: srpSha,
+        sha1: "1".repeat(40),
+        id: "7af14f5a-e521-443a-9275-265decab3edc",
+        required: true,
+      },
+    };
+
+    try {
+      await expect(
+        discoverLocalLampasBlobs({
+          clientManifest: fixture.clientManifest as any,
+          serverManifest: fixture.serverManifest as any,
+          packDir: fixture.packDir,
+          release: releaseWithSrp,
+        })
+      ).rejects.toThrow("size mismatch");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }

@@ -153,6 +153,9 @@ export function validateManifestForSync(
     if (typeof srp.required !== "boolean") {
       throw new Error("Invalid server resourcePack: 'required' must be a boolean");
     }
+    if (!Number.isSafeInteger(srp.size) || srp.size < 0) {
+      throw new Error("Invalid server resourcePack: 'size' must be a non-negative integer");
+    }
     if (!srp.url || typeof srp.url !== "string") {
       throw new Error("Invalid server resourcePack: missing 'url'");
     }
@@ -650,4 +653,3 @@ export async function deployServer(options: DeployOptions): Promise<void> {
 
   console.log(`\n[Deploy Complete] Successfully deployed ${manifest.pack} v${manifest.version} to ${targetDir}`);
 }
-

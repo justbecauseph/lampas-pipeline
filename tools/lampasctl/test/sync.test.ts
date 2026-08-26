@@ -3,7 +3,39 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { createHash } from "node:crypto";
-import { syncInstance } from "../src/sync";
+import { syncInstance, validateManifestForSync } from "../src/sync";
+
+describe("server resource-pack manifest validation", () => {
+  const manifestWithSize = (size: unknown) => ({
+    schemaVersion: 1,
+    pack: "Lampas 2",
+    version: "2.0.0",
+    target: "server",
+    minecraft: "26.2",
+    loader: { type: "fabric", version: "0.19.3" },
+    protocol: 2,
+    resourcePack: {
+      artifact: "lampas2",
+      required: true,
+      filename: "lampas2.zip",
+      path: "resourcepacks/lampas2.zip",
+      size,
+      url: "https://example.test/lampas2.zip",
+      sha1: "1".repeat(40),
+      sha256: "a".repeat(64),
+    },
+    files: [],
+  });
+
+  test("requires a non-negative integer resource-pack size", () => {
+    for (const size of [undefined, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+      expect(() => validateManifestForSync(manifestWithSize(size) as any)).toThrow(
+        "Invalid server resourcePack: 'size' must be a non-negative integer"
+      );
+    }
+    expect(() => validateManifestForSync(manifestWithSize(0) as any)).not.toThrow();
+  });
+});
 
 describe("sync verification modes", () => {
   test("fast trusts matching metadata while full verification repairs content", async () => {
@@ -84,6 +116,7 @@ describe("sync verification modes", () => {
           required: true,
           filename: "Lampas-Resources-2.0.0.zip",
           path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+          size: 1,
           url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
           sha1: "abc1234567890123456789012345678901234567",
           sha256: "a".repeat(64),
@@ -121,6 +154,7 @@ describe("sync verification modes", () => {
             required: true,
             filename: "Lampas-Resources-2.0.0.zip",
             path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+            size: 1,
             url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
             sha1: "abc1234567890123456789012345678901234567",
             sha256: "a".repeat(64),

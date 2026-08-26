@@ -262,6 +262,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
       required: srpDef.required !== false,
       filename: artifact.filename,
       path: `resourcepacks/${artifact.filename}`,
+      size: artifact.size,
       url: downloadUrl,
       sha1: artifact.sha1,
       sha256: artifact.sha256,

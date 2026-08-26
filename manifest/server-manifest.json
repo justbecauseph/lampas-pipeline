@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -1179,9 +1179,9 @@
     {
       "id": "mingen",
       "name": "Minimal Structures (Mingen)",
-      "side": "server",
-      "filename": "mingen-v7.2.2.jar",
-      "size": 1695440,
+      "side": "both",
+      "filename": "mingen-v7.2.3.jar",
+      "size": 1029532,
       "description": "Adds new structures to your world",
       "iconUrl": "https://cdn.modrinth.com/data/FyLFHdlz/e3c6cb602e2a74e42606134533001f9e3641a7b8_96.webp",
       "categories": [
@@ -3227,14 +3227,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mingen-v7.2.2.jar",
-      "size": 1695440,
+      "path": "mods/mingen-v7.2.3.jar",
+      "size": 1029532,
       "hashes": {
-        "sha256": "520ae37f942ce9e5be23576a756dafdd93996b66f128af037b5f0bebd1cd8812",
-        "sha512": "b788264d24db6b31697a26e07431920b29fdea7294c8268f7a321edf46d2ab3da165c949419eb33b09b20f7ebf66d757f1ef8c7454fa5868d95a08e6db27eb29"
+        "sha256": "756a1c7d98523bfd65c3b89b4f37856a97ab4cf2f4e81cad095ee278b1d0586d",
+        "sha512": "95d5063b821e8920db210ad221ab17443fe5089b6b9167e45239ec3effc6069bb69eeba69e014e7e8394cc8d372d8a2529d1b6bf603d4c34adb43b24e38d1f46"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/FyLFHdlz/versions/Ze9ByKBY/mingen-v7.2.2.jar",
+        "url": "https://cdn.modrinth.com/data/FyLFHdlz/versions/N4KCFqwj/mingen-v7.2.3.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -8523,6 +8523,7 @@
     "required": true,
     "filename": "lampas2-resource-pack.zip",
     "path": "resourcepacks/lampas2-resource-pack.zip",
+    "size": 208331,
     "url": "https://dev.lampas.town/api/v1/blobs/47ce079bb26176a1bc869e79fe5d49a9cbbba8fd2be4e5ec8381e44aeff560b0",
     "sha1": "6f087e5414025491e079bd60b9bb43623cc7e337",
     "sha256": "47ce079bb26176a1bc869e79fe5d49a9cbbba8fd2be4e5ec8381e44aeff560b0",

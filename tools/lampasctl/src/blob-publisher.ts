@@ -61,7 +61,7 @@ export async function discoverLocalLampasBlobs(params: {
     const isLampasBlob = srp.provider === "lampas" || srp.url.includes("/api/v1/blobs/") || !srp.url.startsWith("http");
     if (isLampasBlob && !uniqueBlobs.has(sha)) {
       const relPath = srp.path || (srp.filename ? `resourcepacks/${srp.filename}` : `resourcepacks/${srp.artifact}.zip`);
-      uniqueBlobs.set(sha, { path: relPath, size: undefined });
+      uniqueBlobs.set(sha, { path: relPath, size: srp.size });
     }
   }
 
@@ -104,6 +104,8 @@ export async function discoverLocalLampasBlobs(params: {
       ? "application/json"
       : info.path.endsWith(".jar")
       ? "application/java-archive"
+      : info.path.endsWith(".zip")
+      ? "application/zip"
       : "application/octet-stream";
 
     discoveredBlobs.push({
