@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -2915,19 +2915,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
-      "size": 96088,
-      "hashes": {
-        "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-        "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e"
-      },
-      "download": {
-        "url": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
       "size": 324221,
       "hashes": {
@@ -2936,6 +2923,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
+      "size": 96088,
+      "hashes": {
+        "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+        "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e"
+      },
+      "download": {
+        "url": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
         "provider": "lampas"
       },
       "policy": "MANAGED"

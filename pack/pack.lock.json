@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.0.1",
+  "packVersion": "2.0.2",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-08-26T10:52:49.797Z",
+  "updated": "2026-08-26T12:10:07.905Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2372,23 +2372,6 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas-aria-0_1_0-alpha_1": {
-      "id": "lampas-aria-0_1_0-alpha_1",
-      "name": "lampas-aria-0.1.0-alpha.1",
-      "side": "both",
-      "filename": "lampas-aria-0.1.0-alpha.1.jar",
-      "size": 96088,
-      "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-      "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e",
-      "sha1": "95d837bd53196d368a9952a3c5ca00ce9957d563",
-      "downloadUrl": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas-aria-0.1.0-alpha.1.jar"
-      }
-    },
     "apothicattributes-26_2-4_0_0": {
       "id": "apothicattributes-26_2-4_0_0",
       "name": "ApothicAttributes-26.2-4.0.0",
@@ -2404,6 +2387,23 @@
       "provider": {
         "type": "lampas",
         "file": "custom/ApothicAttributes-26.2-4.0.0.jar"
+      }
+    },
+    "lampas-aria-0_1_0-alpha_1": {
+      "id": "lampas-aria-0_1_0-alpha_1",
+      "name": "lampas-aria-0.1.0-alpha.1",
+      "side": "both",
+      "filename": "lampas-aria-0.1.0-alpha.1.jar",
+      "size": 96088,
+      "sha256": "f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+      "sha512": "5d4aff7753c7bbce8740940cff96029b2ca78da22b3cf9632d707848c6ac026a40c57a5e3b7726ca3c308e0602e40cb58b641840d5b985020d6f148cb0187b8e",
+      "sha1": "95d837bd53196d368a9952a3c5ca00ce9957d563",
+      "downloadUrl": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas-aria-0.1.0-alpha.1.jar"
       }
     },
     "leavesbegone": {
