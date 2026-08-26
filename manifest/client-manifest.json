@@ -621,8 +621,8 @@
       "id": "elytratrims",
       "name": "Elytra Trims",
       "side": "both",
-      "filename": "elytratrims-fabric-4.8.3+26.2.jar",
-      "size": 824336,
+      "filename": "elytratrims-fabric-4.9.0-beta.6+26.2.jar",
+      "size": 1052048,
       "description": "Customizable elytra mod with trims, banner patterns and more!",
       "iconUrl": "https://cdn.modrinth.com/data/XpzGz7KD/1d33b802dfb5a1b2d25a2490fe1a9df0a681d686_96.webp",
       "categories": [
@@ -926,8 +926,8 @@
       "id": "horseman",
       "name": "Horseman",
       "side": "both",
-      "filename": "horseman-fabric-26.2-1.7.4.jar",
-      "size": 278725,
+      "filename": "horseman-fabric-26.2-1.7.5.jar",
+      "size": 281540,
       "description": "Improved horses: faster hitching, smooth riding, QOL features and more...",
       "iconUrl": "https://cdn.modrinth.com/data/qIv5FhAA/7a7cf7848d05a3cb1150a58a3ac5c92a8539c2cd.png",
       "categories": [
@@ -1868,8 +1868,8 @@
       "id": "sodium",
       "name": "Sodium",
       "side": "client",
-      "filename": "sodium-fabric-0.9.1+mc26.2.jar",
-      "size": 1834384,
+      "filename": "sodium-fabric-0.9.2-alpha.4+mc26.2.jar",
+      "size": 1880490,
       "description": "A high-performance rendering engine replacement for Minecraft, which greatly improves frame rates and reduces micro-stutter.",
       "iconUrl": "https://cdn.modrinth.com/data/AANobbMI/295862f4724dc3f78df3447ad6072b2dcd3ef0c9_96.webp",
       "categories": [
@@ -2007,8 +2007,8 @@
       "id": "supermartijn642corelib",
       "name": "SuperMartijn642's Core Lib",
       "side": "both",
-      "filename": "supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
-      "size": 686523,
+      "filename": "supermartijn642corelib-1.1.24a-fabric-mc26.2.jar",
+      "size": 687905,
       "description": "SuperMartijn642's Core Lib adds lots of basic implementations that allow for similar code between different Minecraft versions!",
       "iconUrl": "https://cdn.modrinth.com/data/rOUBggPv/e745e719d7fe2aa0335d819ca9c97defbf2e0bcb_96.webp",
       "categories": [
@@ -2693,15 +2693,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/elytratrims-fabric-4.8.3+26.2.jar",
-      "size": 824336,
+      "path": "mods/distant-decorations-0.1.0.jar",
+      "size": 100151,
       "hashes": {
-        "sha256": "9f5a8ccfe54876deeb96a7c9957c9a5a0cae8385fceeb86e1921c46902c716e7",
-        "sha512": "812c09154c1b38d3cedd93c25d8bd9dbb57e54d553089d4f8ee6a19d70de178bb541db09755327bd854f887edaa6ce82759d46c717b5636686205d9fce20fb70"
+        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/XpzGz7KD/versions/xe4XXryG/elytratrims-fabric-4.8.3%2B26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -2823,14 +2823,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/fast-paintings-1.0.0.jar",
-      "size": 78874,
+      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
+      "size": 151958,
       "hashes": {
-        "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-        "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801"
+        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
       },
       "download": {
-        "url": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
+        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2862,14 +2862,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/distant-decorations-0.1.0.jar",
-      "size": 100151,
+      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
+      "size": 324221,
       "hashes": {
-        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
-        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
+        "sha256": "abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
+        "sha512": "f443f393001c424094ebed0ab3845b6c2906cbb3e3f5b051b7a7a0b279c281a019284ce966e07a72524e4c2a5659452547f0f141e266a3fe39ad3505bee823c1"
       },
       "download": {
-        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "url": "/api/v1/blobs/abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2927,14 +2927,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
-      "size": 151958,
+      "path": "mods/fast-paintings-1.0.0.jar",
+      "size": 78874,
       "hashes": {
-        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
-        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
+        "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
+        "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801"
       },
       "download": {
-        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "url": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2966,15 +2966,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/horseman-fabric-26.2-1.7.4.jar",
-      "size": 278725,
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
       "hashes": {
-        "sha256": "ae7e5cb7f5747311676a0a43d514c338de58ed6bdb7058944950b1bca4b2f756",
-        "sha512": "070b1999cae5a02d48016a75090255c9d462ee71c77810e7478f4b87d1363f95788ce09ed47c3cf620833500d55d1d35725801329dc29ad32df9327df6311d2a"
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/qIv5FhAA/versions/TEUrXCXq/horseman-fabric-26.2-1.7.4.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -3109,6 +3109,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
+      "size": 661344,
+      "hashes": {
+        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
+      },
+      "download": {
+        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
       "size": 96088,
       "hashes": {
@@ -3122,14 +3135,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
-      "size": 324221,
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 141981,
       "hashes": {
-        "sha256": "abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
-        "sha512": "f443f393001c424094ebed0ab3845b6c2906cbb3e3f5b051b7a7a0b279c281a019284ce966e07a72524e4c2a5659452547f0f141e266a3fe39ad3505bee823c1"
+        "sha256": "5fd375d9725a39ba108050dc55297f03018999911a02b748fc34187a2d633a12",
+        "sha512": "dc1fb3f7ddfb2e783714f14d51d98c29a6b2475002714596c721f8cdead96cc1ba85783a326dd68ee8e22fb6f63a017200a4ef8aa242e3da9951b1a585f3a7e5"
       },
       "download": {
-        "url": "/api/v1/blobs/abf3078ca0a614ef39dc9b6b9ec739906c911ce9e9e11cb14861d60b77e290e8",
+        "url": "/api/v1/blobs/5fd375d9725a39ba108050dc55297f03018999911a02b748fc34187a2d633a12",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3143,19 +3156,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/148d130ad1851d92179c6c38d99f82631dd25b0b8d5628c01a6f112376147639",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 141981,
-      "hashes": {
-        "sha256": "5fd375d9725a39ba108050dc55297f03018999911a02b748fc34187a2d633a12",
-        "sha512": "dc1fb3f7ddfb2e783714f14d51d98c29a6b2475002714596c721f8cdead96cc1ba85783a326dd68ee8e22fb6f63a017200a4ef8aa242e3da9951b1a585f3a7e5"
-      },
-      "download": {
-        "url": "/api/v1/blobs/5fd375d9725a39ba108050dc55297f03018999911a02b748fc34187a2d633a12",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3603,6 +3603,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "hashes": {
+        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
+      },
+      "download": {
+        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/levelledmobs-fabric-1.0.0.jar",
       "size": 160823,
       "hashes": {
@@ -3611,19 +3624,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
-      "size": 661344,
-      "hashes": {
-        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
-        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
-      },
-      "download": {
-        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3928,15 +3928,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/sodium-fabric-0.9.1+mc26.2.jar",
-      "size": 1834384,
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2476264,
       "hashes": {
-        "sha256": "de406c7a0ca5e748dfbe44740278400882a44e3109e2584b243ec02d4003344b",
-        "sha512": "627fbf9625a4b94693c789c84a0686ffe558c0b1ecbeccf2602a903caafa9e126548b644282aa9c391dc798930d378724a383bea6b4397c5294d59ba5c0a6936"
+        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/AANobbMI/versions/2Yom1N68/sodium-fabric-0.9.1%2Bmc26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4045,15 +4045,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
-      "size": 686523,
+      "path": "mods/Placebo-26.2-11.0.0.jar",
+      "size": 487444,
       "hashes": {
-        "sha256": "bfdcbb7d9cc40d467743912a79555d0ab1774a899e5b82af7346f0f2658828d2",
-        "sha512": "c08c1226ad2a96d96d00b03b3fd7d6e593d01ec49db0687fe97c07bf396510b4759d57636b12d7e0cd0ffaf4eefa36d453bf31b66b031abd262ebe214cc2b50e"
+        "sha256": "4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
+        "sha512": "c3d2b528304036f8b03673b2061aa3ed12fb9222e452d84f2612e6e958cf48e92bb0f90e2f8c4c46df8607e97eea4dea4a6ca0eff5073e4a2aa65cba046d9f1c"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/o1h83Sfl/supermartijn642corelib-1.1.24-fabric-mc26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4370,32 +4370,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
-      },
-      "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Placebo-26.2-11.0.0.jar",
-      "size": 487444,
-      "hashes": {
-        "sha256": "4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
-        "sha512": "c3d2b528304036f8b03673b2061aa3ed12fb9222e452d84f2612e6e958cf48e92bb0f90e2f8c4c46df8607e97eea4dea4a6ca0eff5073e4a2aa65cba046d9f1c"
-      },
-      "download": {
-        "url": "/api/v1/blobs/4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
       "size": 884979,
       "hashes": {
@@ -4409,27 +4383,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
       "hashes": {
-        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
       },
       "download": {
-        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2476264,
-      "hashes": {
-        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
-        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
-      },
-      "download": {
-        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4443,19 +4404,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/e232bccaf52975b4190f9c8a40b33a7405dd279b1bd50616657442b913e73a88",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
-      },
-      "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4483,6 +4431,58 @@
       "download": {
         "url": "/api/v1/blobs/8df45de6b765da8cd186caba54171047390122aa78a136145f1c198c53a3d612",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/horseman-fabric-26.2-1.7.5.jar",
+      "size": 281540,
+      "hashes": {
+        "sha256": "d2e4c5d023a4f6f0a89e6b0be487eda3465b4eb315d1c2769cd2d4e37762b73b",
+        "sha512": "a2638c182bb2a3fcd33a2428506a746db42eae4e9923022a72edb7830e949a8b025ca5c0f9ec29ebcd6c7735a9fb73a3c0c2349c83b38ee346dbc1ed34bea184"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/qIv5FhAA/versions/xU6ysEWF/horseman-fabric-26.2-1.7.5.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/elytratrims-fabric-4.9.0-beta.6+26.2.jar",
+      "size": 1052048,
+      "hashes": {
+        "sha256": "b5045d036a057cd38ebd33f29e656cc20a37bd1ff6668dd6c4c62eebb9d4cf53",
+        "sha512": "3e0c6a93d727297bdd54fc516f42aef8b1ab646d07d0cb53d7ada68158435110291931d84f911e707aa8aded5e8d4850aec806b95a263e7c5908cc1ab8c6a9df"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/XpzGz7KD/versions/X4BX7O9a/elytratrims-fabric-4.9.0-beta.6%2B26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/supermartijn642corelib-1.1.24a-fabric-mc26.2.jar",
+      "size": 687905,
+      "hashes": {
+        "sha256": "778fa23c8073f9c611af0795b24a5f42150cc4817698c1c27b75be77e4e8442d",
+        "sha512": "528eea45969d662985f613fe323ce37753e482cd924394d0f28edc5f1ac954121f7048cc54c9a137fa923bfaa2913456c32387c0f50a9cfe7c62196a136d62fc"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/vUZarRZr/supermartijn642corelib-1.1.24a-fabric-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/sodium-fabric-0.9.2-alpha.4+mc26.2.jar",
+      "size": 1880490,
+      "hashes": {
+        "sha256": "a6d1ced177a1c57147e8c1c8043650d5f93e1f2824c9952f3fb67ae05633a0a7",
+        "sha512": "2c7a548616e6a9ecc9a0aaeb3f192bf75be424fa965e7ac248e958535330ccee8059026cc3bab9fc481e09055446d684bc07c57bc82f91fb966a52d7142be472"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/AANobbMI/versions/a9YZH3ip/sodium-fabric-0.9.2-alpha.4%2Bmc26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -4670,13 +4670,13 @@
     },
     {
       "path": "config/diagonalblocks-common.toml",
-      "size": 166,
+      "size": 162,
       "hashes": {
-        "sha256": "a322c9aec6a5893f3ce933219970447f46752c8e09e83f6477bd2bddbf434c42",
-        "sha512": "c8bc00c1fa587307bbad30934cb7dad8a28c486388e62e765a6d9dd94842eee097cdd353dea2ad0c35b28bec3cb294a157938fab2442012bce201c102006187d"
+        "sha256": "b0893a6b6e19012bee871289df4ab6493db03735888dd72f4abe43701e5860cb",
+        "sha512": "22102b66df061c875bcf7f35465f054f84d22af119618f61ac2811dd8e3232986f8091e828c1ec08a87b978f0a5736fc04c0deb5ee61b5cc4bb06b7d08a294f9"
       },
       "download": {
-        "url": "/api/v1/blobs/a322c9aec6a5893f3ce933219970447f46752c8e09e83f6477bd2bddbf434c42",
+        "url": "/api/v1/blobs/b0893a6b6e19012bee871289df4ab6493db03735888dd72f4abe43701e5860cb",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4709,26 +4709,26 @@
     },
     {
       "path": "config/ferritecore.mixin.properties",
-      "size": 815,
+      "size": 803,
       "hashes": {
-        "sha256": "71d5e19e278cb843d92f90a99b8a9772780c62e5611b7c8cc92097cd18399b08",
-        "sha512": "7bd8085e398378d3b2d63eefafbdfea21d5e1f0f68af977c4ff1e83fc4b47140f55381865460a03f1ff5eaec9d841045e0930dd7a36f59b1f059a864cb8ef28c"
+        "sha256": "fc4d7a195210fb6d32cdfc5a255b6d555ab0225da1a929b61d17dd6b5648c2ba",
+        "sha512": "c48daf0428a2f49b380b77a210df0ade2b01caa8c0161014859e785bce9eaf039a3a1fe6c9b52549d5df78dfa343f2da1b60e0920aee57b583c1182fc51dd2e1"
       },
       "download": {
-        "url": "/api/v1/blobs/71d5e19e278cb843d92f90a99b8a9772780c62e5611b7c8cc92097cd18399b08",
+        "url": "/api/v1/blobs/fc4d7a195210fb6d32cdfc5a255b6d555ab0225da1a929b61d17dd6b5648c2ba",
         "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
       "path": "config/forgeconfigapiport.toml",
-      "size": 524,
+      "size": 518,
       "hashes": {
-        "sha256": "aa7820e54c267335b6c9d1b3e674e92d586a155ce6e8b151c2255eda8cb09155",
-        "sha512": "2b5359a78aa468d2320a84c495761f3e1de7424db070cbeaeb207902e48e575e7979c20e2f0a1a1c4d2337d6ea5a04d0177fc019d3bdcb0bb1a2a8a7d25eb5a0"
+        "sha256": "5d0dae71bec38d54665f89b7fa4d44d761bae97cd67a26fff8a5e4a31bbc98c9",
+        "sha512": "7163096a17f61e17ca9f4feb1153b63cabe33380019f43b4c88c16292fa9f7e74781499dad563082f214220dcca8940deb6b982b73dadf5779f7ef048aea293a"
       },
       "download": {
-        "url": "/api/v1/blobs/aa7820e54c267335b6c9d1b3e674e92d586a155ce6e8b151c2255eda8cb09155",
+        "url": "/api/v1/blobs/5d0dae71bec38d54665f89b7fa4d44d761bae97cd67a26fff8a5e4a31bbc98c9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4826,13 +4826,13 @@
     },
     {
       "path": "config/pyrite.toml",
-      "size": 4251,
+      "size": 4101,
       "hashes": {
-        "sha256": "1e1a7e0ed04054b73f6f5f77047f982d81cc757aec0f6ce74c7b1575873dec22",
-        "sha512": "17bc55a999cc906be58eb9bd18b30edf271cd662b30427917327eb2125c677198ce0e571ba2b91ded6d030b310c024fa4cc233399c44e7348554e742986644e3"
+        "sha256": "ea4871aa91125a84cce34f869d9b697812c2c66fb093d3ec3d8e27b368f01aab",
+        "sha512": "c70dfce0555bc085101ca2542c1525e97c2c75776118c96549d7b1ea9159a0ab7254d75fecfd2f4c42734a9b8a420681fb0a633471bdd9abef6f68ee2601bc51"
       },
       "download": {
-        "url": "/api/v1/blobs/1e1a7e0ed04054b73f6f5f77047f982d81cc757aec0f6ce74c7b1575873dec22",
+        "url": "/api/v1/blobs/ea4871aa91125a84cce34f869d9b697812c2c66fb093d3ec3d8e27b368f01aab",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4865,26 +4865,26 @@
     },
     {
       "path": "config/scalablelux.properties",
-      "size": 84,
+      "size": 81,
       "hashes": {
-        "sha256": "8dd9c5f97f2ac1ace13cfdddef5d40c5a65c9f94a6b58ac00c72402d0574d8d7",
-        "sha512": "fb367d3b51d5682e0eeff225bdd917246bea3804356bc37f65d5bee53195396a3b4d3423cd9f785e24eb09759d33379aee0bc5ef50a63f09f6267b87965ef005"
+        "sha256": "2853586c6f1c5c824bddd4a92d05908b185feb4e6efe48ff0c0d47cb445601c9",
+        "sha512": "1387b9f03e96ed1bcf9a3ed11787f0ebd85671bad978e59a59c1408a16cae1af7c22f5a4ccab34403556b5a50c08adea9c395cd12afd9127437963a03b1e7fad"
       },
       "download": {
-        "url": "/api/v1/blobs/8dd9c5f97f2ac1ace13cfdddef5d40c5a65c9f94a6b58ac00c72402d0574d8d7",
+        "url": "/api/v1/blobs/2853586c6f1c5c824bddd4a92d05908b185feb4e6efe48ff0c0d47cb445601c9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
       "path": "config/stoneworks-common.toml",
-      "size": 132,
+      "size": 129,
       "hashes": {
-        "sha256": "4520351cdc15987fec48faa462e182c8e371f4e8691300f64b5913db01d8cd3f",
-        "sha512": "35731fde369cbc909becfb9a48dac4aa0a4cbe6f016aef35869931bf973d40e10fdcb36f1ad464c75a9764bc3d686001dcff3aa258ec8219733305a3efd7af5e"
+        "sha256": "6c5c6c65024160d9602cd4b54d8c279e06142e92275295d361ffb06b15110de7",
+        "sha512": "de81550476c5140fb28bec3f8807b95cf19857e821c36c5f4dd41f5c46055eaa89fa2d8c1b3d41d6ab71dde7ff374e1f46c6ab69374420556ca80b9a0b9d68e3"
       },
       "download": {
-        "url": "/api/v1/blobs/4520351cdc15987fec48faa462e182c8e371f4e8691300f64b5913db01d8cd3f",
+        "url": "/api/v1/blobs/6c5c6c65024160d9602cd4b54d8c279e06142e92275295d361ffb06b15110de7",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4904,13 +4904,13 @@
     },
     {
       "path": "config/travelersbackpack-common.toml",
-      "size": 197,
+      "size": 191,
       "hashes": {
-        "sha256": "37ce5a56214bb9ca267ea3a4bdeee69da309afbbd6f74866efdd6e987a709ce3",
-        "sha512": "251aac8b9676aad4fb8a5c3267f483c6e167c2c7ddc2c66dcc52329e99a59b35c8229131b8e6b041ef18bd58a30e43a593f7f19f30dda1f1b66acf85877cce03"
+        "sha256": "961a398de15c5db5ce71a268f00d50d1a668b64bd09797501ce157b649362e82",
+        "sha512": "5f2288ad6f50e4f8e8ec6daf371b339090848914d6ef1902d8d6168300207de2ad495bab82d15c790c38907ee38f90bccc33c94b93c12cd83b4d4ece3b590c5e"
       },
       "download": {
-        "url": "/api/v1/blobs/37ce5a56214bb9ca267ea3a4bdeee69da309afbbd6f74866efdd6e987a709ce3",
+        "url": "/api/v1/blobs/961a398de15c5db5ce71a268f00d50d1a668b64bd09797501ce157b649362e82",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -6958,13 +6958,13 @@
     },
     {
       "path": "config/worldedit/worldedit.properties",
-      "size": 2545,
+      "size": 2499,
       "hashes": {
-        "sha256": "b88d2d20de712d1aa1040c651634b04f0516efe285644ee9a6078985714451cb",
-        "sha512": "21901bbf05fc54745b9809362ad9057a78b05c06a826de512dd70a546fe52445dfc115e59035a880cb8c1ad78895155673336c21ebd2ab92a0ef64fd7100beb3"
+        "sha256": "b3de5bda5777730bad07c54cb47fee61c1e4c170f675c5e826b2374637ae20d3",
+        "sha512": "151be8ff3a966af29f3092bc64d7b1e5417c9c909af8c17fb8edfba66fe6e913ad9b9cf42196018cca1638252bbf4eaf512b283857ec1d641d208a84e2ddb730"
       },
       "download": {
-        "url": "/api/v1/blobs/b88d2d20de712d1aa1040c651634b04f0516efe285644ee9a6078985714451cb",
+        "url": "/api/v1/blobs/b3de5bda5777730bad07c54cb47fee61c1e4c170f675c5e826b2374637ae20d3",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -7023,13 +7023,13 @@
     },
     {
       "path": "config/iris.properties",
-      "size": 297,
+      "size": 288,
       "hashes": {
-        "sha256": "0dd36fdf4a3b1b74b5e1e4cd2c1b8ae3e16b1732026733ebb64412e0bd9421cf",
-        "sha512": "20e397c11f6a753f1f94e7ab52ea62aef00dac5079a2c01e355c251d62435b9f81f15ac82cd7ee5c3555f9b5a471d6622124c75a01d87fbe344e4285f66b8ac0"
+        "sha256": "1ceeb9809ff4abcd9004b107862d031030108ae9e65fe615b520d1cba8941921",
+        "sha512": "c450bbf1011b68fba91aae793eaff804db0f3e92f6c3be65e293e176048d0cc8fc504c741148d279bf87fb58b09be1eea87d2bb390068b0382389112108462ea"
       },
       "download": {
-        "url": "/api/v1/blobs/0dd36fdf4a3b1b74b5e1e4cd2c1b8ae3e16b1732026733ebb64412e0bd9421cf",
+        "url": "/api/v1/blobs/1ceeb9809ff4abcd9004b107862d031030108ae9e65fe615b520d1cba8941921",
         "provider": "lampas"
       },
       "policy": "MANAGED"
