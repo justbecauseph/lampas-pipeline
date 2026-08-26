@@ -1,0 +1,33 @@
+[Unit]
+Description=Lampas Dedicated Minecraft Server
+After=network.target
+
+[Service]
+Type=simple
+User=server
+Group=server
+WorkingDirectory=/home/server
+ExecStart=/home/server/start.sh
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=60
+KillSignal=SIGTERM
+SendSIGKILL=yes
+
+# CPU & Process Priority Tuning
+Nice=-10
+CPUSchedulingPolicy=other
+SuccessExitStatus=0 143 130 SIGTERM SIGINT
+
+# Limits & environment
+LimitNOFILE=65535
+Environment=HOME=/home/server
+EnvironmentFile=/home/server/.minecraft-env
+UMask=0002
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

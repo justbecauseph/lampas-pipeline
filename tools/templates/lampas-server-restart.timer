@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Scheduled Restart Timer for Lampas Minecraft Server (10:00 AM UTC)
+Documentation=https://lampas.town
+
+[Timer]
+OnCalendar=*-*-* 09:55:00 UTC
+AccuracySec=1s
+Persistent=false
+Unit=lampas-server-restart.service
+
+[Install]
+WantedBy=timers.target

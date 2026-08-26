@@ -1,0 +1,14 @@
+[Unit]
+Description=Lampas Minecraft Server Scheduled Restart with Warnings
+Documentation=https://lampas.town
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/lampas-scheduled-restart.sh
+TimeoutStartSec=600
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
