@@ -5,7 +5,10 @@ export interface BackupOptions {
   source: string;
   destinationRoot: string;
   label?: string;
+  maxBackups?: number;
 }
+
+const DEFAULT_MAX_BACKUPS = 2;
 
 export function formatTimestamp(date = new Date()): string {
   const pad = (n: number, width = 2) => n.toString().padStart(width, "0");
@@ -20,7 +23,11 @@ export function formatTimestamp(date = new Date()): string {
 }
 
 export async function backupDirectory(options: BackupOptions): Promise<string | undefined> {
-  const { source, destinationRoot, label = "world" } = options;
+  const { source, destinationRoot, label = "world", maxBackups = DEFAULT_MAX_BACKUPS } = options;
+
+  if (!Number.isInteger(maxBackups) || maxBackups < 1) {
+    throw new RangeError("maxBackups must be a positive integer");
+  }
 
   if (!fs.existsSync(source)) {
     return undefined;
@@ -49,6 +56,16 @@ export async function backupDirectory(options: BackupOptions): Promise<string | 
   }
 
   fs.cpSync(source, backupDest, { recursive: true });
+
+  const backupPrefix = `${label}_`;
+  const backupDirectories = fs.readdirSync(destinationRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith(backupPrefix))
+    .map((entry) => entry.name)
+    .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+
+  for (const expiredBackup of backupDirectories.slice(maxBackups)) {
+    fs.rmSync(path.join(destinationRoot, expiredBackup), { recursive: true, force: true });
+  }
 
   console.log(`[Backup] Created backup of '${path.basename(source)}' at: ${backupDest}`);
   return backupDest;

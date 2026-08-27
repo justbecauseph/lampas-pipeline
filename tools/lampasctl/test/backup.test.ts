@@ -62,4 +62,33 @@ describe("world backup utility", () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test("keeps only the two newest matching backups by default", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-backup-test-"));
+    try {
+      const worldDir = path.join(dir, "world");
+      const backupsDir = path.join(dir, ".backups");
+      fs.mkdirSync(worldDir);
+      fs.writeFileSync(path.join(worldDir, "level.dat"), "first");
+
+      const firstBackup = await backupDirectory({ source: worldDir, destinationRoot: backupsDir });
+      fs.writeFileSync(path.join(worldDir, "level.dat"), "second");
+      const secondBackup = await backupDirectory({ source: worldDir, destinationRoot: backupsDir });
+
+      const unrelatedBackup = path.join(backupsDir, "nether_2026-08-26_173012_456");
+      fs.mkdirSync(unrelatedBackup);
+
+      fs.writeFileSync(path.join(worldDir, "level.dat"), "third");
+      const thirdBackup = await backupDirectory({ source: worldDir, destinationRoot: backupsDir });
+
+      const worldBackups = fs.readdirSync(backupsDir).filter((name) => name.startsWith("world_"));
+      expect(worldBackups).toHaveLength(2);
+      expect(fs.existsSync(firstBackup!)).toBe(false);
+      expect(fs.readFileSync(path.join(secondBackup!, "level.dat"), "utf-8")).toBe("second");
+      expect(fs.readFileSync(path.join(thirdBackup!, "level.dat"), "utf-8")).toBe("third");
+      expect(fs.existsSync(unrelatedBackup)).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
