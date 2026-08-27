@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
@@ -9,21 +9,42 @@
   },
   "minimumLauncherVersion": "1.0.0",
   "protocol": 2,
-  "created": "2026-08-27T18:49:11.782Z",
-  "clientManifest": "https://dev.lampas.town/api/v1/releases/2.0.9/client-manifest",
-  "serverManifest": "https://dev.lampas.town/api/v1/releases/2.0.9/server-manifest",
-  "totalMods": 216,
-  "totalFiles": 458,
+  "created": "2026-08-27T19:23:39.937Z",
+  "clientManifest": "https://dev.lampas.town/api/v1/releases/2.0.10/client-manifest",
+  "serverManifest": "https://dev.lampas.town/api/v1/releases/2.0.10/server-manifest",
+  "totalMods": 220,
+  "totalFiles": 462,
   "launch": {
     "autoConnect": true,
     "server": "play.lampas.town:25576",
     "requiredResourcePacks": [
+      {
+        "id": "fresh-animations-extensions",
+        "filename": "FA+All_Extensions-v1.9.2.zip",
+        "path": "resourcepacks/FA+All_Extensions-v1.9.2.zip",
+        "sha256": "027acba5f64c9d1bf5ccb8daecb7fc756961bfeee866434a0ee5f7809a48d326",
+        "sha1": "510b8b67d2de0852ffbff704906b8dff78443b67"
+      },
+      {
+        "id": "fresh-animations",
+        "filename": "FreshAnimations_v1.10.5.zip",
+        "path": "resourcepacks/FreshAnimations_v1.10.5.zip",
+        "sha256": "cf9f17a2977e171b33cb0b598bc4357dd0383e09c10d5f768ff17c12d0a028ee",
+        "sha1": "0d069c5583d1dd4591e55ec5ff6dd0905f3f8615"
+      },
       {
         "id": "fa-player-extension",
         "filename": "FA+Player-v1.1.zip",
         "path": "resourcepacks/FA+Player-v1.1.zip",
         "sha256": "9ee3ae5b2fe5cd980e4041429dc66d88243f5f2420e2814e5361c746ad937f33",
         "sha1": "122e397af111e3dc5fb6b60004aad9464980f13a"
+      },
+      {
+        "id": "recolourful-containers-gui",
+        "filename": "Recolourful Containers 3.1.3 (1.19.4+).zip",
+        "path": "resourcepacks/Recolourful Containers 3.1.3 (1.19.4+).zip",
+        "sha256": "fe14f85cf5c551fb1d0f122d7fa07a4b371186f15e23b467a409999658974948",
+        "sha1": "89e14abdaf6f09895adc62a714a3da75fa591951"
       }
     ]
   },
