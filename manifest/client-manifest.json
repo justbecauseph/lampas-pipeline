@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1088,6 +1088,14 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/lambdynamiclights"
+    },
+    {
+      "id": "lampas-addons-1_0_0",
+      "name": "lampas-addons-1.0.0",
+      "side": "both",
+      "filename": "lampas-addons-1.0.0.jar",
+      "size": 81563,
+      "categories": []
     },
     {
       "id": "lampas-aria-0_1_0-alpha_1",
@@ -3139,6 +3147,19 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/yBW8D80W/versions/LCAMVAqE/lambdynamiclights-4.12.3%2B26.2.jar",
         "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas-addons-1.0.0.jar",
+      "size": 81563,
+      "hashes": {
+        "sha256": "a8e8f2526e75eeb8f0654c33430e3c6d6eb157567b7b1cd499e4adf7a26921af",
+        "sha512": "2fbdabf9ecc9c68abe1f809fa3f9d840e4afb260024565b24a40e2a006053ca0738017904b4aa1391af1548d795ff99baa7ed8d0be07bd16be66a782333acb3c"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a8e8f2526e75eeb8f0654c33430e3c6d6eb157567b7b1cd499e4adf7a26921af",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
