@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -4555,6 +4555,890 @@
       "policy": "MANAGED"
     },
     {
+      "path": "config/apotheosis/apotheosis.cfg",
+      "size": 4494,
+      "hashes": {
+        "sha256": "0d567c27b10feb3945d329fc6ff0bf4f3eaeace7456aa814b7912063b2281e42",
+        "sha512": "665683722359c74f8d46cb843a38f33dd600169468529bf0af69fdf8596dcece4b59b4c5bc83d83dcd1403168d32997212bc364302e226c06ce702760a345fec"
+      },
+      "download": {
+        "url": "/api/v1/blobs/0d567c27b10feb3945d329fc6ff0bf4f3eaeace7456aa814b7912063b2281e42",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/apotheosis/apothic_attributes.cfg",
+      "size": 5755,
+      "hashes": {
+        "sha256": "60c9f1019dfa06a1b78c71cfb40a231a58d35ef32b8fb288300335b57949eebe",
+        "sha512": "c91f5a80b4485725d27d82e68a37354cd49e1f79602db5f6532b18067222cf847664cce3c7868d8af83646be1ad0718bb2e07d82ed61bc542de746314ae34727"
+      },
+      "download": {
+        "url": "/api/v1/blobs/60c9f1019dfa06a1b78c71cfb40a231a58d35ef32b8fb288300335b57949eebe",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/apotheosis/apothic_enchanting.cfg",
+      "size": 718,
+      "hashes": {
+        "sha256": "2150a9e5f1bf77a33843d3a9d290efad799e7aaf338b1f6d0bedfae190864aa8",
+        "sha512": "381294f1826114a551c2c5b88f4d405c358da607207c200820dc71d61472e79288f7e7493589f4849f16f6b24c4bd83bd9b0ea9da63f5e59a5653eaf10b316cb"
+      },
+      "download": {
+        "url": "/api/v1/blobs/2150a9e5f1bf77a33843d3a9d290efad799e7aaf338b1f6d0bedfae190864aa8",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/apotheosis/apothic_spawners.cfg",
+      "size": 967,
+      "hashes": {
+        "sha256": "c40b79d0b09ab1cab420e6c853efd8e926e0945825a05dc042de5a869c49444a",
+        "sha512": "7dc959d479cdb8dc06544863c22d672e3c0078523770384e39a9e5b041ac5a6de54aee1864948f4d49c659f894fb15cdeb4e31403b01e8333227bc2e25ca3506"
+      },
+      "download": {
+        "url": "/api/v1/blobs/c40b79d0b09ab1cab420e6c853efd8e926e0945825a05dc042de5a869c49444a",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/apotheosis/name_generation.cfg",
+      "size": 28979,
+      "hashes": {
+        "sha256": "96c16ea65d6acfdb3a07c261694564b939b1d31365555922a40924b74a5a93bc",
+        "sha512": "5cab73b87359cc8ca711a2c88ca651ff8cba1e74a8abc444481e77b21ab8565df6f2c2a6e61a6832d15b8c38185463346062c22ee3b300ec4d6b3da83843e8b7"
+      },
+      "download": {
+        "url": "/api/v1/blobs/96c16ea65d6acfdb3a07c261694564b939b1d31365555922a40924b74a5a93bc",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/armor_pierce.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/armor_shred.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "803b5a64c395b01f6efd12222624c7422cc548890c74d62f105daa670500e438",
+        "sha512": "8f50746e586e5e6c611827a6dc6c1a9e95b6e7bb71c6e77578ac6797acf2df971b2a3f0e105ae6141fd3b70332f4abc42b64dd9665b1cd6542313da5a3c88851"
+      },
+      "download": {
+        "url": "/api/v1/blobs/803b5a64c395b01f6efd12222624c7422cc548890c74d62f105daa670500e438",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/arrow_damage.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/arrow_velocity.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/cold_damage.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/cooldown_reduction.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "20fb17a4c7d63f89af4530b823b1d95c8fc10a114112f802fcf377c1b8c23128",
+        "sha512": "e5cd8e78a18c4d693f52d2a7f260b9d930248e6b6ab8914ab813f090c6626b163dfa06b4a5349d3911985c6cc005c7d0d1a0a677c37bb091681fdea13909f662"
+      },
+      "download": {
+        "url": "/api/v1/blobs/20fb17a4c7d63f89af4530b823b1d95c8fc10a114112f802fcf377c1b8c23128",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/crit_chance.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/crit_damage.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "c53319e27427fef88d5df7db100e255158c6f088d53b67cc4c2a7f8d0a152693",
+        "sha512": "52c363bbd759de94fbde6e03933bedf833c5892df4fbb09746bc51e38cf86792140c19b9e415f8a605185994a021f817cbf512483635daa495b71f40ea4f56f6"
+      },
+      "download": {
+        "url": "/api/v1/blobs/c53319e27427fef88d5df7db100e255158c6f088d53b67cc4c2a7f8d0a152693",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/current_hp_damage.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/dodge_chance.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/draw_speed.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "bb3d3e9c91455de6702c80400f82cd48760dd76ea9e71498ea4939c675e3b0f4",
+        "sha512": "2580cb24a72d06831bd911590d9293bf2ded1a8e13d57811318eeef50e78bfb1d468a1912a36cf1c5e6266125664542dcc1cbfc294d460d744815a4ca68be77e"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bb3d3e9c91455de6702c80400f82cd48760dd76ea9e71498ea4939c675e3b0f4",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/experience_gained.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/fire_damage.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/ghost_health.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/healing_received.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "sha512": "f651b5b89d59516eba669931fdece49634f2f35209c55641f7b1a9a6c0a295db72d3f8a7c6b43eb8a9e8d5176baac1826ecac3ad9cc8ded471ecacc562cc8590"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6a50a28a3820a8085fb2d43b0b3ba718ff8d9e0df9800e855d540c3c7a82d862",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/life_steal.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/overheal.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/projectile_damage.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/prot_pierce.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "a34b1473712893aa4dd1a7ae1a7a0a6faf7232e546e1c112871054694c8fed35",
+        "sha512": "b514d8aed6c7898af5f910658603cc69deb0d848b3b75b02dddee92bcd4545eb1ab03c4b95e14dfcfbd36e4808be45d7171ee97ffb21bdd385946179a70de877"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a34b1473712893aa4dd1a7ae1a7a0a6faf7232e546e1c112871054694c8fed35",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/prot_shred.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_attributes/swim_speed.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/apothic_enchanting/max_eterna.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "6217856e9bb2355a468bbe03fe24bc97bae91f8deb54e9df42f8a4021cde99e6",
+        "sha512": "86ecaf0effd9c511c5de2d9ff6fdc978cd92edc493aafc0d563836722a5e42febeac917332b120f1b0476da4dcb1eecce0de6a3314d3207437b31685f560829e"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6217856e9bb2355a468bbe03fe24bc97bae91f8deb54e9df42f8a4021cde99e6",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/betternether/player.obsidian_block_break_speed.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "c53319e27427fef88d5df7db100e255158c6f088d53b67cc4c2a7f8d0a152693",
+        "sha512": "52c363bbd759de94fbde6e03933bedf833c5892df4fbb09746bc51e38cf86792140c19b9e415f8a605185994a021f817cbf512483635daa495b71f40ea4f56f6"
+      },
+      "download": {
+        "url": "/api/v1/blobs/c53319e27427fef88d5df7db100e255158c6f088d53b67cc4c2a7f8d0a152693",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/air_drag_modifier.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "sha512": "1e0a7f93e305a24824ede58fb3fc6b1f7ca318e81dcb390ba357cfd732a101f6a29b40fa778fcf2a7dc22105174d1c39153d3fd5e9b17411587de0d61c08f8d1"
+      },
+      "download": {
+        "url": "/api/v1/blobs/43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/armor_toughness.json",
+      "size": 389,
+      "hashes": {
+        "sha256": "b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "sha512": "b126f50924d3b31d3457e66d403d1dff831765fa8b409f34b3c11136233cf66cfbf14e6eb1c20d20e1cad1e711d15e95485e4a3e0e2e67828a856ff20051c586"
+      },
+      "download": {
+        "url": "/api/v1/blobs/b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/armor.json",
+      "size": 389,
+      "hashes": {
+        "sha256": "b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "sha512": "b126f50924d3b31d3457e66d403d1dff831765fa8b409f34b3c11136233cf66cfbf14e6eb1c20d20e1cad1e711d15e95485e4a3e0e2e67828a856ff20051c586"
+      },
+      "download": {
+        "url": "/api/v1/blobs/b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/attack_damage.json",
+      "size": 389,
+      "hashes": {
+        "sha256": "b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "sha512": "b126f50924d3b31d3457e66d403d1dff831765fa8b409f34b3c11136233cf66cfbf14e6eb1c20d20e1cad1e711d15e95485e4a3e0e2e67828a856ff20051c586"
+      },
+      "download": {
+        "url": "/api/v1/blobs/b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/attack_knockback.json",
+      "size": 389,
+      "hashes": {
+        "sha256": "b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "sha512": "b126f50924d3b31d3457e66d403d1dff831765fa8b409f34b3c11136233cf66cfbf14e6eb1c20d20e1cad1e711d15e95485e4a3e0e2e67828a856ff20051c586"
+      },
+      "download": {
+        "url": "/api/v1/blobs/b6aa33f20fbc7bb14c930dfcfd93591f37f2ccf12df0b6da9551f7a6fad1e439",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/attack_speed.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/below_name_distance.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "6cd57a7ca2f9d04fbacd8ca3e6f4b17b1bab8deec05213ce5847bde562bace5a",
+        "sha512": "3637ab21e6470493bf478007aa427e0df5bbdcdb587bd82dab677f5dbdea828f7c2f76983924c7a879dc70f309c67cc02824ace6a8e33c671fc21976c153a909"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6cd57a7ca2f9d04fbacd8ca3e6f4b17b1bab8deec05213ce5847bde562bace5a",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/block_break_speed.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/block_interaction_range.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "137e8a8052b2264bc1c881b91b97011e4c33726819f4c434753ad5480ee3d19f",
+        "sha512": "f86da27ea1d0b5731f046fb0ec6c268c1e5126a748117daee607be454d31a72b016915258fc4ae37d4f44f2c72a464674d83886a2b103cca8358a850bfd2a510"
+      },
+      "download": {
+        "url": "/api/v1/blobs/137e8a8052b2264bc1c881b91b97011e4c33726819f4c434753ad5480ee3d19f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/bounciness.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/burning_time.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/camera_distance.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "220b18479d9b6497fc95e3b2ffcca5014d93eca33153fab8f343151c9a553bde",
+        "sha512": "6f4277cdfdb55489e79459f59c413a49a5a12824e757c5f3ed06fe6f0d13b823e2ac89fdcf61633ae2fdc066d1e5f6b165e588067950d4d898b5d0d3ce458db4"
+      },
+      "download": {
+        "url": "/api/v1/blobs/220b18479d9b6497fc95e3b2ffcca5014d93eca33153fab8f343151c9a553bde",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/entity_interaction_range.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "137e8a8052b2264bc1c881b91b97011e4c33726819f4c434753ad5480ee3d19f",
+        "sha512": "f86da27ea1d0b5731f046fb0ec6c268c1e5126a748117daee607be454d31a72b016915258fc4ae37d4f44f2c72a464674d83886a2b103cca8358a850bfd2a510"
+      },
+      "download": {
+        "url": "/api/v1/blobs/137e8a8052b2264bc1c881b91b97011e4c33726819f4c434753ad5480ee3d19f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/explosion_knockback_resistance.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/fall_damage_multiplier.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "6217856e9bb2355a468bbe03fe24bc97bae91f8deb54e9df42f8a4021cde99e6",
+        "sha512": "86ecaf0effd9c511c5de2d9ff6fdc978cd92edc493aafc0d563836722a5e42febeac917332b120f1b0476da4dcb1eecce0de6a3314d3207437b31685f560829e"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6217856e9bb2355a468bbe03fe24bc97bae91f8deb54e9df42f8a4021cde99e6",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/flying_speed.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/follow_range.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "sha512": "1e0a7f93e305a24824ede58fb3fc6b1f7ca318e81dcb390ba357cfd732a101f6a29b40fa778fcf2a7dc22105174d1c39153d3fd5e9b17411587de0d61c08f8d1"
+      },
+      "download": {
+        "url": "/api/v1/blobs/43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/friction_modifier.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "sha512": "1e0a7f93e305a24824ede58fb3fc6b1f7ca318e81dcb390ba357cfd732a101f6a29b40fa778fcf2a7dc22105174d1c39153d3fd5e9b17411587de0d61c08f8d1"
+      },
+      "download": {
+        "url": "/api/v1/blobs/43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/gravity.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "84207d0866413a367d92222bd193912a418615f5eb9da342057bafec30173a79",
+        "sha512": "91a2c7b615ee07dea48dc235da303ee88d38d2152b58d04f994dab40cc6c70baa4aa61c8f839708eaa2fc5f20e93b0800197576aa82ed4f48806ddcd7f16e55d"
+      },
+      "download": {
+        "url": "/api/v1/blobs/84207d0866413a367d92222bd193912a418615f5eb9da342057bafec30173a79",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/jump_strength.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "220b18479d9b6497fc95e3b2ffcca5014d93eca33153fab8f343151c9a553bde",
+        "sha512": "6f4277cdfdb55489e79459f59c413a49a5a12824e757c5f3ed06fe6f0d13b823e2ac89fdcf61633ae2fdc066d1e5f6b165e588067950d4d898b5d0d3ce458db4"
+      },
+      "download": {
+        "url": "/api/v1/blobs/220b18479d9b6497fc95e3b2ffcca5014d93eca33153fab8f343151c9a553bde",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/knockback_resistance.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "a103b8b62d3f94cc5e16f2157f16f737532a3a77e961d4d6023e60f4bc04b9aa",
+        "sha512": "a11c9797e4aecf62cbd514aacfbbfc0bc83bb843f4d7dd315699233692f4538d1312c2a0078bb9a9056daa7b3debee1157049f206f0922499b1fa43a9784ef14"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a103b8b62d3f94cc5e16f2157f16f737532a3a77e961d4d6023e60f4bc04b9aa",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/luck.json",
+      "size": 393,
+      "hashes": {
+        "sha256": "6bce4756f23cedf273e963254625fa594a32208f99de05db1abd1e77ec671372",
+        "sha512": "74bea686e64459b5f8844739752c362aa0c7a7f5acc1500cff799b63f1cb0874bb0bf5925672f50bb72a80d87e8dd1bfbf8a2d7f0bf2cbc7e910f4bc486ae6d9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6bce4756f23cedf273e963254625fa594a32208f99de05db1abd1e77ec671372",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/max_absorption.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "sha512": "1e0a7f93e305a24824ede58fb3fc6b1f7ca318e81dcb390ba357cfd732a101f6a29b40fa778fcf2a7dc22105174d1c39153d3fd5e9b17411587de0d61c08f8d1"
+      },
+      "download": {
+        "url": "/api/v1/blobs/43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/max_health.json",
+      "size": 389,
+      "hashes": {
+        "sha256": "9d0ae1c8fda340e80aac17df9999ec1e9c7396a2327f63a40ea8006991201305",
+        "sha512": "a9c66cabef26416a3129bf6f7af4ba1e0d1b903878a7db6ff1830eed451ebbe6341673543b87edc48b869e62d923c9504de88c6b7f235de4506d84bda66e43f2"
+      },
+      "download": {
+        "url": "/api/v1/blobs/9d0ae1c8fda340e80aac17df9999ec1e9c7396a2327f63a40ea8006991201305",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/mining_efficiency.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/movement_efficiency.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/movement_speed.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/name_tag_distance.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "6cd57a7ca2f9d04fbacd8ca3e6f4b17b1bab8deec05213ce5847bde562bace5a",
+        "sha512": "3637ab21e6470493bf478007aa427e0df5bbdcdb587bd82dab677f5dbdea828f7c2f76983924c7a879dc70f309c67cc02824ace6a8e33c671fc21976c153a909"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6cd57a7ca2f9d04fbacd8ca3e6f4b17b1bab8deec05213ce5847bde562bace5a",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/oxygen_bonus.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "sha512": "56c9e193d2f6c4cb34d2b7f8d1a8b4750542af10f3f43d1a43b3dd49cfa1d5280d9ad0808bc40902d991ec62af8345cea67c6f2b0b1c42f9ee88b95525d36392"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6b9b3d0281e3d07f12580d39983e2ac2eac90f30c739d743b84d55024c3651ed",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/safe_fall_distance.json",
+      "size": 393,
+      "hashes": {
+        "sha256": "6bce4756f23cedf273e963254625fa594a32208f99de05db1abd1e77ec671372",
+        "sha512": "74bea686e64459b5f8844739752c362aa0c7a7f5acc1500cff799b63f1cb0874bb0bf5925672f50bb72a80d87e8dd1bfbf8a2d7f0bf2cbc7e910f4bc486ae6d9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/6bce4756f23cedf273e963254625fa594a32208f99de05db1abd1e77ec671372",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/scale.json",
+      "size": 387,
+      "hashes": {
+        "sha256": "0e28210686e7f216d46ba0fee2508c263c7c39e26fb6d8380404789d3185e73a",
+        "sha512": "9ef78e9cb5ffa810f68a5a01b70cc1a26c9efe05ddd9d17f20705773b68479a8783967820cce5c266799d9d2532dff2688009528f042e87b585bd736fc556dfc"
+      },
+      "download": {
+        "url": "/api/v1/blobs/0e28210686e7f216d46ba0fee2508c263c7c39e26fb6d8380404789d3185e73a",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/sneaking_speed.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/spawn_reinforcements.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/step_height.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "sha512": "a577c3e0f04509d445770961adcbab524833a2710d601ef8a5f3e1aaa402d65ac47eca3987b9d5ac9b3114a1d037efca1e9e8cae9836f9211dc6203b17fafbb9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/93b4adf5c49377098f3767e46dea7ab8228ad0edd2d0f59904ff9e12a429e8c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/submerged_mining_speed.json",
+      "size": 381,
+      "hashes": {
+        "sha256": "f874427dd6754eff702ef41fd35649493094ddd0c79e01623a2cc9ccfe8ce8d7",
+        "sha512": "40daa0f066cc6bcaf33701f464c90e5c3cf5eb09c0632bf7592a39975cbc121816fe55f68d25641a1671bfc0b8119d0e706ba907506a3503a711cc224a04ce2c"
+      },
+      "download": {
+        "url": "/api/v1/blobs/f874427dd6754eff702ef41fd35649493094ddd0c79e01623a2cc9ccfe8ce8d7",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/sweeping_damage_ratio.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/tempt_range.json",
+      "size": 385,
+      "hashes": {
+        "sha256": "43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "sha512": "1e0a7f93e305a24824ede58fb3fc6b1f7ca318e81dcb390ba357cfd732a101f6a29b40fa778fcf2a7dc22105174d1c39153d3fd5e9b17411587de0d61c08f8d1"
+      },
+      "download": {
+        "url": "/api/v1/blobs/43aa2701d17e26c045533a5b0500fa8c0639d4e62adcccd389ba3426378a80c0",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/water_movement_efficiency.json",
+      "size": 379,
+      "hashes": {
+        "sha256": "17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "sha512": "73106c843b16ace94161ecffcb5c8cf9ca5ca634553718069f7fb0fad41e58fce955deae4d5ff0ede1ec151e34c1b9b4cd55e37f81a0db647fb5ba18e4cc9c1f"
+      },
+      "download": {
+        "url": "/api/v1/blobs/17ef1233e3020b53a3835793bc771c00114af5b167f57cb03506098dbc49e535",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/waypoint_receive_range.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "2d8ef79ff6cbf914b4080e290dafd2bcddd8f497cebc08502f657350035ae323",
+        "sha512": "540ed853ee7bf522200cbc7a83a69feeeac8fa12f395dc2bf846236a7ed55b3cbf4b302910ac8945892cd6daa13495f275b1a73e7a7e4cde1f6bfee5f7088e86"
+      },
+      "download": {
+        "url": "/api/v1/blobs/2d8ef79ff6cbf914b4080e290dafd2bcddd8f497cebc08502f657350035ae323",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/attributefix/minecraft/waypoint_transmit_range.json",
+      "size": 383,
+      "hashes": {
+        "sha256": "2d8ef79ff6cbf914b4080e290dafd2bcddd8f497cebc08502f657350035ae323",
+        "sha512": "540ed853ee7bf522200cbc7a83a69feeeac8fa12f395dc2bf846236a7ed55b3cbf4b302910ac8945892cd6daa13495f275b1a73e7a7e4cde1f6bfee5f7088e86"
+      },
+      "download": {
+        "url": "/api/v1/blobs/2d8ef79ff6cbf914b4080e290dafd2bcddd8f497cebc08502f657350035ae323",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "config/bclib/client.json",
       "size": 219,
       "hashes": {
@@ -4797,6 +5681,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/860b01817ec9f4b181d0347e722e86098e9744147ac7320aae0e175249b35d9e",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/horseman-common.toml",
+      "size": 269,
+      "hashes": {
+        "sha256": "38873b6f3111be24ebfce89cae4eebca90e68cbde011c4d923eb3b12af216dd5",
+        "sha512": "7e0117855702fae745d8362c73c8feac81c1dea880c368006248f3090999134ce5f53fc806bc16a5956c3ea68d317e6a18f1f569c4bf68ec2b2e2da2a0fce996"
+      },
+      "download": {
+        "url": "/api/v1/blobs/38873b6f3111be24ebfce89cae4eebca90e68cbde011c4d923eb3b12af216dd5",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -7064,6 +7961,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "config/chatting/chattabs.json",
+      "size": 584,
+      "hashes": {
+        "sha256": "078579b01dd6860509d49268052837918ad83336f383c19c08435bad9b3f079d",
+        "sha512": "165c319b22cae13b98ecd89afc1ee325d17970f2d5249a8f4380488e6108754532069fa0cfc85ffbe2e24fc24baec70e1d167207a340fdb8d5d4d63e860759ac"
+      },
+      "download": {
+        "url": "/api/v1/blobs/078579b01dd6860509d49268052837918ad83336f383c19c08435bad9b3f079d",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "config/figura.json",
       "size": 207,
       "hashes": {
@@ -7077,14 +7987,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "config/iris.properties",
-      "size": 297,
+      "path": "config/inventoryprofilesnext/inventoryprofiles.json",
+      "size": 1412,
       "hashes": {
-        "sha256": "0dd36fdf4a3b1b74b5e1e4cd2c1b8ae3e16b1732026733ebb64412e0bd9421cf",
-        "sha512": "20e397c11f6a753f1f94e7ab52ea62aef00dac5079a2c01e355c251d62435b9f81f15ac82cd7ee5c3555f9b5a471d6622124c75a01d87fbe344e4285f66b8ac0"
+        "sha256": "aadaf56a255f74fb8c33f2c635b2479ef879233516b2f8b362e4f8fbb7577b05",
+        "sha512": "ae1982a018d5465a752ce069cf8ba7bb278c660e825c15b5c82ac656a82a9c0adb0a5acd4a873153e814dcaf03170d85e7fdd98a093373b068cd78081c7c5912"
       },
       "download": {
-        "url": "/api/v1/blobs/0dd36fdf4a3b1b74b5e1e4cd2c1b8ae3e16b1732026733ebb64412e0bd9421cf",
+        "url": "/api/v1/blobs/aadaf56a255f74fb8c33f2c635b2479ef879233516b2f8b362e4f8fbb7577b05",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -7104,13 +8014,13 @@
     },
     {
       "path": "config/replaymod.json",
-      "size": 1741,
+      "size": 1743,
       "hashes": {
-        "sha256": "d46b6a22ac685999991093996f6b0331d8dd1da72f51395a58830303f08a8f46",
-        "sha512": "4c18d8b1c9a646ba652062d42033c3678edb69e149c2485554e2d28821cb56a9ead3eb3f60b34210ecb45691495005e813b582e95b6d9c7e705bc2343f1cb51d"
+        "sha256": "305ed72c5d8793bbcf3958b0bb3afcf3b4dc720648c3c9ad21bf9d744d1a3629",
+        "sha512": "73c49f9a4418c1e7da228329eb12866a89ea0af805c2a54fa41c2c12557b085c85a12a76dbd88bb58a7dda7933baedd92f0a2a1f5df29e9605edf165a6ba53a7"
       },
       "download": {
-        "url": "/api/v1/blobs/d46b6a22ac685999991093996f6b0331d8dd1da72f51395a58830303f08a8f46",
+        "url": "/api/v1/blobs/305ed72c5d8793bbcf3958b0bb3afcf3b4dc720648c3c9ad21bf9d744d1a3629",
         "provider": "lampas"
       },
       "policy": "MANAGED"

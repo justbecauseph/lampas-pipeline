@@ -1,0 +1,35 @@
+{
+  "tabs": [
+    {
+      "enabled": true,
+      "name": "World",
+      "unformatted": true,
+      "lowercase": false,
+
+      "ignore_contains": [
+        "[OOC]"
+      ],
+
+      "color": 14737632,
+      "hovered_color": 16777120,
+      "selected_color": 10526880,
+      "prefix": ""
+    },
+    {
+      "enabled": true,
+      "name": "OOC",
+      "unformatted": true,
+      "lowercase": false,
+
+      "contains": [
+        "[OOC]"
+      ],
+
+      "color": 14737632,
+      "hovered_color": 16777120,
+      "selected_color": 10526880,
+      "prefix": "/ooc "
+    }
+  ],
+  "version": 6
+}

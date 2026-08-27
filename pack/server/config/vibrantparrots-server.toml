@@ -1,0 +1,22 @@
+#Keep all parrots sitting on a player's shoulders when that player is flying in creative mode.
+#Default Value: true
+parrots_stay_when_flying = true
+#Keep all parrots sitting on a player's shoulders when that player is touching water. Only eject the parrots when the player is fully submerged.
+#Default Value: true
+dismount_parrots_only_when_submerged = true
+#The maximum time after breeding two parrots after which one of them will lay an egg for hatching a parrot chick.
+#Default Value: 20
+# Default: 20
+# Range: > 0
+max_egg_lay_time_in_minutes = 20
+#Remove all parrots sitting on a player's shoulders when that player is sneaking.
+#Default Value: true
+dismount_parrots_when_sneaking = true
+#The minimum time after breeding two parrots after which one of them will lay an egg for hatching a parrot chick.
+#Default Value: 10
+# Default: 10
+# Range: > 0
+min_egg_lay_time_in_minutes = 10
+#Keep all parrots sitting on a player's shoulders when that player is falling.
+#Default Value: true
+parrots_stay_when_falling = true
