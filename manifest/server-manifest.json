@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -520,8 +520,8 @@
       "id": "dungeons_and_taverns",
       "name": "Dungeons and Taverns",
       "side": "server",
-      "filename": "dungeons-and-taverns-5.3.0.jar",
-      "size": 39639975,
+      "filename": "dungeons-and-taverns-5.3.1.jar",
+      "size": 39640152,
       "description": "A Structure Datapack adding dungeons, taverns and other structures to find while you explore the world.",
       "iconUrl": "https://cdn.modrinth.com/data/tpehi7ww/429ba22d212868940cdd82465df949ac51c9791e_96.webp",
       "categories": [
@@ -895,8 +895,8 @@
       "id": "jei",
       "name": "Just Enough Items (JEI)",
       "side": "both",
-      "filename": "jei-26.2-fabric-30.26.0.186.jar",
-      "size": 1818022,
+      "filename": "jei-26.2-fabric-30.28.0.191.jar",
+      "size": 1822520,
       "description": "View Items and Recipes",
       "iconUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/4a3f18ac0d096c9f8e9176984c44be4e58f94c89_96.webp",
       "categories": [
@@ -1531,8 +1531,8 @@
       "id": "pv-addon-lavaplayer-lib",
       "name": "pv-addon-lavaplayer-lib",
       "side": "server",
-      "filename": "pv-addon-lavaplayer-lib-1.2.2.jar",
-      "size": 35124534,
+      "filename": "pv-addon-lavaplayer-lib-1.2.3.jar",
+      "size": 35125858,
       "description": "Add-on library with bundled needed for some Plasmo Voice add-ons.",
       "iconUrl": "https://cdn.modrinth.com/data/Kx9d4acU/8d20662c66a88b48908d01005c60a42eb6a2573c.png",
       "categories": [
@@ -2029,7 +2029,7 @@
       "name": "Voxy Server Side",
       "side": "both",
       "filename": "voxy-server-side-fabric.jar",
-      "size": 7928776,
+      "size": 8113981,
       "description": "Render distant Voxy LODs on servers",
       "iconUrl": "https://cdn.modrinth.com/data/84zcagOb/8f13eacb45ff56be05d77190237cd7d159cb136f.png",
       "categories": [
@@ -2546,15 +2546,28 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/dungeons-and-taverns-5.3.0.jar",
-      "size": 39639975,
+      "path": "mods/distant-decorations-0.1.0.jar",
+      "size": 100151,
       "hashes": {
-        "sha256": "a62d84df3111d9c876ace4f18fc93e239d66b1d077e9604e250c10fda42591bd",
-        "sha512": "04a435e483d8c0204a49769cc749b1ec4d34a005b4a266cf0b3a62f6cc3d7c28bbbf50f5e2b684ab70b617d98e2bbe9e1e98e0a237564c572f1d6391afa66d5e"
+        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/tpehi7ww/versions/kejPgknA/dungeons-and-taverns-5.3.0.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
+      "size": 151958,
+      "hashes": {
+        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
+      },
+      "download": {
+        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -2689,14 +2702,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/distant-decorations-0.1.0.jar",
-      "size": 100151,
+      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
+      "size": 324985,
       "hashes": {
-        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
-        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
+        "sha256": "050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
+        "sha512": "ee45aff29cff0c2dcd9f963a303032b1657a7ae498923cb9ce6e13709f5bfa06d22cc7517cc8bac58d06387c69781442d4336bc0301dd342d76f36b3285fd18d"
       },
       "download": {
-        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "url": "/api/v1/blobs/050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2780,14 +2793,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
-      "size": 151958,
+      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
+      "size": 661344,
       "hashes": {
-        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
-        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
+        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
       },
       "download": {
-        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2871,6 +2884,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "hashes": {
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+      },
+      "download": {
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/Jade-mc26.2-Fabric-26.2.11.jar",
       "size": 1043764,
       "hashes": {
@@ -2884,15 +2910,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/jei-26.2-fabric-30.26.0.186.jar",
-      "size": 1818022,
+      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
       "hashes": {
-        "sha256": "7b90271278d39e86c068a56b60c0323c682db9a9b9d55faa63f571221abebc5f",
-        "sha512": "6d8aaad5066d607e460db6f83cba28807129104b46c580b5ba3372d7b7cef84e28ade393c0a3d6bbb38191bcac053af691d0f58d8075f211c687c7b56c74337c"
+        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/ZLvOB7Pk/jei-26.2-fabric-30.26.0.186.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -2936,19 +2962,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
-      "size": 324985,
-      "hashes": {
-        "sha256": "050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
-        "sha512": "ee45aff29cff0c2dcd9f963a303032b1657a7ae498923cb9ce6e13709f5bfa06d22cc7517cc8bac58d06387c69781442d4336bc0301dd342d76f36b3285fd18d"
-      },
-      "download": {
-        "url": "/api/v1/blobs/050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/lampas-aria-0.1.0-alpha.1.jar",
       "size": 96088,
       "hashes": {
@@ -2957,6 +2970,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/f9f0f5afb06ebaf556292a0c25977e4d59e5b686f802de421697bc1ce6115147",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2476264,
+      "hashes": {
+        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
+        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -2975,19 +3001,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/levelledmobs-apotheosis-1.0.0.jar",
-      "size": 11812,
-      "hashes": {
-        "sha256": "148d130ad1851d92179c6c38d99f82631dd25b0b8d5628c01a6f112376147639",
-        "sha512": "d81902b4b04c26c4e1bfdbfb02d22b52b01ba1033f1e4de2bf579610ed1b4218007da0f69e2e1f6e385505ea076ef4dbe3248506dcb775ce2820dca47b1eef39"
-      },
-      "download": {
-        "url": "/api/v1/blobs/148d130ad1851d92179c6c38d99f82631dd25b0b8d5628c01a6f112376147639",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/lampas2-overrides-1.0.0.jar",
       "size": 151412,
       "hashes": {
@@ -2996,6 +3009,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/564bd8e7a7313b5145fd2219aad4e552248dea94ea2cd3a4da0738ed20a3673f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/levelledmobs-apotheosis-1.0.0.jar",
+      "size": 11812,
+      "hashes": {
+        "sha256": "148d130ad1851d92179c6c38d99f82631dd25b0b8d5628c01a6f112376147639",
+        "sha512": "d81902b4b04c26c4e1bfdbfb02d22b52b01ba1033f1e4de2bf579610ed1b4218007da0f69e2e1f6e385505ea076ef4dbe3248506dcb775ce2820dca47b1eef39"
+      },
+      "download": {
+        "url": "/api/v1/blobs/148d130ad1851d92179c6c38d99f82631dd25b0b8d5628c01a6f112376147639",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3417,14 +3443,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
-      "size": 661344,
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
       "hashes": {
-        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
-        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
       },
       "download": {
-        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3547,15 +3573,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/pv-addon-lavaplayer-lib-1.2.2.jar",
-      "size": 35124534,
+      "path": "mods/Placebo-26.2-11.0.0.jar",
+      "size": 487444,
       "hashes": {
-        "sha256": "70da9b44b4a115d440a7d9872ba5f43e2713dd939fb26be4758827aae73dacc2",
-        "sha512": "4c57baf0f1d83a1fb7cfa72d6551a0b3a1619a8a8e5c1875b90f5e7bb173673ff1460904cbbb6fce666223fc1a5b47209949c9bbfa7ef5a8f4ca3ac46d7d47c4"
+        "sha256": "4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
+        "sha512": "c3d2b528304036f8b03673b2061aa3ed12fb9222e452d84f2612e6e958cf48e92bb0f90e2f8c4c46df8607e97eea4dea4a6ca0eff5073e4a2aa65cba046d9f1c"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/Kx9d4acU/versions/4vj3dQKI/pv-addon-lavaplayer-lib-1.2.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4002,19 +4028,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/voxy-server-side-fabric.jar",
-      "size": 7928776,
-      "hashes": {
-        "sha256": "b7b1d92231c0b4b26cbba988516cac824d60cf9e7dfc61b4a59a6d5d108ac056",
-        "sha512": "157f4b6473e6d099bddc2ce69b370c13bb05ae591c4bf4739723eb27e08c28e813362dc9acfb7bf0b49113662d43e60042db58826832cdcd829444c8fee472ec"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/84zcagOb/versions/JiG0StST/voxy-server-side-fabric.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/WilderWild-4.2.11-mc26.2.jar",
       "size": 43113841,
       "hashes": {
@@ -4106,32 +4119,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
-      },
-      "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Placebo-26.2-11.0.0.jar",
-      "size": 487444,
-      "hashes": {
-        "sha256": "4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
-        "sha512": "c3d2b528304036f8b03673b2061aa3ed12fb9222e452d84f2612e6e958cf48e92bb0f90e2f8c4c46df8607e97eea4dea4a6ca0eff5073e4a2aa65cba046d9f1c"
-      },
-      "download": {
-        "url": "/api/v1/blobs/4cfd7e44257132fc545d558d0c21ee95cd8cd6f86f06e03c5e982423d11a73ec",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
       "size": 884979,
       "hashes": {
@@ -4140,45 +4127,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "hashes": {
-        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
-      },
-      "download": {
-        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2476264,
-      "hashes": {
-        "sha256": "bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
-        "sha512": "3fcda3ddf39e5582d52c5a4413cd088ab0bce75c8f34b9fdc7f2ce63b26d59c1cc70cccb251139f039511ea7bde700ae3a43341a8a12b901df594d8ded1b6f28"
-      },
-      "download": {
-        "url": "/api/v1/blobs/bd66064b08a429357a8f894a9d90c67cc735921da728e61a3b2e5002c5e474f9",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
-      },
-      "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4206,6 +4154,58 @@
       "download": {
         "url": "/api/v1/blobs/8df45de6b765da8cd186caba54171047390122aa78a136145f1c198c53a3d612",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/jei-26.2-fabric-30.28.0.191.jar",
+      "size": 1822520,
+      "hashes": {
+        "sha256": "cae11932f56294ece0e7b40781cd7a266276d7330b75ad97070146a40617554b",
+        "sha512": "aa7dca89026fea2293a2e25fa4a84faf0eeaa6407b7e84991e69626ff1ee0f9df9ba3a5e096cbf631d08842693b115653c5c8373e5ef3953318a892dbdc0a33d"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/FQUVLzeD/jei-26.2-fabric-30.28.0.191.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/voxy-server-side-fabric.jar",
+      "size": 8113981,
+      "hashes": {
+        "sha256": "03ac120f331ac3c9e1a0369906aae611d6d8ebb8b97fafcaf877e925bec5c32a",
+        "sha512": "b0d82da6585fafd389bb6ce92a11d7570590c4e7494984f2f21f60fa49254c10f29a4f25c85161e5bdf0174b4a311a793a2dd367b1a83fd13c759837ee21ab87"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/84zcagOb/versions/6orJJsqa/voxy-server-side-fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/pv-addon-lavaplayer-lib-1.2.3.jar",
+      "size": 35125858,
+      "hashes": {
+        "sha256": "d986355c3f74a884e50ece5ee76f089d7c8af9d7ec1e8230b4cf2b85cb909b9c",
+        "sha512": "7409b0d3d8c77297a0458021af088a26db55308b7d36de872bcad2fd352989217ec77104ef85e867add53eb02f5ba1c4a0ca132fb8444f5281fa8dee01531545"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/Kx9d4acU/versions/kxLi3Vh0/pv-addon-lavaplayer-lib-1.2.3.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/dungeons-and-taverns-5.3.1.jar",
+      "size": 39640152,
+      "hashes": {
+        "sha256": "4f6e83146e93c671f564df5d0bf14f6f17e020e6200c6a427cb1f371c32d1064",
+        "sha512": "6a5313478582c7ae124a03e14630ff460bc52ee828e3d562857f56a846bef2a6d850d42f0f715394672185f49ec8b9fbd557107e19610eae2ad992f68a69ff9e"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/tpehi7ww/versions/TaODUzQu/dungeons-and-taverns-5.3.1.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -7838,26 +7838,26 @@
     },
     {
       "path": "config/mobfilter.json5",
-      "size": 3334,
+      "size": 2297,
       "hashes": {
-        "sha256": "5a0dff8539dafa079d259b3862bb360f5172eb40c3108d42cb69af78ec45d320",
-        "sha512": "2230671e767916eee3f2500e048d14cf18a1c6aa8df51134ae351335b3e8dcfe9796542721a71d1f00bcadece24464288de7f97a17d51d66fb51e35a29a0a5ea"
+        "sha256": "706dddafaa80cb449127bd5b998817e579c74aea208a386eaebea41d35150daf",
+        "sha512": "cf9f6dbe768d0190598902e848ae7f13dcf4848e0070eabfaf1f1edd405d235470a4effb570fa6d4cf38bb7218d5ea4ab7b950925443f217127351ec31b2d92d"
       },
       "download": {
-        "url": "/api/v1/blobs/5a0dff8539dafa079d259b3862bb360f5172eb40c3108d42cb69af78ec45d320",
+        "url": "/api/v1/blobs/706dddafaa80cb449127bd5b998817e579c74aea208a386eaebea41d35150daf",
         "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
       "path": "config/mobfilter.simple",
-      "size": 1136,
+      "size": 170,
       "hashes": {
-        "sha256": "e3fae9e143ab33dd9b27db982c4f2d1b17c3be17a090e38e169708b036827e7f",
-        "sha512": "b0c814172677bbfe09e4fea2d05ca4c5c5e917329420014dba2595bf0067d1c05682a0f831eb3a5258d61c71ffac264a4d4854b84fb1f4ae14341bb6028526df"
+        "sha256": "123a2d44e00ab6de48676a93d2f3d4535cdebee104f6888cb85c43757b4d3d38",
+        "sha512": "375750d4c28ec3a5ba8bcd2a7e5ca16fea2584016d0582aa13265e00642f52c58603b01361bced43aa56012c72a26c7035040a2c5beb8cbc0bf8e21a706a47b6"
       },
       "download": {
-        "url": "/api/v1/blobs/e3fae9e143ab33dd9b27db982c4f2d1b17c3be17a090e38e169708b036827e7f",
+        "url": "/api/v1/blobs/123a2d44e00ab6de48676a93d2f3d4535cdebee104f6888cb85c43757b4d3d38",
         "provider": "lampas"
       },
       "policy": "MANAGED"
