@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.18",
+  "version": "2.0.19",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -307,6 +307,19 @@
         "worldgen"
       ],
       "sourceUrl": "https://modrinth.com/mod/chunky"
+    },
+    {
+      "id": "cinchs-missing-blocks",
+      "name": "Cinch's Missing Blocks",
+      "side": "both",
+      "filename": "cinchsmissingblocks-[Fabric-26.2]-4.4.0.jar",
+      "size": 2857459,
+      "description": "Cinch's Missing Blocks aims to add all the block variants that Mojang skipped. From random wall and stair variants that are missing to entire new brick sets.",
+      "iconUrl": "https://cdn.modrinth.com/data/MXO0e0CH/6d3b9ddab8bf0e2d1f2fe56b92ad45aa020b53fd_96.webp",
+      "categories": [
+        "decoration"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/cinchs-missing-blocks"
     },
     {
       "id": "cloth-config",
@@ -1009,7 +1022,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 201379,
+      "size": 203856,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -1870,6 +1883,21 @@
       "sourceUrl": "https://modrinth.com/mod/supermartijn642s-core-lib"
     },
     {
+      "id": "tables-chairs-2",
+      "name": "Tables & Chairs 2",
+      "side": "both",
+      "filename": "tables-chairs-2-0.6.jar",
+      "size": 2781375,
+      "description": "Modular, functional, and customisable tables and chairs for your Minecraft game, built from the ground up for performance. Vanilla furniture originally based on Axel's Tables & Chairs!",
+      "iconUrl": "https://cdn.modrinth.com/data/6sIyp8H4/a5903d7a1bb19b6f372b3273c61e57bd4df59c70_96.webp",
+      "categories": [
+        "decoration",
+        "social",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/tables-chairs-2"
+    },
+    {
       "id": "tectonic",
       "name": "Tectonic",
       "side": "server",
@@ -2442,6 +2470,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/fALzjamp/versions/4Eotm6ov/Chunky-Fabric-1.5.3.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/cinchsmissingblocks-[Fabric-26.2]-4.4.0.jar",
+      "size": 2857459,
+      "hashes": {
+        "sha256": "cc09157970657c6502cd5d60cc80a797bfae09d78fe0aa0bfecac90363073ac5",
+        "sha512": "b4ba35886a0bcda8ef4fc956581a9f34834f5c0efff2f451d1ddafaa8660d70ac1c970e47ba28257ccdcc4e7387cc08c9ddfcfb4f9683be2a44bd78c18ed1377"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/MXO0e0CH/versions/7RzucccH/cinchsmissingblocks-%5BFabric-26.2%5D-4.4.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3111,13 +3152,13 @@
     },
     {
       "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 201379,
+      "size": 203856,
       "hashes": {
-        "sha256": "3f8e47e56c7b2c7dd5af2f6c70dc488f92299975b380f11a0888b4e97b28c18b",
-        "sha512": "ca3f7b7200264f82de08221b0d5d80810379677909198ed0bf715e9128744b3383961694a8d7762c1797990e3556ae56cfd06874ddb6ad8885fdc671684ac6d2"
+        "sha256": "8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
+        "sha512": "07b8fb18f1f8c923112c5fcb1f142f67fc397976d18b325ce0feb7ee90119cae3c44ec7f95a648e4526c4ddfe711076c85557d10c326effc2c89b9a4685dd425"
       },
       "download": {
-        "url": "/api/v1/blobs/3f8e47e56c7b2c7dd5af2f6c70dc488f92299975b380f11a0888b4e97b28c18b",
+        "url": "/api/v1/blobs/8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3937,6 +3978,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/vUZarRZr/supermartijn642corelib-1.1.24a-fabric-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/tables-chairs-2-0.6.jar",
+      "size": 2781375,
+      "hashes": {
+        "sha256": "48722e286b42eab3a2b2f33dba26d0fe338c0fa7402c314c08c94907971f3239",
+        "sha512": "f733cdfaec3189385234e83e63a4d9869ce0039788cb8785246b42a1c2ada2043d675f47082541632d6ec986e918c80c6c64058069d5a83d496bad1b17cd0bff"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/6sIyp8H4/versions/oWxMB4jz/tables-chairs-2-0.6.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
