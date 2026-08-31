@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -78,6 +78,20 @@
         "decoration"
       ],
       "sourceUrl": "https://modrinth.com/mod/additional-lanterns"
+    },
+    {
+      "id": "animaticarefabricated",
+      "name": "Animatica Refabricated",
+      "side": "client",
+      "filename": "animatica-0.6.3+26.2.jar",
+      "size": 117443,
+      "description": "A fork of Animatica implementing the OptiFine/MCPatcher animated texture format.",
+      "iconUrl": "https://cdn.modrinth.com/data/xEyZuswh/7f2b47384ecac893a320f6863b18cbe69d7852ee_96.webp",
+      "categories": [
+        "decoration",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/animaticarefabricated"
     },
     {
       "id": "apotheosis-26_2-10_0_0",
@@ -330,19 +344,6 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/chattweaks"
-    },
-    {
-      "id": "cinchs-missing-blocks",
-      "name": "Cinch's Missing Blocks",
-      "side": "both",
-      "filename": "cinchsmissingblocks-[Fabric-26.2]-4.4.0.jar",
-      "size": 2857459,
-      "description": "Cinch's Missing Blocks aims to add all the block variants that Mojang skipped. From random wall and stair variants that are missing to entire new brick sets.",
-      "iconUrl": "https://cdn.modrinth.com/data/MXO0e0CH/6d3b9ddab8bf0e2d1f2fe56b92ad45aa020b53fd_96.webp",
-      "categories": [
-        "decoration"
-      ],
-      "sourceUrl": "https://modrinth.com/mod/cinchs-missing-blocks"
     },
     {
       "id": "cloth-config",
@@ -2710,19 +2711,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/cinchsmissingblocks-[Fabric-26.2]-4.4.0.jar",
-      "size": 2857459,
-      "hashes": {
-        "sha256": "cc09157970657c6502cd5d60cc80a797bfae09d78fe0aa0bfecac90363073ac5",
-        "sha512": "b4ba35886a0bcda8ef4fc956581a9f34834f5c0efff2f451d1ddafaa8660d70ac1c970e47ba28257ccdcc4e7387cc08c9ddfcfb4f9683be2a44bd78c18ed1377"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/MXO0e0CH/versions/7RzucccH/cinchsmissingblocks-%5BFabric-26.2%5D-4.4.0.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/cloth-config-26.2.155.jar",
       "size": 1135186,
       "hashes": {
@@ -2970,6 +2958,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/distant-decorations-0.1.0.jar",
+      "size": 100151,
+      "hashes": {
+        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
+      },
+      "download": {
+        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/elytratrails-1.5.2-26.2.jar",
       "size": 331251,
       "hashes": {
@@ -3113,14 +3114,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/fast-paintings-1.0.0.jar",
-      "size": 78874,
+      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
+      "size": 151958,
       "hashes": {
-        "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-        "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801"
+        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
       },
       "download": {
-        "url": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
+        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3152,14 +3153,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/distant-decorations-0.1.0.jar",
-      "size": 100151,
+      "path": "mods/fast-paintings-1.0.0.jar",
+      "size": 78874,
       "hashes": {
-        "sha256": "64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
-        "sha512": "f5cb70d821dd28a445b69a978fb0ebfc8401bdb2761ecb5c5b3c4ee60423a7816557d7bfff7c8b75a993502677d8f7b024bbb8b87e502efa55823bca9df6e12d"
+        "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
+        "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801"
       },
       "download": {
-        "url": "/api/v1/blobs/64ac71ab759bfe7d344a5090b8f0d9b49395e25ecdec037517d7bac4f6f9b04b",
+        "url": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3230,14 +3231,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicSpawners-26.2-3.0.0.jar",
-      "size": 151958,
+      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
+      "size": 324985,
       "hashes": {
-        "sha256": "5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
-        "sha512": "6fec00a988a8725f24be9c7bd1af36a641c302db7306ca464ea28e782cc84b1da5254614fdba16752a97aa1257fa914d3156a67ddceb5b7463c4879a8ec0b4a9"
+        "sha256": "050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
+        "sha512": "ee45aff29cff0c2dcd9f963a303032b1657a7ae498923cb9ce6e13709f5bfa06d22cc7517cc8bac58d06387c69781442d4336bc0301dd342d76f36b3285fd18d"
       },
       "download": {
-        "url": "/api/v1/blobs/5e3a32b80933bbb9f82fd22b54a5e271dc4a9e07892866933cafd73c6d68dab3",
+        "url": "/api/v1/blobs/050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3451,19 +3452,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicAttributes-26.2-4.0.0.jar",
-      "size": 324985,
-      "hashes": {
-        "sha256": "050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
-        "sha512": "ee45aff29cff0c2dcd9f963a303032b1657a7ae498923cb9ce6e13709f5bfa06d22cc7517cc8bac58d06387c69781442d4336bc0301dd342d76f36b3285fd18d"
-      },
-      "download": {
-        "url": "/api/v1/blobs/050276ea2696310c777b4030776227c04d5a5dcd983e5ae76f0430ae42444b14",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/lampas-aria-0.1.0-alpha.2.jar",
       "size": 106366,
       "hashes": {
@@ -3472,6 +3460,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/d15af04f125e90938afc34e50364bf81e7639585059eb56e45e85be797d30832",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 203856,
+      "hashes": {
+        "sha256": "8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
+        "sha512": "07b8fb18f1f8c923112c5fcb1f142f67fc397976d18b325ce0feb7ee90119cae3c44ec7f95a648e4526c4ddfe711076c85557d10c326effc2c89b9a4685dd425"
+      },
+      "download": {
+        "url": "/api/v1/blobs/8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3490,14 +3491,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 203856,
+      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
+      "size": 661344,
       "hashes": {
-        "sha256": "8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
-        "sha512": "07b8fb18f1f8c923112c5fcb1f142f67fc397976d18b325ce0feb7ee90119cae3c44ec7f95a648e4526c4ddfe711076c85557d10c326effc2c89b9a4685dd425"
+        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
+        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
       },
       "download": {
-        "url": "/api/v1/blobs/8f898d66f1c33a5c8ab141d76d9cbf5ffbf3b518ec9b43e42e6a209a409a571b",
+        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3971,6 +3972,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "hashes": {
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+      },
+      "download": {
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/levelledmobs-fabric-1.0.0.jar",
       "size": 160823,
       "hashes": {
@@ -3979,19 +3993,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/GatewaysToEternity-26.2-7.0.0.jar",
-      "size": 661344,
-      "hashes": {
-        "sha256": "070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
-        "sha512": "9737385c73f1c79d4a281c44fbf67b614ec6952816d81b7146a184849aabb8c5b36c7af7218eaf7e75ba0beef57b3fc2c03d8d4653ce4979162883032355c856"
-      },
-      "download": {
-        "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4790,19 +4791,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
-      },
-      "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "resourcepacks/Recolourful Containers 3.1.3 (1.19.4+).zip",
       "size": 2104807,
       "hashes": {
@@ -4829,19 +4817,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
-      },
-      "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/crazy_chambers-1.0.0+26.2.jar",
       "size": 1910498,
       "hashes": {
@@ -4850,6 +4825,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "hashes": {
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4916,6 +4904,19 @@
       "download": {
         "url": "/api/v1/blobs/8df45de6b765da8cd186caba54171047390122aa78a136145f1c198c53a3d612",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/animatica-0.6.3+26.2.jar",
+      "size": 117443,
+      "hashes": {
+        "sha256": "6724b477f35b32b7bc878d73b7d56e6ab89b042cb863ed322c2bb9aa664bfc88",
+        "sha512": "318b29f83accee30547e027aa333fa6f31850ba959e662c635237290bbe8a04b0b47c99666f534cbcdb485d5d8bf9cb0dd189af4b9841ed89987c49cf3f6bb19"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/xEyZuswh/versions/SjuTFuhz/animatica-0.6.3%2B26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
