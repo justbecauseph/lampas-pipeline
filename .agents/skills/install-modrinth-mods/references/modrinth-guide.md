@@ -15,7 +15,7 @@ side = "client"
 [provider]
 type = "modrinth"
 project_id = "AANobbMI"
-version_id = "1.0.0+mc26.2"
+version_id = "de406c7a"
 ```
 
 ### Properties:
@@ -24,7 +24,7 @@ version_id = "1.0.0+mc26.2"
 - `type`: (Optional) `"mod" | "shader" | "resourcepack"`. If omitted, defaults to `"mod"`.
 - `provider.type`: Must be `"modrinth"`.
 - `provider.project_id`: 8-character base62 Modrinth project ID or project slug.
-- `provider.version_id`: 8-character base62 Modrinth version ID or version number string.
+- `provider.version_id`: 8-character base62 Modrinth version ID of the specific build.
 
 ---
 

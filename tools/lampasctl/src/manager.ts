@@ -122,19 +122,23 @@ export async function addMod(options: AddModOptions) {
       const vRes = await fetch(`https://api.modrinth.com/v2/version/${versionIdFromUrl}`, {
         headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
       });
-      if (!vRes.ok) {
-        throw new Error(`Modrinth version '${versionIdFromUrl}' not found (${vRes.status})`);
+      if (vRes.ok) {
+        const vData = await vRes.json();
+        query = vData.project_id;
+        explicitVersion = vData.id;
       }
-      const vData = await vRes.json();
-      query = vData.project_id;
     } else if (
       query.includes("modrinth.com/mod/") ||
+      query.includes("modrinth.com/plugin/") ||
+      query.includes("modrinth.com/datapack/") ||
       query.includes("modrinth.com/shader/") ||
       query.includes("modrinth.com/resourcepack/") ||
-      query.includes("modrinth.com/datapack/")
+      query.includes("modrinth.com/project/")
     ) {
       detectedProvider = "modrinth";
-      const match = query.match(/modrinth\.com\/(?:mod|shader|resourcepack|datapack)\/([^/?#]+)(?:\/version\/([^/?#]+))?/);
+      const match = query.match(
+        /modrinth\.com\/(?:mod|plugin|datapack|shader|resourcepack|project)\/([^/?#]+)(?:\/version\/([^/?#]+))?/
+      );
       if (match) {
         query = match[1];
         if (match[2]) {
@@ -175,10 +179,27 @@ export async function addMod(options: AddModOptions) {
       const verDisplay = explicitVersion ? ` (Version: ${explicitVersion})` : "";
       console.log(`${indent}[Artifact Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
 
-      // 1. Query project metadata
-      const projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
+      // 1. Query project metadata (or direct version lookup if query is a version ID)
+      let projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
         headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
       });
+
+      let directVersionData: any = null;
+
+      // If project was not found by query, check if query is a direct version ID
+      if (!projRes.ok) {
+        const vRes = await fetch(`https://api.modrinth.com/v2/version/${query}`, {
+          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+        });
+        if (vRes.ok) {
+          directVersionData = await vRes.json();
+          explicitVersion = directVersionData.id;
+          query = directVersionData.project_id;
+          projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
+            headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+          });
+        }
+      }
 
       if (!projRes.ok) {
         throw new Error(`Modrinth project '${query}' not found (${projRes.status})`);
@@ -203,90 +224,112 @@ export async function addMod(options: AddModOptions) {
       os_ensure_dir(targetDir);
 
       // 2. Query matching version
-      let selectedVersion: any = null;
+      let selectedVersion: any = directVersionData;
 
-      // Fetch all project versions
-      const allVersRes = await fetch(`https://api.modrinth.com/v2/project/${projectId}/version`, {
-        headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-      });
+      if (!selectedVersion) {
+        // Fetch all project versions
+        const allVersRes = await fetch(`https://api.modrinth.com/v2/project/${projectId}/version`, {
+          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+        });
 
-      if (!allVersRes.ok) {
-        throw new Error(`Failed to query versions for '${slug}' (${allVersRes.status})`);
-      }
-
-      const allVersions: any[] = await allVersRes.json();
-
-      if (explicitVersion) {
-        const needle = explicitVersion.toLowerCase();
-
-        // 2a. Match exact ID, version_number, name, or filename
-        selectedVersion = allVersions.find(
-          (v) =>
-            v.id === explicitVersion ||
-            v.version_number?.toLowerCase() === needle ||
-            v.name?.toLowerCase() === needle ||
-            v.files?.some((f: any) => f.filename?.toLowerCase() === needle)
-        );
-
-        // 2b. Fuzzy / Prefix match if exact not found
-        if (!selectedVersion) {
-          selectedVersion = allVersions.find(
-            (v) =>
-              v.version_number?.toLowerCase().startsWith(needle) ||
-              v.name?.toLowerCase().includes(needle) ||
-              needle.startsWith(v.version_number?.toLowerCase() || "")
-          );
+        if (!allVersRes.ok) {
+          throw new Error(`Failed to query versions for '${slug}' (${allVersRes.status})`);
         }
 
-        // 2c. Direct version lookup by ID if still not found
-        if (!selectedVersion) {
-          const directVerRes = await fetch(`https://api.modrinth.com/v2/version/${explicitVersion}`, {
-            headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-          });
-          if (directVerRes.ok) {
-            selectedVersion = await directVerRes.json();
+        const allVersions: any[] = await allVersRes.json();
+
+        if (explicitVersion) {
+          const needle = explicitVersion.toLowerCase();
+
+          // 2a. Match exact ID first (e.g. base62 version ID)
+          selectedVersion = allVersions.find((v) => v.id === explicitVersion);
+
+          // 2b. Match by version_number, name, or filename with compatibility prioritization
+          if (!selectedVersion) {
+            const exactCandidates = allVersions.filter(
+              (v) =>
+                v.version_number?.toLowerCase() === needle ||
+                v.name?.toLowerCase() === needle ||
+                v.files?.some((f: any) => f.filename?.toLowerCase() === needle)
+            );
+
+            const fuzzyCandidates =
+              exactCandidates.length > 0
+                ? exactCandidates
+                : allVersions.filter(
+                    (v) =>
+                      v.version_number?.toLowerCase().startsWith(needle) ||
+                      v.name?.toLowerCase().includes(needle) ||
+                      needle.startsWith(v.version_number?.toLowerCase() || "")
+                  );
+
+            if (fuzzyCandidates.length > 0) {
+              selectedVersion =
+                fuzzyCandidates.find(
+                  (v) =>
+                    v.game_versions?.includes(targetMc) &&
+                    v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase())
+                ) ||
+                fuzzyCandidates.find((v) =>
+                  v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase())
+                ) ||
+                fuzzyCandidates.find((v) => v.game_versions?.includes(targetMc)) ||
+                fuzzyCandidates[0];
+            }
           }
-        }
 
-        if (!selectedVersion) {
-          const availableList = allVersions
-            .slice(0, 6)
-            .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}) [ID: ${v.id}]`)
-            .join("\n");
-          throw new Error(
-            `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`
-          );
-        }
-      } else {
-        if (projectType === "shader") {
-          // Shaders are largely version-agnostic / Iris compatible
-          const irisCompatible = allVersions.filter((v) =>
-            v.loaders?.some((l: string) => ["iris", "canvas", "optifine"].includes(l.toLowerCase()))
-          );
-          selectedVersion = irisCompatible[0] || allVersions[0];
-        } else if (projectType === "resourcepack") {
-          const mcCompatible = allVersions.filter((v) => v.game_versions?.includes(targetMc));
-          selectedVersion = mcCompatible[0] || allVersions[0];
-        } else {
-          // Find latest compatible with target MC and Loader
-          const compatibleVersions = allVersions.filter(
-            (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
-          );
+          // 2c. Direct version lookup by ID if still not found
+          if (!selectedVersion) {
+            try {
+              const directVerRes = await fetch(`https://api.modrinth.com/v2/version/${explicitVersion}`, {
+                headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
+              });
+              if (directVerRes.ok) {
+                selectedVersion = await directVerRes.json();
+              }
+            } catch {}
+          }
 
-          if (compatibleVersions.length === 0) {
+          if (!selectedVersion) {
             const availableList = allVersions
               .slice(0, 6)
-              .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
+              .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}) [ID: ${v.id}]`)
               .join("\n");
             throw new Error(
-              `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
-                `You can explicitly install a specific version with:\n` +
-                `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
-                `Available upstream versions:\n${availableList}`
+              `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`
             );
           }
+        } else {
+          if (projectType === "shader") {
+            // Shaders are largely version-agnostic / Iris compatible
+            const irisCompatible = allVersions.filter((v) =>
+              v.loaders?.some((l: string) => ["iris", "canvas", "optifine"].includes(l.toLowerCase()))
+            );
+            selectedVersion = irisCompatible[0] || allVersions[0];
+          } else if (projectType === "resourcepack") {
+            const mcCompatible = allVersions.filter((v) => v.game_versions?.includes(targetMc));
+            selectedVersion = mcCompatible[0] || allVersions[0];
+          } else {
+            // Find latest compatible with target MC and Loader
+            const compatibleVersions = allVersions.filter(
+              (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
+            );
 
-          selectedVersion = compatibleVersions[0];
+            if (compatibleVersions.length === 0) {
+              const availableList = allVersions
+                .slice(0, 6)
+                .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
+                .join("\n");
+              throw new Error(
+                `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
+                  `You can explicitly install a specific version with:\n` +
+                  `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
+                  `Available upstream versions:\n${availableList}`
+              );
+            }
+
+            selectedVersion = compatibleVersions[0];
+          }
         }
       }
 
