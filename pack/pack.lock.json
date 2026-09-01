@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.0.27",
+  "packVersion": "2.0.28",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-09-01T11:05:33.675Z",
+  "updated": "2026-09-01T16:29:03.133Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -5493,6 +5493,23 @@
         "sourceUrl": "https://modrinth.com/mod/trinkets-updated",
         "clientSide": "required",
         "serverSide": "required"
+      }
+    },
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc-1.0.0",
+      "side": "both",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 8256,
+      "sha256": "fa83ef1066dfed0f138d7d16efef018090086b00e44eea90075dfe5e97ec57c0",
+      "sha512": "7944827351c57bd534724e29d759ebaee1ce0126e712245e2cbfaa47cf3b72153588362af0d9e4f82bb5046d17b17786508ec803f41ba5cac66fa6242c40fc99",
+      "sha1": "434fa73abfd1dcd18a817d790361edacd66e62da",
+      "downloadUrl": "/api/v1/blobs/fa83ef1066dfed0f138d7d16efef018090086b00e44eea90075dfe5e97ec57c0",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "twod_projectiles": {

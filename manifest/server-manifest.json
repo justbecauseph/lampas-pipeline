@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.27",
+  "version": "2.0.28",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -2007,6 +2007,14 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/trinkets-updated"
+    },
+    {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc-1.0.0",
+      "side": "both",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 8256,
+      "categories": []
     },
     {
       "id": "ubesdelight",
@@ -4070,6 +4078,19 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/XaT8sLP6/versions/r453A8nE/trinkets-4.1.0-rc.1%2B26.2.jar",
         "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 8256,
+      "hashes": {
+        "sha256": "fa83ef1066dfed0f138d7d16efef018090086b00e44eea90075dfe5e97ec57c0",
+        "sha512": "7944827351c57bd534724e29d759ebaee1ce0126e712245e2cbfaa47cf3b72153588362af0d9e4f82bb5046d17b17786508ec803f41ba5cac66fa6242c40fc99"
+      },
+      "download": {
+        "url": "/api/v1/blobs/fa83ef1066dfed0f138d7d16efef018090086b00e44eea90075dfe5e97ec57c0",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
