@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
 import type { PackConfig, PackLock } from "./types";
+import { validateConfigPatches } from "./config-patches";
 
 export interface ValidateOptions {
   packDir: string;
@@ -127,6 +128,48 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
         console.error(`  ✗ [Invalid SHA-256] Server resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`);
         hasErrors = true;
       }
+    }
+  }
+
+  // Check config patches if present
+  const patchesFile = path.join(options.packDir, "config-patches", "client.json");
+  if (fs.existsSync(patchesFile)) {
+    try {
+      const raw = readJsonFile<any>(patchesFile);
+      const staticDirs = ["common", "client"];
+      const manifestFiles: any[] = [];
+      for (const dir of staticDirs) {
+        const fullDir = path.join(options.packDir, dir);
+        if (fs.existsSync(fullDir)) {
+          const walk = (cur: string) => {
+            for (const entry of fs.readdirSync(cur, { withFileTypes: true })) {
+              const full = path.join(cur, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else if (entry.isFile()) {
+                manifestFiles.push({
+                  path: path.relative(fullDir, full).replace(/\\/g, "/"),
+                  policy: "MANAGED",
+                });
+              }
+            }
+          };
+          walk(fullDir);
+        }
+      }
+      for (const art of Object.values(lock.artifacts)) {
+        const targetDir =
+          art.targetDir ||
+          (art.artifactType === "shader"
+            ? "shaderpacks"
+            : art.artifactType === "resourcepack"
+            ? "resourcepacks"
+            : "mods");
+        manifestFiles.push({ path: `${targetDir}/${art.filename}`, policy: "MANAGED" });
+      }
+      validateConfigPatches(raw, manifestFiles);
+    } catch (err: any) {
+      console.error(`  ✗ [Invalid Config Patches] ${err.message}`);
+      hasErrors = true;
     }
   }
 

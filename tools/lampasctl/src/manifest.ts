@@ -1,7 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid, isValidServerAddress, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
-import type { ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
+import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
+import { validateConfigPatches } from "./config-patches";
 
 export interface ManifestOptions {
   packDir: string;
@@ -184,8 +185,19 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   clientModsCatalog.sort((a, b) => a.name.localeCompare(b.name));
   serverModsCatalog.sort((a, b) => a.name.localeCompare(b.name));
 
+  // Scan and validate client config patches
+  const allClientFiles = [...clientModFiles, ...commonFiles, ...clientStaticFiles];
+  const allServerFiles = [...serverModFiles, ...commonFiles, ...serverStaticFiles];
+
+  const clientPatchesPath = path.join(options.packDir, "config-patches", "client.json");
+  let clientConfigPatches: ConfigPatch[] | undefined = undefined;
+  if (fs.existsSync(clientPatchesPath)) {
+    const rawPatches = readJsonFile<any>(clientPatchesPath);
+    clientConfigPatches = validateConfigPatches(rawPatches, allClientFiles);
+  }
+
   const clientManifest: PackManifest = {
-    schemaVersion: 1,
+    schemaVersion: clientConfigPatches && clientConfigPatches.length > 0 ? 2 : 1,
     pack: packConfig.pack.name,
     version: packConfig.pack.version,
     target: "client",
@@ -196,7 +208,8 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     },
     protocol: packConfig.launcher?.protocol || 1,
     mods: clientModsCatalog,
-    files: [...clientModFiles, ...commonFiles, ...clientStaticFiles],
+    files: allClientFiles,
+    ...(clientConfigPatches && clientConfigPatches.length > 0 ? { configPatches: clientConfigPatches } : {}),
   };
 
   const serverManifest: PackManifest = {
@@ -211,7 +224,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     },
     protocol: packConfig.launcher?.protocol || 1,
     mods: serverModsCatalog,
-    files: [...serverModFiles, ...commonFiles, ...serverStaticFiles],
+    files: allServerFiles,
   };
 
   // Build resolved release launch configuration

@@ -78,8 +78,8 @@ export function validateManifestForSync(
   if (!manifest || typeof manifest !== "object") {
     throw new Error("Invalid manifest: expected a JSON object");
   }
-  if (manifest.schemaVersion !== 1) {
-    throw new Error(`Invalid manifest: unsupported schemaVersion ${manifest.schemaVersion} (expected 1)`);
+  if (manifest.schemaVersion !== 1 && manifest.schemaVersion !== 2) {
+    throw new Error(`Invalid manifest: unsupported schemaVersion ${manifest.schemaVersion} (expected 1 or 2)`);
   }
   if (!manifest.pack || typeof manifest.pack !== "string" || manifest.pack.trim() === "") {
     throw new Error("Invalid manifest: 'pack' must be a non-empty string");
