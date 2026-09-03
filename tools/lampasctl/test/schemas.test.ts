@@ -14,9 +14,10 @@ describe("schemas and IDE validation configuration", () => {
     "pack-lock.schema.json",
     "pack.schema.json",
     "mod.schema.json",
+    "artifact-definition.schema.json",
   ];
 
-  test("all 6 JSON schemas exist and are valid JSON with standard draft-2020-12 header", () => {
+  test("all 7 JSON schemas exist and are valid JSON with standard draft-2020-12 header", () => {
     for (const schemaFile of expectedSchemas) {
       const fullPath = path.join(schemasDir, schemaFile);
       expect(fs.existsSync(fullPath)).toBe(true);
@@ -48,7 +49,9 @@ describe("schemas and IDE validation configuration", () => {
     expect(settings["evenBetterToml.schema.associations"]).toBeDefined();
     const tomlMappings = settings["evenBetterToml.schema.associations"];
     expect(tomlMappings["pack/pack\\.toml"]).toBe("./schemas/pack.schema.json");
-    expect(tomlMappings["pack/mods/.*\\.toml"]).toBe("./schemas/mod.schema.json");
+    expect(tomlMappings["pack/mods/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
+    expect(tomlMappings["pack/resourcepacks/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
+    expect(tomlMappings["pack/shaderpacks/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
   });
 
   test("repository files match their corresponding schema definitions", () => {

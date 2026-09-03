@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://lampas.town/schemas/mod.schema.json",
-  "title": "Lampas Mod Descriptor (pack/mods/*.toml)",
-  "description": "Declarative mod definition file specifying side, upstream provider, and version pinning.",
+  "$id": "https://lampas.town/schemas/artifact-definition.schema.json",
+  "title": "Lampas Pack Artifact Descriptor",
+  "description": "Declarative artifact definition file for Lampas mods (pack/mods/*.toml), resource packs (pack/resourcepacks/*.toml), and shader packs (pack/shaderpacks/*.toml) specifying side, type, upstream provider, and version pinning.",
   "type": "object",
   "required": [
     "name",
@@ -12,7 +12,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Human-readable mod name."
+      "description": "Human-readable display name of the artifact."
     },
     "side": {
       "type": "string",
@@ -21,7 +21,7 @@
         "server",
         "both"
       ],
-      "description": "Distribution side target."
+      "description": "Distribution side target: 'client' for player instances only, 'server' for dedicated servers only, or 'both'."
     },
     "type": {
       "type": "string",
@@ -31,7 +31,7 @@
         "resourcepack"
       ],
       "default": "mod",
-      "description": "Artifact category."
+      "description": "Artifact category: 'mod' (Fabric mod JAR), 'shader' (Iris shaderpack), or 'resourcepack' (asset zip)."
     },
     "notes": {
       "type": "string",
@@ -39,11 +39,12 @@
     },
     "sha1": {
       "type": "string",
+      "pattern": "^[0-9a-fA-F]{40}$",
       "description": "Optional SHA-1 hash override."
     },
     "uuid": {
       "type": "string",
-      "description": "Optional UUID (e.g. for resource packs)."
+      "description": "Optional UUID (e.g. for server resource pack matching)."
     },
     "provider": {
       "type": "object",
@@ -78,7 +79,7 @@
         },
         "file": {
           "type": "string",
-          "description": "Local JAR path relative to pack/custom-jars/."
+          "description": "Local JAR or ZIP path relative to pack/custom-jars/."
         },
         "url": {
           "type": "string",
@@ -86,6 +87,7 @@
         },
         "sha256": {
           "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$",
           "description": "SHA-256 hash for direct download."
         },
         "filename": {
@@ -94,7 +96,8 @@
         },
         "size": {
           "type": "integer",
-          "description": "File size for direct download."
+          "minimum": 0,
+          "description": "File size in bytes for direct download."
         }
       }
     }

@@ -27,6 +27,9 @@
   ],
   "evenBetterToml.schema.associations": {
     "pack/pack\\.toml": "./schemas/pack.schema.json",
-    "pack/mods/.*\\.toml": "./schemas/mod.schema.json"
+    "pack/mods/.*\\.toml": "./schemas/artifact-definition.schema.json",
+    "pack/resourcepacks/.*\\.toml": "./schemas/artifact-definition.schema.json",
+    "pack/shaderpacks/.*\\.toml": "./schemas/artifact-definition.schema.json",
+    "pack/shaders/.*\\.toml": "./schemas/artifact-definition.schema.json"
   }
 }

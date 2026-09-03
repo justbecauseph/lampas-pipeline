@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/artifact-definition.schema.json",
+  "title": "Lampas Pack Artifact Descriptor",
+  "description": "Declarative artifact definition file for Lampas mods (pack/mods/*.toml), resource packs (pack/resourcepacks/*.toml), and shader packs (pack/shaderpacks/*.toml) specifying side, type, upstream provider, and version pinning.",
+  "type": "object",
+  "required": [
+    "name",
+    "side",
+    "provider"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name of the artifact."
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "client",
+        "server",
+        "both"
+      ],
+      "description": "Distribution side target: 'client' for player instances only, 'server' for dedicated servers only, or 'both'."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "mod",
+        "shader",
+        "resourcepack"
+      ],
+      "default": "mod",
+      "description": "Artifact category: 'mod' (Fabric mod JAR), 'shader' (Iris shaderpack), or 'resourcepack' (asset zip)."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Author notes or rationale."
+    },
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{40}$",
+      "description": "Optional SHA-1 hash override."
+    },
+    "uuid": {
+      "type": "string",
+      "description": "Optional UUID (e.g. for server resource pack matching)."
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "modrinth",
+            "curseforge",
+            "lampas",
+            "direct"
+          ],
+          "description": "Upstream source provider."
+        },
+        "project_id": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "Modrinth project slug/ID (string) or CurseForge project ID (integer)."
+        },
+        "version_id": {
+          "type": "string",
+          "description": "Modrinth version ID."
+        },
+        "file_id": {
+          "type": "integer",
+          "description": "CurseForge file ID."
+        },
+        "file": {
+          "type": "string",
+          "description": "Local JAR or ZIP path relative to pack/custom-jars/."
+        },
+        "url": {
+          "type": "string",
+          "description": "Direct download URL."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$",
+          "description": "SHA-256 hash for direct download."
+        },
+        "filename": {
+          "type": "string",
+          "description": "Target filename for direct download."
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "File size in bytes for direct download."
+        }
+      }
+    }
+  }
+}
