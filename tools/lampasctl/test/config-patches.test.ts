@@ -100,6 +100,8 @@ describe("pipeline: config patch validation and manifest emission", () => {
     expect(clientManifest.configPatches).toHaveLength(1);
     expect(clientManifest.configPatches![0]).toEqual(samplePatch);
     expect(clientManifest.schemaVersion).toBe(2);
+    expect(serverManifest.schemaVersion).toBe(2);
+    expect(clientManifest.schemaVersion).toBe(serverManifest.schemaVersion);
 
     // Target must NOT be in files[]
     expect(clientManifest.files.some((f) => f.path === "config/chatting.json")).toBe(false);
@@ -110,6 +112,17 @@ describe("pipeline: config patch validation and manifest emission", () => {
     // Validator should also pass
     const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile });
     expect(valid).toBe(true);
+  });
+
+  test("manifests without config patches still emit schemaVersion 2 on both client and server", async () => {
+    const fixtureWithoutPatches = setupFixture({});
+    const { clientManifest, serverManifest } = await buildManifests(fixtureWithoutPatches);
+
+    expect(clientManifest.schemaVersion).toBe(2);
+    expect(serverManifest.schemaVersion).toBe(2);
+    expect(clientManifest.schemaVersion).toBe(serverManifest.schemaVersion);
+    expect(clientManifest.configPatches).toBeUndefined();
+    expect(serverManifest.configPatches).toBeUndefined();
   });
 
   test("rejects unsafe target paths", () => {

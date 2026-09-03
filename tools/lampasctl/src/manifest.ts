@@ -4,6 +4,8 @@ import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid
 import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
 import { validateConfigPatches } from "./config-patches";
 
+export const PACK_MANIFEST_SCHEMA_VERSION = 2;
+
 export interface ManifestOptions {
   packDir: string;
   lockFile: string;
@@ -197,7 +199,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   }
 
   const clientManifest: PackManifest = {
-    schemaVersion: clientConfigPatches && clientConfigPatches.length > 0 ? 2 : 1,
+    schemaVersion: PACK_MANIFEST_SCHEMA_VERSION,
     pack: packConfig.pack.name,
     version: packConfig.pack.version,
     target: "client",
@@ -213,7 +215,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   };
 
   const serverManifest: PackManifest = {
-    schemaVersion: 1,
+    schemaVersion: PACK_MANIFEST_SCHEMA_VERSION,
     pack: packConfig.pack.name,
     version: packConfig.pack.version,
     target: "server",
