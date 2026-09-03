@@ -3,6 +3,42 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-09-04
+
+### Added
+- Comprehensive JSON schema definitions for modpack artifacts, definitions, lockfiles, manifests, releases, and config patches (`schemas/`).
+- Automated in-file `#:schema` header injection in `writeTomlFile` and `inferTomlSchemaHeader` for `pack.toml` and artifact definitions (`pack/mods/`, `pack/resourcepacks/`, `pack/shaderpacks/`).
+- Automatic `$schema` reference inclusion in generated lockfiles (`pack.lock.json`).
+- Schema validation test coverage asserting schema conformity for all repository definitions and IDE configurations (`test/schemas.test.ts`).
+
+### Changed
+- Unconditionally emit `PackManifest` schema version 2 across both client and server manifests (`PACK_MANIFEST_SCHEMA_VERSION = 2`).
+
+## [1.0.3] - 2026-09-04
+
+### Added
+- Managed client configuration patch architecture supporting property-level config modifications without overwriting entire files (`pack/config-patches/client.json`).
+- Config patch adapters for `json`, `jsonc`, `yaml`, `toml`, `properties`, `ini`, and `text` formats.
+- Support for `set`, `remove`, and literal string replacement (`replaceLiteral`) operations.
+- Granular patch modes (`enforce` and `once`) and missing-file policies (`defer` and `create`).
+- Strict config patch validation (`validateConfigPatches`): path traversal guards, unique patch ID assertions, and adapter-specific constraints.
+- Strict config ownership conflict detection preventing files from simultaneously existing as a whole-file `MANAGED` artifact and a managed config-patch target.
+
+### Changed
+- Manifest generation (`buildManifests`) now validates and emits `configPatches` into `client-manifest.json` while excluding patch targets from the client `files` list.
+
+## [1.0.2] - 2026-09-01
+
+### Added
+- Unit tests for mod addition and version resolution in `test/manager.test.ts`.
+
+### Changed
+- Improved Modrinth version resolution in `lampasctl add` by prioritizing game version (`targetMc`) and loader (`targetLoader`) compatibility across candidate matches.
+
+### Fixed
+- Fixed exact version ID matching for Modrinth base62 version identifiers.
+- Added direct API fallback (`/v2/version/<id>`) when candidate matching does not locate an explicit version ID.
+
 ## [1.0.1] - 2026-08-27
 
 ### Added
