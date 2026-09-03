@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "pack": "Lampas 2",
-  "version": "2.0.30",
+  "version": "2.0.31",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1064,21 +1064,6 @@
       "sourceUrl": "https://modrinth.com/mod/immediatelyfast"
     },
     {
-      "id": "improved-sign-editing",
-      "name": "Improved Sign Editing",
-      "side": "client",
-      "filename": "improvedsignediting-26.2.0-1.6.jar",
-      "size": 59022,
-      "description": "🪵 Better sign editing functionality. Shift to the next and previous line during typing.",
-      "iconUrl": "https://cdn.modrinth.com/data/EWQifKYI/37386081a80cc0e3721baddf6032b3f3241b4378.png",
-      "categories": [
-        "decoration",
-        "game-mechanics",
-        "utility"
-      ],
-      "sourceUrl": "https://modrinth.com/mod/improved-sign-editing"
-    },
-    {
       "id": "inventoryprofilesnext",
       "name": "Inventory Profiles Next",
       "side": "client",
@@ -2034,6 +2019,20 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/searchables"
+    },
+    {
+      "id": "signtweaks",
+      "name": "Sign Tweaks",
+      "side": "client",
+      "filename": "signtweaks-fabric-2.103.0+26.2.jar",
+      "size": 73222,
+      "description": "A collection of tweaks to improve the sign editing experience.",
+      "iconUrl": "https://cdn.modrinth.com/data/c7xDMxha/bd6ccde212b4bd5dfe99820fbefdc775f9067543_96.webp",
+      "categories": [
+        "social",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/signtweaks"
     },
     {
       "id": "slotcycler",
@@ -3317,19 +3316,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/improvedsignediting-26.2.0-1.6.jar",
-      "size": 59022,
-      "hashes": {
-        "sha256": "19f1590cc517bfc07d8e698bfbe03284a331e6ef57bff803a40edc8fe5a484a6",
-        "sha512": "ff0cdeb3de5eb346b590cbf64d022496ea07776912f1502ab906170e60659df59dba8aefe2a418397bbc9b12ee882f52082e671f9511ad86821ca72579e3fd23"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/EWQifKYI/versions/9bxxvJb5/improvedsignediting-26.2.0-1.6.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/InventoryProfilesNext-fabric-26.2-2.3.7.jar",
       "size": 1456192,
       "hashes": {
@@ -4261,6 +4247,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/fuuu3xnx/versions/bvFby61J/Searchables-fabric-26.2-1.0.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/signtweaks-fabric-2.103.0+26.2.jar",
+      "size": 73222,
+      "hashes": {
+        "sha256": "f4205904b188e6a8b8d5dfe7a894d51c6c5268c845069eb220a7b7fb49739378",
+        "sha512": "06e40f7e94918a625389b89ba30d124597c63ab4c415f436bdb531fdbb22ba0cbc43c751cc1d559a69ee9e76c8f8ce423c9603aeb0abd2a07732351dbd62d394"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/c7xDMxha/versions/piBkp75o/signtweaks-fabric-2.103.0%2B26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.0.30",
+  "packVersion": "2.0.31",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.3"
   },
-  "updated": "2026-09-03T14:46:08.407Z",
+  "updated": "2026-09-03T16:52:44.564Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2281,36 +2281,6 @@
           "optimization"
         ],
         "sourceUrl": "https://modrinth.com/mod/immediatelyfast",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "improved-sign-editing": {
-      "id": "improved-sign-editing",
-      "name": "Improved Sign Editing",
-      "side": "client",
-      "filename": "improvedsignediting-26.2.0-1.6.jar",
-      "size": 59022,
-      "sha256": "19f1590cc517bfc07d8e698bfbe03284a331e6ef57bff803a40edc8fe5a484a6",
-      "sha512": "ff0cdeb3de5eb346b590cbf64d022496ea07776912f1502ab906170e60659df59dba8aefe2a418397bbc9b12ee882f52082e671f9511ad86821ca72579e3fd23",
-      "sha1": "d89bde7998ad68d9994827886429a7fbcd8c5c54",
-      "downloadUrl": "https://cdn.modrinth.com/data/EWQifKYI/versions/9bxxvJb5/improvedsignediting-26.2.0-1.6.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "EWQifKYI",
-        "versionId": "9bxxvJb5"
-      },
-      "metadata": {
-        "description": "🪵 Better sign editing functionality. Shift to the next and previous line during typing.",
-        "iconUrl": "https://cdn.modrinth.com/data/EWQifKYI/37386081a80cc0e3721baddf6032b3f3241b4378.png",
-        "categories": [
-          "decoration",
-          "game-mechanics",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/improved-sign-editing",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
@@ -4713,6 +4683,35 @@
         "sourceUrl": "https://modrinth.com/mod/searchables",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "signtweaks": {
+      "id": "signtweaks",
+      "name": "Sign Tweaks",
+      "side": "client",
+      "filename": "signtweaks-fabric-2.103.0+26.2.jar",
+      "size": 73222,
+      "sha256": "f4205904b188e6a8b8d5dfe7a894d51c6c5268c845069eb220a7b7fb49739378",
+      "sha512": "06e40f7e94918a625389b89ba30d124597c63ab4c415f436bdb531fdbb22ba0cbc43c751cc1d559a69ee9e76c8f8ce423c9603aeb0abd2a07732351dbd62d394",
+      "sha1": "28760276e7f84db68d3d3b67ef4c4c8768d0c8df",
+      "downloadUrl": "https://cdn.modrinth.com/data/c7xDMxha/versions/piBkp75o/signtweaks-fabric-2.103.0%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "c7xDMxha",
+        "versionId": "piBkp75o"
+      },
+      "metadata": {
+        "description": "A collection of tweaks to improve the sign editing experience.",
+        "iconUrl": "https://cdn.modrinth.com/data/c7xDMxha/bd6ccde212b4bd5dfe99820fbefdc775f9067543_96.webp",
+        "categories": [
+          "social",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/signtweaks",
+        "clientSide": "unknown",
+        "serverSide": "unknown"
       }
     },
     "skinlayers3d": {
