@@ -299,9 +299,27 @@ export function parseTomlFile<T = unknown>(filePath: string): T {
   return parseToml(content) as T;
 }
 
-export function writeTomlFile(filePath: string, data: any): void {
+export function inferTomlSchemaHeader(filePath: string): string | null {
+  const norm = filePath.replace(/\\/g, "/");
+  if (/(?:^|\/)pack\/pack\.toml$/i.test(norm)) {
+    return "#:schema ../schemas/pack.schema.json\n\n";
+  }
+  if (/(?:^|\/)pack\/(?:mods|resourcepacks|shaderpacks|shaders)\/[^/]+\.toml$/i.test(norm)) {
+    return "#:schema ../../schemas/artifact-definition.schema.json\n\n";
+  }
+  return null;
+}
+
+export function writeTomlFile(filePath: string, data: any, schemaHeader?: string | false): void {
   ensureDir(path.dirname(filePath));
-  const content = stringifyToml(data);
+  let header = "";
+  if (schemaHeader === undefined) {
+    const inferred = inferTomlSchemaHeader(filePath);
+    if (inferred) header = inferred;
+  } else if (typeof schemaHeader === "string") {
+    header = `#:schema ${schemaHeader}\n\n`;
+  }
+  const content = header + stringifyToml(data);
   fs.writeFileSync(filePath, content, "utf-8");
 }
 

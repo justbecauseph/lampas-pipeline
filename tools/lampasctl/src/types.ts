@@ -139,6 +139,7 @@ export interface ResolvedArtifact {
 }
 
 export interface PackLock {
+  $schema?: string;
   schema: number;
   packName: string;
   packVersion: string;

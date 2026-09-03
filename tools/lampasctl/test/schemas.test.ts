@@ -107,5 +107,49 @@ describe("schemas and IDE validation configuration", () => {
       expect(lock.packName).toBeDefined();
       expect(typeof lock.artifacts).toBe("object");
     }
+
+    // 5. pack/pack.toml has schema header
+    const packTomlPath = path.join(rootDir, "pack/pack.toml");
+    if (fs.existsSync(packTomlPath)) {
+      const packTomlContent = fs.readFileSync(packTomlPath, "utf-8");
+      expect(packTomlContent.startsWith("#:schema ../schemas/pack.schema.json")).toBe(true);
+    }
+
+    // 6. All pack artifact TOMLs have schema header
+    const artifactDirs = ["pack/mods", "pack/resourcepacks", "pack/shaderpacks"];
+    for (const relDir of artifactDirs) {
+      const fullDir = path.join(rootDir, relDir);
+      if (!fs.existsSync(fullDir)) continue;
+      for (const f of fs.readdirSync(fullDir)) {
+        if (!f.endsWith(".toml")) continue;
+        const fileContent = fs.readFileSync(path.join(fullDir, f), "utf-8");
+        expect(fileContent.startsWith("#:schema ../../schemas/artifact-definition.schema.json")).toBe(true);
+      }
+    }
+  });
+
+  test("writeTomlFile automatically prepends #:schema header for pipeline configuration TOMLs", async () => {
+    const { inferTomlSchemaHeader, writeTomlFile } = await import("../src/utils");
+
+    expect(inferTomlSchemaHeader("pack/pack.toml")).toBe("#:schema ../schemas/pack.schema.json\n\n");
+    expect(inferTomlSchemaHeader("C:\\Users\\user\\repo\\pack\\pack.toml")).toBe("#:schema ../schemas/pack.schema.json\n\n");
+    expect(inferTomlSchemaHeader("pack/mods/sodium.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
+    expect(inferTomlSchemaHeader("pack/resourcepacks/lampas2.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
+    expect(inferTomlSchemaHeader("pack/shaderpacks/photon.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
+
+    // Distributed configs should NOT have schema injected
+    expect(inferTomlSchemaHeader("pack/client/config/c2me.toml")).toBeNull();
+    expect(inferTomlSchemaHeader("pack/common/config/pyrite.toml")).toBeNull();
+
+    // Verify file write prepends header
+    const tmpFile = path.join(rootDir, "pack/mods/_test_schema_write.toml");
+    try {
+      writeTomlFile(tmpFile, { name: "Test Mod", side: "client" });
+      const written = fs.readFileSync(tmpFile, "utf-8");
+      expect(written.startsWith("#:schema ../../schemas/artifact-definition.schema.json\n\n")).toBe(true);
+      expect(written).toContain('name = "Test Mod"');
+    } finally {
+      if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+    }
   });
 });

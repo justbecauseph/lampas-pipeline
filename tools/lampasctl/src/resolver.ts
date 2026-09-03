@@ -158,6 +158,7 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   await Promise.all(workers);
 
   const lock: PackLock = {
+    $schema: "../schemas/pack-lock.schema.json",
     schema: 1,
     packName: packConfig.pack.name,
     packVersion: packConfig.pack.version,
