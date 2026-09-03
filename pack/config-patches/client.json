@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "patches": [
+    {
+      "id": "chatting-global-chat-tabs",
+      "revision": 1,
+      "path": "config/chatting.json",
+      "adapter": "json",
+      "mode": "enforce",
+      "missingFile": "defer",
+      "operations": [
+        {
+          "op": "set",
+          "path": [
+            "hypixelOnlyChatTabs"
+          ],
+          "value": false
+        }
+      ]
+    }
+  ]
+}
