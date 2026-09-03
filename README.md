@@ -267,7 +267,26 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
-### 4. Release Diff Tool
+### 4. Managed Configuration Patches
+In addition to distributing whole files, Lampas supports **property-level / targeted config management** defined in `pack/config-patches/client.json`.
+
+#### Ownership Levels:
+- **`MANAGED`**: Lampas owns the whole file. Any local modifications are overwritten on synchronization, and obsolete files are deleted.
+- **`PRESERVE`**: The mod or player owns the whole file. Lampas places initial defaults only if missing.
+- **`CONFIG PATCH / enforce`**: The mod or player owns the file; Lampas owns selected values. If the player changes an enforced value, the next synchronization restores the Lampas value while preserving unrelated settings and comments.
+- **`CONFIG PATCH / once`**: Lampas supplies selected initial values, then permanently relinquishes ownership to the player. Re-applies only when the patch revision is incremented.
+
+> **Syntax Adapters**: The `adapter` property describes internal file syntax (`json`, `jsonc`, `yaml`, `toml`, `properties`, `ini`, `text`). **File extension does not determine the adapter.**
+
+Supported adapters:
+- **JSON / JSONC** (`adapter: "json"` / `"jsonc"`): Preserves unrelated whitespace, ordering, and comments.
+- **YAML** (`adapter: "yaml"`): AST-based targeted editing preserving comments and formatting.
+- **TOML** (`adapter: "toml"`): Conservative in-place scalar editor for tables and keys.
+- **Java Properties** (`adapter: "properties"`): Line-preserving key-value modifier.
+- **INI** (`adapter: "ini"`): Section/key modifier preserving comments.
+- **Generic Text** (`adapter: "text"`): Literal search/replace with strict `expectedMatches` validation.
+
+### 5. Release Diff Tool
 Compare two manifests to inspect added, removed, or updated mods along with size deltas:
 ```bash
 bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server-manifest.json
