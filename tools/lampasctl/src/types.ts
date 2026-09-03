@@ -177,6 +177,42 @@ export interface ModCatalogEntry {
   sourceUrl?: string;
 }
 
+export type ConfigPatchMode = "enforce" | "once";
+
+export type MissingFilePolicy = "defer" | "create";
+
+export type ConfigOperation =
+  | {
+      op: "set";
+      path: Array<string | number>;
+      value: any;
+    }
+  | {
+      op: "remove";
+      path: Array<string | number>;
+    }
+  | {
+      op: "replaceLiteral";
+      search: string;
+      replacement: string;
+      expectedMatches: number;
+    };
+
+export interface ConfigPatch {
+  id: string;
+  revision: number;
+  path: string;
+  adapter: string;
+  mode: ConfigPatchMode;
+  missingFile: MissingFilePolicy;
+  operations: ConfigOperation[];
+}
+
+export interface ConfigPatchesFile {
+  schemaVersion: number;
+  patches: ConfigPatch[];
+}
+
 export interface PackManifest {
   schemaVersion: number;
   pack: string;
@@ -191,6 +227,7 @@ export interface PackManifest {
   resourcePack?: ServerResourcePackConfig;
   mods?: ModCatalogEntry[];
   files: ManifestFile[];
+  configPatches?: ConfigPatch[];
 }
 
 export interface ReleaseDescriptor {
