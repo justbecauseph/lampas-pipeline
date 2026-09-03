@@ -25,7 +25,8 @@ instance/
 Thumbs.db
 
 # IDE & Editor files
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 *.suo
 *.user

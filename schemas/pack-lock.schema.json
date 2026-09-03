@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/pack-lock.schema.json",
+  "title": "Lampas Pack Lockfile",
+  "description": "Deterministic resolved lockfile mapping all modpack artifacts to immutable checksums and URLs.",
+  "type": "object",
+  "required": [
+    "schema",
+    "packName",
+    "packVersion",
+    "minecraft",
+    "loader",
+    "updated",
+    "artifacts"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema": {
+      "type": "integer",
+      "const": 1
+    },
+    "packName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "packVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "minecraft": {
+      "type": "string",
+      "minLength": 1
+    },
+    "loader": {
+      "type": "object",
+      "required": [
+        "type",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "fabric"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "side",
+          "filename",
+          "size",
+          "sha256",
+          "downloadUrl",
+          "provider"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "client",
+              "server",
+              "both"
+            ]
+          },
+          "filename": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "sha512": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{128}$"
+          },
+          "sha1": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{40}$"
+          },
+          "downloadUrl": {
+            "type": "string"
+          },
+          "targetDir": {
+            "type": "string"
+          },
+          "artifactType": {
+            "enum": [
+              "mod",
+              "shader",
+              "resourcepack"
+            ]
+          },
+          "provider": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "modrinth",
+                  "curseforge",
+                  "lampas",
+                  "direct"
+                ]
+              },
+              "projectId": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "versionId": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "fileId": {
+                "type": "integer"
+              },
+              "file": {
+                "type": "string"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

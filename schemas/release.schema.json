@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/release.schema.json",
+  "title": "Lampas Release Descriptor",
+  "description": "Metadata descriptor for an immutable Lampas modpack release.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "pack",
+    "version",
+    "minecraft",
+    "loader",
+    "minimumLauncherVersion",
+    "protocol",
+    "created",
+    "clientManifest",
+    "serverManifest"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "pack": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "minecraft": {
+      "type": "string",
+      "minLength": 1
+    },
+    "loader": {
+      "type": "object",
+      "required": [
+        "type",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "fabric"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "minimumLauncherVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "protocol": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gitCommit": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "clientManifest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "serverManifest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "totalMods": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalFiles": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "launch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "autoConnect": {
+          "type": "boolean"
+        },
+        "server": {
+          "type": "string"
+        },
+        "requiredResourcePacks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "filename",
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{64}$"
+              },
+              "sha1": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{40}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "serverResourcePack": {
+      "type": "object"
+    },
+    "signature": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -44,6 +44,7 @@ export const ConfigPatchSchema = z.object({
 });
 
 export const ConfigPatchesFileSchema = z.object({
+  $schema: z.string().optional(),
   schemaVersion: z.literal(1),
   patches: z.array(ConfigPatchSchema),
 });

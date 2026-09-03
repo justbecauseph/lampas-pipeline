@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/pack-manifest.schema.json",
+  "title": "Lampas Pack Manifest",
+  "description": "Authoritative distribution manifest for Lampas Minecraft clients or dedicated servers (Schema v2).",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "pack",
+    "version",
+    "target",
+    "minecraft",
+    "loader",
+    "protocol",
+    "files"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 2,
+      "description": "Manifest format schema version (currently 2)."
+    },
+    "pack": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Modpack display name."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Modpack release semantic version."
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "client",
+        "server"
+      ],
+      "description": "Target distribution side: 'client' for player instances, 'server' for dedicated server."
+    },
+    "minecraft": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Target Minecraft version (e.g. '26.2')."
+    },
+    "loader": {
+      "type": "object",
+      "required": [
+        "type",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "fabric",
+          "description": "Mod loader type."
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Mod loader version."
+        }
+      }
+    },
+    "protocol": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Launcher capability protocol required by this manifest."
+    },
+    "mods": {
+      "type": "array",
+      "description": "Informational catalog of included mods.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "side",
+          "filename",
+          "size"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "client",
+              "server",
+              "both"
+            ]
+          },
+          "filename": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": {
+            "type": "string"
+          },
+          "iconUrl": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "description": "Authoritative list of files to install and verify.",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "size",
+          "hashes",
+          "download",
+          "policy"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Instance-relative path."
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "File size in bytes."
+          },
+          "hashes": {
+            "type": "object",
+            "required": [
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{64}$"
+              },
+              "sha512": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{128}$"
+              }
+            }
+          },
+          "download": {
+            "type": "object",
+            "required": [
+              "url",
+              "provider"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "url": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider": {
+                "enum": [
+                  "modrinth",
+                  "curseforge",
+                  "lampas",
+                  "direct"
+                ]
+              }
+            }
+          },
+          "policy": {
+            "enum": [
+              "MANAGED",
+              "PRESERVE",
+              "OPTIONAL",
+              "GENERATED"
+            ],
+            "description": "Ownership policy: MANAGED (wholly owned by Lampas), PRESERVE (mod/player owned)."
+          }
+        }
+      }
+    },
+    "configPatches": {
+      "type": "array",
+      "description": "Targeted property-level configuration patches (client manifest only).",
+      "items": {
+        "$ref": "https://lampas.town/schemas/config-patches.schema.json#/$defs/configPatch"
+      }
+    },
+    "resourcePack": {
+      "type": "object",
+      "description": "Dedicated server forced resource pack metadata (server manifest only).",
+      "required": [
+        "artifact",
+        "required",
+        "filename",
+        "path",
+        "size",
+        "url",
+        "sha1",
+        "sha256",
+        "provider"
+      ],
+      "properties": {
+        "artifact": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "url": {
+          "type": "string"
+        },
+        "sha1": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{40}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

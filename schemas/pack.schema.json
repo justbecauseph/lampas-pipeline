@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/pack.schema.json",
+  "title": "Lampas Pack Configuration (pack.toml)",
+  "description": "Root modpack definition specifying pack metadata, Minecraft version, mod loader, and launcher settings.",
+  "type": "object",
+  "required": [
+    "pack",
+    "loader"
+  ],
+  "properties": {
+    "pack": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "minecraft"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Modpack display name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic release version (e.g. '2.0.32')."
+        },
+        "minecraft": {
+          "type": "string",
+          "description": "Target Minecraft version (e.g. '26.2')."
+        }
+      }
+    },
+    "loader": {
+      "type": "object",
+      "required": [
+        "type",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "const": "fabric",
+          "description": "Mod loader type."
+        },
+        "version": {
+          "type": "string",
+          "description": "Fabric loader version."
+        }
+      }
+    },
+    "launcher": {
+      "type": "object",
+      "properties": {
+        "minimum_version": {
+          "type": "string",
+          "description": "Minimum required Lampas Launcher version (e.g. '1.1.0')."
+        },
+        "protocol": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Required launcher capabilities protocol (e.g. 3)."
+        },
+        "play": {
+          "type": "object",
+          "properties": {
+            "auto_connect": {
+              "type": "boolean",
+              "description": "Automatically connect to server on game launch."
+            },
+            "server": {
+              "type": "string",
+              "description": "Target SMP server address (e.g. 'play.lampas.town:25576')."
+            }
+          }
+        },
+        "resourcepacks": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of mod IDs corresponding to required resource packs."
+            }
+          }
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "properties": {
+        "resourcepack": {
+          "type": "object",
+          "properties": {
+            "artifact": {
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "prompt": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "uuid": {
+              "type": "string"
+            }
+          }
+        },
+        "resource_pack": {
+          "type": "object",
+          "properties": {
+            "artifact": {
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "prompt": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "uuid": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

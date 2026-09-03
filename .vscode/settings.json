@@ -1,0 +1,32 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/pack/config-patches/*.json"
+      ],
+      "url": "./schemas/config-patches.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/manifest/*-manifest.json"
+      ],
+      "url": "./schemas/pack-manifest.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/manifest/release.json"
+      ],
+      "url": "./schemas/release.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/pack/pack.lock.json"
+      ],
+      "url": "./schemas/pack-lock.schema.json"
+    }
+  ],
+  "evenBetterToml.schema.associations": {
+    "pack/pack\\.toml": "./schemas/pack.schema.json",
+    "pack/mods/.*\\.toml": "./schemas/mod.schema.json"
+  }
+}

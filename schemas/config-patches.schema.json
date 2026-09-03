@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lampas.town/schemas/config-patches.schema.json",
+  "title": "Lampas Managed Config Patches Authoring File",
+  "description": "Declarative property-level configuration patch authoring file for Lampas modpacks.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "patches"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URI to the JSON schema."
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Authoring schema version for config patch definition files (currently 1)."
+    },
+    "patches": {
+      "type": "array",
+      "description": "Array of targeted config patch declarations.",
+      "items": {
+        "$ref": "#/$defs/configPatch"
+      }
+    }
+  },
+  "$defs": {
+    "configPatch": {
+      "type": "object",
+      "required": [
+        "id",
+        "revision",
+        "path",
+        "adapter",
+        "mode",
+        "missingFile",
+        "operations"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for this patch."
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Patch revision number. Incrementing re-applies 'once' mode patches."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Safe pack-relative path to target configuration file (e.g. 'config/chatting.json')."
+        },
+        "adapter": {
+          "type": "string",
+          "enum": [
+            "json",
+            "jsonc",
+            "yaml",
+            "toml",
+            "properties",
+            "ini",
+            "text"
+          ],
+          "description": "Internal syntax adapter for the configuration file. File extension does not determine the adapter."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "enforce",
+            "once"
+          ],
+          "description": "'enforce' restores declared values on every sync; 'once' applies values once then yields ownership to the user."
+        },
+        "missingFile": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "create"
+          ],
+          "description": "'defer' waits until target file exists; 'create' creates the file if missing (not allowed for text adapter)."
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "description": "List of operations to apply to the target configuration file.",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        }
+      }
+    },
+    "operation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "path",
+            "value"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "set",
+              "description": "Set a property value at the targeted path."
+            },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "description": "Structured path to property (e.g. ['chat', 'tabs', 'hypixelOnly'])."
+            },
+            "value": {
+              "description": "Value to assign to the property."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "path"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "remove",
+              "description": "Remove a property at the targeted path."
+            },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "description": "Structured path to property to remove."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "search",
+            "replacement",
+            "expectedMatches"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "replaceLiteral",
+              "description": "Literal search and replace for generic text."
+            },
+            "search": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Exact literal substring to find."
+            },
+            "replacement": {
+              "type": "string",
+              "description": "Replacement string."
+            },
+            "expectedMatches": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Expected number of matches in target file."
+            }
+          }
+        }
+      ]
+    }
+  }
+}
