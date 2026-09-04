@@ -3,6 +3,25 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-09-05
+
+### Added
+- Dedicated server Fabric runtime provisioning (`tools/lampasctl/src/fabric-runtime.ts`):
+  - Resolves exact-version Fabric server launcher JAR from Fabric Meta `/v2/versions/loader/{minecraft}/{loaderVersion}/{installerVersion}/server/jar`.
+  - Pinned default Fabric server installer version (`1.0.1`).
+  - Strict Minecraft 26.2 scope boundary enforcement (fails closed on unsupported Minecraft versions).
+  - ZIP header magic bytes (`PK\x03\x04`) integrity check on downloaded launcher JARs.
+  - Staged atomic deployment into `.lampas/runtime/.tmp-staging/` before activating to `<serverDir>/.lampas/runtime/fabric-server-launch.jar`.
+  - Server runtime state tracking in `<serverDir>/.lampas/runtime/runtime.json` and `.lampas/installation.json`.
+  - Fast/full verification modes for server runtime: fast reuses matching metadata and file; full recomputes SHA-256 and re-downloads if corrupt.
+- Cross-validation between release descriptor and server manifest in `deployServer()` preventing runtime version mismatches.
+- Unit and integration tests for Fabric server runtime resolver, upgrade flow, failure atomicity, and `start.py` managed runtime launch.
+
+### Changed
+- Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization. If runtime staging fails, deployment aborts immediately with zero disk changes, preventing "new mods + old loader" state.
+- Updated `tools/scripts/start.py` to launch exclusively from Lampas-managed `.lampas/runtime/fabric-server-launch.jar`, completely removing legacy glob-first JAR discovery (`fabric-server-*.jar` and `server.jar`).
+- Ensured `--no-sync` and `--allow-stale` in `start.py` strictly respect managed runtime location and launch existing coherent installation on deployment failures.
+
 ## [1.0.5] - 2026-09-05
 
 ### Added

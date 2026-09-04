@@ -252,10 +252,23 @@ export interface ReleaseDescriptor {
   serverResourcePack?: ServerResourcePackConfig;
 }
 
+export interface ServerRuntimeState {
+  minecraft: string;
+  loader: {
+    type: "fabric";
+    version: string;
+  };
+  installerVersion?: string;
+  launcherJar: string;
+  launcherSha256: string;
+  installedAt?: string;
+}
+
 export interface InstallationState {
   pack: string;
   version: string;
   installedAt: string;
+  runtime?: ServerRuntimeState;
   managedResourcePacks?: string[];
   serverResourcePack?: {
     managed: boolean;

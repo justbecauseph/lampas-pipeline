@@ -12,7 +12,6 @@ Usage:
 
 import os
 import sys
-import glob
 import shutil
 import signal
 import subprocess
@@ -35,7 +34,17 @@ SERVER_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def find_java_binary():
-    """Locates the preferred Java binary (SDKMAN GraalVM, system Java, etc.)."""
+    """Locates the preferred Java binary (JAVA_BIN, JAVA_HOME, SDKMAN GraalVM, system Java, etc.)."""
+    env_bin = os.getenv("JAVA_BIN")
+    if env_bin and os.path.exists(env_bin):
+        return env_bin
+
+    java_home = os.getenv("JAVA_HOME")
+    if java_home:
+        candidate = os.path.join(java_home, "bin", "java.exe" if sys.platform == "win32" else "java")
+        if os.path.exists(candidate):
+            return candidate
+
     sdkman_java = os.path.expanduser("~/.sdkman/candidates/java/current/bin/java")
     if os.path.exists(sdkman_java) and os.access(sdkman_java, os.X_OK):
         return sdkman_java
@@ -48,17 +57,18 @@ def find_java_binary():
 
 
 def find_fabric_server_jar():
-    """Locates the Fabric server launcher JAR."""
-    candidates = glob.glob(os.path.join(SERVER_DIR, "fabric-server-*.jar"))
-    if candidates:
-        return candidates[0]
-
-    server_jar = os.path.join(SERVER_DIR, "server.jar")
-    if os.path.exists(server_jar):
-        return server_jar
+    """Locates the Lampas-managed Fabric server launcher JAR."""
+    managed_jar = os.path.join(SERVER_DIR, ".lampas", "runtime", "fabric-server-launch.jar")
+    if os.path.exists(managed_jar):
+        return managed_jar
+    return None
 
 def find_lampasctl():
-    """Locates the lampasctl executable (co-located binary, PATH, or development Bun source)."""
+    """Locates the lampasctl executable (LAMPASCTL_BIN, co-located binary, PATH, or development Bun source)."""
+    env_ctl = os.getenv("LAMPASCTL_BIN")
+    if env_ctl and os.path.exists(env_ctl):
+        return env_ctl
+
     # 1. Prefer co-located pinned binary in server directory
     local_exe = os.path.join(SERVER_DIR, "lampasctl.exe" if sys.platform == "win32" else "lampasctl")
     if os.path.exists(local_exe) and (sys.platform == "win32" or os.access(local_exe, os.X_OK)):
@@ -98,6 +108,8 @@ def main():
         lampasctl = find_lampasctl()
         if lampasctl:
             sync_cmd = lampasctl if isinstance(lampasctl, list) else [lampasctl]
+            if sys.platform == "win32" and isinstance(sync_cmd[0], str) and (sync_cmd[0].lower().endswith(".bat") or sync_cmd[0].lower().endswith(".cmd")):
+                sync_cmd = ["cmd.exe", "/c"] + sync_cmd
             sync_cmd.extend([
                 "deploy",
                 "--target", SERVER_DIR,
@@ -130,7 +142,7 @@ def main():
     java_bin = find_java_binary()
     server_jar = find_fabric_server_jar()
     if not server_jar:
-        print("[Starter Error] No Fabric server JAR found in directory.", file=sys.stderr)
+        print("[Starter Error] No managed Fabric runtime is installed. Run start.py without --no-sync first.", file=sys.stderr)
         sys.exit(1)
 
     jar_name = os.path.basename(server_jar)
@@ -172,7 +184,8 @@ def main():
     ]
 
     # Combine flags and extra arguments
-    jvm_cmd = [java_bin] + optimized_jvm_flags + extra_java_args + [
+    base_cmd = ["cmd.exe", "/c", java_bin] if (sys.platform == "win32" and (java_bin.lower().endswith(".bat") or java_bin.lower().endswith(".cmd"))) else [java_bin]
+    jvm_cmd = base_cmd + optimized_jvm_flags + extra_java_args + [
         "-jar",
         server_jar,
         "nogui",

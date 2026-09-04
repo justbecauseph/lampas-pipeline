@@ -13,7 +13,8 @@ import {
 } from "./utils";
 import { backupDirectory } from "./backup";
 import { resolveRelease } from "./release-resolver";
-import type { InstallationState, ManifestFile, PackManifest } from "./types";
+import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
+import type { InstallationState, ManifestFile, PackManifest, ServerRuntimeState } from "./types";
 
 export interface SyncOptions {
   manifestPath?: string;
@@ -23,6 +24,7 @@ export interface SyncOptions {
   concurrency?: number;
   verificationMode?: "fast" | "full";
   backupWorld?: boolean;
+  runtime?: ServerRuntimeState;
 }
 
 export interface DeployOptions {
@@ -32,6 +34,9 @@ export interface DeployOptions {
   version?: string;
   verificationMode?: "fast" | "full";
   backupWorld?: boolean;
+  installerVersion?: string;
+  fabricMetaUrl?: string;
+  fetchFn?: typeof fetch;
 }
 
 export const CLIENT_PROTECTED = [
@@ -463,6 +468,12 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     files: {},
   };
 
+  if (options.runtime) {
+    newState.runtime = options.runtime;
+  } else if (prevState.runtime) {
+    newState.runtime = prevState.runtime;
+  }
+
   for (const file of manifest.files) {
     const filePath = path.join(targetDir, file.path);
     const stat = fs.existsSync(filePath) ? fs.statSync(filePath) : undefined;
@@ -627,7 +638,7 @@ export function resetServerResourcePackProperties(targetDir: string): void {
 
 export async function deployServer(options: DeployOptions): Promise<void> {
   const portalUrl = options.portalUrl || process.env.PORTAL_URL || "https://dev.lampas.town";
-  const { version, manifest } = await resolveRelease({
+  const { version, release, manifest } = await resolveRelease({
     portalUrl,
     channel: options.channel || (options.version ? undefined : "dev"),
     version: options.version,
@@ -639,17 +650,55 @@ export async function deployServer(options: DeployOptions): Promise<void> {
     expectedVersion: version,
   });
 
+  // Cross-validate release descriptor and server manifest runtime
+  if (release) {
+    if (release.minecraft !== manifest.minecraft) {
+      throw new Error(
+        `Release Minecraft version mismatch: release requires '${release.minecraft}', server manifest requires '${manifest.minecraft}'`
+      );
+    }
+    if (
+      release.loader?.type !== manifest.loader?.type ||
+      release.loader?.version !== manifest.loader?.version
+    ) {
+      throw new Error(
+        `Invalid Lampas release: release descriptor requires Fabric ${release.loader?.version}, server manifest requires Fabric ${manifest.loader?.version}.`
+      );
+    }
+  }
+
+  const runtime = validateRuntimeDefinition(manifest.minecraft, manifest.loader);
   const targetDir = path.resolve(options.targetDir);
   console.log(`[Deploy] Target Minecraft server directory: ${targetDir}`);
   console.log(`[Deploy] Deploying ${manifest.pack} v${manifest.version}...`);
 
-  await syncInstance({
-    manifest,
+  // Stage Fabric server runtime before any server pack mutation
+  const stagedRuntime = await prepareFabricServerRuntime({
     targetDir,
-    portalBaseUrl: portalUrl,
-    verificationMode: options.verificationMode || "fast",
-    backupWorld: options.backupWorld !== false,
+    minecraft: runtime.minecraft,
+    loaderVersion: runtime.loader.version,
+    installerVersion: options.installerVersion,
+    verificationMode: options.verificationMode,
+    fabricMetaUrl: options.fabricMetaUrl,
+    fetchFn: options.fetchFn,
   });
+
+  try {
+    await syncInstance({
+      manifest,
+      targetDir,
+      portalBaseUrl: portalUrl,
+      verificationMode: options.verificationMode || "fast",
+      backupWorld: options.backupWorld !== false,
+      runtime: stagedRuntime.runtimeState,
+    });
+
+    // Atomically activate runtime only after pack files are synced & verified
+    await stagedRuntime.activate();
+  } catch (err) {
+    await stagedRuntime.cleanup().catch(() => {});
+    throw err;
+  }
 
   console.log(`\n[Deploy Complete] Successfully deployed ${manifest.pack} v${manifest.version} to ${targetDir}`);
 }

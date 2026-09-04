@@ -79,11 +79,11 @@ export interface VerifiedTransferOptions {
   timeoutMs?: number;
 }
 
-function temporarySibling(filePath: string): string {
+export function temporarySibling(filePath: string): string {
   return `${filePath}.partial.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}`;
 }
 
-async function replaceFile(tempPath: string, destination: string): Promise<void> {
+export async function replaceFile(tempPath: string, destination: string): Promise<void> {
   try {
     await fs.promises.rename(tempPath, destination);
   } catch (error: any) {

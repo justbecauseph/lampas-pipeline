@@ -19,11 +19,21 @@ describe("lampasctl deploy server deployment workflow", () => {
   const srpSha256 = crypto.createHash("sha256").update(srpContent).digest("hex");
   const srpSha1 = crypto.createHash("sha1").update(srpContent).digest("hex");
 
+  const mockServerJarContent = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00]);
+  const mockServerJarSha = crypto.createHash("sha256").update(mockServerJarContent).digest("hex");
+
   beforeAll(() => {
     server = Bun.serve({
       port: 0,
       fetch(req) {
         const url = new URL(req.url);
+
+        // Fabric Meta server jar endpoint
+        if (url.pathname.includes("/server/jar")) {
+          return new Response(mockServerJarContent, {
+            headers: { "Content-Type": "application/java-archive" },
+          });
+        }
 
         // Channel endpoints
         if (url.pathname === "/api/v1/channels/dev") {
@@ -132,9 +142,11 @@ describe("lampasctl deploy server deployment workflow", () => {
     });
 
     portalUrl = `http://127.0.0.1:${server.port}`;
+    process.env.FABRIC_META_URL = portalUrl;
   });
 
   afterAll(() => {
+    delete process.env.FABRIC_META_URL;
     server.stop(true);
   });
 
@@ -462,6 +474,145 @@ describe("lampasctl deploy server deployment workflow", () => {
       ).rejects.toThrow("Invalid server resourcePack: SHA-1 is required and must be 40 hex characters");
     } finally {
       missingSha1Server.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects deployment when release descriptor and server manifest loader versions disagree", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-mismatch-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    const mismatchServer = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/server-manifest") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            target: "server",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.4" }, // Loader version mismatch!
+            protocol: 2,
+            files: [],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl: `http://127.0.0.1:${mismatchServer.port}`,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Invalid Lampas release: release descriptor requires Fabric 0.19.3, server manifest requires Fabric 0.19.4.");
+    } finally {
+      mismatchServer.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("failure atomicity: runtime staging failure aborts deployment before modifying disk", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-atomicity-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    // Pre-populate with v1 mod and state
+    const modsDir = path.join(serverDir, "mods");
+    fs.mkdirSync(modsDir, { recursive: true });
+    fs.writeFileSync(path.join(modsDir, "existing-mod.jar"), "existing-mod-content");
+
+    const runtimeDir = path.join(serverDir, ".lampas", "runtime");
+    fs.mkdirSync(runtimeDir, { recursive: true });
+    fs.writeFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "previous-coherent-launcher");
+    fs.writeFileSync(
+      path.join(runtimeDir, "runtime.json"),
+      JSON.stringify({
+        minecraft: "26.2",
+        loader: { type: "fabric", version: "0.19.3" },
+        launcherJar: "fabric-server-launch.jar",
+        launcherSha256: "prevhash",
+      })
+    );
+
+    // Mock server returning release that requires a loader which fails to download
+    const failingRuntimeServer = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "2.0.0" });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.99.broken" },
+          });
+        }
+        if (url.pathname === "/api/v1/releases/2.0.0/server-manifest") {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: "2.0.0",
+            target: "server",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.99.broken" },
+            protocol: 2,
+            files: [
+              {
+                path: "mods/new-mod.jar",
+                hashes: { sha256: "b".repeat(64) },
+                size: 10,
+                download: { url: "/api/v1/blobs/newmod" },
+                policy: "MANAGED",
+              },
+            ],
+          });
+        }
+        // Fabric server download returns 500 error
+        if (url.pathname.includes("/server/jar")) {
+          return new Response("Fabric Meta Down", { status: 500 });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl: `http://127.0.0.1:${failingRuntimeServer.port}`,
+          fabricMetaUrl: `http://127.0.0.1:${failingRuntimeServer.port}`,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Failed to download Fabric server launcher");
+
+      // Verify that existing mod was NOT deleted, new mod was NOT added, and runtime remained previous coherent version
+      expect(fs.existsSync(path.join(modsDir, "existing-mod.jar"))).toBe(true);
+      expect(fs.existsSync(path.join(modsDir, "new-mod.jar"))).toBe(false);
+      expect(fs.readFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "utf-8")).toBe("previous-coherent-launcher");
+    } finally {
+      failingRuntimeServer.stop(true);
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
