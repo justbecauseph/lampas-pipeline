@@ -3,7 +3,7 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.6] - 2026-09-05
+## [1.0.5] - 2026-09-05
 
 ### Added
 - Dedicated server Fabric runtime provisioning (`tools/lampasctl/src/fabric-runtime.ts`):
@@ -27,16 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Defers writing `installation.json` until *after* runtime activation succeeds.
 - Cross-validation between release descriptor and server manifest in `deployServer()` preventing runtime version mismatches.
 - Unit and integration tests for Fabric server runtime resolver, upgrade flow, failure atomicity, transactional rollback on activation failure, standalone/fail-closed crash recovery, and `start.py` managed runtime launch.
-
-### Changed
-- Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization and manage file changes under a `DeploymentTransaction`. If runtime activation fails, deployment cleanly rolls back to the previous coherent state.
-- Updated `tools/scripts/start.py` to launch exclusively from Lampas-managed `.lampas/runtime/fabric-server-launch.jar`, completely removing legacy glob-first JAR discovery (`fabric-server-*.jar` and `server.jar`).
-- Ensured all launch paths (including `--no-sync` and `--allow-stale`) check for interrupted deployment transaction journals, executing `lampasctl recover` and failing closed if recovery fails or `lampasctl` is missing.
-- Ensured `--no-sync` strictly respects managed runtime location and launches existing coherent installation.
-
-## [1.0.5] - 2026-09-05
-
-### Added
 - Authoritative loader definition validation (`validateLoaderDefinition`): ensures `pack.toml [loader]` defines valid type (`fabric`) and non-empty `version`.
 - Fabric Meta API compatibility verification (`verifyFabricLoaderCompatibility`): queries `/v2/versions/loader/{minecraft}/{loaderVersion}` to guarantee loader and Minecraft compatibility before publishing releases.
 - Strict `loader.maven` and `intermediary.maven` coordinate validation for Fabric Meta API responses.
@@ -47,6 +37,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Extended schema test suite asserting runtime invariants across pack definitions, manifests, lockfile, and release descriptors.
 
 ### Changed
+- Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization and manage file changes under a `DeploymentTransaction`. If runtime activation fails, deployment cleanly rolls back to the previous coherent state.
+- Updated `tools/scripts/start.py` to launch exclusively from Lampas-managed `.lampas/runtime/fabric-server-launch.jar`, completely removing legacy glob-first JAR discovery (`fabric-server-*.jar` and `server.jar`).
+- Ensured all launch paths (including `--no-sync` and `--allow-stale`) check for interrupted deployment transaction journals, executing `lampasctl recover` and failing closed if recovery fails or `lampasctl` is missing.
+- Ensured `--no-sync` strictly respects managed runtime location and launches existing coherent installation.
 - Tightened `schemas/pack.schema.json` with `minLength: 1` and `additionalProperties: false` on loader object.
 - Added `checkFabricMeta` verification to `lampasctl validate` and `lampasctl manifest`, and documented `--skip-meta-check` in CLI help.
 - Converted unit test suite to be hermetic with mocked Fabric Meta responses, providing an optional live network smoke test (`RUN_LIVE_FABRIC_META_TESTS=true`).
