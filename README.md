@@ -1,7 +1,7 @@
 # ⚡ Lampas Modpack Distribution Pipeline
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2-brightgreen.svg)](https://minecraft.net)
-[![Fabric Loader](https://img.shields.io/badge/Fabric-0.19.3-blue.svg)](https://fabricmc.net)
+[![Fabric Loader](https://img.shields.io/badge/Fabric-Manifest--Defined-blue.svg)](https://fabricmc.net)
 [![Java](https://img.shields.io/badge/OpenJDK-25%20(epsilon)-orange.svg)](https://adoptium.net)
 [![Runtime](https://img.shields.io/badge/Runtime-Bun-black.svg)](https://bun.sh)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
@@ -38,13 +38,13 @@ graph TD
     end
 
     subgraph ClientLayer ["6. Client Ecosystem"]
-        Launcher["lampas-launcher (separate repository)<br/>• OpenJDK 25 Auto-Discovery<br/>• Web OAuth PKCE Login<br/>• Direct KnotClient JVM Spawner"]
-        ClientMC["Minecraft 26.2 Client<br/>• Fabric Loader 0.19.3<br/>• Synchronized Mods"]
+        Launcher["lampas-launcher (separate repository)<br/>• OpenJDK 25 Auto-Discovery<br/>• Web OAuth PKCE Login<br/>• Dynamic Fabric Bootstrap"]
+        ClientMC["Minecraft 26.2 Client<br/>• Manifest-Defined Fabric Loader<br/>• Synchronized Mods"]
     end
 
     subgraph ServerLayer ["7. Dedicated Server Ecosystem"]
-        ServerScript["lampasctl deploy / Server Sync<br/>• Timestamped World Backup<br/>• Dual Size & Hash Verification<br/>• Obsolete File Cleanup"]
-        ServerMC["lampas-server-fabric<br/>• Fabric Dedicated Server<br/>• OpenJDK 25 JVM"]
+        ServerScript["lampasctl deploy / Server Sync<br/>• Transactional Rollback Engine<br/>• Managed Runtime Resolver<br/>• Timestamped World Backup"]
+        ServerMC["lampas-server-fabric<br/>• Manifest-Defined Fabric Server<br/>• OpenJDK 25 JVM"]
     end
 
     Pipeline -->|Validation / explicit release| Lampasctl
@@ -500,6 +500,33 @@ When `--version` is omitted, `deploy` resolves the selected channel (default: `d
 - **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
 - **Automatic Recovery**: Corrupted or truncated files (e.g. incomplete network aborts) are detected on disk and automatically re-downloaded.
 - **Protected Paths**: Never overwrites runtime data such as `world/`, `whitelist.json`, `ops.json`, or player logs. `server.properties` is preserved except for the five explicitly managed server-resource-pack keys, which are reconciled and verified from the manifest.
+
+### ⚙️ Dedicated Server Runtime Provisioning & Transactional Safety
+
+Dedicated servers use an immutable, manifest-defined runtime managed exclusively by `lampasctl`:
+
+1. **Manifest-Defined Fabric Server Runtime**:
+   - `lampasctl deploy` resolves the exact Fabric server launcher JAR from Fabric Meta (`/v2/versions/loader/{minecraft}/{loaderVersion}/{installerVersion}/server/jar`) matching the release contract.
+   - Fabric installer version is pinned to `1.1.2`, and runtime provisioning is bounded to supported Minecraft versions (`26.2`).
+   - Deep archive validation (`validateFabricServerLauncherJar`) verifies ZIP structure, confirms `META-INF/MANIFEST.MF` declares `Main-Class: net.fabricmc.installer.ServerLauncher`, and strictly validates `install.properties` declaring the exact Minecraft and Loader versions.
+   - The launcher is staged into `.lampas/runtime/.tmp-staging/` and atomically activated to `.lampas/runtime/fabric-server-launch.jar` alongside `.lampas/runtime/runtime.json`.
+
+2. **Transactional Deployment & Rollback (`.lampas/.tx-rollback/`)**:
+   - Before applying any pack changes, `DeploymentTransaction` snapshots modified files, deleted files, `server.properties`, `installation.json`, and previous runtime files.
+   - An atomic journal (`journal.json`) is persisted to disk before any target mutations.
+   - If runtime activation fails or an unhandled exception occurs, the transaction automatically rolls back: restores modified/deleted files, purges newly added files, restores previous server properties, and restores the previous coherent runtime.
+   - Writing `.lampas/installation.json` is deferred until *after* runtime activation succeeds.
+   - **Explicit Commit Point**: Once deployment is fully coherent, unlinking `journal.json` commits the transaction. Presence of `journal.json` unambiguously indicates an interrupted deployment requiring recovery; its absence indicates successful commitment.
+
+3. **Fail-Closed Crash Recovery**:
+   - Preflight backup validation: `rollbackFromDir` validates that all required backups for overwritten/deleted files, server properties, and runtime state exist as regular readable files before the first restoration mutation.
+   - If an interrupted transaction is detected upon startup or subsequent deploy, `recoverIfInterrupted()` validates the journal schema, strictly enforces path safety (forbidding `.` or `..` traversal segments and `.lampas` directory tampering), and executes the rollback.
+   - Operators can also run `lampasctl recover --target <path>` directly.
+
+4. **Managed Server Startup (`tools/scripts/start.py`)**:
+   - `start.py` launches exclusively from the canonical Lampas-managed `.lampas/runtime/fabric-server-launch.jar` (legacy glob-first discovery of `fabric-server-*.jar` and root `server.jar` is removed).
+   - Pre-launch recovery guard: Every startup path (including `--no-sync` and normal boot) checks for an interrupted transaction journal. If present, it executes `lampasctl recover` and fails closed if recovery fails or `lampasctl` is missing.
+   - `--allow-stale`: If `lampasctl deploy` fails on startup, attempts transaction recovery before launching the recovered coherent runtime.
 
 ---
 
