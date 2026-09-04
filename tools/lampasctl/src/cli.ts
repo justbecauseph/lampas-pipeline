@@ -52,11 +52,13 @@ Commands:
   validate              Validate pack definitions, lockfile, and integrity
     -p, --pack <path>   Pack directory (default: ./pack)
     -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
+    --skip-meta-check   Skip upstream Fabric Meta compatibility verification
 
   manifest              Generate client-manifest.json and server-manifest.json
     -p, --pack <path>   Pack directory (default: ./pack)
     -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
     -o, --out <path>    Manifest output directory (default: ./manifest)
+    --skip-meta-check   Skip upstream Fabric Meta compatibility verification
 
   publish               Publish release and upload blobs to Lampas Portal
     --portal <url>      Lampas Portal URL (e.g. http://localhost:3000)

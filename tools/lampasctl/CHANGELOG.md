@@ -8,13 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Authoritative loader definition validation (`validateLoaderDefinition`): ensures `pack.toml [loader]` defines valid type (`fabric`) and non-empty `version`.
 - Fabric Meta API compatibility verification (`verifyFabricLoaderCompatibility`): queries `/v2/versions/loader/{minecraft}/{loaderVersion}` to guarantee loader and Minecraft compatibility before publishing releases.
+- Strict `loader.maven` and `intermediary.maven` coordinate validation for Fabric Meta API responses.
+- Differentiated Fabric Meta error responses: 404 (non-existent pair, fails immediately without retry), 5xx (transient service unavailability, automatic retry), and network/timeout failures (automatic retry).
+- Finite timeout and retry policy for upstream Fabric Meta queries.
 - Lockfile and manifest consistency enforcement: rejects manifest generation and validation if `pack.lock.json` runtime metadata differs from `pack.toml`.
 - Descriptor consistency assertion in release publishing: verifies client manifest, server manifest, and release descriptor declare identical Minecraft and Fabric Loader versions.
 - Extended schema test suite asserting runtime invariants across pack definitions, manifests, lockfile, and release descriptors.
 
 ### Changed
 - Tightened `schemas/pack.schema.json` with `minLength: 1` and `additionalProperties: false` on loader object.
-- Added `checkFabricMeta` verification to `lampasctl validate` and `lampasctl manifest`.
+- Added `checkFabricMeta` verification to `lampasctl validate` and `lampasctl manifest`, and documented `--skip-meta-check` in CLI help.
+- Converted unit test suite to be hermetic with mocked Fabric Meta responses, providing an optional live network smoke test (`RUN_LIVE_FABRIC_META_TESTS=true`).
 
 ## [1.0.4] - 2026-09-04
 
