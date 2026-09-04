@@ -14,6 +14,7 @@ import {
 import { backupDirectory } from "./backup";
 import { resolveRelease } from "./release-resolver";
 import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
+import { DeploymentTransaction } from "./transaction";
 import type { InstallationState, ManifestFile, PackManifest, ServerRuntimeState } from "./types";
 
 export interface SyncOptions {
@@ -25,6 +26,8 @@ export interface SyncOptions {
   verificationMode?: "fast" | "full";
   backupWorld?: boolean;
   runtime?: ServerRuntimeState;
+  tx?: DeploymentTransaction;
+  deferStateWrite?: boolean;
 }
 
 export interface DeployOptions {
@@ -37,6 +40,9 @@ export interface DeployOptions {
   installerVersion?: string;
   fabricMetaUrl?: string;
   fetchFn?: typeof fetch;
+  _testHooks?: {
+    forceActivationFailure?: boolean;
+  };
 }
 
 export const CLIENT_PROTECTED = [
@@ -184,7 +190,7 @@ export function validateManifestForSync(
   }
 }
 
-export async function syncInstance(options: SyncOptions): Promise<void> {
+export async function syncInstance(options: SyncOptions): Promise<InstallationState> {
   const manifest = options.manifest || readJsonFile<PackManifest>(options.manifestPath!);
   if (!manifest) {
     throw new Error("syncInstance requires either 'manifest' or 'manifestPath'.");
@@ -373,10 +379,19 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
   const workers = Array.from({ length: Math.min(concurrency, toDownload.length) }, () => worker());
   await Promise.all(workers);
 
+  // Take rollback snapshot before modifying files on disk
+  if (options.tx) {
+    await options.tx.snapshot({ toDownload, toDelete });
+  }
+
   // Apply only after every artifact is present and verified in the cache.
   for (const file of toDownload) {
+    const fullPath = path.join(targetDir, file.path);
+    if (!fs.existsSync(fullPath) && options.tx) {
+      options.tx.recordNewFile(file.path);
+    }
     const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
-    await copyFileAtomic(cachePath, path.join(targetDir, file.path));
+    await copyFileAtomic(cachePath, fullPath);
   }
 
   // Delete obsolete managed files
@@ -501,9 +516,12 @@ export async function syncInstance(options: SyncOptions): Promise<void> {
     newState.serverResourcePack = { managed: false };
   }
 
-  writeJsonFile(stateFile, newState, true);
+  if (!options.deferStateWrite) {
+    writeJsonFile(stateFile, newState, true);
+  }
 
   console.log(`\n[Sync Complete] Successfully synchronized ${manifest.pack} v${manifest.version}`);
+  return newState;
 }
 
 export function readServerPropertiesMap(targetDir: string): Record<string, string> {
@@ -672,6 +690,9 @@ export async function deployServer(options: DeployOptions): Promise<void> {
   console.log(`[Deploy] Target Minecraft server directory: ${targetDir}`);
   console.log(`[Deploy] Deploying ${manifest.pack} v${manifest.version}...`);
 
+  // Recover interrupted transaction if one exists
+  await DeploymentTransaction.recoverIfInterrupted(targetDir);
+
   // Stage Fabric server runtime before any server pack mutation
   const stagedRuntime = await prepareFabricServerRuntime({
     targetDir,
@@ -683,19 +704,35 @@ export async function deployServer(options: DeployOptions): Promise<void> {
     fetchFn: options.fetchFn,
   });
 
+  const tx = new DeploymentTransaction(targetDir);
+
   try {
-    await syncInstance({
+    const newState = await syncInstance({
       manifest,
       targetDir,
       portalBaseUrl: portalUrl,
       verificationMode: options.verificationMode || "fast",
       backupWorld: options.backupWorld !== false,
       runtime: stagedRuntime.runtimeState,
+      tx,
+      deferStateWrite: true,
     });
+
+    if (options._testHooks?.forceActivationFailure) {
+      throw new Error("Forced runtime activation failure for test verification");
+    }
 
     // Atomically activate runtime only after pack files are synced & verified
     await stagedRuntime.activate();
+
+    // Write installation.json ONLY after runtime activation succeeds
+    const stateFile = path.join(targetDir, ".lampas", "installation.json");
+    writeJsonFile(stateFile, newState, true);
+
+    // Commit transaction and cleanup rollback snapshot
+    await tx.commit();
   } catch (err) {
+    await tx.rollback().catch((e) => console.error("Rollback error:", e));
     await stagedRuntime.cleanup().catch(() => {});
     throw err;
   }

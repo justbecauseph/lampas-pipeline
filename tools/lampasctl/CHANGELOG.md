@@ -8,17 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Dedicated server Fabric runtime provisioning (`tools/lampasctl/src/fabric-runtime.ts`):
   - Resolves exact-version Fabric server launcher JAR from Fabric Meta `/v2/versions/loader/{minecraft}/{loaderVersion}/{installerVersion}/server/jar`.
-  - Pinned default Fabric server installer version (`1.0.1`).
+  - Pinned default Fabric server installer version to latest stable (`1.1.2`).
   - Strict Minecraft 26.2 scope boundary enforcement (fails closed on unsupported Minecraft versions).
-  - ZIP header magic bytes (`PK\x03\x04`) integrity check on downloaded launcher JARs.
+  - Deep archive structure validation (`validateFabricServerLauncherJar`): verifies valid ZIP format, checks `META-INF/MANIFEST.MF` declaring `net.fabricmc.installer.ServerLauncher`, and verifies `install.properties` containing matching `fabric-loader-version` and `game-version`.
   - Staged atomic deployment into `.lampas/runtime/.tmp-staging/` before activating to `<serverDir>/.lampas/runtime/fabric-server-launch.jar`.
   - Server runtime state tracking in `<serverDir>/.lampas/runtime/runtime.json` and `.lampas/installation.json`.
   - Fast/full verification modes for server runtime: fast reuses matching metadata and file; full recomputes SHA-256 and re-downloads if corrupt.
+- Transactional deployment rollback architecture (`tools/lampasctl/src/transaction.ts`):
+  - Added `DeploymentTransaction` managing `.lampas/.tx-rollback/`.
+  - Snapshots modified files, deleted files, `server.properties`, `installation.json`, and `.lampas/runtime/` prior to mutations.
+  - Automatically rolls back changes on mid-flight failure, restoring previous coherent release state (reverting modified files, purging newly added files, restoring previous runtime JAR, runtime.json, installation.json, and server.properties).
+  - Auto-recovers interrupted or crashed transactions on subsequent deployment runs (`recoverIfInterrupted`).
+  - Defers writing `installation.json` until *after* runtime activation succeeds.
 - Cross-validation between release descriptor and server manifest in `deployServer()` preventing runtime version mismatches.
-- Unit and integration tests for Fabric server runtime resolver, upgrade flow, failure atomicity, and `start.py` managed runtime launch.
+- Unit and integration tests for Fabric server runtime resolver, upgrade flow, failure atomicity, transactional rollback on activation failure, and `start.py` managed runtime launch.
 
 ### Changed
-- Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization. If runtime staging fails, deployment aborts immediately with zero disk changes, preventing "new mods + old loader" state.
+- Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization and manage file changes under a `DeploymentTransaction`. If runtime activation fails, deployment cleanly rolls back to the previous coherent state.
 - Updated `tools/scripts/start.py` to launch exclusively from Lampas-managed `.lampas/runtime/fabric-server-launch.jar`, completely removing legacy glob-first JAR discovery (`fabric-server-*.jar` and `server.jar`).
 - Ensured `--no-sync` and `--allow-stale` in `start.py` strictly respect managed runtime location and launch existing coherent installation on deployment failures.
 

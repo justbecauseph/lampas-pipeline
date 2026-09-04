@@ -1,6 +1,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { unzipSync } from "fflate";
 import type { ServerRuntimeState } from "./types";
 import {
   computeFileHashesStreaming,
@@ -11,8 +12,56 @@ import {
   writeJsonFile,
 } from "./utils";
 
-export const DEFAULT_FABRIC_SERVER_INSTALLER_VERSION = "1.0.1";
+export const DEFAULT_FABRIC_SERVER_INSTALLER_VERSION = "1.1.2";
 export const SUPPORTED_MINECRAFT_VERSIONS = new Set(["26.2"]);
+
+export function validateFabricServerLauncherJar(
+  buffer: Buffer,
+  expectedMinecraft: string,
+  expectedLoaderVersion: string
+): void {
+  if (buffer.length < 4 || buffer[0] !== 0x50 || buffer[1] !== 0x4b || buffer[2] !== 0x03 || buffer[3] !== 0x04) {
+    throw new Error(
+      `Invalid Fabric server launcher JAR received for ${expectedMinecraft} / ${expectedLoaderVersion} (invalid ZIP magic bytes)`
+    );
+  }
+
+  let entries: Record<string, Uint8Array>;
+  try {
+    entries = unzipSync(new Uint8Array(buffer));
+  } catch (err: any) {
+    throw new Error(
+      `Failed to parse Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: ${err.message}`
+    );
+  }
+
+  const manifestEntry = entries["META-INF/MANIFEST.MF"];
+  if (!manifestEntry) {
+    throw new Error(
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing META-INF/MANIFEST.MF`
+    );
+  }
+
+  const manifestText = new TextDecoder().decode(manifestEntry);
+  if (!manifestText.includes("net.fabricmc.installer.ServerLauncher")) {
+    throw new Error(
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: unexpected Main-Class in manifest`
+    );
+  }
+
+  const installPropsEntry = entries["install.properties"];
+  if (installPropsEntry) {
+    const propsText = new TextDecoder().decode(installPropsEntry);
+    if (
+      !propsText.includes(`fabric-loader-version=${expectedLoaderVersion}`) ||
+      !propsText.includes(`game-version=${expectedMinecraft}`)
+    ) {
+      throw new Error(
+        `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: install.properties does not match requested runtime`
+      );
+    }
+  }
+}
 
 export interface RuntimeDefinition {
   minecraft: string;
@@ -147,10 +196,9 @@ export async function prepareFabricServerRuntime(
   );
 
   ensureDir(stagingDir);
-  const stagedJarPath = path.join(
-    stagingDir,
-    `fabric-server-launch.jar.tmp.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}`
-  );
+  const suffix = `${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}`;
+  const stagedJarPath = path.join(stagingDir, `fabric-server-launch.jar.tmp.${suffix}`);
+  const stagedJsonPath = path.join(stagingDir, `runtime.json.tmp.${suffix}`);
 
   const endpointUrl = `${fabricMetaBaseUrl}/v2/versions/loader/${encodeURIComponent(minecraft)}/${encodeURIComponent(loaderVersion)}/${encodeURIComponent(installerVersion)}/server/jar`;
 
@@ -177,12 +225,8 @@ export async function prepareFabricServerRuntime(
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Validate ZIP magic header PK\x03\x04
-    if (buffer.length < 4 || buffer[0] !== 0x50 || buffer[1] !== 0x4b || buffer[2] !== 0x03 || buffer[3] !== 0x04) {
-      throw new Error(
-        `Invalid Fabric server launcher JAR received for ${minecraft} / ${loaderVersion} (invalid ZIP magic bytes)`
-      );
-    }
+    // Deep validation of downloaded server launcher JAR (ZIP magic + MANIFEST.MF + install.properties)
+    validateFabricServerLauncherJar(buffer, minecraft, loaderVersion);
 
     const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
     fs.writeFileSync(stagedJarPath, buffer);
@@ -199,13 +243,15 @@ export async function prepareFabricServerRuntime(
       installedAt: new Date().toISOString(),
     };
 
+    writeJsonFile(stagedJsonPath, runtimeState, true);
+
     return {
       isReused: false,
       runtimeState,
       activate: async () => {
         ensureDir(runtimeDir);
         await replaceFile(stagedJarPath, launcherJarPath);
-        writeJsonFile(runtimeStatePath, runtimeState, true);
+        await replaceFile(stagedJsonPath, runtimeStatePath);
         console.log(`  ✓ [Server Runtime Activated] Fabric server launcher ${loaderVersion} activated`);
         return runtimeState;
       },
@@ -213,11 +259,17 @@ export async function prepareFabricServerRuntime(
         if (fs.existsSync(stagedJarPath)) {
           await fs.promises.unlink(stagedJarPath).catch(() => {});
         }
+        if (fs.existsSync(stagedJsonPath)) {
+          await fs.promises.unlink(stagedJsonPath).catch(() => {});
+        }
       },
     };
   } catch (err) {
     if (fs.existsSync(stagedJarPath)) {
       await fs.promises.unlink(stagedJarPath).catch(() => {});
+    }
+    if (fs.existsSync(stagedJsonPath)) {
+      await fs.promises.unlink(stagedJsonPath).catch(() => {});
     }
     throw err;
   }

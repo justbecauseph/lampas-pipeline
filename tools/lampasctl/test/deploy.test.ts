@@ -3,11 +3,27 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { zipSync } from "fflate";
 import { deployServer } from "../src/sync";
 
 describe("lampasctl deploy server deployment workflow", () => {
   let server: ReturnType<typeof Bun.serve>;
   let portalUrl: string;
+
+  function createMockJar(mc: string, loader: string): Buffer {
+    const manifest = Buffer.from(
+      "Manifest-Version: 1.0\r\nImplementation-Title: FabricInstaller\r\nImplementation-Version: 1.1.2\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n\r\n"
+    );
+    const installProps = Buffer.from(
+      `fabric-loader-version=${loader}\r\ngame-version=${mc}\r\n`
+    );
+    return Buffer.from(
+      zipSync({
+        "META-INF/MANIFEST.MF": new Uint8Array(manifest),
+        "install.properties": new Uint8Array(installProps),
+      })
+    );
+  }
 
   const v1ModContent = Buffer.from("v1-mod-jar-bytes");
   const v1ModSha = crypto.createHash("sha256").update(v1ModContent).digest("hex");
@@ -19,9 +35,6 @@ describe("lampasctl deploy server deployment workflow", () => {
   const srpSha256 = crypto.createHash("sha256").update(srpContent).digest("hex");
   const srpSha1 = crypto.createHash("sha1").update(srpContent).digest("hex");
 
-  const mockServerJarContent = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00]);
-  const mockServerJarSha = crypto.createHash("sha256").update(mockServerJarContent).digest("hex");
-
   beforeAll(() => {
     server = Bun.serve({
       port: 0,
@@ -30,7 +43,11 @@ describe("lampasctl deploy server deployment workflow", () => {
 
         // Fabric Meta server jar endpoint
         if (url.pathname.includes("/server/jar")) {
-          return new Response(mockServerJarContent, {
+          const parts = url.pathname.split("/");
+          const loaderIdx = parts.indexOf("loader");
+          const mc = loaderIdx !== -1 && parts[loaderIdx + 1] ? parts[loaderIdx + 1] : "26.2";
+          const loader = loaderIdx !== -1 && parts[loaderIdx + 2] ? parts[loaderIdx + 2] : "0.19.3";
+          return new Response(new Uint8Array(createMockJar(mc, loader)), {
             headers: { "Content-Type": "application/java-archive" },
           });
         }
@@ -97,7 +114,7 @@ describe("lampasctl deploy server deployment workflow", () => {
             pack: "Lampas 2",
             version: "2.1.0",
             minecraft: "26.2",
-            loader: { type: "fabric", version: "0.19.3" },
+            loader: { type: "fabric", version: "0.19.4" },
             minimumLauncherVersion: "1.0.0",
             protocol: 2,
             created: "2026-08-26T00:00:00Z",
@@ -112,7 +129,7 @@ describe("lampasctl deploy server deployment workflow", () => {
             version: "2.1.0",
             target: "server",
             minecraft: "26.2",
-            loader: { type: "fabric", version: "0.19.3" },
+            loader: { type: "fabric", version: "0.19.4" },
             protocol: 2,
             files: [
               {
@@ -223,6 +240,11 @@ describe("lampasctl deploy server deployment workflow", () => {
       const state2 = JSON.parse(fs.readFileSync(stateFile, "utf-8"));
       expect(state2.version).toBe("2.1.0");
       expect(state2.serverResourcePack).toEqual({ managed: false });
+      expect(state2.runtime?.loader?.version).toBe("0.19.4");
+
+      const runtimeFile = path.join(serverDir, ".lampas", "runtime", "runtime.json");
+      const runtimeState = JSON.parse(fs.readFileSync(runtimeFile, "utf-8"));
+      expect(runtimeState.loader.version).toBe("0.19.4");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -613,6 +635,127 @@ describe("lampasctl deploy server deployment workflow", () => {
       expect(fs.readFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "utf-8")).toBe("previous-coherent-launcher");
     } finally {
       failingRuntimeServer.stop(true);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("transactional rollback: forced activation failure restores previous coherent release state", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-tx-rollback-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    // Initial server.properties
+    fs.writeFileSync(
+      path.join(serverDir, "server.properties"),
+      "motd=Lampas Dedicated Server\nserver-port=25565\ndifficulty=hard\nresource-pack=\n"
+    );
+
+    try {
+      // 1. Successfully deploy Release 1 (2.0.0, Fabric 0.19.3)
+      await deployServer({
+        targetDir: serverDir,
+        portalUrl,
+        channel: "dev",
+        backupWorld: false,
+      });
+
+      const modFile = path.join(serverDir, "mods", "fabric-api.jar");
+      const runtimeJar = path.join(serverDir, ".lampas", "runtime", "fabric-server-launch.jar");
+      const runtimeJson = path.join(serverDir, ".lampas", "runtime", "runtime.json");
+      const installationJson = path.join(serverDir, ".lampas", "installation.json");
+      const serverProps = path.join(serverDir, "server.properties");
+
+      // Verify Release 1 state on disk
+      expect(fs.readFileSync(modFile).equals(v1ModContent)).toBe(true);
+      const v1RuntimeState = JSON.parse(fs.readFileSync(runtimeJson, "utf-8"));
+      expect(v1RuntimeState.loader.version).toBe("0.19.3");
+      const v1InstallState = JSON.parse(fs.readFileSync(installationJson, "utf-8"));
+      expect(v1InstallState.version).toBe("2.0.0");
+      const v1Props = fs.readFileSync(serverProps, "utf-8");
+      expect(v1Props).toContain(`resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`);
+      expect(v1Props).toContain("require-resource-pack=true");
+
+      const v1JarBytes = fs.readFileSync(runtimeJar);
+
+      // 2. Attempt to deploy Release 2 (2.1.0, Fabric 0.19.4), but force activation failure
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl,
+          channel: "stable",
+          backupWorld: false,
+          _testHooks: {
+            forceActivationFailure: true,
+          },
+        })
+      ).rejects.toThrow("Forced runtime activation failure for test verification");
+
+      // 3. Verify complete rollback to Release 1 state:
+      // - Mod file content rolled back to v1
+      expect(fs.readFileSync(modFile).equals(v1ModContent)).toBe(true);
+
+      // - Runtime launcher JAR rolled back to 0.19.3
+      expect(fs.readFileSync(runtimeJar).equals(v1JarBytes)).toBe(true);
+
+      // - runtime.json rolled back to 0.19.3
+      const rolledBackRuntimeState = JSON.parse(fs.readFileSync(runtimeJson, "utf-8"));
+      expect(rolledBackRuntimeState.loader.version).toBe("0.19.3");
+
+      // - installation.json rolled back to 2.0.0
+      const rolledBackInstallState = JSON.parse(fs.readFileSync(installationJson, "utf-8"));
+      expect(rolledBackInstallState.version).toBe("2.0.0");
+      expect(rolledBackInstallState.files["mods/fabric-api.jar"].sha256).toBe(v1ModSha);
+
+      // - server.properties restored to 2.0.0 values (resource pack still configured)
+      const rolledBackProps = fs.readFileSync(serverProps, "utf-8");
+      expect(rolledBackProps).toContain(`resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`);
+      expect(rolledBackProps).toContain("require-resource-pack=true");
+
+      // - Rollback journal and staging directories cleaned up
+      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tx-rollback"))).toBe(false);
+      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tmp-staging"))).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("transactional rollback: forced activation failure on clean install leaves no orphaned files", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-tx-clean-rollback-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    const initialProps = "motd=Clean Server\nserver-port=25565\n";
+    fs.writeFileSync(path.join(serverDir, "server.properties"), initialProps);
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl,
+          channel: "dev",
+          backupWorld: false,
+          _testHooks: {
+            forceActivationFailure: true,
+          },
+        })
+      ).rejects.toThrow("Forced runtime activation failure for test verification");
+
+      // Mod files added by the failed release should be removed
+      expect(fs.existsSync(path.join(serverDir, "mods", "fabric-api.jar"))).toBe(false);
+
+      // installation.json should not exist
+      expect(fs.existsSync(path.join(serverDir, ".lampas", "installation.json"))).toBe(false);
+
+      // Runtime should not be activated
+      expect(fs.existsSync(path.join(serverDir, ".lampas", "runtime", "fabric-server-launch.jar"))).toBe(false);
+
+      // server.properties should be restored to its initial state
+      expect(fs.readFileSync(path.join(serverDir, "server.properties"), "utf-8")).toBe(initialProps);
+
+      // Rollback journal and staging directories cleaned up
+      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tx-rollback"))).toBe(false);
+      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tmp-staging"))).toBe(false);
+    } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });

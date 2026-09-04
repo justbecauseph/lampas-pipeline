@@ -3,10 +3,12 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { zipSync } from "fflate";
 import {
   DEFAULT_FABRIC_SERVER_INSTALLER_VERSION,
   ensureFabricServerRuntime,
   prepareFabricServerRuntime,
+  validateFabricServerLauncherJar,
   validateRuntimeDefinition,
 } from "../src/fabric-runtime";
 import { readJsonFile } from "../src/utils";
@@ -16,15 +18,37 @@ describe("Fabric Server Runtime Provisioning", () => {
   let server: ReturnType<typeof Bun.serve>;
   let fabricMetaUrl: string;
 
-  const validZipHeader = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x08, 0x00]);
-  const jarV1Content = Buffer.concat([validZipHeader, Buffer.from("fabric-server-jar-0.19.3")]);
+  function createMockJar(mc: string, loader: string): Buffer {
+    const manifest = Buffer.from(
+      "Manifest-Version: 1.0\r\nImplementation-Title: FabricInstaller\r\nImplementation-Version: 1.1.2\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n\r\n"
+    );
+    const installProps = Buffer.from(
+      `fabric-loader-version=${loader}\r\ngame-version=${mc}\r\n`
+    );
+    return Buffer.from(
+      zipSync({
+        "META-INF/MANIFEST.MF": new Uint8Array(manifest),
+        "install.properties": new Uint8Array(installProps),
+      })
+    );
+  }
+
+  const jarV1Content = createMockJar("26.2", "0.19.3");
   const jarV1Sha256 = crypto.createHash("sha256").update(jarV1Content).digest("hex");
 
-  const jarV2Content = Buffer.concat([validZipHeader, Buffer.from("fabric-server-jar-0.19.4")]);
+  const jarV2Content = createMockJar("26.2", "0.19.4");
   const jarV2Sha256 = crypto.createHash("sha256").update(jarV2Content).digest("hex");
 
-  const sentinelJarContent = Buffer.concat([validZipHeader, Buffer.from("fabric-server-jar-0.99.123-test")]);
+  const sentinelJarContent = createMockJar("26.2", "0.99.123-test");
   const sentinelJarSha256 = crypto.createHash("sha256").update(sentinelJarContent).digest("hex");
+
+  const badManifestJar = Buffer.from(
+    zipSync({
+      "META-INF/MANIFEST.MF": new Uint8Array(
+        Buffer.from("Manifest-Version: 1.0\r\nMain-Class: com.example.WrongLauncher\r\n")
+      ),
+    })
+  );
 
   let recordedRequests: string[] = [];
 
@@ -35,27 +59,32 @@ describe("Fabric Server Runtime Provisioning", () => {
         const url = new URL(req.url);
         recordedRequests.push(url.pathname);
 
-        if (url.pathname === "/v2/versions/loader/26.2/0.19.3/1.0.1/server/jar") {
-          return new Response(jarV1Content, {
+        if (url.pathname === `/v2/versions/loader/26.2/0.19.3/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
+          return new Response(new Uint8Array(jarV1Content), {
             headers: { "Content-Type": "application/java-archive" },
           });
         }
-        if (url.pathname === "/v2/versions/loader/26.2/0.19.4/1.0.1/server/jar") {
-          return new Response(jarV2Content, {
+        if (url.pathname === `/v2/versions/loader/26.2/0.19.4/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
+          return new Response(new Uint8Array(jarV2Content), {
             headers: { "Content-Type": "application/java-archive" },
           });
         }
-        if (url.pathname === "/v2/versions/loader/26.2/0.99.123-test/1.0.1/server/jar") {
-          return new Response(sentinelJarContent, {
+        if (url.pathname === `/v2/versions/loader/26.2/0.99.123-test/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
+          return new Response(new Uint8Array(sentinelJarContent), {
             headers: { "Content-Type": "application/java-archive" },
           });
         }
-        if (url.pathname === "/v2/versions/loader/26.2/corrupt-zip/1.0.1/server/jar") {
-          return new Response(Buffer.from("not-a-zip-header"), {
+        if (url.pathname === `/v2/versions/loader/26.2/corrupt-zip/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
+          return new Response(new Uint8Array(Buffer.from("not-a-zip-header")), {
             headers: { "Content-Type": "application/java-archive" },
           });
         }
-        if (url.pathname === "/v2/versions/loader/26.2/failing-loader/1.0.1/server/jar") {
+        if (url.pathname === `/v2/versions/loader/26.2/bad-manifest/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
+          return new Response(new Uint8Array(badManifestJar), {
+            headers: { "Content-Type": "application/java-archive" },
+          });
+        }
+        if (url.pathname === `/v2/versions/loader/26.2/failing-loader/${DEFAULT_FABRIC_SERVER_INSTALLER_VERSION}/server/jar`) {
           return new Response("Internal Server Error", { status: 500 });
         }
 
@@ -94,7 +123,27 @@ describe("Fabric Server Runtime Provisioning", () => {
     ).toThrow("Invalid loader version: 'loader.version' must be a non-empty string.");
   });
 
-  test("provisions Fabric server runtime, validates ZIP magic, stages and atomically activates", async () => {
+  test("validateFabricServerLauncherJar verifies zip structure and metadata", () => {
+    // Valid jar passes
+    expect(() => validateFabricServerLauncherJar(jarV1Content, "26.2", "0.19.3")).not.toThrow();
+
+    // Rejects non-zip buffer
+    expect(() => validateFabricServerLauncherJar(Buffer.from("not-a-zip"), "26.2", "0.19.3")).toThrow(
+      "invalid ZIP magic bytes"
+    );
+
+    // Rejects jar with wrong main class
+    expect(() => validateFabricServerLauncherJar(badManifestJar, "26.2", "0.19.3")).toThrow(
+      "unexpected Main-Class in manifest"
+    );
+
+    // Rejects jar with mismatched install.properties version
+    expect(() => validateFabricServerLauncherJar(jarV1Content, "26.2", "0.19.4")).toThrow(
+      "install.properties does not match requested runtime"
+    );
+  });
+
+  test("provisions Fabric server runtime, validates ZIP structure, stages and atomically activates", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-runtime-test-"));
     try {
       const state = await ensureFabricServerRuntime({
@@ -202,7 +251,7 @@ describe("Fabric Server Runtime Provisioning", () => {
       const launcherJar = path.join(dir, ".lampas", "runtime", "fabric-server-launch.jar");
 
       // Corrupt the launcher JAR on disk
-      fs.writeFileSync(launcherJar, Buffer.concat([validZipHeader, Buffer.from("corrupted-data")]));
+      fs.writeFileSync(launcherJar, Buffer.from("corrupted-data"));
 
       // In full verification mode, it should detect corrupt hash and re-download
       const repairedState = await ensureFabricServerRuntime({
@@ -260,7 +309,7 @@ describe("Fabric Server Runtime Provisioning", () => {
     }
   });
 
-  test("rejects invalid ZIP magic header", async () => {
+  test("rejects invalid ZIP or corrupted launcher structure", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-runtime-badzip-"));
     try {
       await expect(
@@ -270,7 +319,16 @@ describe("Fabric Server Runtime Provisioning", () => {
           loaderVersion: "corrupt-zip",
           fabricMetaUrl,
         })
-      ).rejects.toThrow("Invalid Fabric server launcher JAR received");
+      ).rejects.toThrow("invalid ZIP magic bytes");
+
+      await expect(
+        ensureFabricServerRuntime({
+          targetDir: dir,
+          minecraft: "26.2",
+          loaderVersion: "bad-manifest",
+          fabricMetaUrl,
+        })
+      ).rejects.toThrow("unexpected Main-Class in manifest");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
