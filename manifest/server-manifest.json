@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.0.37",
+  "version": "2.1.0",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
-    "version": "0.19.3"
+    "version": "0.19.5"
   },
   "protocol": 3,
   "mods": [
@@ -400,8 +400,8 @@
       "id": "dbtools",
       "name": "DBTools for Axiom",
       "side": "both",
-      "filename": "DBTools-2.2.2_AX_5.5.0_MC26.2.jar",
-      "size": 4160470,
+      "filename": "DBTools-2.2.3+MC26.2-AX6.0.5.jar",
+      "size": 4208401,
       "description": "DBTools is a mod for Axiom that provides various tools to enhance the build experience.",
       "iconUrl": "https://cdn.modrinth.com/data/6SWRzDjk/a78be857d4d726c98bc39ed77358616e624383da_96.webp",
       "categories": [
@@ -2576,14 +2576,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/DBTools-2.2.2_AX_5.5.0_MC26.2.jar",
-      "size": 4160470,
+      "path": "mods/DBTools-2.2.3+MC26.2-AX6.0.5.jar",
+      "size": 4208401,
       "hashes": {
-        "sha256": "eeea8a89d276496333ead7a51cc7a990a5494432d76b14c5a6cd0eb6ab815ec7",
-        "sha512": "3dd309dcef79be1824e5bd9cb91e37fb6f4aab53f1fc5de35dd3107a4b7c8c103390782b8977fbb8d70838b3ca87a479951fb5365ad129bacb1dc54d87cd4190"
+        "sha256": "afb5cc2224dcf79d6f3c20780f4aff34994d92f4e00680ed60ccff95de6487fb",
+        "sha512": "17a80d27bb4dd3a90b4e1bd32df1ad314634ffd51798c9dbb8ad76531e576016dc4968b6ff09fd0a4e59ff0e2bff763fcee6bb04174f6c7c4745dc1b8be26a3a"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/6SWRzDjk/versions/kswqezS6/DBTools-2.2.2_AX_5.5.0_MC26.2.jar",
+        "url": "https://cdn.modrinth.com/data/6SWRzDjk/versions/qM0ms2u5/DBTools-2.2.3%2BMC26.2-AX6.0.5.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3590,6 +3590,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/NoChatReports-FABRIC-26.2-v2.20.2.jar",
+      "size": 239602,
+      "hashes": {
+        "sha256": "93c761e9fb7d76269a0d5b9807e19db164b3a2fd0b8ebd0550fe94f832cf396f",
+        "sha512": "aa14fa2d1cc94803f4c965fd817a945823037237bd7a1fea9dc9a0c6427084d25b8d9273da76bc132fe68794d2be8b91540bfff1309125aea37820c12bff0268"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/qQyHxfxd/versions/aDbxaVTi/NoChatReports-FABRIC-26.2-v2.20.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/levelledmobs-fabric-1.0.0.jar",
       "size": 160823,
       "hashes": {
@@ -3611,19 +3624,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/070ff545bd895cad43bde3c15495cd0b4bea704b74bcd05fd12a403be6031edd",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
-      },
-      "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4370,6 +4370,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "hashes": {
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+      },
+      "download": {
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/Placebo-26.2-11.0.0.jar",
       "size": 487444,
       "hashes": {
@@ -4457,19 +4470,6 @@
       "download": {
         "url": "/api/v1/blobs/8df45de6b765da8cd186caba54171047390122aa78a136145f1c198c53a3d612",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/NoChatReports-FABRIC-26.2-v2.20.2.jar",
-      "size": 239602,
-      "hashes": {
-        "sha256": "93c761e9fb7d76269a0d5b9807e19db164b3a2fd0b8ebd0550fe94f832cf396f",
-        "sha512": "aa14fa2d1cc94803f4c965fd817a945823037237bd7a1fea9dc9a0c6427084d25b8d9273da76bc132fe68794d2be8b91540bfff1309125aea37820c12bff0268"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/qQyHxfxd/versions/aDbxaVTi/NoChatReports-FABRIC-26.2-v2.20.2.jar",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
