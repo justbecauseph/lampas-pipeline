@@ -137,8 +137,38 @@ describe("Fabric Server Runtime Provisioning", () => {
       "unexpected Main-Class in manifest"
     );
 
-    // Rejects jar with mismatched install.properties version
+    // Rejects jar where string appears only in comments/other headers
+    const deceptiveManifestJar = Buffer.from(
+      zipSync({
+        "META-INF/MANIFEST.MF": new Uint8Array(
+          Buffer.from("Manifest-Version: 1.0\r\nMain-Class: com.example.DeceptiveLauncher\r\nComment: net.fabricmc.installer.ServerLauncher\r\n")
+        ),
+        "install.properties": new Uint8Array(Buffer.from("fabric-loader-version=0.19.3\r\ngame-version=26.2\r\n")),
+      })
+    );
+    expect(() => validateFabricServerLauncherJar(deceptiveManifestJar, "26.2", "0.19.3")).toThrow(
+      "unexpected Main-Class in manifest"
+    );
+
+    // Rejects jar missing install.properties
+    const missingInstallPropsJar = Buffer.from(
+      zipSync({
+        "META-INF/MANIFEST.MF": new Uint8Array(
+          Buffer.from("Manifest-Version: 1.0\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n")
+        ),
+      })
+    );
+    expect(() => validateFabricServerLauncherJar(missingInstallPropsJar, "26.2", "0.19.3")).toThrow(
+      "missing install.properties"
+    );
+
+    // Rejects jar with mismatched loader version
     expect(() => validateFabricServerLauncherJar(jarV1Content, "26.2", "0.19.4")).toThrow(
+      "install.properties does not match requested runtime"
+    );
+
+    // Rejects jar with mismatched game version
+    expect(() => validateFabricServerLauncherJar(jarV1Content, "1.21.1", "0.19.3")).toThrow(
       "install.properties does not match requested runtime"
     );
   });

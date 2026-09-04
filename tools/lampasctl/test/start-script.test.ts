@@ -254,18 +254,24 @@ describe("start.py managed runtime launcher", () => {
     }
   });
 
-  test("deploy failure with --allow-stale launches previous coherent managed runtime", () => {
+  test("deploy failure with --allow-stale triggers transaction recovery before launching previous coherent runtime", () => {
     const ctx = setupServerDir();
     try {
       ctx.createManagedRuntime("previous-coherent-jar");
 
-      // Mock lampasctl deploy failing with exit code 42
+      // Mock lampasctl where deploy fails (code 42) but recover succeeds (code 0)
       const isWin = process.platform === "win32";
       const ctlBin = path.join(ctx.serverDir, isWin ? "mock_deploy_fail.bat" : "mock_deploy_fail.sh");
       if (isWin) {
-        fs.writeFileSync(ctlBin, "@echo off\r\necho Deploy failed with error\r\nexit /b 42\r\n");
+        fs.writeFileSync(
+          ctlBin,
+          "@echo off\r\nif \"%1\"==\"recover\" (\r\n  echo [Recover] Transaction recovered\r\n  exit /b 0\r\n)\r\necho Deploy failed with error\r\nexit /b 42\r\n"
+        );
       } else {
-        fs.writeFileSync(ctlBin, "#!/usr/bin/env bash\necho Deploy failed with error\nexit 42\n");
+        fs.writeFileSync(
+          ctlBin,
+          "#!/usr/bin/env bash\nif [ \"$1\" = \"recover\" ]; then\n  echo \"[Recover] Transaction recovered\"\n  exit 0\nfi\necho Deploy failed with error\nexit 42\n"
+        );
         fs.chmodSync(ctlBin, 0o755);
       }
 
@@ -277,10 +283,50 @@ describe("start.py managed runtime launcher", () => {
       expect(res.status).toBe(0);
       expect(res.stderr).toContain("[Starter Error] Pack deployment failed with exit code 42.");
       expect(res.stdout).toContain(
-        "[Starter Warning] Continuing server launch despite deployment failure (--allow-stale enabled)."
+        "[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)..."
+      );
+      expect(res.stdout).toContain(
+        "[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled)."
       );
       expect(res.stdout).toContain("MOCK JAVA LAUNCHED");
       expect(res.stdout).toContain("fabric-server-launch.jar");
+    } finally {
+      ctx.cleanup();
+    }
+  });
+
+  test("deploy failure with --allow-stale aborts server startup if transaction recovery fails", () => {
+    const ctx = setupServerDir();
+    try {
+      ctx.createManagedRuntime("previous-coherent-jar");
+
+      // Mock lampasctl where both deploy and recover fail
+      const isWin = process.platform === "win32";
+      const ctlBin = path.join(ctx.serverDir, isWin ? "mock_deploy_rec_fail.bat" : "mock_deploy_rec_fail.sh");
+      if (isWin) {
+        fs.writeFileSync(
+          ctlBin,
+          "@echo off\r\nif \"%1\"==\"recover\" (\r\n  echo [Recover] Recovery failed\r\n  exit /b 99\r\n)\r\necho Deploy failed with error\r\nexit /b 42\r\n"
+        );
+      } else {
+        fs.writeFileSync(
+          ctlBin,
+          "#!/usr/bin/env bash\nif [ \"$1\" = \"recover\" ]; then\n  echo \"[Recover] Recovery failed\"\n  exit 99\nfi\necho Deploy failed with error\nexit 42\n"
+        );
+        fs.chmodSync(ctlBin, 0o755);
+      }
+
+      const res = runStartPy(ctx.serverDir, ["--allow-stale"], {
+        JAVA_BIN: ctx.javaBin,
+        LAMPASCTL_BIN: ctlBin,
+      });
+
+      expect(res.status).toBe(99);
+      expect(res.stderr).toContain("[Starter Error] Pack deployment failed with exit code 42.");
+      expect(res.stderr).toContain(
+        "[Starter Error] Failed to recover deployment transaction (exit code 99). Aborting launch to prevent running corrupted server."
+      );
+      expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
     } finally {
       ctx.cleanup();
     }

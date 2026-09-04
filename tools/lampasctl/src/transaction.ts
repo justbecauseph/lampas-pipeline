@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { copyFileAtomic, ensureDir, readJsonFile, writeJsonFile } from "./utils";
+import { copyFileAtomic, ensureDir, readJsonFile, replaceFile, temporarySibling } from "./utils";
 
 export interface TransactionJournalData {
   txId: string;
@@ -37,6 +37,15 @@ export class DeploymentTransaction {
     };
   }
 
+  private async persistJournal(): Promise<void> {
+    ensureDir(this.txDir);
+    const journalPath = path.join(this.txDir, "journal.json");
+    const tempPath = temporarySibling(journalPath);
+    const content = JSON.stringify(this.journal, null, 2);
+    await fs.promises.writeFile(tempPath, content, "utf-8");
+    await replaceFile(tempPath, journalPath);
+  }
+
   public async snapshot(options: {
     toDownload: Array<{ path: string }>;
     toDelete: string[];
@@ -46,6 +55,7 @@ export class DeploymentTransaction {
     const deletedDir = path.join(this.txDir, "deleted");
 
     // 1. Snapshot files in toDownload that already exist on disk (they will be overwritten)
+    // or register them in newFiles before downloading begins
     for (const f of options.toDownload) {
       const fullPath = path.join(this.targetDir, f.path);
       if (fs.existsSync(fullPath)) {
@@ -53,6 +63,10 @@ export class DeploymentTransaction {
         ensureDir(path.dirname(dest));
         fs.copyFileSync(fullPath, dest);
         this.journal.overwrittenFiles.push(f.path);
+      } else {
+        if (!this.journal.newFiles.includes(f.path)) {
+          this.journal.newFiles.push(f.path);
+        }
       }
     }
 
@@ -99,17 +113,13 @@ export class DeploymentTransaction {
     }
 
     this.snapshotted = true;
-    writeJsonFile(path.join(this.txDir, "journal.json"), this.journal, true);
+    await this.persistJournal();
   }
 
-  public recordNewFile(relPath: string): void {
+  public async recordNewFile(relPath: string): Promise<void> {
     if (!this.journal.overwrittenFiles.includes(relPath) && !this.journal.newFiles.includes(relPath)) {
       this.journal.newFiles.push(relPath);
-      try {
-        writeJsonFile(path.join(this.txDir, "journal.json"), this.journal, true);
-      } catch {
-        // memory state remains tracked
-      }
+      await this.persistJournal();
     }
   }
 
@@ -126,7 +136,7 @@ export class DeploymentTransaction {
     }
   }
 
-  public static async recoverIfInterrupted(targetDir: string): Promise<void> {
+  public static async recoverIfInterrupted(targetDir: string): Promise<boolean> {
     const txDir = path.join(targetDir, ".lampas", ".tx-rollback");
     const journalPath = path.join(txDir, "journal.json");
     if (fs.existsSync(journalPath)) {
@@ -134,10 +144,16 @@ export class DeploymentTransaction {
       try {
         const journal = readJsonFile<TransactionJournalData>(journalPath);
         await DeploymentTransaction.rollbackFromDir(targetDir, txDir, journal);
+        return true;
       } catch (err: any) {
         console.error(`  ✗ [Recovery Error] Failed to recover from journal: ${err.message}`);
+        throw new Error(
+          `Cannot recover interrupted deployment transaction: ${err.message}`,
+          { cause: err }
+        );
       }
     }
+    return false;
   }
 
   private static async rollbackFromDir(
@@ -213,7 +229,13 @@ export class DeploymentTransaction {
       await fs.promises.unlink(stateTarget).catch(() => {});
     }
 
-    // 7. Clean up txDir
+    // 7. Clean up any staged runtime directory
+    const stagingDir = path.join(targetDir, ".lampas", "runtime", ".tmp-staging");
+    if (fs.existsSync(stagingDir)) {
+      await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
+    }
+
+    // 8. Clean up txDir
     await fs.promises.rm(txDir, { recursive: true, force: true }).catch(() => {});
     console.log(`  ✓ [Deployment Rollback Complete] Successfully restored previous installation state`);
   }

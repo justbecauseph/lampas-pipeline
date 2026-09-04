@@ -43,23 +43,31 @@ export function validateFabricServerLauncherJar(
   }
 
   const manifestText = new TextDecoder().decode(manifestEntry);
-  if (!manifestText.includes("net.fabricmc.installer.ServerLauncher")) {
+  const mainClassMatch = manifestText.match(/^Main-Class:\s*([^\r\n]+)/im);
+  const actualMainClass = mainClassMatch ? mainClassMatch[1].trim() : undefined;
+  if (actualMainClass !== "net.fabricmc.installer.ServerLauncher") {
     throw new Error(
-      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: unexpected Main-Class in manifest`
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: unexpected Main-Class in manifest (found '${actualMainClass || "none"}', expected 'net.fabricmc.installer.ServerLauncher')`
     );
   }
 
   const installPropsEntry = entries["install.properties"];
-  if (installPropsEntry) {
-    const propsText = new TextDecoder().decode(installPropsEntry);
-    if (
-      !propsText.includes(`fabric-loader-version=${expectedLoaderVersion}`) ||
-      !propsText.includes(`game-version=${expectedMinecraft}`)
-    ) {
-      throw new Error(
-        `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: install.properties does not match requested runtime`
-      );
-    }
+  if (!installPropsEntry) {
+    throw new Error(
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing install.properties`
+    );
+  }
+
+  const propsText = new TextDecoder().decode(installPropsEntry);
+  const loaderMatch = propsText.match(/^fabric-loader-version\s*=\s*([^\r\n]+)/im);
+  const gameMatch = propsText.match(/^game-version\s*=\s*([^\r\n]+)/im);
+  const actualLoader = loaderMatch ? loaderMatch[1].trim() : undefined;
+  const actualGame = gameMatch ? gameMatch[1].trim() : undefined;
+
+  if (actualLoader !== expectedLoaderVersion || actualGame !== expectedMinecraft) {
+    throw new Error(
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: install.properties does not match requested runtime (found game-version=${actualGame || "none"}, fabric-loader-version=${actualLoader || "none"})`
+    );
   }
 }
 
@@ -252,6 +260,7 @@ export async function prepareFabricServerRuntime(
         ensureDir(runtimeDir);
         await replaceFile(stagedJarPath, launcherJarPath);
         await replaceFile(stagedJsonPath, runtimeStatePath);
+        await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
         console.log(`  ✓ [Server Runtime Activated] Fabric server launcher ${loaderVersion} activated`);
         return runtimeState;
       },
@@ -262,6 +271,7 @@ export async function prepareFabricServerRuntime(
         if (fs.existsSync(stagedJsonPath)) {
           await fs.promises.unlink(stagedJsonPath).catch(() => {});
         }
+        await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
       },
     };
   } catch (err) {
@@ -271,6 +281,7 @@ export async function prepareFabricServerRuntime(
     if (fs.existsSync(stagedJsonPath)) {
       await fs.promises.unlink(stagedJsonPath).catch(() => {});
     }
+    await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
     throw err;
   }
 }

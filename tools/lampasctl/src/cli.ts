@@ -5,6 +5,7 @@ import { resolvePack } from "./resolver";
 import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
 import { deployServer, syncInstance } from "./sync";
+import { DeploymentTransaction } from "./transaction";
 import { publishRelease } from "./publisher";
 import { checkPackUpdates } from "./checker";
 import { diffManifests } from "./diff";
@@ -74,6 +75,9 @@ Commands:
     -v, --version <ver> Specific release version to deploy (overrides channel)
     --verify <mode>     Verification mode: fast | full (default: fast)
     --no-backup         Skip automatic world backup before applying mutations
+
+  recover               Recover an interrupted deployment transaction on a Minecraft server
+    -t, --target <path> Target Minecraft server directory (default: current directory)
 
   install               Synchronize a Minecraft instance directory to a manifest
     -m, --manifest <p>  Path to client-manifest.json or server-manifest.json
@@ -304,6 +308,17 @@ async function main() {
           verificationMode,
           backupWorld,
         });
+        break;
+      }
+
+      case "recover": {
+        const targetDir = path.resolve(flags.target || positional[0] || rootDir);
+        const recovered = await DeploymentTransaction.recoverIfInterrupted(targetDir);
+        if (recovered) {
+          console.log(`[Recover] Successfully recovered interrupted transaction in ${targetDir}`);
+        } else {
+          console.log(`[Recover] No interrupted transaction found in ${targetDir}`);
+        }
         break;
       }
 

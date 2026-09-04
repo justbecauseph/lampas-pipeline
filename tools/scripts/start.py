@@ -132,7 +132,16 @@ def main():
                     print("[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)", file=sys.stderr)
                     sys.exit(ret)
                 else:
-                    print("[Starter Warning] Continuing server launch despite deployment failure (--allow-stale enabled).")
+                    print("[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)...")
+                    recover_cmd = lampasctl if isinstance(lampasctl, list) else [lampasctl]
+                    if sys.platform == "win32" and isinstance(recover_cmd[0], str) and (recover_cmd[0].lower().endswith(".bat") or recover_cmd[0].lower().endswith(".cmd")):
+                        recover_cmd = ["cmd.exe", "/c"] + recover_cmd
+                    recover_cmd.extend(["recover", "--target", SERVER_DIR])
+                    rec_ret = subprocess.call(recover_cmd)
+                    if rec_ret != 0:
+                        print(f"[Starter Error] Failed to recover deployment transaction (exit code {rec_ret}). Aborting launch to prevent running corrupted server.", file=sys.stderr)
+                        sys.exit(rec_ret)
+                    print("[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled).")
         else:
             print("[Starter Error] 'lampasctl' executable not found. Install lampasctl or launch with --no-sync.", file=sys.stderr)
             if not args.allow_stale:

@@ -388,7 +388,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
   for (const file of toDownload) {
     const fullPath = path.join(targetDir, file.path);
     if (!fs.existsSync(fullPath) && options.tx) {
-      options.tx.recordNewFile(file.path);
+      await options.tx.recordNewFile(file.path);
     }
     const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
     await copyFileAtomic(cachePath, fullPath);

@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { spawnSync } from "node:child_process";
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { zipSync } from "fflate";
 import { deployServer } from "../src/sync";
+import { DeploymentTransaction } from "../src/transaction";
 
 describe("lampasctl deploy server deployment workflow", () => {
   let server: ReturnType<typeof Bun.serve>;
@@ -713,7 +715,7 @@ describe("lampasctl deploy server deployment workflow", () => {
 
       // - Rollback journal and staging directories cleaned up
       expect(fs.existsSync(path.join(serverDir, ".lampas", ".tx-rollback"))).toBe(false);
-      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tmp-staging"))).toBe(false);
+      expect(fs.existsSync(path.join(serverDir, ".lampas", "runtime", ".tmp-staging"))).toBe(false);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -754,7 +756,146 @@ describe("lampasctl deploy server deployment workflow", () => {
 
       // Rollback journal and staging directories cleaned up
       expect(fs.existsSync(path.join(serverDir, ".lampas", ".tx-rollback"))).toBe(false);
-      expect(fs.existsSync(path.join(serverDir, ".lampas", ".tmp-staging"))).toBe(false);
+      expect(fs.existsSync(path.join(serverDir, ".lampas", "runtime", ".tmp-staging"))).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("fail-closed crash recovery: aborts deployment when interrupted transaction recovery fails", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-recovery-fail-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    // Simulate an unrecoverable corrupted journal
+    const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
+    fs.mkdirSync(txDir, { recursive: true });
+    fs.writeFileSync(path.join(txDir, "journal.json"), "{ invalid JSON syntax !!!");
+
+    try {
+      await expect(
+        deployServer({
+          targetDir: serverDir,
+          portalUrl,
+          channel: "dev",
+        })
+      ).rejects.toThrow("Cannot recover interrupted deployment transaction:");
+
+      // Verify that no mods were deployed on top of corrupted state
+      expect(fs.existsSync(path.join(serverDir, "mods"))).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("standalone recovery restores interrupted transaction state and deletes journal", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-recovery-standalone-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(path.join(serverDir, "mods"), { recursive: true });
+
+    // Set up corrupted on-disk state from an interrupted hard-crash
+    const newModPath = path.join(serverDir, "mods", "interrupted-new-mod.jar");
+    const oldModPath = path.join(serverDir, "mods", "existing-mod.jar");
+    const propsPath = path.join(serverDir, "server.properties");
+
+    fs.writeFileSync(newModPath, "partial-new-mod-data");
+    fs.writeFileSync(oldModPath, "partially-overwritten-mod-data");
+    fs.writeFileSync(propsPath, "motd=partially-corrupted-motd\n");
+
+    // Set up transaction journal and backups
+    const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
+    const overwrittenDir = path.join(txDir, "overwritten", "mods");
+    fs.mkdirSync(overwrittenDir, { recursive: true });
+
+    fs.writeFileSync(path.join(overwrittenDir, "existing-mod.jar"), "restored-good-mod-content");
+    fs.writeFileSync(path.join(txDir, "server.properties"), "motd=Restored Coherent Server\n");
+
+    const journal = {
+      txId: "interrupted-tx-123",
+      startedAt: new Date().toISOString(),
+      targetDir: serverDir,
+      overwrittenFiles: ["mods/existing-mod.jar"],
+      deletedFiles: [],
+      newFiles: ["mods/interrupted-new-mod.jar"],
+      hadServerProperties: true,
+      hadInstallationJson: false,
+      hadRuntimeJar: false,
+      hadRuntimeJson: false,
+    };
+    fs.writeFileSync(path.join(txDir, "journal.json"), JSON.stringify(journal, null, 2));
+
+    try {
+      // 1. First call recovers the interrupted state
+      const recovered = await DeploymentTransaction.recoverIfInterrupted(serverDir);
+      expect(recovered).toBe(true);
+
+      // Verify files were recovered
+      expect(fs.existsSync(newModPath)).toBe(false);
+      expect(fs.readFileSync(oldModPath, "utf-8")).toBe("restored-good-mod-content");
+      expect(fs.readFileSync(propsPath, "utf-8")).toBe("motd=Restored Coherent Server\n");
+
+      // Verify journal is deleted
+      expect(fs.existsSync(txDir)).toBe(false);
+
+      // 2. Second call is a clean no-op
+      const secondRecover = await DeploymentTransaction.recoverIfInterrupted(serverDir);
+      expect(secondRecover).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("lampasctl recover CLI command restores interrupted transaction state", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-cli-recovery-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(path.join(serverDir, "mods"), { recursive: true });
+
+    const newModPath = path.join(serverDir, "mods", "cli-interrupted-mod.jar");
+    const oldModPath = path.join(serverDir, "mods", "cli-existing-mod.jar");
+
+    fs.writeFileSync(newModPath, "partial-new-mod");
+    fs.writeFileSync(oldModPath, "corrupted-existing-mod");
+
+    const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
+    const overwrittenDir = path.join(txDir, "overwritten", "mods");
+    fs.mkdirSync(overwrittenDir, { recursive: true });
+
+    fs.writeFileSync(path.join(overwrittenDir, "cli-existing-mod.jar"), "restored-from-cli");
+
+    const journal = {
+      txId: "cli-tx-456",
+      startedAt: new Date().toISOString(),
+      targetDir: serverDir,
+      overwrittenFiles: ["mods/cli-existing-mod.jar"],
+      deletedFiles: [],
+      newFiles: ["mods/cli-interrupted-mod.jar"],
+      hadServerProperties: false,
+      hadInstallationJson: false,
+      hadRuntimeJar: false,
+      hadRuntimeJson: false,
+    };
+    fs.writeFileSync(path.join(txDir, "journal.json"), JSON.stringify(journal, null, 2));
+
+    try {
+      const cliPath = path.resolve("tools", "lampasctl", "src", "cli.ts");
+      const res = spawnSync("bun", ["run", cliPath, "recover", "--target", serverDir], {
+        encoding: "utf-8",
+      });
+
+      expect(res.status).toBe(0);
+      expect(res.stderr).toContain("[Deployment Recovery] Detected incomplete deployment transaction");
+      expect(res.stdout).toContain("[Recover] Successfully recovered interrupted transaction");
+
+      expect(fs.existsSync(newModPath)).toBe(false);
+      expect(fs.readFileSync(oldModPath, "utf-8")).toBe("restored-from-cli");
+      expect(fs.existsSync(txDir)).toBe(false);
+
+      // Running again reports no transaction found
+      const res2 = spawnSync("bun", ["run", cliPath, "recover", "--target", serverDir], {
+        encoding: "utf-8",
+      });
+      expect(res2.status).toBe(0);
+      expect(res2.stdout).toContain("[Recover] No interrupted transaction found");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
