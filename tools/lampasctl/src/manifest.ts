@@ -3,6 +3,8 @@ import * as path from "node:path";
 import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid, isValidServerAddress, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
 import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
 import { validateConfigPatches } from "./config-patches";
+import { validateLoaderDefinition } from "./validator";
+import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 
 export const PACK_MANIFEST_SCHEMA_VERSION = 2;
 
@@ -11,6 +13,7 @@ export interface ManifestOptions {
   lockFile: string;
   outDir: string;
   portalBaseUrl?: string;
+  checkFabricMeta?: boolean;
 }
 
 async function scanStaticDir(baseDir: string, relDir: string): Promise<ManifestFile[]> {
@@ -62,6 +65,31 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   const packConfigPath = path.join(options.packDir, "pack.toml");
   const packConfig = parseTomlFile<PackConfig>(packConfigPath);
   const lock = readJsonFile<PackLock>(options.lockFile);
+
+  // Validate loader definition
+  const loaderDef = validateLoaderDefinition(packConfig.pack?.minecraft, packConfig.loader);
+
+  // Lock consistency check
+  if (lock.minecraft !== packConfig.pack.minecraft) {
+    throw new Error(
+      `pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`
+    );
+  }
+
+  if (
+    !lock.loader ||
+    lock.loader.type !== loaderDef.type ||
+    lock.loader.version !== loaderDef.version
+  ) {
+    throw new Error(
+      `pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`
+    );
+  }
+
+  // Validate Fabric Meta compatibility if enabled
+  if (options.checkFabricMeta) {
+    await verifyFabricLoaderCompatibility(packConfig.pack.minecraft, loaderDef.version);
+  }
 
   // Validate launcher play configuration
   if (packConfig.launcher?.play) {

@@ -37,6 +37,7 @@
         "type",
         "version"
       ],
+      "additionalProperties": false,
       "properties": {
         "type": {
           "const": "fabric",
@@ -44,6 +45,7 @@
         },
         "version": {
           "type": "string",
+          "minLength": 1,
           "description": "Fabric loader version."
         }
       }

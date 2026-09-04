@@ -9,6 +9,7 @@ import {
   formatBytes,
   type LocalPublishBlob,
 } from "./blob-publisher";
+import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 
 export type ReleaseChannel = "dev" | "beta" | "stable";
 
@@ -21,6 +22,7 @@ export interface PublishOptions {
   publishSecret: string;
   channel?: ReleaseChannel | ReleaseChannel[] | string;
   maxConcurrency?: number;
+  skipFabricMetaCheck?: boolean;
 }
 
 export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel[] | string): ReleaseChannel[] {
@@ -67,6 +69,29 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
   const clientManifest = readJsonFile<PackManifest>(clientManifestPath);
   const serverManifest = readJsonFile<PackManifest>(serverManifestPath);
   const targetChannels = resolvePublishChannels(options.channel);
+
+  // Runtime and descriptor consistency check
+  if (clientManifest.minecraft !== release.minecraft || serverManifest.minecraft !== release.minecraft) {
+    throw new Error(
+      `Manifest Minecraft version mismatch: client declares ${clientManifest.minecraft}, server declares ${serverManifest.minecraft}, release declares ${release.minecraft}.`
+    );
+  }
+  if (
+    clientManifest.loader?.type !== release.loader?.type ||
+    clientManifest.loader?.version !== release.loader?.version ||
+    serverManifest.loader?.type !== release.loader?.type ||
+    serverManifest.loader?.version !== release.loader?.version
+  ) {
+    throw new Error(
+      `Manifest Loader mismatch: client declares ${clientManifest.loader?.type}/${clientManifest.loader?.version}, server declares ${serverManifest.loader?.type}/${serverManifest.loader?.version}, release declares ${release.loader?.type}/${release.loader?.version}.`
+    );
+  }
+
+  // Verify Fabric Loader compatibility with Fabric Meta API unless explicitly skipped
+  if (!options.skipFabricMetaCheck) {
+    console.log(`[Publish] Verifying Fabric Loader ${release.loader.version} compatibility with Minecraft ${release.minecraft}...`);
+    await verifyFabricLoaderCompatibility(release.minecraft, release.loader.version);
+  }
 
   console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${options.portalUrl} (channels: ${targetChannels.join(", ")})...`);
 

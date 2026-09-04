@@ -442,6 +442,7 @@ describe("publishRelease", () => {
         packDir: fixture.packDir,
         portalUrl: "http://localhost:3000",
         publishSecret: "secret-token-123",
+        skipFabricMetaCheck: true,
       });
 
       // Check request sequence:
@@ -509,6 +510,7 @@ describe("publishRelease", () => {
         portalUrl: "http://localhost:3000",
         publishSecret: "secret-token-123",
         channel: "dev",
+        skipFabricMetaCheck: true,
       });
 
       // Exactly 2 calls: prepare and publish (0 PUT uploads!)
@@ -558,6 +560,7 @@ describe("publishRelease", () => {
           packDir: fixture.packDir,
           portalUrl: "http://localhost:3000",
           publishSecret: "secret-token",
+          skipFabricMetaCheck: true,
         })
       ).rejects.toThrow("Direct PUT upload failed");
 
@@ -584,6 +587,7 @@ describe("publishRelease", () => {
           portalUrl: "http://localhost:3000",
           publishSecret: "invalid-token",
           channel: "dev",
+          skipFabricMetaCheck: true,
         })
       ).rejects.toThrow("Blob preparation failed (401 Unauthorized)");
     } finally {
@@ -618,8 +622,33 @@ describe("publishRelease", () => {
           portalUrl: "http://localhost:3000",
           publishSecret: "secret",
           channel: "dev",
+          skipFabricMetaCheck: true,
         })
       ).rejects.toThrow("Failed to publish release (500 Internal Server Error)");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects publication when client/server manifest and release descriptor disagree on runtime", async () => {
+    const fixture = setupPublishFixture();
+
+    // Cause a loader mismatch between client-manifest.json and release.json
+    const clientPath = path.join(fixture.manifestDir, "client-manifest.json");
+    const clientData = JSON.parse(fs.readFileSync(clientPath, "utf-8"));
+    clientData.loader.version = "0.19.99";
+    fs.writeFileSync(clientPath, JSON.stringify(clientData, null, 2), "utf-8");
+
+    try {
+      await expect(
+        publishRelease({
+          manifestDir: fixture.manifestDir,
+          packDir: fixture.packDir,
+          portalUrl: "http://localhost:3000",
+          publishSecret: "secret",
+          skipFabricMetaCheck: true,
+        })
+      ).rejects.toThrow(/Manifest Loader mismatch/);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }

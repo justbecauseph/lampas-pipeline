@@ -3,6 +3,19 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-09-05
+
+### Added
+- Authoritative loader definition validation (`validateLoaderDefinition`): ensures `pack.toml [loader]` defines valid type (`fabric`) and non-empty `version`.
+- Fabric Meta API compatibility verification (`verifyFabricLoaderCompatibility`): queries `/v2/versions/loader/{minecraft}/{loaderVersion}` to guarantee loader and Minecraft compatibility before publishing releases.
+- Lockfile and manifest consistency enforcement: rejects manifest generation and validation if `pack.lock.json` runtime metadata differs from `pack.toml`.
+- Descriptor consistency assertion in release publishing: verifies client manifest, server manifest, and release descriptor declare identical Minecraft and Fabric Loader versions.
+- Extended schema test suite asserting runtime invariants across pack definitions, manifests, lockfile, and release descriptors.
+
+### Changed
+- Tightened `schemas/pack.schema.json` with `minLength: 1` and `additionalProperties: false` on loader object.
+- Added `checkFabricMeta` verification to `lampasctl validate` and `lampasctl manifest`.
+
 ## [1.0.4] - 2026-09-04
 
 ### Added

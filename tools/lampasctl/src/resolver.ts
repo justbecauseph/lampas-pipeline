@@ -5,6 +5,7 @@ import { ArtifactResolver, ModrinthClient } from "./providers";
 import { CurseForgeClient } from "./curseforge";
 import { enrichPackLock } from "./enricher";
 import type { ModDefinition, PackConfig, PackLock, ResolvedArtifact } from "./types";
+import { validateLoaderDefinition } from "./validator";
 
 export interface ResolveOptions {
   packDir: string;
@@ -24,6 +25,7 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   }
 
   const packConfig = parseTomlFile<PackConfig>(packTomlPath);
+  const loaderDef = validateLoaderDefinition(packConfig.pack?.minecraft, packConfig.loader);
   const modsDir = path.join(options.packDir, "mods");
   const shaderpacksDir = path.join(options.packDir, "shaderpacks");
   const shadersDir = path.join(options.packDir, "shaders");
@@ -164,8 +166,8 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
     packVersion: packConfig.pack.version,
     minecraft: packConfig.pack.minecraft,
     loader: {
-      type: packConfig.loader.type,
-      version: packConfig.loader.version,
+      type: loaderDef.type,
+      version: loaderDef.version,
     },
     updated: new Date().toISOString(),
     artifacts,

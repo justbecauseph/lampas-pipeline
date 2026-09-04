@@ -76,8 +76,9 @@ describe("schemas and IDE validation configuration", () => {
     // 2. manifest/client-manifest.json & server-manifest.json
     const clientManifestPath = path.join(rootDir, "manifest/client-manifest.json");
     const serverManifestPath = path.join(rootDir, "manifest/server-manifest.json");
+    let client: any;
     if (fs.existsSync(clientManifestPath) && fs.existsSync(serverManifestPath)) {
-      const client = JSON.parse(fs.readFileSync(clientManifestPath, "utf-8"));
+      client = JSON.parse(fs.readFileSync(clientManifestPath, "utf-8"));
       const server = JSON.parse(fs.readFileSync(serverManifestPath, "utf-8"));
 
       expect(client.schemaVersion).toBe(2);
@@ -86,6 +87,14 @@ describe("schemas and IDE validation configuration", () => {
       expect(server.target).toBe("server");
       expect(Array.isArray(client.files)).toBe(true);
       expect(Array.isArray(server.files)).toBe(true);
+
+      // Runtime invariants
+      expect(client.minecraft).toBeDefined();
+      expect(client.loader?.type).toBe("fabric");
+      expect(client.loader?.version).toBeTruthy();
+
+      expect(server.minecraft).toBe(client.minecraft);
+      expect(server.loader).toEqual(client.loader);
     }
 
     // 3. manifest/release.json
@@ -97,6 +106,11 @@ describe("schemas and IDE validation configuration", () => {
       expect(release.version).toBeDefined();
       expect(release.clientManifest).toBeDefined();
       expect(release.serverManifest).toBeDefined();
+
+      if (client) {
+        expect(release.minecraft).toBe(client.minecraft);
+        expect(release.loader).toEqual(client.loader);
+      }
     }
 
     // 4. pack/pack.lock.json
@@ -106,6 +120,11 @@ describe("schemas and IDE validation configuration", () => {
       expect(lock.schema).toBe(1);
       expect(lock.packName).toBeDefined();
       expect(typeof lock.artifacts).toBe("object");
+
+      if (client) {
+        expect(lock.minecraft).toBe(client.minecraft);
+        expect(lock.loader).toEqual(client.loader);
+      }
     }
 
     // 5. pack/pack.toml has schema header

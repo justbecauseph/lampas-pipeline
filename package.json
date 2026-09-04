@@ -5,6 +5,7 @@
   "scripts": {
     "lampasctl": "bun run tools/lampasctl/src/cli.ts",
     "manifest:dual": "bun run .agents/skills/deploy-custom-jars/scripts/generate-manifests.ts",
+    "build": "tsc --noEmit && bun run tools/lampasctl/scripts/build-release.ts --target host",
     "build:lampasctl": "bun run tools/lampasctl/scripts/build-release.ts --target host",
     "build:lampasctl:all": "bun run tools/lampasctl/scripts/build-release.ts --target all --package",
     "test": "bun test",

@@ -81,6 +81,7 @@ graph TD
 5. **Web OAuth2 PKCE Authentication**: Desktop login delegates to the web portal via a browser loopback OAuth2 flow, linking Discord roles, SMP whitelist verification, and official Minecraft Java UUIDs in one click.
 6. **Zero-Downtime Rollbacks & Gated Channels**: Channels (`stable`, `beta`, `dev`) are mutable pointers to immutable releases, so promotion and rollback are atomic pointer updates.
 7. **Automated Upstream Updater**: Scheduled CI jobs monitor all pack mods and automatically open Pull Requests with changelogs when updates are released.
+8. **Authoritative Loader Contract**: `pack.toml [loader]` defines the mod loader required by the release. Generated locks, manifests, and release descriptors derive their loader metadata from this definition and must never independently choose a loader version. Releases are verified against Fabric Meta to guarantee Minecraft/Loader compatibility before publication.
 
 ---
 

@@ -240,7 +240,11 @@ async function main() {
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
         const lockFile = path.resolve(flags.lock || path.join(packDir, "pack.lock.json"));
 
-        const passed = await validatePack({ packDir, lockFile });
+        const passed = await validatePack({
+          packDir,
+          lockFile,
+          checkFabricMeta: flags["skip-meta-check"] !== "true",
+        });
         if (!passed) {
           process.exit(1);
         }
@@ -257,6 +261,7 @@ async function main() {
           lockFile,
           outDir,
           portalBaseUrl: flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL || "https://portal.lampas.town",
+          checkFabricMeta: flags["skip-meta-check"] !== "true",
         });
         break;
       }

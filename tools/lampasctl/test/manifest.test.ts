@@ -700,3 +700,212 @@ required = true
     }
   });
 });
+
+describe("loader ownership, propagation, and consistency", () => {
+  test("propagates loader and minecraft metadata to client, server manifests, and release descriptor", async () => {
+    const packToml = `
+[pack]
+name = "Lampas Test"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+`;
+    const fixture = setupFixture({ packTomlContent: packToml });
+
+    try {
+      const { clientManifest, serverManifest, release } = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+
+      expect(clientManifest.minecraft).toBe("26.2");
+      expect(clientManifest.loader).toEqual({ type: "fabric", version: "0.19.3" });
+
+      expect(serverManifest.minecraft).toBe("26.2");
+      expect(serverManifest.loader).toEqual({ type: "fabric", version: "0.19.3" });
+
+      expect(release.minecraft).toBe("26.2");
+      expect(release.loader).toEqual({ type: "fabric", version: "0.19.3" });
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("propagates non-default synthetic loader version to prove dynamic propagation (no hardcoding)", async () => {
+    const nonDefaultLoaderVersion = "0.99.123-test";
+    const packToml = `
+[pack]
+name = "Lampas Synthetic"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "${nonDefaultLoaderVersion}"
+`;
+    const fixture = setupFixture({ packTomlContent: packToml });
+
+    // Update lockfile to match the synthetic loader version
+    const lockData = JSON.parse(fs.readFileSync(fixture.lockFile, "utf-8"));
+    lockData.loader = { type: "fabric", version: nonDefaultLoaderVersion };
+    fs.writeFileSync(fixture.lockFile, JSON.stringify(lockData, null, 2), "utf-8");
+
+    try {
+      const { clientManifest, serverManifest, release } = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+
+      expect(clientManifest.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+      expect(serverManifest.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+      expect(release.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+
+      // Also verify written JSON files on disk
+      const clientDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "client-manifest.json"), "utf-8"));
+      const serverDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "server-manifest.json"), "utf-8"));
+      const releaseDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "release.json"), "utf-8"));
+
+      expect(clientDisk.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+      expect(serverDisk.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+      expect(releaseDisk.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects manifest build when lock loader version differs from pack.toml", async () => {
+    const packToml = `
+[pack]
+name = "Lampas Mismatch"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.4"
+`;
+    // Lock was created with 0.19.3 by default
+    const fixture = setupFixture({ packTomlContent: packToml });
+
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        })
+      ).rejects.toThrow(
+        /pack\.lock\.json was generated for Fabric Loader 0\.19\.3, but pack\.toml requires 0\.19\.4/
+      );
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects manifest build when lock minecraft version differs from pack.toml", async () => {
+    const packToml = `
+[pack]
+name = "Lampas Mismatch"
+version = "2.0.0"
+minecraft = "26.3"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+`;
+    // Lock was created with 26.2 by default
+    const fixture = setupFixture({ packTomlContent: packToml });
+
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        })
+      ).rejects.toThrow(
+        /pack\.lock\.json was generated for Minecraft 26\.2, but pack\.toml requires 26\.3/
+      );
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("rejects empty or invalid loader definition in pack.toml", async () => {
+    const emptyVersionToml = `
+[pack]
+name = "Lampas Empty Loader"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = ""
+`;
+    const fixture1 = setupFixture({ packTomlContent: emptyVersionToml });
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture1.packDir,
+          lockFile: fixture1.lockFile,
+          outDir: fixture1.outDir,
+        })
+      ).rejects.toThrow(/Invalid loader version: 'loader\.version' must be a non-empty string/);
+    } finally {
+      fs.rmSync(fixture1.dir, { recursive: true, force: true });
+    }
+
+    const unsupportedLoaderToml = `
+[pack]
+name = "Lampas Neoforge"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "neoforge"
+version = "20.4.80"
+`;
+    const fixture2 = setupFixture({ packTomlContent: unsupportedLoaderToml });
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture2.packDir,
+          lockFile: fixture2.lockFile,
+          outDir: fixture2.outDir,
+        })
+      ).rejects.toThrow(/Unsupported mod loader 'neoforge'/);
+    } finally {
+      fs.rmSync(fixture2.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("validatePack catches loader mismatch and invalid loader definition", async () => {
+    const mismatchToml = `
+[pack]
+name = "Lampas Mismatch"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.4"
+`;
+    const fixture = setupFixture({ packTomlContent: mismatchToml });
+    try {
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
+      expect(valid).toBe(false);
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+});
+

@@ -3,10 +3,47 @@ import * as path from "node:path";
 import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
 import type { PackConfig, PackLock } from "./types";
 import { validateConfigPatches } from "./config-patches";
+import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
+
+export interface LoaderDefinition {
+  type: "fabric";
+  version: string;
+}
+
+export function validateLoaderDefinition(
+  minecraft: unknown,
+  loader: unknown
+): LoaderDefinition {
+  if (typeof minecraft !== "string" || minecraft.trim().length === 0) {
+    throw new Error("Invalid pack definition: 'pack.minecraft' must be a non-empty string.");
+  }
+
+  if (!loader || typeof loader !== "object") {
+    throw new Error("Invalid pack definition: '[loader]' section is missing or not an object.");
+  }
+
+  const l = loader as Record<string, any>;
+  if (!l.type) {
+    throw new Error("Invalid pack definition: '[loader.type]' is required.");
+  }
+  if (l.type !== "fabric") {
+    throw new Error(`Unsupported mod loader '${l.type}'. Lampas supports Fabric releases only.`);
+  }
+
+  if (typeof l.version !== "string" || l.version.trim().length === 0) {
+    throw new Error("Invalid loader version: 'loader.version' must be a non-empty string.");
+  }
+
+  return {
+    type: "fabric",
+    version: l.version.trim(),
+  };
+}
 
 export interface ValidateOptions {
   packDir: string;
   lockFile: string;
+  checkFabricMeta?: boolean;
 }
 
 export async function validatePack(options: ValidateOptions): Promise<boolean> {
@@ -19,16 +56,55 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   const packConfig = parseTomlFile<PackConfig>(packTomlPath);
   console.log(`[Validator] Validating ${packConfig.pack.name} v${packConfig.pack.version}...`);
 
+  let loaderDef: LoaderDefinition;
+  try {
+    loaderDef = validateLoaderDefinition(packConfig.pack?.minecraft, packConfig.loader);
+  } catch (err: any) {
+    console.error(`  ✗ [Invalid Loader] ${err.message}`);
+    return false;
+  }
+
   if (!fs.existsSync(options.lockFile)) {
     console.error(`[Validate Error] Lock file missing at ${options.lockFile}. Run 'lampasctl resolve' first.`);
     return false;
   }
 
   const lock = readJsonFile<PackLock>(options.lockFile);
-  const modsDir = path.join(options.packDir, "mods");
-  const modFiles = fs.readdirSync(modsDir).filter((f) => f.endsWith(".toml"));
 
   let hasErrors = false;
+
+  // Check lock consistency with pack.toml
+  if (lock.minecraft !== packConfig.pack.minecraft) {
+    console.error(
+      `  ✗ [Lock Mismatch] pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`
+    );
+    hasErrors = true;
+  }
+
+  if (
+    !lock.loader ||
+    lock.loader.type !== loaderDef.type ||
+    lock.loader.version !== loaderDef.version
+  ) {
+    console.error(
+      `  ✗ [Lock Mismatch] pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`
+    );
+    hasErrors = true;
+  }
+
+  // Validate Fabric Meta compatibility
+  if (options.checkFabricMeta !== false) {
+    try {
+      await verifyFabricLoaderCompatibility(packConfig.pack.minecraft, loaderDef.version);
+      console.log(`  ✓ [Loader Verified] Fabric Loader ${loaderDef.version} is compatible with Minecraft ${packConfig.pack.minecraft}`);
+    } catch (err: any) {
+      console.error(`  ✗ ${err.message}`);
+      hasErrors = true;
+    }
+  }
+
+  const modsDir = path.join(options.packDir, "mods");
+  const modFiles = fs.readdirSync(modsDir).filter((f) => f.endsWith(".toml"));
 
   // Check that every mod TOML has a corresponding entry in pack.lock.json
   for (const file of modFiles) {
