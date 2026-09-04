@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -2507,6 +2507,19 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/yacl"
+    },
+    {
+      "id": "zconfig",
+      "name": "ZConfig",
+      "side": "both",
+      "filename": "zconfig-1.0.0+26.x.jar",
+      "size": 405423,
+      "description": "A mixin config plugin for zfastnoise",
+      "iconUrl": "https://cdn.modrinth.com/data/4qmvXRB9/cbb824fe58645294ee7aa783bf49d5ef6c574142.png",
+      "categories": [
+        "library"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/zconfig"
     }
   ],
   "files": [
@@ -4742,6 +4755,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/cnfPzuFU/yet_another_config_lib_v3-3.9.6%2B26.2-fabric.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/zconfig-1.0.0+26.x.jar",
+      "size": 405423,
+      "hashes": {
+        "sha256": "b48151a35cc495bcb612a3c400770cdce5b4ad1302e072407acacd34a765ebe8",
+        "sha512": "baf87ac023fd0297f531897f0dcdcac3b0b35960683090adb3350a2281a211c5134a5373730a10628300caf5711b912705f16b33a1d1a73a3a86f346bcd7c6f5"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/4qmvXRB9/versions/tsgt79sG/zconfig-1.0.0%2B26.x.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
