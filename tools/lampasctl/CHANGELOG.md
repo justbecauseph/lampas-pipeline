@@ -20,7 +20,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Snapshots modified files, deleted files, `server.properties`, `installation.json`, and `.lampas/runtime/` prior to mutations.
   - Automatically rolls back changes on mid-flight failure, restoring previous coherent release state (reverting modified files, purging newly added files, restoring previous runtime JAR, runtime.json, installation.json, and server.properties).
   - Explicit commit point: unlinks `journal.json` as the atomic transaction commit point before cleaning up rollback directories.
-  - Fail-closed crash recovery: `validateJournalData` strictly verifies journal structure, target directory, boolean properties, relative paths, and forbids path traversal (`..`) or `.lampas` directory tampering before performing disk mutations.
+  - Fail-closed crash recovery: `validateJournalData` strictly verifies journal structure, target directory, boolean properties, relative paths, and forbids path traversal (`..`, `.`) or `.lampas` directory tampering before performing disk mutations.
+  - Preflight backup validation: `rollbackFromDir` verifies that all backups for overwritten/deleted files, `server.properties`, runtime JAR/state, and `installation.json` exist and are regular readable files before the first restoration mutation; missing backups abort rollback immediately and preserve `journal.json`.
+  - Non-swallowed rollback errors: file removal and restoration errors throw rather than being caught and ignored, preserving `journal.json` on disk to fail closed.
   - Standalone `lampasctl recover --target <path>` command for operators and automated recovery.
   - Defers writing `installation.json` until *after* runtime activation succeeds.
 - Cross-validation between release descriptor and server manifest in `deployServer()` preventing runtime version mismatches.

@@ -940,6 +940,8 @@ describe("lampasctl deploy server deployment workflow", () => {
     // Unsafe relative path or path traversal
     expect(() => validateJournalData({ ...validJournal, newFiles: ["../outside.jar"] }, targetDir)).toThrow("unsafe relative path");
     expect(() => validateJournalData({ ...validJournal, overwrittenFiles: ["/absolute/path.jar"] }, targetDir)).toThrow("unsafe relative path");
+    expect(() => validateJournalData({ ...validJournal, newFiles: ["config/foo/../bar.json"] }, targetDir)).toThrow("traversal segment");
+    expect(() => validateJournalData({ ...validJournal, deletedFiles: ["mods/./foo.jar"] }, targetDir)).toThrow("traversal segment");
 
     // Path entering internal .lampas
     expect(() => validateJournalData({ ...validJournal, newFiles: [".lampas/hacked.jar"] }, targetDir)).toThrow("path enters internal .lampas directory");
@@ -963,6 +965,77 @@ describe("lampasctl deploy server deployment workflow", () => {
       // journal.json must be unlinked and txDir removed
       expect(fs.existsSync(journalPath)).toBe(false);
       expect(fs.existsSync(tx.txDir)).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("fail-closed rollback: preflight fails and preserves journal if required backup is missing", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-missing-backup-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
+    fs.mkdirSync(txDir, { recursive: true });
+
+    // Journal claiming an overwritten file exists in backup, but backup file was not created
+    const journal = {
+      txId: "tx-missing-backup-1",
+      startedAt: new Date().toISOString(),
+      targetDir: serverDir,
+      overwrittenFiles: ["mods/fabric-api.jar"],
+      deletedFiles: [],
+      newFiles: [],
+      hadServerProperties: false,
+      hadInstallationJson: false,
+      hadRuntimeJar: false,
+      hadRuntimeJson: false,
+    };
+    const journalPath = path.join(txDir, "journal.json");
+    fs.writeFileSync(journalPath, JSON.stringify(journal, null, 2));
+
+    try {
+      await expect(DeploymentTransaction.recoverIfInterrupted(serverDir)).rejects.toThrow(
+        "Cannot recover deployment: backup for overwritten file 'mods/fabric-api.jar' is missing or unreadable"
+      );
+
+      // Invariant: journal.json must still be present on disk
+      expect(fs.existsSync(journalPath)).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("fail-closed rollback: preserves journal if file removal fails", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-removal-fail-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
+    fs.mkdirSync(txDir, { recursive: true });
+
+    // Create a directory where a new file was expected, causing fs.promises.unlink to fail with EPERM
+    const newDirPath = path.join(serverDir, "mods", "dir-as-file.jar");
+    fs.mkdirSync(newDirPath, { recursive: true });
+
+    const journal = {
+      txId: "tx-removal-fail-1",
+      startedAt: new Date().toISOString(),
+      targetDir: serverDir,
+      overwrittenFiles: [],
+      deletedFiles: [],
+      newFiles: ["mods/dir-as-file.jar"],
+      hadServerProperties: false,
+      hadInstallationJson: false,
+      hadRuntimeJar: false,
+      hadRuntimeJson: false,
+    };
+    const journalPath = path.join(txDir, "journal.json");
+    fs.writeFileSync(journalPath, JSON.stringify(journal, null, 2));
+
+    try {
+      await expect(DeploymentTransaction.recoverIfInterrupted(serverDir)).rejects.toThrow(
+        "Cannot recover interrupted deployment transaction:"
+      );
+
+      // Invariant: journal.json must still be present on disk
+      expect(fs.existsSync(journalPath)).toBe(true);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

@@ -46,7 +46,11 @@ export function validateJournalData(
 
   const expectedNorm = path.resolve(expectedTargetDir);
   const journalNorm = path.resolve(d.targetDir);
-  if (expectedNorm.toLowerCase() !== journalNorm.toLowerCase()) {
+  const targetMatch =
+    process.platform === "win32"
+      ? expectedNorm.toLowerCase() === journalNorm.toLowerCase()
+      : expectedNorm === journalNorm;
+  if (!targetMatch) {
     throw new Error(
       `Invalid transaction journal: targetDir mismatch (expected '${expectedNorm}', found '${journalNorm}')`
     );
@@ -77,6 +81,12 @@ export function validateJournalData(
       if (!isSafeRelativePath(item)) {
         throw new Error(`Invalid transaction journal: unsafe relative path in '${prop}': '${item}'`);
       }
+      const segments = item.replace(/\\/g, "/").split("/");
+      if (segments.some((seg) => seg === ".." || seg === ".")) {
+        throw new Error(
+          `Invalid transaction journal: relative path contains traversal segment in '${prop}': '${item}'`
+        );
+      }
       const normalized = path.normalize(item).replace(/\\/g, "/");
       if (normalized.startsWith(".lampas/") || normalized === ".lampas") {
         throw new Error(
@@ -87,6 +97,14 @@ export function validateJournalData(
   }
 
   return d as unknown as TransactionJournalData;
+}
+
+function isRegularFile(filePath: string): boolean {
+  try {
+    return fs.statSync(filePath).isFile();
+  } catch {
+    return false;
+  }
 }
 
 export class DeploymentTransaction {
@@ -244,75 +262,114 @@ export class DeploymentTransaction {
     txDir: string,
     journal: TransactionJournalData
   ): Promise<void> {
-    // 1. Remove newly created files
+    // 0. Preflight checks: verify all backups exist and are regular files before making any mutations
+    const overwrittenDir = path.join(txDir, "overwritten");
+    for (const relPath of journal.overwrittenFiles) {
+      const backupPath = path.join(overwrittenDir, relPath);
+      if (!isRegularFile(backupPath)) {
+        throw new Error(
+          `Cannot recover deployment: backup for overwritten file '${relPath}' is missing or unreadable at '${backupPath}'`
+        );
+      }
+    }
+
+    const deletedDir = path.join(txDir, "deleted");
+    for (const relPath of journal.deletedFiles) {
+      const backupPath = path.join(deletedDir, relPath);
+      if (!isRegularFile(backupPath)) {
+        throw new Error(
+          `Cannot recover deployment: backup for deleted file '${relPath}' is missing or unreadable at '${backupPath}'`
+        );
+      }
+    }
+
+    const propsBackup = path.join(txDir, "server.properties");
+    if (journal.hadServerProperties && !isRegularFile(propsBackup)) {
+      throw new Error(
+        `Cannot recover deployment: server.properties backup is missing or unreadable at '${propsBackup}'`
+      );
+    }
+
+    const runtimeJarBackup = path.join(txDir, "runtime", "fabric-server-launch.jar");
+    if (journal.hadRuntimeJar && !isRegularFile(runtimeJarBackup)) {
+      throw new Error(
+        `Cannot recover deployment: Fabric server launcher JAR backup is missing or unreadable at '${runtimeJarBackup}'`
+      );
+    }
+
+    const runtimeJsonBackup = path.join(txDir, "runtime", "runtime.json");
+    if (journal.hadRuntimeJson && !isRegularFile(runtimeJsonBackup)) {
+      throw new Error(
+        `Cannot recover deployment: Fabric runtime metadata backup is missing or unreadable at '${runtimeJsonBackup}'`
+      );
+    }
+
+    const stateBackup = path.join(txDir, "installation.json");
+    if (journal.hadInstallationJson && !isRegularFile(stateBackup)) {
+      throw new Error(
+        `Cannot recover deployment: installation.json backup is missing or unreadable at '${stateBackup}'`
+      );
+    }
+
+    // 1. Remove newly created files (fail-closed: do not swallow unlink errors)
     for (const relPath of journal.newFiles) {
       const fullPath = path.join(targetDir, relPath);
       if (fs.existsSync(fullPath)) {
-        await fs.promises.unlink(fullPath).catch(() => {});
+        await fs.promises.unlink(fullPath);
       }
     }
 
     // 2. Restore overwritten files
-    const overwrittenDir = path.join(txDir, "overwritten");
     for (const relPath of journal.overwrittenFiles) {
       const backupPath = path.join(overwrittenDir, relPath);
       const targetPath = path.join(targetDir, relPath);
-      if (fs.existsSync(backupPath)) {
-        ensureDir(path.dirname(targetPath));
-        await copyFileAtomic(backupPath, targetPath);
-      }
+      ensureDir(path.dirname(targetPath));
+      await copyFileAtomic(backupPath, targetPath);
     }
 
     // 3. Restore deleted files
-    const deletedDir = path.join(txDir, "deleted");
     for (const relPath of journal.deletedFiles) {
       const backupPath = path.join(deletedDir, relPath);
       const targetPath = path.join(targetDir, relPath);
-      if (fs.existsSync(backupPath)) {
-        ensureDir(path.dirname(targetPath));
-        await copyFileAtomic(backupPath, targetPath);
-      }
+      ensureDir(path.dirname(targetPath));
+      await copyFileAtomic(backupPath, targetPath);
     }
 
     // 4. Restore server.properties
     const propsTarget = path.join(targetDir, "server.properties");
-    const propsBackup = path.join(txDir, "server.properties");
-    if (journal.hadServerProperties && fs.existsSync(propsBackup)) {
+    if (journal.hadServerProperties) {
       await copyFileAtomic(propsBackup, propsTarget);
-    } else if (!journal.hadServerProperties && fs.existsSync(propsTarget)) {
-      await fs.promises.unlink(propsTarget).catch(() => {});
+    } else if (fs.existsSync(propsTarget)) {
+      await fs.promises.unlink(propsTarget);
     }
 
     // 5. Restore .lampas/runtime/
     const runtimeJarTarget = path.join(targetDir, ".lampas", "runtime", "fabric-server-launch.jar");
-    const runtimeJarBackup = path.join(txDir, "runtime", "fabric-server-launch.jar");
-    if (journal.hadRuntimeJar && fs.existsSync(runtimeJarBackup)) {
+    if (journal.hadRuntimeJar) {
       ensureDir(path.dirname(runtimeJarTarget));
       await copyFileAtomic(runtimeJarBackup, runtimeJarTarget);
-    } else if (!journal.hadRuntimeJar && fs.existsSync(runtimeJarTarget)) {
-      await fs.promises.unlink(runtimeJarTarget).catch(() => {});
+    } else if (fs.existsSync(runtimeJarTarget)) {
+      await fs.promises.unlink(runtimeJarTarget);
     }
 
     const runtimeJsonTarget = path.join(targetDir, ".lampas", "runtime", "runtime.json");
-    const runtimeJsonBackup = path.join(txDir, "runtime", "runtime.json");
-    if (journal.hadRuntimeJson && fs.existsSync(runtimeJsonBackup)) {
+    if (journal.hadRuntimeJson) {
       ensureDir(path.dirname(runtimeJsonTarget));
       await copyFileAtomic(runtimeJsonBackup, runtimeJsonTarget);
-    } else if (!journal.hadRuntimeJson && fs.existsSync(runtimeJsonTarget)) {
-      await fs.promises.unlink(runtimeJsonTarget).catch(() => {});
+    } else if (fs.existsSync(runtimeJsonTarget)) {
+      await fs.promises.unlink(runtimeJsonTarget);
     }
 
     // 6. Restore .lampas/installation.json
     const stateTarget = path.join(targetDir, ".lampas", "installation.json");
-    const stateBackup = path.join(txDir, "installation.json");
-    if (journal.hadInstallationJson && fs.existsSync(stateBackup)) {
+    if (journal.hadInstallationJson) {
       ensureDir(path.dirname(stateTarget));
       await copyFileAtomic(stateBackup, stateTarget);
-    } else if (!journal.hadInstallationJson && fs.existsSync(stateTarget)) {
-      await fs.promises.unlink(stateTarget).catch(() => {});
+    } else if (fs.existsSync(stateTarget)) {
+      await fs.promises.unlink(stateTarget);
     }
 
-    // 7. Clean up any staged runtime directory
+    // 7. Clean up any staged runtime directory (best-effort)
     const stagingDir = path.join(targetDir, ".lampas", "runtime", ".tmp-staging");
     if (fs.existsSync(stagingDir)) {
       await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
@@ -321,7 +378,7 @@ export class DeploymentTransaction {
     // 8. Explicit commit point for rollback: remove journal first
     const journalPath = path.join(txDir, "journal.json");
     if (fs.existsSync(journalPath)) {
-      await fs.promises.unlink(journalPath).catch(() => {});
+      await fs.promises.unlink(journalPath);
     }
 
     // 9. Clean up txDir
