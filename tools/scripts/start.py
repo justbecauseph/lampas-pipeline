@@ -90,6 +90,15 @@ def find_lampasctl():
     return None
 
 
+def run_recovery(lampasctl):
+    """Executes lampasctl recover on SERVER_DIR and returns the exit code."""
+    recover_cmd = lampasctl if isinstance(lampasctl, list) else [lampasctl]
+    if sys.platform == "win32" and isinstance(recover_cmd[0], str) and (recover_cmd[0].lower().endswith(".bat") or recover_cmd[0].lower().endswith(".cmd")):
+        recover_cmd = ["cmd.exe", "/c"] + recover_cmd
+    recover_cmd.extend(["recover", "--target", SERVER_DIR])
+    return subprocess.call(recover_cmd)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Lampas Minecraft Server Starter")
     parser.add_argument("--no-sync", action="store_true", help="Skip automatic pack synchronization before launch")
@@ -133,11 +142,7 @@ def main():
                     sys.exit(ret)
                 else:
                     print("[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)...")
-                    recover_cmd = lampasctl if isinstance(lampasctl, list) else [lampasctl]
-                    if sys.platform == "win32" and isinstance(recover_cmd[0], str) and (recover_cmd[0].lower().endswith(".bat") or recover_cmd[0].lower().endswith(".cmd")):
-                        recover_cmd = ["cmd.exe", "/c"] + recover_cmd
-                    recover_cmd.extend(["recover", "--target", SERVER_DIR])
-                    rec_ret = subprocess.call(recover_cmd)
+                    rec_ret = run_recovery(lampasctl)
                     if rec_ret != 0:
                         print(f"[Starter Error] Failed to recover deployment transaction (exit code {rec_ret}). Aborting launch to prevent running corrupted server.", file=sys.stderr)
                         sys.exit(rec_ret)
@@ -147,7 +152,21 @@ def main():
             if not args.allow_stale:
                 sys.exit(1)
 
-    # 2. Locate Java and Fabric Server JAR
+    # 2. Ensure no interrupted deployment transaction journal exists before launching
+    journal_path = os.path.join(SERVER_DIR, ".lampas", ".tx-rollback", "journal.json")
+    if os.path.exists(journal_path):
+        print("[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch...")
+        lampasctl = find_lampasctl()
+        if not lampasctl:
+            print("[Starter Error] Cannot recover interrupted deployment: 'lampasctl' binary not found. Aborting launch to prevent running corrupted server.", file=sys.stderr)
+            sys.exit(1)
+        rec_ret = run_recovery(lampasctl)
+        if rec_ret != 0:
+            print(f"[Starter Error] Transaction recovery failed with exit code {rec_ret}. Aborting server launch.", file=sys.stderr)
+            sys.exit(rec_ret)
+        print("[Starter] Transaction recovery completed successfully.")
+
+    # 3. Locate Java and Fabric Server JAR
     java_bin = find_java_binary()
     server_jar = find_fabric_server_jar()
     if not server_jar:

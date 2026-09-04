@@ -331,4 +331,128 @@ describe("start.py managed runtime launcher", () => {
       ctx.cleanup();
     }
   });
+
+  test("--no-sync with interrupted transaction journal detects journal, recovers, and launches", () => {
+    const ctx = setupServerDir();
+    try {
+      ctx.createManagedRuntime();
+
+      const txDir = path.join(ctx.serverDir, ".lampas", ".tx-rollback");
+      fs.mkdirSync(txDir, { recursive: true });
+      fs.writeFileSync(path.join(txDir, "journal.json"), "{}");
+
+      const isWin = process.platform === "win32";
+      const ctlBin = path.join(ctx.serverDir, isWin ? "mock_ctl_rec.bat" : "mock_ctl_rec.sh");
+      if (isWin) {
+        fs.writeFileSync(
+          ctlBin,
+          `@echo off\r\nif "%1"=="recover" (\r\n  rmdir /s /q "${txDir}" 2>nul\r\n  echo [Recover] Recovered\r\n  exit /b 0\r\n)\r\nexit /b 1\r\n`
+        );
+      } else {
+        fs.writeFileSync(
+          ctlBin,
+          `#!/usr/bin/env bash\nif [ "$1" = "recover" ]; then\n  rm -rf "${txDir}"\n  echo "[Recover] Recovered"\n  exit 0\nfi\nexit 1\n`
+        );
+        fs.chmodSync(ctlBin, 0o755);
+      }
+
+      const res = runStartPy(ctx.serverDir, ["--no-sync"], {
+        JAVA_BIN: ctx.javaBin,
+        LAMPASCTL_BIN: ctlBin,
+      });
+
+      expect(res.status).toBe(0);
+      expect(res.stdout).toContain(
+        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+      );
+      expect(res.stdout).toContain("[Starter] Transaction recovery completed successfully.");
+      expect(res.stdout).toContain("MOCK JAVA LAUNCHED");
+      expect(res.stdout).toContain("fabric-server-launch.jar");
+    } finally {
+      ctx.cleanup();
+    }
+  });
+
+  test("--no-sync with interrupted transaction journal fails closed if recovery fails", () => {
+    const ctx = setupServerDir();
+    try {
+      ctx.createManagedRuntime();
+
+      const txDir = path.join(ctx.serverDir, ".lampas", ".tx-rollback");
+      fs.mkdirSync(txDir, { recursive: true });
+      fs.writeFileSync(path.join(txDir, "journal.json"), "{}");
+
+      const isWin = process.platform === "win32";
+      const ctlBin = path.join(ctx.serverDir, isWin ? "mock_ctl_rec_fail.bat" : "mock_ctl_rec_fail.sh");
+      if (isWin) {
+        fs.writeFileSync(
+          ctlBin,
+          `@echo off\r\nif "%1"=="recover" (\r\n  echo [Recover] Recovery failed\r\n  exit /b 77\r\n)\r\nexit /b 1\r\n`
+        );
+      } else {
+        fs.writeFileSync(
+          ctlBin,
+          `#!/usr/bin/env bash\nif [ "$1" = "recover" ]; then\n  echo "[Recover] Recovery failed"\n  exit 77\nfi\nexit 1\n`
+        );
+        fs.chmodSync(ctlBin, 0o755);
+      }
+
+      const res = runStartPy(ctx.serverDir, ["--no-sync"], {
+        JAVA_BIN: ctx.javaBin,
+        LAMPASCTL_BIN: ctlBin,
+      });
+
+      expect(res.status).toBe(77);
+      expect(res.stdout).toContain(
+        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+      );
+      expect(res.stderr).toContain(
+        "[Starter Error] Transaction recovery failed with exit code 77. Aborting server launch."
+      );
+      expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
+    } finally {
+      ctx.cleanup();
+    }
+  });
+
+  test("--no-sync with interrupted transaction journal fails closed if lampasctl is missing", () => {
+    const ctx = setupServerDir();
+    try {
+      ctx.createManagedRuntime();
+
+      const txDir = path.join(ctx.serverDir, ".lampas", ".tx-rollback");
+      fs.mkdirSync(txDir, { recursive: true });
+      fs.writeFileSync(path.join(txDir, "journal.json"), "{}");
+
+      // Restrict PATH so lampasctl and bun cannot be discovered via PATH
+      const cleanPath = (process.env.PATH || "")
+        .split(path.delimiter)
+        .filter((dir) => {
+          const lower = dir.toLowerCase();
+          if (lower.includes(".local\\bin") || lower.includes(".bun\\bin")) return false;
+          const hasCtl =
+            fs.existsSync(path.join(dir, "lampasctl.exe")) ||
+            fs.existsSync(path.join(dir, "lampasctl"));
+          return !hasCtl;
+        })
+        .join(path.delimiter);
+
+      const res = runStartPy(ctx.serverDir, ["--no-sync"], {
+        JAVA_BIN: ctx.javaBin,
+        LAMPASCTL_BIN: "",
+        PATH: cleanPath,
+      });
+
+      expect(res.status).toBe(1);
+      expect(res.stdout).toContain(
+        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+      );
+      expect(res.stderr).toContain(
+        "[Starter Error] Cannot recover interrupted deployment: 'lampasctl' binary not found. Aborting launch to prevent running corrupted server."
+      );
+      expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
+    } finally {
+      ctx.cleanup();
+    }
+  });
 });

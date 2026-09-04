@@ -19,8 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Mandatory atomic journal persistence via temporary sibling and atomic file replacement before disk mutations.
   - Snapshots modified files, deleted files, `server.properties`, `installation.json`, and `.lampas/runtime/` prior to mutations.
   - Automatically rolls back changes on mid-flight failure, restoring previous coherent release state (reverting modified files, purging newly added files, restoring previous runtime JAR, runtime.json, installation.json, and server.properties).
-  - Fail-closed crash recovery: `recoverIfInterrupted()` aborts deployment if previous transaction recovery cannot complete cleanly.
-  - Added standalone `lampasctl recover --target <path>` command for operators and automated tooling.
+  - Explicit commit point: unlinks `journal.json` as the atomic transaction commit point before cleaning up rollback directories.
+  - Fail-closed crash recovery: `validateJournalData` strictly verifies journal structure, target directory, boolean properties, relative paths, and forbids path traversal (`..`) or `.lampas` directory tampering before performing disk mutations.
+  - Standalone `lampasctl recover --target <path>` command for operators and automated recovery.
   - Defers writing `installation.json` until *after* runtime activation succeeds.
 - Cross-validation between release descriptor and server manifest in `deployServer()` preventing runtime version mismatches.
 - Unit and integration tests for Fabric server runtime resolver, upgrade flow, failure atomicity, transactional rollback on activation failure, standalone/fail-closed crash recovery, and `start.py` managed runtime launch.
@@ -28,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Refactored `deployServer()` to stage Fabric server runtime prior to server pack synchronization and manage file changes under a `DeploymentTransaction`. If runtime activation fails, deployment cleanly rolls back to the previous coherent state.
 - Updated `tools/scripts/start.py` to launch exclusively from Lampas-managed `.lampas/runtime/fabric-server-launch.jar`, completely removing legacy glob-first JAR discovery (`fabric-server-*.jar` and `server.jar`).
-- Ensured `--allow-stale` in `start.py` runs `lampasctl recover` before attempting stale launch, preventing corrupted server startup after a hard crash.
+- Ensured all launch paths (including `--no-sync` and `--allow-stale`) check for interrupted deployment transaction journals, executing `lampasctl recover` and failing closed if recovery fails or `lampasctl` is missing.
 - Ensured `--no-sync` strictly respects managed runtime location and launches existing coherent installation.
 
 ## [1.0.5] - 2026-09-05

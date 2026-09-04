@@ -6,7 +6,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { zipSync } from "fflate";
 import { deployServer } from "../src/sync";
-import { DeploymentTransaction } from "../src/transaction";
+import { DeploymentTransaction, validateJournalData } from "../src/transaction";
 
 describe("lampasctl deploy server deployment workflow", () => {
   let server: ReturnType<typeof Bun.serve>;
@@ -896,6 +896,73 @@ describe("lampasctl deploy server deployment workflow", () => {
       });
       expect(res2.status).toBe(0);
       expect(res2.stdout).toContain("[Recover] No interrupted transaction found");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("validateJournalData validates schema, paths, and prevents directory traversal or .lampas tampering", () => {
+    const targetDir = path.resolve(os.tmpdir(), "lampas-test-validate-journal");
+
+    const validJournal = {
+      txId: "tx-test-1",
+      startedAt: new Date().toISOString(),
+      targetDir,
+      overwrittenFiles: ["mods/foo.jar"],
+      deletedFiles: ["config/old.json"],
+      newFiles: ["mods/new.jar"],
+      hadServerProperties: true,
+      hadInstallationJson: false,
+      hadRuntimeJar: true,
+      hadRuntimeJson: false,
+    };
+
+    // Valid passes
+    expect(() => validateJournalData(validJournal, targetDir)).not.toThrow();
+
+    // Invalid root
+    expect(() => validateJournalData(null, targetDir)).toThrow("root must be an object");
+    expect(() => validateJournalData("invalid", targetDir)).toThrow("root must be an object");
+    expect(() => validateJournalData([], targetDir)).toThrow("root must be an object");
+
+    // Missing or invalid string props
+    expect(() => validateJournalData({ ...validJournal, txId: "" }, targetDir)).toThrow("'txId' must be a non-empty string");
+    expect(() => validateJournalData({ ...validJournal, startedAt: "" }, targetDir)).toThrow("'startedAt' must be a non-empty string");
+    expect(() => validateJournalData({ ...validJournal, targetDir: "" }, targetDir)).toThrow("'targetDir' must be a non-empty string");
+
+    // TargetDir mismatch
+    expect(() => validateJournalData(validJournal, path.resolve(os.tmpdir(), "other-dir"))).toThrow("targetDir mismatch");
+
+    // Invalid boolean flags
+    expect(() => validateJournalData({ ...validJournal, hadServerProperties: "yes" }, targetDir)).toThrow("'hadServerProperties' must be a boolean");
+    expect(() => validateJournalData({ ...validJournal, hadRuntimeJar: 1 }, targetDir)).toThrow("'hadRuntimeJar' must be a boolean");
+
+    // Unsafe relative path or path traversal
+    expect(() => validateJournalData({ ...validJournal, newFiles: ["../outside.jar"] }, targetDir)).toThrow("unsafe relative path");
+    expect(() => validateJournalData({ ...validJournal, overwrittenFiles: ["/absolute/path.jar"] }, targetDir)).toThrow("unsafe relative path");
+
+    // Path entering internal .lampas
+    expect(() => validateJournalData({ ...validJournal, newFiles: [".lampas/hacked.jar"] }, targetDir)).toThrow("path enters internal .lampas directory");
+    expect(() => validateJournalData({ ...validJournal, deletedFiles: [".lampas"] }, targetDir)).toThrow("path enters internal .lampas directory");
+  });
+
+  test("DeploymentTransaction.commit unlinks journal.json as explicit commit point", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-commit-point-"));
+    const serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+
+    try {
+      const tx = new DeploymentTransaction(serverDir);
+      await tx.snapshot({ toDownload: [], toDelete: [] });
+      const journalPath = path.join(tx.txDir, "journal.json");
+      expect(fs.existsSync(journalPath)).toBe(true);
+
+      // Call commit
+      await tx.commit();
+
+      // journal.json must be unlinked and txDir removed
+      expect(fs.existsSync(journalPath)).toBe(false);
+      expect(fs.existsSync(tx.txDir)).toBe(false);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

@@ -1,6 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { copyFileAtomic, ensureDir, readJsonFile, replaceFile, temporarySibling } from "./utils";
+import {
+  copyFileAtomic,
+  ensureDir,
+  isSafeRelativePath,
+  readJsonFile,
+  replaceFile,
+  temporarySibling,
+} from "./utils";
 
 export interface TransactionJournalData {
   txId: string;
@@ -13,6 +20,73 @@ export interface TransactionJournalData {
   hadInstallationJson: boolean;
   hadRuntimeJar: boolean;
   hadRuntimeJson: boolean;
+}
+
+export function validateJournalData(
+  data: unknown,
+  expectedTargetDir: string
+): TransactionJournalData {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error("Invalid transaction journal: root must be an object");
+  }
+
+  const d = data as Record<string, unknown>;
+
+  if (typeof d.txId !== "string" || !d.txId.trim()) {
+    throw new Error("Invalid transaction journal: 'txId' must be a non-empty string");
+  }
+
+  if (typeof d.startedAt !== "string" || !d.startedAt.trim()) {
+    throw new Error("Invalid transaction journal: 'startedAt' must be a non-empty string");
+  }
+
+  if (typeof d.targetDir !== "string" || !d.targetDir.trim()) {
+    throw new Error("Invalid transaction journal: 'targetDir' must be a non-empty string");
+  }
+
+  const expectedNorm = path.resolve(expectedTargetDir);
+  const journalNorm = path.resolve(d.targetDir);
+  if (expectedNorm.toLowerCase() !== journalNorm.toLowerCase()) {
+    throw new Error(
+      `Invalid transaction journal: targetDir mismatch (expected '${expectedNorm}', found '${journalNorm}')`
+    );
+  }
+
+  const boolProps = [
+    "hadServerProperties",
+    "hadInstallationJson",
+    "hadRuntimeJar",
+    "hadRuntimeJson",
+  ] as const;
+
+  for (const prop of boolProps) {
+    if (typeof d[prop] !== "boolean") {
+      throw new Error(`Invalid transaction journal: '${prop}' must be a boolean`);
+    }
+  }
+
+  const listProps = ["overwrittenFiles", "deletedFiles", "newFiles"] as const;
+  for (const prop of listProps) {
+    if (!Array.isArray(d[prop])) {
+      throw new Error(`Invalid transaction journal: '${prop}' must be an array`);
+    }
+    for (const item of d[prop] as unknown[]) {
+      if (typeof item !== "string" || !item.trim()) {
+        throw new Error(`Invalid transaction journal: '${prop}' contains a non-string entry`);
+      }
+      if (!isSafeRelativePath(item)) {
+        throw new Error(`Invalid transaction journal: unsafe relative path in '${prop}': '${item}'`);
+      }
+      const normalized = path.normalize(item).replace(/\\/g, "/");
+      if (normalized.startsWith(".lampas/") || normalized === ".lampas") {
+        throw new Error(
+          `Invalid transaction journal: path enters internal .lampas directory in '${prop}': '${item}'`
+        );
+      }
+    }
+  }
+
+  return d as unknown as TransactionJournalData;
 }
 
 export class DeploymentTransaction {
@@ -131,6 +205,14 @@ export class DeploymentTransaction {
   }
 
   public async commit(): Promise<void> {
+    const journalPath = path.join(this.txDir, "journal.json");
+
+    // Commit point: deployment is already fully coherent here.
+    if (fs.existsSync(journalPath)) {
+      await fs.promises.unlink(journalPath);
+    }
+
+    // Garbage collection after commit is best-effort.
     if (fs.existsSync(this.txDir)) {
       await fs.promises.rm(this.txDir, { recursive: true, force: true }).catch(() => {});
     }
@@ -142,7 +224,8 @@ export class DeploymentTransaction {
     if (fs.existsSync(journalPath)) {
       console.warn(`  ⚠ [Deployment Recovery] Detected incomplete deployment transaction. Rolling back...`);
       try {
-        const journal = readJsonFile<TransactionJournalData>(journalPath);
+        const raw = readJsonFile<unknown>(journalPath);
+        const journal = validateJournalData(raw, targetDir);
         await DeploymentTransaction.rollbackFromDir(targetDir, txDir, journal);
         return true;
       } catch (err: any) {
@@ -235,7 +318,13 @@ export class DeploymentTransaction {
       await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
     }
 
-    // 8. Clean up txDir
+    // 8. Explicit commit point for rollback: remove journal first
+    const journalPath = path.join(txDir, "journal.json");
+    if (fs.existsSync(journalPath)) {
+      await fs.promises.unlink(journalPath).catch(() => {});
+    }
+
+    // 9. Clean up txDir
     await fs.promises.rm(txDir, { recursive: true, force: true }).catch(() => {});
     console.log(`  ✓ [Deployment Rollback Complete] Successfully restored previous installation state`);
   }
