@@ -10,6 +10,7 @@ Guidelines and rules for AI assistants working in this repository.
 - **Progress Tracking**: Record all completed phases, architectural notes, and verification evidence in `PROGRESS.md`.
 - **Commit & Push**: Commit and push to GitHub after every completed phase. Present commit range and url to review.
 - **Stop for Review**: Stop development after every completed phase for human code review.
+- Also update CHANGELOG.md for lampasctl scoped changes
 
 ## Reference Repositories
 
