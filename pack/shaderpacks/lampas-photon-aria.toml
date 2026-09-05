@@ -1,0 +1,9 @@
+#:schema ../../schemas/artifact-definition.schema.json
+
+name = "Photon Shaders"
+side = "client"
+type = "shader"
+
+[provider]
+type = "lampas"
+file = "custom/lampas-photon-aria.zip"
