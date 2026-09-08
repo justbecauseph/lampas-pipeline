@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.7",
+  "packVersion": "2.1.8",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-08T21:28:51.695Z",
+  "updated": "2026-09-08T22:19:52.770Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -730,6 +730,33 @@
         "serverSide": "optional"
       }
     },
+    "compose-multiplatform": {
+      "id": "compose-multiplatform",
+      "name": "Compose Multiplatform",
+      "side": "client",
+      "filename": "compose-bundle-1.0.4+compose.1.12.0.jar",
+      "size": 77957708,
+      "sha256": "796bd31e5fd7f37a14650b2785257f1025ff6b631fefe9cf07eb198b07ee146d",
+      "sha512": "13b26534cfc5ed4c67c2d891ba70b8e2a90f874374e8b3547aef031770c87b3caed68f2947846beb6a538336fa1799bb300a68c92b84f65f392debf4d36c1ee4",
+      "sha1": "8f9722743955dca08fa557193ef0a4673217ef0c",
+      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/8rpN5puy/compose-bundle-1.0.4%2Bcompose.1.12.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "eHe8QhtD",
+        "versionId": "8rpN5puy"
+      },
+      "metadata": {
+        "description": "Library mod bundling JetBrains' Compose Multiplatform libs",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/compose-multiplatform",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "continuity": {
       "id": "continuity",
       "name": "Continuity",
@@ -1281,23 +1308,6 @@
         "serverSide": "required"
       }
     },
-    "distant-decorations": {
-      "id": "distant-decorations",
-      "name": "distant-decorations-0.1.0",
-      "side": "both",
-      "filename": "distant-decorations-0.2.0.jar",
-      "size": 100686,
-      "sha256": "61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
-      "sha512": "a0a79654be42d0e414b6f6a6e43b3ff0411a68090fbafb2dd0a2fd75e322a86e799525c01bf7779a0c4457bd7a1f60647b2f4d2566b049da609c7d82526635e7",
-      "sha1": "1584014d416e0da80086144043b13645df9aebee",
-      "downloadUrl": "/api/v1/blobs/61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/distant-decorations-0.2.0.jar"
-      }
-    },
     "easy-elytra-takeoff": {
       "id": "easy-elytra-takeoff",
       "name": "Easy Elytra Takeoff",
@@ -1328,21 +1338,32 @@
         "serverSide": "required"
       }
     },
-    "apothicspawners-26_2-3_0_1": {
-      "id": "apothicspawners-26_2-3_0_1",
-      "name": "ApothicSpawners-26.2-3.0.1",
-      "side": "both",
-      "filename": "ApothicSpawners-26.2-3.0.1.jar",
-      "size": 161628,
-      "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
-      "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a",
-      "sha1": "abb7bd5b57bbff09af32d51b2b12b9d5018a1263",
-      "downloadUrl": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
+    "elytratrails": {
+      "id": "elytratrails",
+      "name": "Elytra Contrails Mod",
+      "side": "client",
+      "filename": "elytratrails-1.6.3-26.2.jar",
+      "size": 391750,
+      "sha256": "f6f0f3005bdd36df062b26c682e661c5d71fd7f0768b23935e073a82a44e3f71",
+      "sha512": "308956de744601fe826b3cb32464050dc9aec3ac16025a2ca079e3ea8fe4e572b0ba13f10fd82f90ac478651cc9c209f82e5463cc6026fb802bbf7d4893a6e45",
+      "sha1": "a14d1c8581398c8c53a689e758e173305f4b2581",
+      "downloadUrl": "https://cdn.modrinth.com/data/dWMHBEAQ/versions/5VAxvNFC/elytratrails-1.6.3-26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicSpawners-26.2-3.0.1.jar"
+        "type": "modrinth",
+        "projectId": "dWMHBEAQ",
+        "versionId": "5VAxvNFC"
+      },
+      "metadata": {
+        "description": "Adds Accurate Elytra Trails with a Mod!",
+        "iconUrl": "https://cdn.modrinth.com/data/dWMHBEAQ/01afeedfb5d6e284ac16261a8728abf4c9bccd54_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/elytra-contrails-mod",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "elytratrims": {
@@ -1577,21 +1598,32 @@
         "serverSide": "unsupported"
       }
     },
-    "apothicattributes-26_2-4_0_1": {
-      "id": "apothicattributes-26_2-4_0_1",
-      "name": "ApothicAttributes-26.2-4.0.1",
+    "fabric-api": {
+      "id": "fabric-api",
+      "name": "Fabric API",
       "side": "both",
-      "filename": "ApothicAttributes-26.2-4.0.1.jar",
-      "size": 357463,
-      "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
-      "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2",
-      "sha1": "a7cf7dbd085f90c30cdc2ff2f2fa6372db30dd1f",
-      "downloadUrl": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+      "filename": "fabric-api-0.160.0+26.2.jar",
+      "size": 2542898,
+      "sha256": "5f3dff88e1661166e222213302b25ace6c36dc3683804cbd4b5acf93138ea05e",
+      "sha512": "1a08b68b2c2c90f6005ef441ab71b65f464be964005b9c0d18e6fc6c5ec53fe346e7dd76189c4f09ade59ef9bc3b836376a2cc71d4ce6e9be47122477d1bbd1e",
+      "sha1": "58e82722dee4a78235c4b5c06100ae433973f62e",
+      "downloadUrl": "https://cdn.modrinth.com/data/P7dR8mSH/versions/UWwhUX3k/fabric-api-0.160.0%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicAttributes-26.2-4.0.1.jar"
+        "type": "modrinth",
+        "projectId": "P7dR8mSH",
+        "versionId": "UWwhUX3k"
+      },
+      "metadata": {
+        "description": "Lightweight and modular API providing common hooks and intercompatibility measures utilized by mods using the Fabric toolchain.",
+        "iconUrl": "https://cdn.modrinth.com/data/P7dR8mSH/icon.png",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/fabric-api",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "fabric-custom-names": {
@@ -1624,21 +1656,32 @@
         "serverSide": "required"
       }
     },
-    "eastersdelight-fabric-26_2-1_3_1": {
-      "id": "eastersdelight-fabric-26_2-1_3_1",
-      "name": "eastersdelight-fabric-26.2-1.3.1",
+    "fabric-language-kotlin": {
+      "id": "fabric-language-kotlin",
+      "name": "Fabric Language Kotlin",
       "side": "both",
-      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
-      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
-      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "filename": "fabric-language-kotlin-1.14.1+kotlin.2.4.20.jar",
+      "size": 8142858,
+      "sha256": "620c2709be2a262b837cf976f6f85f6eda80a56af2ba4242e0bdc83a60fee7a5",
+      "sha512": "91404f87774466ce8604aafea791d8cc97b603bc310dce17c8188f94f7783cca6dc14fc726ce871ca317bfe9033c199d8d858d51284106a00754e952147703b8",
+      "sha1": "62ae40a31b689b52fde399f2143d547a631e942c",
+      "downloadUrl": "https://cdn.modrinth.com/data/Ha28R6CL/versions/eRRZzGMc/fabric-language-kotlin-1.14.1%2Bkotlin.2.4.20.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
+        "type": "modrinth",
+        "projectId": "Ha28R6CL",
+        "versionId": "eRRZzGMc"
+      },
+      "metadata": {
+        "description": "This is a mod that enables usage of the Kotlin programming language for Fabric mods.",
+        "iconUrl": "https://cdn.modrinth.com/data/Ha28R6CL/72c3d74aeb665e45aea93a945a01474cbce3b7da_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/fabric-language-kotlin",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "farmersdelight": {
@@ -1745,21 +1788,21 @@
         "serverSide": "optional"
       }
     },
-    "crazy_chambers-1_0_0_26_2": {
-      "id": "crazy_chambers-1_0_0_26_2",
-      "name": "crazy_chambers-1.0.0+26.2",
+    "distant-decorations": {
+      "id": "distant-decorations",
+      "name": "distant-decorations-0.1.0",
       "side": "both",
-      "filename": "crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
-      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
-      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "filename": "distant-decorations-0.2.0.jar",
+      "size": 100686,
+      "sha256": "61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
+      "sha512": "a0a79654be42d0e414b6f6a6e43b3ff0411a68090fbafb2dd0a2fd75e322a86e799525c01bf7779a0c4457bd7a1f60647b2f4d2566b049da609c7d82526635e7",
+      "sha1": "1584014d416e0da80086144043b13645df9aebee",
+      "downloadUrl": "/api/v1/blobs/61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+        "file": "custom/distant-decorations-0.2.0.jar"
       }
     },
     "forcecloseworldloadingscreen": {
@@ -1992,45 +2035,51 @@
         "serverSide": "required"
       }
     },
-    "camerapture-2_0_0_mc26_2": {
-      "id": "camerapture-2_0_0_mc26_2",
-      "name": "camerapture-2.0.0+mc26.2",
+    "apothicspawners-26_2-3_0_1": {
+      "id": "apothicspawners-26_2-3_0_1",
+      "name": "ApothicSpawners-26.2-3.0.1",
       "side": "both",
-      "filename": "camerapture-2.0.0+mc26.2.jar",
-      "size": 2495253,
-      "sha256": "864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
-      "sha512": "dbe6adc636c0ad0c7b4c0086ac1c8253caf6022bba7f7cc8bbc4f1b41ada74c815e7d183e4a9f452bf71e54698be1918dcec89393124521926e168d47dc8adfb",
-      "sha1": "36b6c22c1a51a3a3269bf068557e83482e5f6ae7",
-      "downloadUrl": "/api/v1/blobs/864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+      "filename": "ApothicSpawners-26.2-3.0.1.jar",
+      "size": 161628,
+      "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
+      "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a",
+      "sha1": "abb7bd5b57bbff09af32d51b2b12b9d5018a1263",
+      "downloadUrl": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/camerapture-2.0.0+mc26.2.jar"
-      },
-      "metadata": {
-        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
-        "categories": [
-          "utility",
-          "media"
-        ]
+        "file": "custom/ApothicSpawners-26.2-3.0.1.jar"
       }
     },
-    "gatewaystoeternity-26_2-7_0_1": {
-      "id": "gatewaystoeternity-26_2-7_0_1",
-      "name": "GatewaysToEternity-26.2-7.0.1",
-      "side": "both",
-      "filename": "GatewaysToEternity-26.2-7.0.1.jar",
-      "size": 663471,
-      "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
-      "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b",
-      "sha1": "b46074a2f29a1376ef816dd477d6a5e514b0000a",
-      "downloadUrl": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+    "geckolib": {
+      "id": "geckolib",
+      "name": "Geckolib",
+      "side": "client",
+      "filename": "geckolib-fabric-26.2-5.5.5.jar",
+      "size": 1185836,
+      "sha256": "1cade267232b852fa3ea8f309cd88fc09a8f77b41915519e4d1873cbb39fdc59",
+      "sha512": "098f28bbe551551f99e85584b36c37e466dfc46084737ed3644fc8588dae676653f5c5b16393cccff2cb90c5f3779260e0aec5a0e8c5813df3456166c0bce9ec",
+      "sha1": "66bd0b658dadc9345d9b885641b4322e3686094c",
+      "downloadUrl": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/7gaQHok7/geckolib-fabric-26.2-5.5.5.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/GatewaysToEternity-26.2-7.0.1.jar"
+        "type": "modrinth",
+        "projectId": "8BmcQJ2H",
+        "versionId": "7gaQHok7"
+      },
+      "metadata": {
+        "description": "A 3D animation library for entities, blocks, items, armor, and more!",
+        "iconUrl": "https://cdn.modrinth.com/data/8BmcQJ2H/012d1aadbc754995de66e8c149a56aa10b63fe05_96.webp",
+        "categories": [
+          "game-mechanics",
+          "library",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/geckolib",
+        "clientSide": "required",
+        "serverSide": "optional"
       }
     },
     "geophilic": {
@@ -2380,21 +2429,33 @@
         "serverSide": "optional"
       }
     },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
+    "jei": {
+      "id": "jei",
+      "name": "Just Enough Items (JEI)",
       "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "filename": "jei-26.2-fabric-30.32.0.209.jar",
+      "size": 1883752,
+      "sha256": "c64028d3c828fea69e3728edfa08c8cc37f63f57a27eadb177403671ce9ffcb5",
+      "sha512": "311a5aea4c1e1c7391bf06ec7f6b5790fb37caad0b2037f2a7261dac2dd764b9f073670ce14298cc36826f4a4a2f9349277a50901f09a2b4b0fcd66174233670",
+      "sha1": "da0cd127ee21097ae873fbf7d6a59b50eca2f1f0",
+      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/rd9kG7G3/jei-26.2-fabric-30.32.0.209.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+        "type": "modrinth",
+        "projectId": "u6dRKJwZ",
+        "versionId": "rd9kG7G3"
+      },
+      "metadata": {
+        "description": "View Items and Recipes",
+        "iconUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/4a3f18ac0d096c9f8e9176984c44be4e58f94c89_96.webp",
+        "categories": [
+          "library",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/jei",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "kitchen-projectiles": {
@@ -2529,6 +2590,23 @@
         "file": "custom/lampas-addons-1.0.0.jar"
       }
     },
+    "apothicattributes-26_2-4_0_1": {
+      "id": "apothicattributes-26_2-4_0_1",
+      "name": "ApothicAttributes-26.2-4.0.1",
+      "side": "both",
+      "filename": "ApothicAttributes-26.2-4.0.1.jar",
+      "size": 357463,
+      "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+      "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2",
+      "sha1": "a7cf7dbd085f90c30cdc2ff2f2fa6372db30dd1f",
+      "downloadUrl": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/ApothicAttributes-26.2-4.0.1.jar"
+      }
+    },
     "lampas-aria": {
       "id": "lampas-aria",
       "name": "lampas-aria",
@@ -2544,32 +2622,6 @@
       "provider": {
         "type": "lampas",
         "file": "custom/lampas-aria-0.1.0-alpha.2.jar"
-      }
-    },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
-      "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 220748,
-      "sha256": "e2f05414e9fdc5c16f7860670c14cef05e7b50f78789917afbc11d01b36ebbc8",
-      "sha512": "0e0df6797e7963a62695bfe92ff84c23ac22d067cbfe41a2bd83351192cac7e680779d1086c95fd9d6b48f303ad1b5e6458cbff1bc52a9f12da7761152149f4d",
-      "sha1": "c5f313f200d2d2aff1e662db79953556adb09fa5",
-      "downloadUrl": "/api/v1/blobs/e2f05414e9fdc5c16f7860670c14cef05e7b50f78789917afbc11d01b36ebbc8",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "leavesbegone": {
@@ -3288,21 +3340,21 @@
         "serverSide": "required"
       }
     },
-    "modern-player-ladder-1_0_0": {
-      "id": "modern-player-ladder-1_0_0",
-      "name": "modern-player-ladder-1.0.0",
+    "gatewaystoeternity-26_2-7_0_1": {
+      "id": "gatewaystoeternity-26_2-7_0_1",
+      "name": "GatewaysToEternity-26.2-7.0.1",
       "side": "both",
-      "filename": "modern-player-ladder-1.0.0.jar",
-      "size": 31067,
-      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
-      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
-      "downloadUrl": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "filename": "GatewaysToEternity-26.2-7.0.1.jar",
+      "size": 663471,
+      "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+      "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b",
+      "sha1": "b46074a2f29a1376ef816dd477d6a5e514b0000a",
+      "downloadUrl": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/modern-player-ladder-1.0.0.jar"
+        "file": "custom/GatewaysToEternity-26.2-7.0.1.jar"
       }
     },
     "modmenu": {
@@ -3537,28 +3589,32 @@
         "serverSide": "required"
       }
     },
-    "figura-0-1-6-rc-1": {
-      "id": "figura-0-1-6-rc-1",
-      "name": "Figura",
-      "side": "client",
-      "filename": "figura-0.1.6-rc.1+26.2.jar",
-      "size": 3228383,
-      "sha256": "700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
-      "sha512": "c759fc632346382d00b4f827ee7751287f9bde5ffdf2553475d6b894f98f64520136b64ec8a9b3db6da162beb86cfc0cfd813fad943fa3ae60a2949da363a623",
-      "sha1": "1df0d8d43e1a10970015b55c3f2626341e3c95b5",
-      "downloadUrl": "/api/v1/blobs/700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
+    "name-tag-upgrade": {
+      "id": "name-tag-upgrade",
+      "name": "Name Tag Upgrade",
+      "side": "both",
+      "filename": "NameTagUpgrade-v26.2.3-mc26.2.x-Fabric.jar",
+      "size": 67294,
+      "sha256": "5ea03a840af06a22b4bf4691893e1519128f4fc1cb14eb931fe4cafd29f41ba4",
+      "sha512": "d3e3c091613ae38519cd01210b8524c4d2156d9571245a3b4ac6e9665d6bdc80f215dae1502036f8d734d2c352a7b0ef4cf2e875b20ebb867f5f45e40b579bf5",
+      "sha1": "7e591938147fa128ed8282981bedd1cb4000a9f0",
+      "downloadUrl": "https://cdn.modrinth.com/data/d7LHtwd7/versions/N1FHbvAe/NameTagUpgrade-v26.2.3-mc26.2.x-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/figura-0.1.6-rc.1+26.2.jar"
+        "type": "modrinth",
+        "projectId": "d7LHtwd7",
+        "versionId": "N1FHbvAe"
       },
       "metadata": {
-        "description": "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
+        "description": "Smarter name tags with renaming on the go and handy quality-of-life improvements.",
+        "iconUrl": "https://cdn.modrinth.com/data/d7LHtwd7/ee739aca1ebc64b811c6021cae2e9c03181335e3_96.webp",
         "categories": [
-          "cosmetic",
-          "avatar"
-        ]
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/name-tag-upgrade",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "naturalwaters": {
@@ -3733,21 +3789,33 @@
         "serverSide": "unsupported"
       }
     },
-    "apothicenchanting-26_2-3_0_1": {
-      "id": "apothicenchanting-26_2-3_0_1",
-      "name": "ApothicEnchanting-26.2-3.0.1",
-      "side": "both",
-      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
-      "size": 5440070,
-      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
-      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
-      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
-      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+    "oneconfigbootstrap": {
+      "id": "oneconfigbootstrap",
+      "name": "OneConfig",
+      "side": "client",
+      "filename": "OneConfig-26.2-fabric-1.1.15.jar",
+      "size": 11566116,
+      "sha256": "ce69addc2389c4e6097c6f2c5f3eabb029e6a52d2353d47132d02a108e235284",
+      "sha512": "3d9251dcc7dd84020eeb3855737500a14c83a109a3cc8c0c45de2eeabb4b4df67d2bdbb2109cd57d10d4e94c04922b730e6791cfc9a70363cd3f34c815316e26",
+      "sha1": "e823f34fb9e44f342b4d06dd8466d330a26d51e1",
+      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/iIkr68W1/OneConfig-26.2-fabric-1.1.15.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
+        "type": "modrinth",
+        "projectId": "AibBIVmj",
+        "versionId": "iIkr68W1"
+      },
+      "metadata": {
+        "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
+        "iconUrl": "https://cdn.modrinth.com/data/AibBIVmj/073a92ecc8bb5650456758f1a58990801de64db5_96.webp",
+        "categories": [
+          "library",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/oneconfig",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "optigui": {
@@ -3808,38 +3876,38 @@
         "serverSide": "unsupported"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "modern-player-ladder-1_0_0": {
+      "id": "modern-player-ladder-1_0_0",
+      "name": "modern-player-ladder-1.0.0",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "filename": "modern-player-ladder-1.0.0.jar",
+      "size": 31067,
+      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
+      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
+      "downloadUrl": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "file": "custom/modern-player-ladder-1.0.0.jar"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "eastersdelight-fabric-26_2-1_3_1": {
+      "id": "eastersdelight-fabric-26_2-1_3_1",
+      "name": "eastersdelight-fabric-26.2-1.3.1",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
+      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
+      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
       }
     },
     "placeholder-api": {
@@ -5641,21 +5709,32 @@
         "serverSide": "unsupported"
       }
     },
-    "apotheosis-26_2-10_0_1": {
-      "id": "apotheosis-26_2-10_0_1",
-      "name": "Apotheosis-26.2-10.0.1",
+    "vibrant-parrots": {
+      "id": "vibrant-parrots",
+      "name": "Vibrant Parrots",
       "side": "both",
-      "filename": "Apotheosis-26.2-10.0.1.jar",
-      "size": 8188778,
-      "sha256": "ff5387fc203c974d054c0f672b73511e3dd77d5c9da6b502267c5f4db04e3606",
-      "sha512": "4fcecff87e7a646f966d16842a125083c268e53f4c2579ef654adf4179f87a456ebe0a40f95dd27aa4c1c3ccf24ed2304d192b1c2d527beeb6f0b776f773db06",
-      "sha1": "b446ddb579557a90bd8a4af7d58de9ef3b191112",
-      "downloadUrl": "/api/v1/blobs/ff5387fc203c974d054c0f672b73511e3dd77d5c9da6b502267c5f4db04e3606",
+      "filename": "VibrantParrots-v26.2.2-mc26.2.x-Fabric.jar",
+      "size": 127813,
+      "sha256": "7f27c1a8c57bfc70364d6c6494f9f8a0bad2d7198c06aa20dac193f57cf9d199",
+      "sha512": "14cd5ced7fbc309f59c86c584f5119d177803b9aab34c050ce9d7b2352cc4a1a0b0e6abc9c7c0d7ee53508c969d350940e51b1608411baf1c6ed8c2c859020ab",
+      "sha1": "d0b42b8b6a38d950173432aa17d67cda8aeca98c",
+      "downloadUrl": "https://cdn.modrinth.com/data/v7w63Mwj/versions/PmKdLc7N/VibrantParrots-v26.2.2-mc26.2.x-Fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/Apotheosis-26.2-10.0.1.jar"
+        "type": "modrinth",
+        "projectId": "v7w63Mwj",
+        "versionId": "PmKdLc7N"
+      },
+      "metadata": {
+        "description": "New colorful parrots, breeding, eggs, and portable cages for the ultimate bird companion.",
+        "iconUrl": "https://cdn.modrinth.com/data/v7w63Mwj/8fa02be9dab46f119a8ca4d7ee01f8c23a871272_96.webp",
+        "categories": [
+          "mobs"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/vibrant-parrots",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "villager-names-serilum": {
@@ -6010,32 +6089,33 @@
         "serverSide": "optional"
       }
     },
-    "elytratrails": {
-      "id": "elytratrails",
-      "name": "Elytra Contrails Mod",
-      "side": "client",
-      "filename": "elytratrails-1.6.3-26.2.jar",
-      "size": 391750,
-      "sha256": "f6f0f3005bdd36df062b26c682e661c5d71fd7f0768b23935e073a82a44e3f71",
-      "sha512": "308956de744601fe826b3cb32464050dc9aec3ac16025a2ca079e3ea8fe4e572b0ba13f10fd82f90ac478651cc9c209f82e5463cc6026fb802bbf7d4893a6e45",
-      "sha1": "a14d1c8581398c8c53a689e758e173305f4b2581",
-      "downloadUrl": "https://cdn.modrinth.com/data/dWMHBEAQ/versions/5VAxvNFC/elytratrails-1.6.3-26.2.jar",
+    "zfastsurface": {
+      "id": "zfastsurface",
+      "name": "Fast Surface",
+      "side": "server",
+      "filename": "zfastsurface-1.0.0-beta.3+26.2.jar",
+      "size": 49470,
+      "sha256": "2df490d09bbad9783d0e54b3abac2eb0daeaae112377f4badf7b8e2eca38d549",
+      "sha512": "d8bb7b82e2a2e8c2f298dd6b4963de6743eea5a5d78437383e3acb837753095d4e3f530c3b661628b51fd11e1136652db642267618613c28668387714e5cb8ab",
+      "sha1": "798f8d92ff38415a1341b0a9d36db34d58886e85",
+      "downloadUrl": "https://cdn.modrinth.com/data/FRSaEVFk/versions/OdFNZ4fM/zfastsurface-1.0.0-beta.3%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
-        "projectId": "dWMHBEAQ",
-        "versionId": "5VAxvNFC"
+        "projectId": "FRSaEVFk",
+        "versionId": "OdFNZ4fM"
       },
       "metadata": {
-        "description": "Adds Accurate Elytra Trails with a Mod!",
-        "iconUrl": "https://cdn.modrinth.com/data/dWMHBEAQ/01afeedfb5d6e284ac16261a8728abf4c9bccd54_96.webp",
+        "description": "A vanilla worldgen optimization mod to optimise block calculations during surface builder",
+        "iconUrl": "https://cdn.modrinth.com/data/FRSaEVFk/c393b58d86fd5fc416158aaabf84210fa20d568c.png",
         "categories": [
-          "decoration"
+          "optimization",
+          "worldgen"
         ],
-        "sourceUrl": "https://modrinth.com/mod/elytra-contrails-mod",
-        "clientSide": "required",
-        "serverSide": "unsupported"
+        "sourceUrl": "https://modrinth.com/mod/zfastsurface",
+        "clientSide": "unsupported",
+        "serverSide": "required"
       }
     },
     "complementary-reimagined": {
@@ -6096,32 +6176,21 @@
         "serverSide": "unsupported"
       }
     },
-    "name-tag-upgrade": {
-      "id": "name-tag-upgrade",
-      "name": "Name Tag Upgrade",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "NameTagUpgrade-v26.2.3-mc26.2.x-Fabric.jar",
-      "size": 67294,
-      "sha256": "5ea03a840af06a22b4bf4691893e1519128f4fc1cb14eb931fe4cafd29f41ba4",
-      "sha512": "d3e3c091613ae38519cd01210b8524c4d2156d9571245a3b4ac6e9665d6bdc80f215dae1502036f8d734d2c352a7b0ef4cf2e875b20ebb867f5f45e40b579bf5",
-      "sha1": "7e591938147fa128ed8282981bedd1cb4000a9f0",
-      "downloadUrl": "https://cdn.modrinth.com/data/d7LHtwd7/versions/N1FHbvAe/NameTagUpgrade-v26.2.3-mc26.2.x-Fabric.jar",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "d7LHtwd7",
-        "versionId": "N1FHbvAe"
-      },
-      "metadata": {
-        "description": "Smarter name tags with renaming on the go and handy quality-of-life improvements.",
-        "iconUrl": "https://cdn.modrinth.com/data/d7LHtwd7/ee739aca1ebc64b811c6021cae2e9c03181335e3_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/name-tag-upgrade",
-        "clientSide": "required",
-        "serverSide": "required"
+        "type": "lampas",
+        "file": "custom/Placebo-26.2-11.0.1.jar"
       }
     },
     "photon-shader": {
@@ -6244,21 +6313,30 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
+      "side": "both",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 1164229,
+      "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+      "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82",
+      "sha1": "64637c84b59f6e44e471b961355ff9bd4986f2e5",
+      "downloadUrl": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+      "artifactType": "mod",
+      "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
+        "file": "custom/lampas2-overrides-1.0.0.jar"
+      },
+      "metadata": {
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+        "categories": [
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "recolourful-containers-gui": {
@@ -6291,6 +6369,122 @@
         "serverSide": "unsupported"
       }
     },
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas2-resource-pack.zip"
+      }
+    },
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
+      "side": "both",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+      }
+    },
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
+      "side": "both",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
+      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
+      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+      }
+    },
+    "camerapture-2_0_0_mc26_2": {
+      "id": "camerapture-2_0_0_mc26_2",
+      "name": "camerapture-2.0.0+mc26.2",
+      "side": "both",
+      "filename": "camerapture-2.0.0+mc26.2.jar",
+      "size": 2495253,
+      "sha256": "864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+      "sha512": "dbe6adc636c0ad0c7b4c0086ac1c8253caf6022bba7f7cc8bbc4f1b41ada74c815e7d183e4a9f452bf71e54698be1918dcec89393124521926e168d47dc8adfb",
+      "sha1": "36b6c22c1a51a3a3269bf068557e83482e5f6ae7",
+      "downloadUrl": "/api/v1/blobs/864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+      },
+      "metadata": {
+        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "categories": [
+          "utility",
+          "media"
+        ]
+      }
+    },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+      }
+    },
+    "figura-0-1-6-rc-1": {
+      "id": "figura-0-1-6-rc-1",
+      "name": "Figura",
+      "side": "client",
+      "filename": "figura-0.1.6-rc.1+26.2.jar",
+      "size": 3228383,
+      "sha256": "700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
+      "sha512": "c759fc632346382d00b4f827ee7751287f9bde5ffdf2553475d6b894f98f64520136b64ec8a9b3db6da162beb86cfc0cfd813fad943fa3ae60a2949da363a623",
+      "sha1": "1df0d8d43e1a10970015b55c3f2626341e3c95b5",
+      "downloadUrl": "/api/v1/blobs/700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/figura-0.1.6-rc.1+26.2.jar"
+      },
+      "metadata": {
+        "description": "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
+        "categories": [
+          "cosmetic",
+          "avatar"
+        ]
+      }
+    },
     "lampas-photon-aria": {
       "id": "lampas-photon-aria",
       "name": "Lampas Photon Shaders",
@@ -6308,232 +6502,38 @@
         "file": "custom/lampas-photon-aria.zip"
       }
     },
-    "fabric-api": {
-      "id": "fabric-api",
-      "name": "Fabric API",
+    "apothicenchanting-26_2-3_0_1": {
+      "id": "apothicenchanting-26_2-3_0_1",
+      "name": "ApothicEnchanting-26.2-3.0.1",
       "side": "both",
-      "filename": "fabric-api-0.160.0+26.2.jar",
-      "size": 2542898,
-      "sha256": "5f3dff88e1661166e222213302b25ace6c36dc3683804cbd4b5acf93138ea05e",
-      "sha512": "1a08b68b2c2c90f6005ef441ab71b65f464be964005b9c0d18e6fc6c5ec53fe346e7dd76189c4f09ade59ef9bc3b836376a2cc71d4ce6e9be47122477d1bbd1e",
-      "sha1": "58e82722dee4a78235c4b5c06100ae433973f62e",
-      "downloadUrl": "https://cdn.modrinth.com/data/P7dR8mSH/versions/UWwhUX3k/fabric-api-0.160.0%2B26.2.jar",
+      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
+      "size": 5440070,
+      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
+      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
+      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "P7dR8mSH",
-        "versionId": "UWwhUX3k"
-      },
-      "metadata": {
-        "description": "Lightweight and modular API providing common hooks and intercompatibility measures utilized by mods using the Fabric toolchain.",
-        "iconUrl": "https://cdn.modrinth.com/data/P7dR8mSH/icon.png",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/fabric-api",
-        "clientSide": "optional",
-        "serverSide": "optional"
+        "type": "lampas",
+        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
       }
     },
-    "vibrant-parrots": {
-      "id": "vibrant-parrots",
-      "name": "Vibrant Parrots",
+    "apotheosis-26_2-10_0_1": {
+      "id": "apotheosis-26_2-10_0_1",
+      "name": "Apotheosis-26.2-10.0.1",
       "side": "both",
-      "filename": "VibrantParrots-v26.2.2-mc26.2.x-Fabric.jar",
-      "size": 127813,
-      "sha256": "7f27c1a8c57bfc70364d6c6494f9f8a0bad2d7198c06aa20dac193f57cf9d199",
-      "sha512": "14cd5ced7fbc309f59c86c584f5119d177803b9aab34c050ce9d7b2352cc4a1a0b0e6abc9c7c0d7ee53508c969d350940e51b1608411baf1c6ed8c2c859020ab",
-      "sha1": "d0b42b8b6a38d950173432aa17d67cda8aeca98c",
-      "downloadUrl": "https://cdn.modrinth.com/data/v7w63Mwj/versions/PmKdLc7N/VibrantParrots-v26.2.2-mc26.2.x-Fabric.jar",
+      "filename": "Apotheosis-26.2-10.0.1.jar",
+      "size": 8188778,
+      "sha256": "ff5387fc203c974d054c0f672b73511e3dd77d5c9da6b502267c5f4db04e3606",
+      "sha512": "4fcecff87e7a646f966d16842a125083c268e53f4c2579ef654adf4179f87a456ebe0a40f95dd27aa4c1c3ccf24ed2304d192b1c2d527beeb6f0b776f773db06",
+      "sha1": "b446ddb579557a90bd8a4af7d58de9ef3b191112",
+      "downloadUrl": "/api/v1/blobs/ff5387fc203c974d054c0f672b73511e3dd77d5c9da6b502267c5f4db04e3606",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "v7w63Mwj",
-        "versionId": "PmKdLc7N"
-      },
-      "metadata": {
-        "description": "New colorful parrots, breeding, eggs, and portable cages for the ultimate bird companion.",
-        "iconUrl": "https://cdn.modrinth.com/data/v7w63Mwj/8fa02be9dab46f119a8ca4d7ee01f8c23a871272_96.webp",
-        "categories": [
-          "mobs"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/vibrant-parrots",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "jei": {
-      "id": "jei",
-      "name": "Just Enough Items (JEI)",
-      "side": "both",
-      "filename": "jei-26.2-fabric-30.32.0.209.jar",
-      "size": 1883752,
-      "sha256": "c64028d3c828fea69e3728edfa08c8cc37f63f57a27eadb177403671ce9ffcb5",
-      "sha512": "311a5aea4c1e1c7391bf06ec7f6b5790fb37caad0b2037f2a7261dac2dd764b9f073670ce14298cc36826f4a4a2f9349277a50901f09a2b4b0fcd66174233670",
-      "sha1": "da0cd127ee21097ae873fbf7d6a59b50eca2f1f0",
-      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/rd9kG7G3/jei-26.2-fabric-30.32.0.209.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "u6dRKJwZ",
-        "versionId": "rd9kG7G3"
-      },
-      "metadata": {
-        "description": "View Items and Recipes",
-        "iconUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/4a3f18ac0d096c9f8e9176984c44be4e58f94c89_96.webp",
-        "categories": [
-          "library",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/jei",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
-    "geckolib": {
-      "id": "geckolib",
-      "name": "Geckolib",
-      "side": "client",
-      "filename": "geckolib-fabric-26.2-5.5.5.jar",
-      "size": 1185836,
-      "sha256": "1cade267232b852fa3ea8f309cd88fc09a8f77b41915519e4d1873cbb39fdc59",
-      "sha512": "098f28bbe551551f99e85584b36c37e466dfc46084737ed3644fc8588dae676653f5c5b16393cccff2cb90c5f3779260e0aec5a0e8c5813df3456166c0bce9ec",
-      "sha1": "66bd0b658dadc9345d9b885641b4322e3686094c",
-      "downloadUrl": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/7gaQHok7/geckolib-fabric-26.2-5.5.5.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8BmcQJ2H",
-        "versionId": "7gaQHok7"
-      },
-      "metadata": {
-        "description": "A 3D animation library for entities, blocks, items, armor, and more!",
-        "iconUrl": "https://cdn.modrinth.com/data/8BmcQJ2H/012d1aadbc754995de66e8c149a56aa10b63fe05_96.webp",
-        "categories": [
-          "game-mechanics",
-          "library",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/geckolib",
-        "clientSide": "required",
-        "serverSide": "optional"
-      }
-    },
-    "zfastsurface": {
-      "id": "zfastsurface",
-      "name": "Fast Surface",
-      "side": "server",
-      "filename": "zfastsurface-1.0.0-beta.3+26.2.jar",
-      "size": 49470,
-      "sha256": "2df490d09bbad9783d0e54b3abac2eb0daeaae112377f4badf7b8e2eca38d549",
-      "sha512": "d8bb7b82e2a2e8c2f298dd6b4963de6743eea5a5d78437383e3acb837753095d4e3f530c3b661628b51fd11e1136652db642267618613c28668387714e5cb8ab",
-      "sha1": "798f8d92ff38415a1341b0a9d36db34d58886e85",
-      "downloadUrl": "https://cdn.modrinth.com/data/FRSaEVFk/versions/OdFNZ4fM/zfastsurface-1.0.0-beta.3%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "FRSaEVFk",
-        "versionId": "OdFNZ4fM"
-      },
-      "metadata": {
-        "description": "A vanilla worldgen optimization mod to optimise block calculations during surface builder",
-        "iconUrl": "https://cdn.modrinth.com/data/FRSaEVFk/c393b58d86fd5fc416158aaabf84210fa20d568c.png",
-        "categories": [
-          "optimization",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/zfastsurface",
-        "clientSide": "unsupported",
-        "serverSide": "required"
-      }
-    },
-    "fabric-language-kotlin": {
-      "id": "fabric-language-kotlin",
-      "name": "Fabric Language Kotlin",
-      "side": "both",
-      "filename": "fabric-language-kotlin-1.14.1+kotlin.2.4.20.jar",
-      "size": 8142858,
-      "sha256": "620c2709be2a262b837cf976f6f85f6eda80a56af2ba4242e0bdc83a60fee7a5",
-      "sha512": "91404f87774466ce8604aafea791d8cc97b603bc310dce17c8188f94f7783cca6dc14fc726ce871ca317bfe9033c199d8d858d51284106a00754e952147703b8",
-      "sha1": "62ae40a31b689b52fde399f2143d547a631e942c",
-      "downloadUrl": "https://cdn.modrinth.com/data/Ha28R6CL/versions/eRRZzGMc/fabric-language-kotlin-1.14.1%2Bkotlin.2.4.20.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "Ha28R6CL",
-        "versionId": "eRRZzGMc"
-      },
-      "metadata": {
-        "description": "This is a mod that enables usage of the Kotlin programming language for Fabric mods.",
-        "iconUrl": "https://cdn.modrinth.com/data/Ha28R6CL/72c3d74aeb665e45aea93a945a01474cbce3b7da_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/fabric-language-kotlin",
-        "clientSide": "optional",
-        "serverSide": "optional"
-      }
-    },
-    "oneconfigbootstrap": {
-      "id": "oneconfigbootstrap",
-      "name": "OneConfig",
-      "side": "client",
-      "filename": "OneConfig-26.2-fabric-1.1.15.jar",
-      "size": 11566116,
-      "sha256": "ce69addc2389c4e6097c6f2c5f3eabb029e6a52d2353d47132d02a108e235284",
-      "sha512": "3d9251dcc7dd84020eeb3855737500a14c83a109a3cc8c0c45de2eeabb4b4df67d2bdbb2109cd57d10d4e94c04922b730e6791cfc9a70363cd3f34c815316e26",
-      "sha1": "e823f34fb9e44f342b4d06dd8466d330a26d51e1",
-      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/iIkr68W1/OneConfig-26.2-fabric-1.1.15.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "AibBIVmj",
-        "versionId": "iIkr68W1"
-      },
-      "metadata": {
-        "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
-        "iconUrl": "https://cdn.modrinth.com/data/AibBIVmj/073a92ecc8bb5650456758f1a58990801de64db5_96.webp",
-        "categories": [
-          "library",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/oneconfig",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "compose-multiplatform": {
-      "id": "compose-multiplatform",
-      "name": "Compose Multiplatform",
-      "side": "client",
-      "filename": "compose-bundle-1.0.4+compose.1.12.0.jar",
-      "size": 77957708,
-      "sha256": "796bd31e5fd7f37a14650b2785257f1025ff6b631fefe9cf07eb198b07ee146d",
-      "sha512": "13b26534cfc5ed4c67c2d891ba70b8e2a90f874374e8b3547aef031770c87b3caed68f2947846beb6a538336fa1799bb300a68c92b84f65f392debf4d36c1ee4",
-      "sha1": "8f9722743955dca08fa557193ef0a4673217ef0c",
-      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/8rpN5puy/compose-bundle-1.0.4%2Bcompose.1.12.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "eHe8QhtD",
-        "versionId": "8rpN5puy"
-      },
-      "metadata": {
-        "description": "Library mod bundling JetBrains' Compose Multiplatform libs",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/compose-multiplatform",
-        "clientSide": "required",
-        "serverSide": "unsupported"
+        "type": "lampas",
+        "file": "custom/Apotheosis-26.2-10.0.1.jar"
       }
     }
   }
