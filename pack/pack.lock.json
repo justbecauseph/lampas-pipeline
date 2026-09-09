@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.8",
+  "packVersion": "2.1.9",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-08T22:19:52.770Z",
+  "updated": "2026-09-09T19:46:00.845Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2573,23 +2573,6 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas-addons-1_0_0": {
-      "id": "lampas-addons-1_0_0",
-      "name": "lampas-addons-1.0.0",
-      "side": "both",
-      "filename": "lampas-addons-1.0.0.jar",
-      "size": 128816,
-      "sha256": "261de61cfe18ff4ede15e4f5e177a71340b99e8d701eda926f27c49486841c5c",
-      "sha512": "8174fa1e7860d225221c3cb3bbaf629df9807bd72738ea7a1b08f6bcd9d078da6faffd384b263d8d4e170cc752974d4e2b5c87b63e6d8426dbbda823d56f037a",
-      "sha1": "6d78637d780f4d78b6ddcf302d49ed90eda67d34",
-      "downloadUrl": "/api/v1/blobs/261de61cfe18ff4ede15e4f5e177a71340b99e8d701eda926f27c49486841c5c",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas-addons-1.0.0.jar"
-      }
-    },
     "apothicattributes-26_2-4_0_1": {
       "id": "apothicattributes-26_2-4_0_1",
       "name": "ApothicAttributes-26.2-4.0.1",
@@ -2607,6 +2590,40 @@
         "file": "custom/ApothicAttributes-26.2-4.0.1.jar"
       }
     },
+    "lampas-addons-1_0_0": {
+      "id": "lampas-addons-1_0_0",
+      "name": "lampas-addons-1.0.0",
+      "side": "both",
+      "filename": "lampas-addons-1.0.0.jar",
+      "size": 140793,
+      "sha256": "14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
+      "sha512": "bbf97be355cfcd8d6c0250fd61d307e98e60a89988418052ecb926f61989d09d0989e0a22b53318e4df6d3c9bea68ac5d3114ff2279e016d7626208917cde005",
+      "sha1": "d970f7ccf23e7384814541d4ee3fb44c65e69c74",
+      "downloadUrl": "/api/v1/blobs/14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas-addons-1.0.0.jar"
+      }
+    },
+    "lampas-yggdrasil-client-fabric-0_1_0-snapshot": {
+      "id": "lampas-yggdrasil-client-fabric-0_1_0-snapshot",
+      "name": "lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT",
+      "side": "client",
+      "filename": "lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 34839,
+      "sha256": "bbf2f31e19436d4e5b5f366c90637b786347fc76879f11e3b4cda8d74d0daf65",
+      "sha512": "2773d4341ddf5ea0de168945e5d870ffe9633d7c0e7a2517da3871181294b619cdffa576521c3f114d60b021809ff2f6034c32aec183e52ad92cec129ccdbd1a",
+      "sha1": "f26c395441fb1f9bcc19b5060898c496b9669392",
+      "downloadUrl": "/api/v1/blobs/bbf2f31e19436d4e5b5f366c90637b786347fc76879f11e3b4cda8d74d0daf65",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT.jar"
+      }
+    },
     "lampas-aria": {
       "id": "lampas-aria",
       "name": "lampas-aria",
@@ -2622,6 +2639,23 @@
       "provider": {
         "type": "lampas",
         "file": "custom/lampas-aria-0.1.0-alpha.2.jar"
+      }
+    },
+    "gatewaystoeternity-26_2-7_0_1": {
+      "id": "gatewaystoeternity-26_2-7_0_1",
+      "name": "GatewaysToEternity-26.2-7.0.1",
+      "side": "both",
+      "filename": "GatewaysToEternity-26.2-7.0.1.jar",
+      "size": 663471,
+      "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+      "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b",
+      "sha1": "b46074a2f29a1376ef816dd477d6a5e514b0000a",
+      "downloadUrl": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/GatewaysToEternity-26.2-7.0.1.jar"
       }
     },
     "leavesbegone": {
@@ -2669,21 +2703,21 @@
         "file": "custom/levelledmobs-apotheosis-1.0.0.jar"
       }
     },
-    "levelledmobs-fabric-1_0_0": {
-      "id": "levelledmobs-fabric-1_0_0",
-      "name": "levelledmobs-fabric-1.0.0",
+    "eastersdelight-fabric-26_2-1_3_1": {
+      "id": "eastersdelight-fabric-26_2-1_3_1",
+      "name": "eastersdelight-fabric-26.2-1.3.1",
       "side": "both",
-      "filename": "levelledmobs-fabric-1.0.0.jar",
-      "size": 160823,
-      "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
-      "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d",
-      "sha1": "267a5b8613b5370aeb76bb0047ca5e69c24e74c2",
-      "downloadUrl": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
+      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
+      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/levelledmobs-fabric-1.0.0.jar"
+        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
       }
     },
     "libipn": {
@@ -3340,21 +3374,21 @@
         "serverSide": "required"
       }
     },
-    "gatewaystoeternity-26_2-7_0_1": {
-      "id": "gatewaystoeternity-26_2-7_0_1",
-      "name": "GatewaysToEternity-26.2-7.0.1",
+    "levelledmobs-fabric-1_0_0": {
+      "id": "levelledmobs-fabric-1_0_0",
+      "name": "levelledmobs-fabric-1.0.0",
       "side": "both",
-      "filename": "GatewaysToEternity-26.2-7.0.1.jar",
-      "size": 663471,
-      "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
-      "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b",
-      "sha1": "b46074a2f29a1376ef816dd477d6a5e514b0000a",
-      "downloadUrl": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+      "filename": "levelledmobs-fabric-1.0.0.jar",
+      "size": 160823,
+      "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+      "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d",
+      "sha1": "267a5b8613b5370aeb76bb0047ca5e69c24e74c2",
+      "downloadUrl": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/GatewaysToEternity-26.2-7.0.1.jar"
+        "file": "custom/levelledmobs-fabric-1.0.0.jar"
       }
     },
     "modmenu": {
@@ -3893,21 +3927,30 @@
         "file": "custom/modern-player-ladder-1.0.0.jar"
       }
     },
-    "eastersdelight-fabric-26_2-1_3_1": {
-      "id": "eastersdelight-fabric-26_2-1_3_1",
-      "name": "eastersdelight-fabric-26.2-1.3.1",
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
       "side": "both",
-      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
-      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
-      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 1164229,
+      "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+      "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82",
+      "sha1": "64637c84b59f6e44e471b961355ff9bd4986f2e5",
+      "downloadUrl": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
+        "file": "custom/lampas2-overrides-1.0.0.jar"
+      },
+      "metadata": {
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+        "categories": [
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "placeholder-api": {
@@ -5515,21 +5558,21 @@
         "serverSide": "required"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "file": "custom/Placebo-26.2-11.0.1.jar"
       }
     },
     "twod_projectiles": {
@@ -6176,21 +6219,21 @@
         "serverSide": "unsupported"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "photon-shader": {
@@ -6313,30 +6356,21 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
-      "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-      "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82",
-      "sha1": "64637c84b59f6e44e471b961355ff9bd4986f2e5",
-      "downloadUrl": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
+      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
+      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
       }
     },
     "recolourful-containers-gui": {
@@ -6369,23 +6403,6 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
-      }
-    },
     "patchouli": {
       "id": "patchouli",
       "name": "Patchouli",
@@ -6403,21 +6420,21 @@
         "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
       }
     },
-    "crazy_chambers-1_0_0_26_2": {
-      "id": "crazy_chambers-1_0_0_26_2",
-      "name": "crazy_chambers-1.0.0+26.2",
-      "side": "both",
-      "filename": "crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
-      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
-      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "artifactType": "mod",
-      "targetDir": "mods",
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
       "provider": {
         "type": "lampas",
-        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+        "file": "custom/lampas2-resource-pack.zip"
       }
     },
     "camerapture-2_0_0_mc26_2": {
@@ -6485,6 +6502,23 @@
         ]
       }
     },
+    "apothicenchanting-26_2-3_0_1": {
+      "id": "apothicenchanting-26_2-3_0_1",
+      "name": "ApothicEnchanting-26.2-3.0.1",
+      "side": "both",
+      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
+      "size": 5440070,
+      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
+      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
+      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
+      }
+    },
     "lampas-photon-aria": {
       "id": "lampas-photon-aria",
       "name": "Lampas Photon Shaders",
@@ -6502,21 +6536,21 @@
         "file": "custom/lampas-photon-aria.zip"
       }
     },
-    "apothicenchanting-26_2-3_0_1": {
-      "id": "apothicenchanting-26_2-3_0_1",
-      "name": "ApothicEnchanting-26.2-3.0.1",
-      "side": "both",
-      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
-      "size": 5440070,
-      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
-      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
-      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
-      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+    "lampas-yggdrasil-server-fabric-0_1_0-snapshot": {
+      "id": "lampas-yggdrasil-server-fabric-0_1_0-snapshot",
+      "name": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT",
+      "side": "server",
+      "filename": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 6553471,
+      "sha256": "deb450e93a42472a5704acaeb72aae9ba5dca28fb2f3bb5a61f6b0ffd35b6ac1",
+      "sha512": "7b3439aaaf7aac3ce3f30f941851937c723a646087a22e96051296d54ac25681b36b7293b64be214334e3dcd7b8700bc5c66c2d42971811d88d2395918e3e6ac",
+      "sha1": "d0a25d17d06bee1f1d64791c3aa5024787238684",
+      "downloadUrl": "/api/v1/blobs/deb450e93a42472a5704acaeb72aae9ba5dca28fb2f3bb5a61f6b0ffd35b6ac1",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
+        "file": "custom/lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar"
       }
     },
     "apotheosis-26_2-10_0_1": {

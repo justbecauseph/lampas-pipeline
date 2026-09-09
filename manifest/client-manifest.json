@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1215,7 +1215,7 @@
       "name": "lampas-addons-1.0.0",
       "side": "both",
       "filename": "lampas-addons-1.0.0.jar",
-      "size": 128816,
+      "size": 140793,
       "categories": []
     },
     {
@@ -1224,6 +1224,14 @@
       "side": "both",
       "filename": "lampas-aria-0.1.0-alpha.2.jar",
       "size": 106401,
+      "categories": []
+    },
+    {
+      "id": "lampas-yggdrasil-client-fabric-0_1_0-snapshot",
+      "name": "lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT",
+      "side": "client",
+      "filename": "lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 34839,
       "categories": []
     },
     {
@@ -3470,19 +3478,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas-addons-1.0.0.jar",
-      "size": 128816,
-      "hashes": {
-        "sha256": "261de61cfe18ff4ede15e4f5e177a71340b99e8d701eda926f27c49486841c5c",
-        "sha512": "8174fa1e7860d225221c3cb3bbaf629df9807bd72738ea7a1b08f6bcd9d078da6faffd384b263d8d4e170cc752974d4e2b5c87b63e6d8426dbbda823d56f037a"
-      },
-      "download": {
-        "url": "/api/v1/blobs/261de61cfe18ff4ede15e4f5e177a71340b99e8d701eda926f27c49486841c5c",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/ApothicAttributes-26.2-4.0.1.jar",
       "size": 357463,
       "hashes": {
@@ -3491,6 +3486,32 @@
       },
       "download": {
         "url": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas-addons-1.0.0.jar",
+      "size": 140793,
+      "hashes": {
+        "sha256": "14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
+        "sha512": "bbf97be355cfcd8d6c0250fd61d307e98e60a89988418052ecb926f61989d09d0989e0a22b53318e4df6d3c9bea68ac5d3114ff2279e016d7626208917cde005"
+      },
+      "download": {
+        "url": "/api/v1/blobs/14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 34839,
+      "hashes": {
+        "sha256": "bbf2f31e19436d4e5b5f366c90637b786347fc76879f11e3b4cda8d74d0daf65",
+        "sha512": "2773d4341ddf5ea0de168945e5d870ffe9633d7c0e7a2517da3871181294b619cdffa576521c3f114d60b021809ff2f6034c32aec183e52ad92cec129ccdbd1a"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bbf2f31e19436d4e5b5f366c90637b786347fc76879f11e3b4cda8d74d0daf65",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3509,6 +3530,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/GatewaysToEternity-26.2-7.0.1.jar",
+      "size": 663471,
+      "hashes": {
+        "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+        "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b"
+      },
+      "download": {
+        "url": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/levelledmobs-apotheosis-1.0.0.jar",
       "size": 11812,
       "hashes": {
@@ -3522,14 +3556,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/levelledmobs-fabric-1.0.0.jar",
-      "size": 160823,
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
       "hashes": {
-        "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
-        "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d"
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
       },
       "download": {
-        "url": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3795,14 +3829,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/GatewaysToEternity-26.2-7.0.1.jar",
-      "size": 663471,
+      "path": "mods/levelledmobs-fabric-1.0.0.jar",
+      "size": 160823,
       "hashes": {
-        "sha256": "e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
-        "sha512": "8c0df63426806002169b6f10cac09612bdad3a4083eb1aa619d889d0c46882f8071b5255223244d412f361162a8238bfdf9eff7b619e20d9b421e209ec78e51b"
+        "sha256": "29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
+        "sha512": "f913635533590124722a509909d13077498b0e333bd15e05e23c1e75a72de3c5459de3e28f564aeec6a1be9fa5d7e3dc56d51f19ee28acbdfe6c742f35fca22d"
       },
       "download": {
-        "url": "/api/v1/blobs/e6fe968703d9d656dc0d910822d5edf15395d5705380a126c66e47414ca3795e",
+        "url": "/api/v1/blobs/29a92db0c4f03284ce9652ead76f14b9b8ee1946350baad6f2ce13fe14484e2d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4029,14 +4063,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 1164229,
       "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+        "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+        "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82"
       },
       "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "url": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4562,14 +4596,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4822,14 +4856,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4887,14 +4921,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
+      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
       "hashes": {
-        "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-        "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82"
+        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
       },
       "download": {
-        "url": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4921,19 +4955,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "hashes": {
-        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
-      },
-      "download": {
-        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4978,19 +4999,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "shaderpacks/lampas-photon-aria.zip",
-      "size": 3838738,
-      "hashes": {
-        "sha256": "1e80200850ee1264b8c973d6cc82310ea6ec110003df1a24cd1951daab509e75",
-        "sha512": "035755ddc438810278f384db0ab35e12d63eeb495720713704046acc3cb6420dc2b56181ab0b434221ac40bc3bff8809afd286c43152105140e0a55da50b55be"
-      },
-      "download": {
-        "url": "/api/v1/blobs/1e80200850ee1264b8c973d6cc82310ea6ec110003df1a24cd1951daab509e75",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/ApothicEnchanting-26.2-3.0.1.jar",
       "size": 5440070,
       "hashes": {
@@ -4999,6 +5007,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "shaderpacks/lampas-photon-aria.zip",
+      "size": 3838738,
+      "hashes": {
+        "sha256": "1e80200850ee1264b8c973d6cc82310ea6ec110003df1a24cd1951daab509e75",
+        "sha512": "035755ddc438810278f384db0ab35e12d63eeb495720713704046acc3cb6420dc2b56181ab0b434221ac40bc3bff8809afd286c43152105140e0a55da50b55be"
+      },
+      "download": {
+        "url": "/api/v1/blobs/1e80200850ee1264b8c973d6cc82310ea6ec110003df1a24cd1951daab509e75",
         "provider": "lampas"
       },
       "policy": "MANAGED"
