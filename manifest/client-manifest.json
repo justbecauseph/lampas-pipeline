@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.10",
+  "version": "2.1.11",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -126,11 +126,11 @@
       "categories": []
     },
     {
-      "id": "architectury",
+      "id": "architectury-api",
       "name": "Architectury API",
       "side": "both",
-      "filename": "architectury-fabric-21.1.8.jar",
-      "size": 622155,
+      "filename": "architectury-fabric-21.0.7.jar",
+      "size": 587038,
       "description": "An intermediary api aimed to ease developing multiplatform mods.",
       "iconUrl": "https://cdn.modrinth.com/data/lhGA9TYQ/05fe3a61c28faaccaec3533b92e1b321edde7bf6_96.webp",
       "categories": [
@@ -2568,14 +2568,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/architectury-fabric-21.1.8.jar",
-      "size": 622155,
+      "path": "mods/architectury-fabric-21.0.7.jar",
+      "size": 587038,
       "hashes": {
-        "sha256": "a266a90b68e9a051c4c83f40568a875944350b2a026ead87a2b056b067465156",
-        "sha512": "40be21f33be139db894af8f457847aaad340ab8bc20f9d0bfdc95e9160a36f7fe771a05cd29368e10efde9f52c03ac9eeeea6c21ffa81ffca802ba949239b9e7"
+        "sha256": "0f57afbd3dcddd0b7304c22d712ccf5437e2c41270ec08bd2d8c4e1df0a6d627",
+        "sha512": "deffcad73b8f73d611d8e43ddad3b380e7896ba53e4b4f3660ab877b9c4ba20561e498888b17456b2b8819fb902e2070760613ce6fec9e1f1082990014e92dd4"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/3iJSN9Sa/architectury-fabric-21.1.8.jar",
+        "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1yQC4VvP/architectury-fabric-21.0.7.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3478,19 +3478,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas-addons-1.0.0.jar",
-      "size": 140793,
-      "hashes": {
-        "sha256": "14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
-        "sha512": "bbf97be355cfcd8d6c0250fd61d307e98e60a89988418052ecb926f61989d09d0989e0a22b53318e4df6d3c9bea68ac5d3114ff2279e016d7626208917cde005"
-      },
-      "download": {
-        "url": "/api/v1/blobs/14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/ApothicAttributes-26.2-4.0.1.jar",
       "size": 357463,
       "hashes": {
@@ -3499,6 +3486,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/lampas-addons-1.0.0.jar",
+      "size": 140793,
+      "hashes": {
+        "sha256": "14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
+        "sha512": "bbf97be355cfcd8d6c0250fd61d307e98e60a89988418052ecb926f61989d09d0989e0a22b53318e4df6d3c9bea68ac5d3114ff2279e016d7626208917cde005"
+      },
+      "download": {
+        "url": "/api/v1/blobs/14b9f1208e30f151b38df73e36c0a5bc475ed9a521e8612191b88234dcae8a1c",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4011,15 +4011,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/modern-player-ladder-1.0.0.jar",
-      "size": 31067,
+      "path": "mods/OneConfig-26.2-fabric-1.1.16.jar",
+      "size": 11567021,
       "hashes": {
-        "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-        "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2"
+        "sha256": "2a8299d4f711d7cb55e4487c966384d7580fce271b069510954d7c151ee1e70d",
+        "sha512": "a11f8f96afdbbd9bbb37ddc94e30862de889ad0e8f3aceb1df91752bf394b747d3284370c69628b8b8b027543a037f47fec017c38a881ff9721cef1d2120e20e"
       },
       "download": {
-        "url": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/AibBIVmj/versions/UXaDod3n/OneConfig-26.2-fabric-1.1.16.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -4050,6 +4050,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/modern-player-ladder-1.0.0.jar",
+      "size": 31067,
+      "hashes": {
+        "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+        "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2"
+      },
+      "download": {
+        "url": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/lampas2-overrides-1.0.0.jar",
       "size": 1164229,
       "hashes": {
@@ -4058,19 +4071,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "hashes": {
-        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
-      },
-      "download": {
-        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4388,15 +4388,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
+      "path": "mods/sodium-fabric-0.9.1+mc26.2.jar",
+      "size": 1834384,
       "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+        "sha256": "de406c7a0ca5e748dfbe44740278400882a44e3109e2584b243ec02d4003344b",
+        "sha512": "627fbf9625a4b94693c789c84a0686ffe558c0b1ecbeccf2602a903caafa9e126548b644282aa9c391dc798930d378724a383bea6b4397c5294d59ba5c0a6936"
       },
       "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/AANobbMI/versions/2Yom1N68/sodium-fabric-0.9.1%2Bmc26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -4596,14 +4596,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4856,14 +4856,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4921,14 +4921,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2495253,
+      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
       "hashes": {
-        "sha256": "864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
-        "sha512": "dbe6adc636c0ad0c7b4c0086ac1c8253caf6022bba7f7cc8bbc4f1b41ada74c815e7d183e4a9f452bf71e54698be1918dcec89393124521926e168d47dc8adfb"
+        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
       },
       "download": {
-        "url": "/api/v1/blobs/864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4943,6 +4943,32 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/lewweaHO/versions/Req8KKc8/Recolourful%20Containers%203.1.3%20%281.19.4%2B%29.zip",
         "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "hashes": {
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2495253,
+      "hashes": {
+        "sha256": "864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+        "sha512": "dbe6adc636c0ad0c7b4c0086ac1c8253caf6022bba7f7cc8bbc4f1b41ada74c815e7d183e4a9f452bf71e54698be1918dcec89393124521926e168d47dc8adfb"
+      },
+      "download": {
+        "url": "/api/v1/blobs/864192862b78049d5beee813d5f58e241e3478c883ef6e27c03ff9f80f5d068f",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4969,19 +4995,6 @@
       "download": {
         "url": "/api/v1/blobs/700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/sodium-fabric-0.9.1+mc26.2.jar",
-      "size": 1834384,
-      "hashes": {
-        "sha256": "de406c7a0ca5e748dfbe44740278400882a44e3109e2584b243ec02d4003344b",
-        "sha512": "627fbf9625a4b94693c789c84a0686ffe558c0b1ecbeccf2602a903caafa9e126548b644282aa9c391dc798930d378724a383bea6b4397c5294d59ba5c0a6936"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/AANobbMI/versions/2Yom1N68/sodium-fabric-0.9.1%2Bmc26.2.jar",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5021,19 +5034,6 @@
       "download": {
         "url": "/api/v1/blobs/ff5387fc203c974d054c0f672b73511e3dd77d5c9da6b502267c5f4db04e3606",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/OneConfig-26.2-fabric-1.1.16.jar",
-      "size": 11567021,
-      "hashes": {
-        "sha256": "2a8299d4f711d7cb55e4487c966384d7580fce271b069510954d7c151ee1e70d",
-        "sha512": "a11f8f96afdbbd9bbb37ddc94e30862de889ad0e8f3aceb1df91752bf394b747d3284370c69628b8b8b027543a037f47fec017c38a881ff9721cef1d2120e20e"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/AibBIVmj/versions/UXaDod3n/OneConfig-26.2-fabric-1.1.16.jar",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
