@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.13",
+  "packVersion": "2.1.14",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-10T21:09:29.298Z",
+  "updated": "2026-09-11T10:18:53.962Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -557,6 +557,36 @@
         ],
         "sourceUrl": "https://modrinth.com/mod/boids",
         "clientSide": "unsupported",
+        "serverSide": "required"
+      }
+    },
+    "builders-boundry": {
+      "id": "builders-boundry",
+      "name": "Builder's Boundry",
+      "side": "both",
+      "filename": "builders-boundry-0.2.jar",
+      "size": 738403,
+      "sha256": "bc2c74687b01d943f3496313eb01f47bd528adc7ed48776ff6c2f8667cdc739d",
+      "sha512": "6dd7eab89a9dd7f756bacf94a7f52768714f2ff2697bbe54ee42a073d265c75e927e656fafa8c1c0064fb3e3a0933b22c210741dc1cb2ad417c61d4e2a8ee0d5",
+      "sha1": "d57a27a592b6e87f45c31ccef9f79abfadcf00c5",
+      "downloadUrl": "https://cdn.modrinth.com/data/GnlmvnT6/versions/trudqi9k/builders-boundry-0.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "GnlmvnT6",
+        "versionId": "trudqi9k"
+      },
+      "metadata": {
+        "description": "Make your houses, taverns, and villages feel more alive than ever with Builder's Bounty, a pack of decorative accessories in perfect vanilla Minecraft style!",
+        "iconUrl": "https://cdn.modrinth.com/data/GnlmvnT6/6481db9744dc83bebb3de1c73982b727ec5dfc7a_96.webp",
+        "categories": [
+          "adventure",
+          "decoration",
+          "game-mechanics"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/builders-boundry",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -1425,6 +1455,34 @@
         "serverSide": "unsupported"
       }
     },
+    "enchantment-insights": {
+      "id": "enchantment-insights",
+      "name": "Enchantment Insights",
+      "side": "client",
+      "filename": "EnchantmentInsights-v26.2.3-mc26.2.x-Fabric.jar",
+      "size": 128174,
+      "sha256": "2a6f392455459f0228585c54c2b120380d97afd910696818c8438688aee34348",
+      "sha512": "30f615801e475d20e6c3ee3f2869e943e6198b7c25d344c377d6415810905a551f0679d13801d6ef19c359d57fe6a3bc95a9c1c33385af67849b96c5bf5eafae",
+      "sha1": "aceb33c1962cbd5728bcb13842441add3d605e11",
+      "downloadUrl": "https://cdn.modrinth.com/data/xLSpHE43/versions/P8CPaUO3/EnchantmentInsights-v26.2.3-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "xLSpHE43",
+        "versionId": "P8CPaUO3"
+      },
+      "metadata": {
+        "description": "Pretty enchantment tooltips with colorful names and clear descriptions. No mystery, just magic!",
+        "iconUrl": "https://cdn.modrinth.com/data/xLSpHE43/69a8d538ec028a6cdb569a12531dec0a10882bd1_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/enchantment-insights",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "enchantment-level-cap-indicator": {
       "id": "enchantment-level-cap-indicator",
       "name": "Enchantment Level Cap Indicator",
@@ -1452,6 +1510,35 @@
         "sourceUrl": "https://modrinth.com/mod/enchantment-level-cap-indicator",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "ender-zoology": {
+      "id": "ender-zoology",
+      "name": "Ender Zoology",
+      "side": "both",
+      "filename": "EnderZoology-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 476512,
+      "sha256": "0f45423a8a449cde8c99617800e0eaefc8d27e2f90412617a9856830066bcf9e",
+      "sha512": "3acde01e285c280691f0bcd6d97b52f7dd399dcb92473da38084de1bbfead388ef62f92a2c1955b88bace6e110d61f131ba09f00170f3432cb6e22226ec1fba7",
+      "sha1": "2f9a09774685b99e83a67fafb8ab694be37b6c13",
+      "downloadUrl": "https://cdn.modrinth.com/data/CUQhzQjg/versions/ZH7vZ3hL/EnderZoology-v26.2.0-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "CUQhzQjg",
+        "versionId": "ZH7vZ3hL"
+      },
+      "metadata": {
+        "description": "Vanilla themed monsters to add some difficulty to the game. A remake of Ender Zoo.",
+        "iconUrl": "https://cdn.modrinth.com/data/CUQhzQjg/bc15cec43e6ed3f055035cf78f3b38417a67ef5f_96.webp",
+        "categories": [
+          "adventure",
+          "mobs"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/ender-zoology",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "entity-model-features": {
@@ -1538,6 +1625,36 @@
         "sourceUrl": "https://modrinth.com/mod/entitytexturefeatures",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "epic-structures-dungeons": {
+      "id": "epic-structures-dungeons",
+      "name": "Epic Structures: Dungeons",
+      "side": "both",
+      "filename": "epic-structures-dungeons-1.2.5.jar",
+      "size": 17378734,
+      "sha256": "52a4c665d40eb6fb21f91c2f06f8f4c270aced91ba0d9a82d55bbd0cf969848d",
+      "sha512": "f5a2944b2b648ee161180bcee6199302d5e2fbf934ec7ef6f0839f1277b323e6a19387c7cb61c87569474f224cb410a7f63945b5f610856af8f47a9287216d05",
+      "sha1": "ab762dcaf04fcdb036b698039d7fac12df2773eb",
+      "downloadUrl": "https://cdn.modrinth.com/data/t0YT91nL/versions/tcsK0UPh/epic-structures-dungeons-1.2.5.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "t0YT91nL",
+        "versionId": "tcsK0UPh"
+      },
+      "metadata": {
+        "description": "Adds dungeons of various rarities and sizes",
+        "iconUrl": "https://cdn.modrinth.com/data/t0YT91nL/3638ec2bd51db3dc9f25337d7c4ebd6131da5e30_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/epic-structures-dungeons",
+        "clientSide": "optional",
+        "serverSide": "required"
       }
     },
     "explorify": {
@@ -2197,6 +2314,35 @@
         ],
         "sourceUrl": "https://modrinth.com/mod/hopo-better-mineshaft",
         "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
+    "hopper-gadgetry": {
+      "id": "hopper-gadgetry",
+      "name": "Hopper Gadgetry",
+      "side": "both",
+      "filename": "HopperGadgetry-v26.2.0-mc26.2.x-Fabric.jar",
+      "size": 102874,
+      "sha256": "25e18406cd3abbe1a6a9a92bdf83dcf58ef065ebd8b8576d34d353ee42f969ea",
+      "sha512": "def3681f2324788f19115cdf221fa8936a16ba47c5ffd5230d75d03980fe9efac2bf9131dbd9bbcde14a3c6583bdfef265526ca97463a9e75793d93ce3e235a5",
+      "sha1": "5bb0f0a8528070dafccd9040e6a0b314d5a5b61d",
+      "downloadUrl": "https://cdn.modrinth.com/data/RCK4uOMN/versions/62brqYey/HopperGadgetry-v26.2.0-mc26.2.x-Fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "RCK4uOMN",
+        "versionId": "62brqYey"
+      },
+      "metadata": {
+        "description": "Ready to build smarter, and cheaper contraptions? New hoppers are here to complement your lineup.",
+        "iconUrl": "https://cdn.modrinth.com/data/RCK4uOMN/4eee563e7dd970dac2a443e285a6d35569cbe8a6_96.webp",
+        "categories": [
+          "storage",
+          "transportation"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/hopper-gadgetry",
+        "clientSide": "required",
         "serverSide": "required"
       }
     },
@@ -3565,6 +3711,36 @@
         "serverSide": "required"
       }
     },
+    "moss-ruins": {
+      "id": "moss-ruins",
+      "name": "Moss Ruins",
+      "side": "both",
+      "filename": "moss-ruins-1.3.jar",
+      "size": 174886,
+      "sha256": "b14f001afcffd410faeafe351ff3f6ce08a7bd77fa13e733cab12ff80e2d7d4e",
+      "sha512": "0366073e85c47ab10af87529138b9f5060d408b9c73263d4112c0430a5f956ea619eaf60bdf36f816a499d2b1dc8e4aea9ce0fd24b5bf685801b030b0eb78218",
+      "sha1": "b59d2f358c81201792cd820913d4b476151e9219",
+      "downloadUrl": "https://cdn.modrinth.com/data/aA4qcziz/versions/Qr4xsPU0/moss-ruins-1.3.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "aA4qcziz",
+        "versionId": "Qr4xsPU0"
+      },
+      "metadata": {
+        "description": "A vanilla-like datapack adding new content to embrace some parts of the boring birch forest biomes by adding a new set of structures which spawn as small single buildings or big ruined cities",
+        "iconUrl": "https://cdn.modrinth.com/data/aA4qcziz/62e2ec345bd1bf5a2d85fb8347d7676a5b77ec7f.png",
+        "categories": [
+          "adventure",
+          "decoration",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/moss-ruins",
+        "clientSide": "optional",
+        "serverSide": "required"
+      }
+    },
     "mru": {
       "id": "mru",
       "name": "MRU",
@@ -3677,6 +3853,34 @@
         "sourceUrl": "https://modrinth.com/mod/natural-waters",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "nemos-mossy-blocks": {
+      "id": "nemos-mossy-blocks",
+      "name": "Nemo's Mossy Blocks",
+      "side": "both",
+      "filename": "nemos_mossy_blocks-26.2-2.4.jar",
+      "size": 4033570,
+      "sha256": "188082be8f44280d8a3de5d143aa8a2c8746f328222a5dfe6a3da0f4d2bc050c",
+      "sha512": "620d0ec83c074cea14d6b34bf5b369d5e43688f5c9d04c3e6b4f61120532151a3fee8a5ef1b6ff781f727b5c5155597d8887db9fedf8b6b7acac4509cc52d9b2",
+      "sha1": "dde2946b922a531dcf63161f539843be6225a8c9",
+      "downloadUrl": "https://cdn.modrinth.com/data/vpq85eT0/versions/IHINnUl1/nemos_mossy_blocks-26.2-2.4.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "vpq85eT0",
+        "versionId": "IHINnUl1"
+      },
+      "metadata": {
+        "description": "Nemo's Mossy Blocks adds more mossy blocks, introduces new moss types, and lets you shear mossy blocks!",
+        "iconUrl": "https://cdn.modrinth.com/data/vpq85eT0/d54a32fca89f836758761534d0b8b96efb1a210e_96.webp",
+        "categories": [
+          "decoration"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/nemos-mossy-blocks",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "no-chat-reports": {
@@ -6541,11 +6745,11 @@
       "name": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT",
       "side": "server",
       "filename": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 6595727,
-      "sha256": "3cdc38ec4ef56704a1e2bc4711158f64ac6be52cc2aaab3f28a0c5641a3687bf",
-      "sha512": "581cf45c84601cea0da61f7a5ea3c5aaead8cc8721ae1b55b02e5f724a4c3a815b0b1cc5fbf29fab076e927d060ade789ae91060d0dc855d5fb5659db494846d",
-      "sha1": "65cba6a261f669f0a5a92d71f960ed7e8845fd52",
-      "downloadUrl": "/api/v1/blobs/3cdc38ec4ef56704a1e2bc4711158f64ac6be52cc2aaab3f28a0c5641a3687bf",
+      "size": 6724883,
+      "sha256": "4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
+      "sha512": "03274a330cf235df570bd37a7f725e4500fc3a53c17dc3e540e88a8caa6bbf9fc84feede3e57405638143eca739c1d81359f980ac2f10e753352714c01fa3de8",
+      "sha1": "cfeca5c09aa2a10a800d29bdacf13443e5ace8f7",
+      "downloadUrl": "/api/v1/blobs/4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
