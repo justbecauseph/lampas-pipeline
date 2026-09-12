@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -1081,7 +1081,7 @@
       "name": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT",
       "side": "server",
       "filename": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 6724883,
+      "size": 6725380,
       "categories": []
     },
     {
@@ -1089,7 +1089,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
+      "size": 1196021,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -1912,8 +1912,8 @@
       "id": "streams-reflowing",
       "name": "Streams Reflowing",
       "side": "both",
-      "filename": "StreamsReflowing-26.2-fabric-2.13.1.jar",
-      "size": 2659653,
+      "filename": "StreamsReflowing-26.2-fabric-2.13.5.jar",
+      "size": 2716034,
       "description": "Adds beautiful flowing streams to your world.",
       "iconUrl": "https://cdn.modrinth.com/data/oLS8HdJ1/39dee53a0554e10ce6b7936762be12991ca38ba6.png",
       "categories": [
@@ -3802,13 +3802,13 @@
     },
     {
       "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
+      "size": 1196021,
       "hashes": {
-        "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-        "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82"
+        "sha256": "2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
+        "sha512": "d27757713ebb1e7d3fe19def9f8cee50269f4d063a8b2f2666a490087e459f3eda1c7a01f20fbd6b45f0beb911ed306c8aa38735c5b15f73da7a41fb12c860a9"
       },
       "download": {
-        "url": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+        "url": "/api/v1/blobs/2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4126,14 +4126,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/StreamsReflowing-26.2-fabric-2.13.1.jar",
-      "size": 2659653,
+      "path": "mods/StreamsReflowing-26.2-fabric-2.13.5.jar",
+      "size": 2716034,
       "hashes": {
-        "sha256": "2dc1a46e27b4c1c46d5f4c56bcad7918f6d78436157759adb01e7e788b5a37b5",
-        "sha512": "fdbaada1edb96ab039026c4351c9edd57aafdffc5ccc1a12f344057f86856825c50b2580514caef076fcd5f0cae10352bcca3fe5687260fe82e0f97026cd7be5"
+        "sha256": "10b5a971c16307b7b15b2eee4dd94092b21c147d9e3c43a3704b27675db942a7",
+        "sha512": "1f94fa11cc5b1e269bc99803bf6feef1570ac90350a59a07537a8694db53ed4f05bf8545d8933b4715152a2cff079daa740fa2d6d94968e4c7e3a8e721b2c16b"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/enNkL9Tp/StreamsReflowing-26.2-fabric-2.13.1.jar",
+        "url": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/A5i79RsE/StreamsReflowing-26.2-fabric-2.13.5.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -4634,13 +4634,13 @@
     },
     {
       "path": "mods/lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 6724883,
+      "size": 6725380,
       "hashes": {
-        "sha256": "4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
-        "sha512": "03274a330cf235df570bd37a7f725e4500fc3a53c17dc3e540e88a8caa6bbf9fc84feede3e57405638143eca739c1d81359f980ac2f10e753352714c01fa3de8"
+        "sha256": "bb1373c9dc8daca36026d7fba8d65c45a33db7c92f30fcb0c0f9f69c45791b90",
+        "sha512": "e35fe5d2584b8d8e5000336a4793845dd54fad41b7e08889c18c1fd3239e6274adb2584390c8a96af88e444f719f8742552fb8c44247b3827a9cb6b7f89f5160"
       },
       "download": {
-        "url": "/api/v1/blobs/4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
+        "url": "/api/v1/blobs/bb1373c9dc8daca36026d7fba8d65c45a33db7c92f30fcb0c0f9f69c45791b90",
         "provider": "lampas"
       },
       "policy": "MANAGED"

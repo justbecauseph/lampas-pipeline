@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1310,7 +1310,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
+      "size": 1196021,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -1783,6 +1783,22 @@
       "sourceUrl": "https://modrinth.com/mod/no-chat-restrictions"
     },
     {
+      "id": "noble",
+      "name": "Noble Shaders",
+      "side": "client",
+      "filename": "Noble v1.9.8.zip",
+      "size": 16808457,
+      "description": "Using clever lighting techniques and powerful customization to create clean, immersive, and enjoyable visuals.",
+      "iconUrl": "https://cdn.modrinth.com/data/sclYVqbt/e8d8244abbad99de033b013a046d9fa4f7a084fc_96.webp",
+      "categories": [
+        "shader",
+        "fantasy",
+        "pbr",
+        "realistic"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/noble"
+    },
+    {
       "id": "not-enough-animations",
       "name": "Not Enough Animations",
       "side": "client",
@@ -2058,6 +2074,21 @@
       "sourceUrl": "https://modrinth.com/mod/recolourful-containers-gui"
     },
     {
+      "id": "recolourful-containers-gui-hud-dark",
+      "name": "Recolourful Containers GUI + HUD (DARK)",
+      "side": "client",
+      "filename": "Recolourful Containers DARK 3.1.3 (1.19.4+).zip",
+      "size": 2215671,
+      "description": "Do you want more immersive and more colourful GUIs and HUD? Than this pack is for you! NOW IN DARK",
+      "iconUrl": "https://cdn.modrinth.com/data/sQCUH0Mr/ea7fb8092c2d318e5388159d9dffc3091f636f66.png",
+      "categories": [
+        "core-shaders",
+        "gui",
+        "vanilla-like"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/recolourful-containers-gui-hud-dark"
+    },
+    {
       "id": "reeses-sodium-options",
       "name": "Reese's Sodium Options",
       "side": "client",
@@ -2308,8 +2339,8 @@
       "id": "streams-reflowing",
       "name": "Streams Reflowing",
       "side": "both",
-      "filename": "StreamsReflowing-26.2-fabric-2.13.1.jar",
-      "size": 2659653,
+      "filename": "StreamsReflowing-26.2-fabric-2.13.5.jar",
+      "size": 2716034,
       "description": "Adds beautiful flowing streams to your world.",
       "iconUrl": "https://cdn.modrinth.com/data/oLS8HdJ1/39dee53a0554e10ce6b7936762be12991ca38ba6.png",
       "categories": [
@@ -4254,13 +4285,13 @@
     },
     {
       "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
+      "size": 1196021,
       "hashes": {
-        "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-        "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82"
+        "sha256": "2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
+        "sha512": "d27757713ebb1e7d3fe19def9f8cee50269f4d063a8b2f2666a490087e459f3eda1c7a01f20fbd6b45f0beb911ed306c8aa38735c5b15f73da7a41fb12c860a9"
       },
       "download": {
-        "url": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+        "url": "/api/v1/blobs/2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4682,14 +4713,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/StreamsReflowing-26.2-fabric-2.13.1.jar",
-      "size": 2659653,
+      "path": "mods/StreamsReflowing-26.2-fabric-2.13.5.jar",
+      "size": 2716034,
       "hashes": {
-        "sha256": "2dc1a46e27b4c1c46d5f4c56bcad7918f6d78436157759adb01e7e788b5a37b5",
-        "sha512": "fdbaada1edb96ab039026c4351c9edd57aafdffc5ccc1a12f344057f86856825c50b2580514caef076fcd5f0cae10352bcca3fe5687260fe82e0f97026cd7be5"
+        "sha256": "10b5a971c16307b7b15b2eee4dd94092b21c147d9e3c43a3704b27675db942a7",
+        "sha512": "1f94fa11cc5b1e269bc99803bf6feef1570ac90350a59a07537a8694db53ed4f05bf8545d8933b4715152a2cff079daa740fa2d6d94968e4c7e3a8e721b2c16b"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/enNkL9Tp/StreamsReflowing-26.2-fabric-2.13.1.jar",
+        "url": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/A5i79RsE/StreamsReflowing-26.2-fabric-2.13.5.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -5059,6 +5090,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "shaderpacks/Noble v1.9.8.zip",
+      "size": 16808457,
+      "hashes": {
+        "sha256": "0d84bf7b8b49b0bad6e266416945600d7dc826bda1ec6d07638a0e0366e38fdd",
+        "sha512": "d5771e6d48387ed1c91bf6d537808cc4c2d176a8be7e1289bd09daa1689a2973bfb89d1cf83c9870918922361c7782e7117fa7b67b2dbd522cbeb9e3f95d27c8"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/sclYVqbt/versions/bnDts6hc/Noble%20v1.9.8.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "shaderpacks/photon_v1.3b.zip",
       "size": 3800987,
       "hashes": {
@@ -5120,6 +5164,19 @@
       "download": {
         "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "resourcepacks/Recolourful Containers DARK 3.1.3 (1.19.4+).zip",
+      "size": 2215671,
+      "hashes": {
+        "sha256": "cd4878ce5fa00e61e02f326ce2751026be30fc8e79d65041986d8b66cdade89d",
+        "sha512": "d6812799a98d478647052ef23e64ec7e59f941e37a674e2ca81db55b34c2128aa3b31292daae73b7b13ce42472f83eddc46d15d352ec412a74477d4f15d46d5e"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/RHDuyTyw/Recolourful%20Containers%20DARK%203.1.3%20%281.19.4%2B%29.zip",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },

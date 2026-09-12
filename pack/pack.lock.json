@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.14",
+  "packVersion": "2.1.15",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-11T10:18:53.962Z",
+  "updated": "2026-09-12T10:52:17.416Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -4136,11 +4136,11 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1164229,
-      "sha256": "a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
-      "sha512": "d054a764a78ebee60e1fc0acc7d667a2354f7a41eb3f14d2626e59e5cedea27d25274f91d6c86b27dac866fd2cb8d37c13b100432e07a789778d74f12f8aec82",
-      "sha1": "64637c84b59f6e44e471b961355ff9bd4986f2e5",
-      "downloadUrl": "/api/v1/blobs/a60b563dddf984bbf71cc982d6b16a3859407f60be6c193eb3e5edb7d01bb7ed",
+      "size": 1196021,
+      "sha256": "2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
+      "sha512": "d27757713ebb1e7d3fe19def9f8cee50269f4d063a8b2f2666a490087e459f3eda1c7a01f20fbd6b45f0beb911ed306c8aa38735c5b15f73da7a41fb12c860a9",
+      "sha1": "922d8c25654d93c22b5fa1c11feef82ce9684fda",
+      "downloadUrl": "/api/v1/blobs/2fd7c48ffda46d152ea5cfdf19da3fcf5d08fe1baa4ba89e42bda763c3ddeead",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
@@ -5304,18 +5304,18 @@
       "id": "streams-reflowing",
       "name": "Streams Reflowing",
       "side": "both",
-      "filename": "StreamsReflowing-26.2-fabric-2.13.1.jar",
-      "size": 2659653,
-      "sha256": "2dc1a46e27b4c1c46d5f4c56bcad7918f6d78436157759adb01e7e788b5a37b5",
-      "sha512": "fdbaada1edb96ab039026c4351c9edd57aafdffc5ccc1a12f344057f86856825c50b2580514caef076fcd5f0cae10352bcca3fe5687260fe82e0f97026cd7be5",
-      "sha1": "15b52fa40215b94a9f4121fd35caab34b64d3556",
-      "downloadUrl": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/enNkL9Tp/StreamsReflowing-26.2-fabric-2.13.1.jar",
+      "filename": "StreamsReflowing-26.2-fabric-2.13.5.jar",
+      "size": 2716034,
+      "sha256": "10b5a971c16307b7b15b2eee4dd94092b21c147d9e3c43a3704b27675db942a7",
+      "sha512": "1f94fa11cc5b1e269bc99803bf6feef1570ac90350a59a07537a8694db53ed4f05bf8545d8933b4715152a2cff079daa740fa2d6d94968e4c7e3a8e721b2c16b",
+      "sha1": "b575921e50369419b37fc85db64030d3ab5b7b93",
+      "downloadUrl": "https://cdn.modrinth.com/data/oLS8HdJ1/versions/A5i79RsE/StreamsReflowing-26.2-fabric-2.13.5.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "oLS8HdJ1",
-        "versionId": "enNkL9Tp"
+        "versionId": "A5i79RsE"
       },
       "metadata": {
         "description": "Adds beautiful flowing streams to your world.",
@@ -6440,6 +6440,36 @@
         "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
+    "noble": {
+      "id": "noble",
+      "name": "Noble Shaders",
+      "side": "client",
+      "filename": "Noble v1.9.8.zip",
+      "size": 16808457,
+      "sha256": "0d84bf7b8b49b0bad6e266416945600d7dc826bda1ec6d07638a0e0366e38fdd",
+      "sha512": "d5771e6d48387ed1c91bf6d537808cc4c2d176a8be7e1289bd09daa1689a2973bfb89d1cf83c9870918922361c7782e7117fa7b67b2dbd522cbeb9e3f95d27c8",
+      "sha1": "c89331bdfe0b383854aa900c32f467dabc0227f6",
+      "downloadUrl": "https://cdn.modrinth.com/data/sclYVqbt/versions/bnDts6hc/Noble%20v1.9.8.zip",
+      "artifactType": "shader",
+      "targetDir": "shaderpacks",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "sclYVqbt",
+        "versionId": "bnDts6hc"
+      },
+      "metadata": {
+        "description": "Using clever lighting techniques and powerful customization to create clean, immersive, and enjoyable visuals.",
+        "iconUrl": "https://cdn.modrinth.com/data/sclYVqbt/e8d8244abbad99de033b013a046d9fa4f7a084fc_96.webp",
+        "categories": [
+          "fantasy",
+          "pbr",
+          "realistic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/noble",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "photon-shader": {
       "id": "photon-shader",
       "name": "Photon Shaders",
@@ -6575,6 +6605,36 @@
       "provider": {
         "type": "lampas",
         "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+      }
+    },
+    "recolourful-containers-gui-hud-dark": {
+      "id": "recolourful-containers-gui-hud-dark",
+      "name": "Recolourful Containers GUI + HUD (DARK)",
+      "side": "client",
+      "filename": "Recolourful Containers DARK 3.1.3 (1.19.4+).zip",
+      "size": 2215671,
+      "sha256": "cd4878ce5fa00e61e02f326ce2751026be30fc8e79d65041986d8b66cdade89d",
+      "sha512": "d6812799a98d478647052ef23e64ec7e59f941e37a674e2ca81db55b34c2128aa3b31292daae73b7b13ce42472f83eddc46d15d352ec412a74477d4f15d46d5e",
+      "sha1": "48ee7c5e37a3efb5358bb61582890328fbcc552f",
+      "downloadUrl": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/RHDuyTyw/Recolourful%20Containers%20DARK%203.1.3%20%281.19.4%2B%29.zip",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "sQCUH0Mr",
+        "versionId": "RHDuyTyw"
+      },
+      "metadata": {
+        "description": "Do you want more immersive and more colourful GUIs and HUD? Than this pack is for you! NOW IN DARK",
+        "iconUrl": "https://cdn.modrinth.com/data/sQCUH0Mr/ea7fb8092c2d318e5388159d9dffc3091f636f66.png",
+        "categories": [
+          "core-shaders",
+          "gui",
+          "vanilla-like"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/recolourful-containers-gui-hud-dark",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "recolourful-containers-gui": {
@@ -6745,11 +6805,11 @@
       "name": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT",
       "side": "server",
       "filename": "lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 6724883,
-      "sha256": "4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
-      "sha512": "03274a330cf235df570bd37a7f725e4500fc3a53c17dc3e540e88a8caa6bbf9fc84feede3e57405638143eca739c1d81359f980ac2f10e753352714c01fa3de8",
-      "sha1": "cfeca5c09aa2a10a800d29bdacf13443e5ace8f7",
-      "downloadUrl": "/api/v1/blobs/4bfb5bd7309c8b96513d45b80aa96383465f1caeb2372bf19fa5a011c7bad4c9",
+      "size": 6725380,
+      "sha256": "bb1373c9dc8daca36026d7fba8d65c45a33db7c92f30fcb0c0f9f69c45791b90",
+      "sha512": "e35fe5d2584b8d8e5000336a4793845dd54fad41b7e08889c18c1fd3239e6274adb2584390c8a96af88e444f719f8742552fb8c44247b3827a9cb6b7f89f5160",
+      "sha1": "8e98bfd1a37db08f2565b14166655671c544d872",
+      "downloadUrl": "/api/v1/blobs/bb1373c9dc8daca36026d7fba8d65c45a33db7c92f30fcb0c0f9f69c45791b90",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
