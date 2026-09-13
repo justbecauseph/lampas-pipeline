@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.17",
+  "packVersion": "2.1.19",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-12T15:22:34.737Z",
+  "updated": "2026-09-13T00:05:33.052Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -296,8 +296,38 @@
         "serverSide": "required"
       }
     },
-    "beautiful_potions": {
-      "id": "beautiful_potions",
+    "beautiful-enchanted-books-mod-edition": {
+      "id": "beautiful-enchanted-books-mod-edition",
+      "name": "Beautiful Enchanted Books [MOD EDITION]",
+      "side": "both",
+      "filename": "BEB-Fabric-26.1.2-6.0.0.jar",
+      "size": 1617542,
+      "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
+      "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6",
+      "sha1": "2bf5b3079110e9e26bb1059d1381273ddf972bdc",
+      "downloadUrl": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "pcqEicMM",
+        "versionId": "jBOCNqVv"
+      },
+      "metadata": {
+        "description": "Forget about the boring aspects of enchanted books! Now they will have new aspects that are much more beautiful and characteristic of their theme.",
+        "iconUrl": "https://cdn.modrinth.com/data/pcqEicMM/633fe2daa2937ef7f6591d2770cabdac8b1578eb_96.webp",
+        "categories": [
+          "decoration",
+          "equipment",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/beautiful-enchanted-books-mod-edition",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "beautiful-potions-mod-edition": {
+      "id": "beautiful-potions-mod-edition",
       "name": "Beautiful Potions [MOD EDITION]",
       "side": "both",
       "filename": "BTP-Fabric-26.1.2-2.0.1.jar",
@@ -355,36 +385,6 @@
         "serverSide": "required"
       }
     },
-    "beb": {
-      "id": "beb",
-      "name": "Beautiful Enchanted Books [MOD EDITION]",
-      "side": "both",
-      "filename": "BEB-Fabric-26.1.2-6.0.0.jar",
-      "size": 1617542,
-      "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
-      "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6",
-      "sha1": "2bf5b3079110e9e26bb1059d1381273ddf972bdc",
-      "downloadUrl": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "pcqEicMM",
-        "versionId": "jBOCNqVv"
-      },
-      "metadata": {
-        "description": "Forget about the boring aspects of enchanted books! Now they will have new aspects that are much more beautiful and characteristic of their theme.",
-        "iconUrl": "https://cdn.modrinth.com/data/pcqEicMM/633fe2daa2937ef7f6591d2770cabdac8b1578eb_96.webp",
-        "categories": [
-          "decoration",
-          "equipment",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/beautiful-enchanted-books-mod-edition",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
     "better-combat": {
       "id": "better-combat",
       "name": "Better Combat",
@@ -419,18 +419,18 @@
       "id": "better_lib",
       "name": "Better Library",
       "side": "server",
-      "filename": "better_lib-fabric-26.1-2.1.1.jar",
-      "size": 325510,
-      "sha256": "2f95c2129ffa220a76222a2bec7bb955e1d3b64c7fd998141bc351ee412712f6",
-      "sha512": "b00d1762c1d2d925adc318981c6268c3a42df54954023b2e8a8fd100e50fe4eec98cd9a15683599db26ecf572b24a11c099417dd346bd53040d3ea52da83dde4",
-      "sha1": "68d0377cbed5d99a07a9da8c1a18dc64b3c791bf",
-      "downloadUrl": "https://cdn.modrinth.com/data/2x0ULgTj/versions/nSxpNb5i/better_lib-fabric-26.1-2.1.1.jar",
+      "filename": "better_lib-fabric-26.1-2.1.2.jar",
+      "size": 326154,
+      "sha256": "88b958cd67a97e5c1d6d035977828e6e336bd4a58faa3a2ce2003c6d6284936e",
+      "sha512": "4e9fc59aed5db2e4fc08b5a7a35e5e5d85f67ca28d86f2aacbcdc9a30e4c096941a35390fd22a6c98ddf366d6d0f06409ceeee722bdaa27bf4ea725dbad1488f",
+      "sha1": "92aba0a2d9b3cf53788b10d478b3b5823c5ff16b",
+      "downloadUrl": "https://cdn.modrinth.com/data/2x0ULgTj/versions/G7RtOOFX/better_lib-fabric-26.1-2.1.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "2x0ULgTj",
-        "versionId": "nSxpNb5i"
+        "versionId": "G7RtOOFX"
       },
       "metadata": {
         "description": "this is just a simple lib for config, 1st join message and live message",
@@ -507,18 +507,18 @@
       "id": "biolith",
       "name": "Biolith",
       "side": "both",
-      "filename": "biolith-fabric-3.7.0-alpha.2.jar",
-      "size": 237324,
-      "sha256": "29473e19176547785221f3d1abd48623204f93030059d0a28c9b31293bd255e8",
-      "sha512": "92535804fcb63ba45f17a138f5b86c5faf9d25ba2bba712cedc3612cbe73e697d42f55b1333be4addf4792773d4a17792490a6e117f433ba0935a89c5ecee758",
-      "sha1": "2216a87eb9a0ac82d05d74c33adf8e3ba7cf4e5d",
-      "downloadUrl": "https://cdn.modrinth.com/data/iGEl6Crx/versions/6aikmCOR/biolith-fabric-3.7.0-alpha.2.jar",
+      "filename": "biolith-fabric-3.7.0-beta.1.jar",
+      "size": 237369,
+      "sha256": "4311d6005d4c08b2cecae9ed2b4a7e1731d313a2e759b738b6469ba8a0df40a9",
+      "sha512": "53e2e3d45dd2566c5d4a4d02da85c096929f8da27ddc7d85eba0918f77b1fcda92eceb974418b4306aee6a6db37b39ab6d021dee5d873de04ee072e17a894c1f",
+      "sha1": "7ab86c1b76ca0ba5e66fa74ce0b888fe2629963b",
+      "downloadUrl": "https://cdn.modrinth.com/data/iGEl6Crx/versions/qSLRk6dS/biolith-fabric-3.7.0-beta.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "iGEl6Crx",
-        "versionId": "6aikmCOR"
+        "versionId": "qSLRk6dS"
       },
       "metadata": {
         "description": "A biome placement mod focusing on configurability and consistent distribution of modded biomes",
@@ -594,18 +594,18 @@
       "id": "c2me-fabric",
       "name": "Concurrent Chunk Management Engine (Fabric)",
       "side": "both",
-      "filename": "c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
-      "size": 3833382,
-      "sha256": "b013229383f51789c57684cbcfc12981c8d791206f3b594866dfeb74aed3770b",
-      "sha512": "c9c9c9babe4d94e06abf72c92e453aaa39c82634a7ae646d1041f673e12eff3d99e77e205a686ea53d0a5ae143e9e1e6ed595b3ccfcaeafe64cbfb6327e2f375",
-      "sha1": "adc075c03227d8ba9d25756286b6e16fb11d96d3",
-      "downloadUrl": "https://cdn.modrinth.com/data/VSNURh3q/versions/jSMMstCy/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
+      "filename": "c2me-fabric-mc26.2-0.4.2-alpha.0.52.jar",
+      "size": 3842500,
+      "sha256": "3395a95eb44753ae7cadb78519f1d5dda1a1b0cecee024d3f1e1a6138b803532",
+      "sha512": "76a7c52ea9b22295c15d02be7f1ca4b68fc67368465f1bd3cffb47cd36bf3bf6b9dd925bca02ccb2c7cb2c26df1235538d98ddbac43f85985c39fd183c9f3468",
+      "sha1": "994dcf809cbbf075a33b3f28c71331c845b415a2",
+      "downloadUrl": "https://cdn.modrinth.com/data/VSNURh3q/versions/LmKTn6Yc/c2me-fabric-mc26.2-0.4.2-alpha.0.52.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "VSNURh3q",
-        "versionId": "jSMMstCy"
+        "versionId": "LmKTn6Yc"
       },
       "metadata": {
         "description": "A Fabric mod designed to improve the chunk performance of Minecraft.",
@@ -1831,23 +1831,6 @@
         "serverSide": "required"
       }
     },
-    "fast-paintings": {
-      "id": "fast-paintings",
-      "name": "fast-paintings-1.2.0",
-      "side": "both",
-      "filename": "fast-paintings-1.0.0.jar",
-      "size": 78874,
-      "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-      "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801",
-      "sha1": "852aae7ad9ea129afc047dadac0294d1da48bebe",
-      "downloadUrl": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/fast-paintings-1.0.0.jar"
-      }
-    },
     "fastitemframes": {
       "id": "fastitemframes",
       "name": "Fast Item Frames",
@@ -1907,19 +1890,19 @@
     },
     "distant-decorations": {
       "id": "distant-decorations",
-      "name": "distant-decorations-0.1.0",
+      "name": "distant-decorations-1.0.0",
       "side": "both",
-      "filename": "distant-decorations-0.2.0.jar",
-      "size": 100686,
-      "sha256": "61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
-      "sha512": "a0a79654be42d0e414b6f6a6e43b3ff0411a68090fbafb2dd0a2fd75e322a86e799525c01bf7779a0c4457bd7a1f60647b2f4d2566b049da609c7d82526635e7",
-      "sha1": "1584014d416e0da80086144043b13645df9aebee",
-      "downloadUrl": "/api/v1/blobs/61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
+      "filename": "distant-decorations-1.0.0.jar",
+      "size": 112209,
+      "sha256": "107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
+      "sha512": "220cf84841a82ca6247a48b746a7280a72cc121e23bd4108ae3b24d1153df046dca4f0a7582aae30e0069786721d3d731806e00b1a6ea546dae4d166400b0213",
+      "sha1": "3c56dd1717a78be67120721c3045ca988d02a088",
+      "downloadUrl": "/api/v1/blobs/107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/distant-decorations-0.2.0.jar"
+        "file": "custom/distant-decorations-1.0.0.jar"
       }
     },
     "forcecloseworldloadingscreen": {
@@ -2579,18 +2562,18 @@
       "id": "jei",
       "name": "Just Enough Items (JEI)",
       "side": "both",
-      "filename": "jei-26.2-fabric-30.32.0.212.jar",
+      "filename": "jei-26.2-fabric-30.32.0.215.jar",
       "size": 1920506,
-      "sha256": "e8e043f3172f2590f5eadf41a6c67a4d572247bf0001b0f85a6ec160f012967d",
-      "sha512": "4dd5fdf24663fe1d3a03c9f8f87008a3cf79fe5be74e4b67cf5c517c9f2b385aaa1a69337a3d4fe3638b63ca8eea9205cf5ffe370470f037c51110bd6c6cb2a8",
-      "sha1": "1a928903b1284756ad18e1f4155307bb99e1c825",
-      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/SdabrSLO/jei-26.2-fabric-30.32.0.212.jar",
+      "sha256": "4384e311c031b922f17dcf7ac306f8bd122f0ea9c34d21cd1baffe2b0116042a",
+      "sha512": "36b7cbfb03880e3747701baf527a1a22e7ad7d07a294f6017d12498ca41f6806a06f2fd7bd1aaab105c315f42494e8170130fae043fc1314de065696581dab99",
+      "sha1": "056a79b00b53696f6a9342212f194ee09355c356",
+      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/9ZUrEGIL/jei-26.2-fabric-30.32.0.215.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "u6dRKJwZ",
-        "versionId": "SdabrSLO"
+        "versionId": "9ZUrEGIL"
       },
       "metadata": {
         "description": "View Items and Recipes",
@@ -3541,18 +3524,18 @@
       "id": "modmenu",
       "name": "Mod Menu",
       "side": "both",
-      "filename": "modmenu-20.0.1.jar",
-      "size": 614002,
-      "sha256": "81bfbca06012c57c74949072f2ffaad06360badee4d00dc59bfaeac80dd24bd8",
-      "sha512": "1aa297ab5e6fac71ad6af750fe6f8cd25281bd00c0340e5fe1c1e9d153d1198df03be1df55727a4a2116db97dcaad541d41754f3fc0063abfe4345b60f193fb4",
-      "sha1": "8562dee49eae1a6bdd14b026be1b300aedb5ce0f",
-      "downloadUrl": "https://cdn.modrinth.com/data/mOgUt4GM/versions/njXb639R/modmenu-20.0.1.jar",
+      "filename": "modmenu-20.0.2.jar",
+      "size": 616610,
+      "sha256": "1bf32f327b2257266e9dbd00b394800885c3a7c5ff86dc62be0dec129c1da482",
+      "sha512": "9baebd229ff5a0a377a0269f2a8783dd9bde682b0773d9ce380dedf61b214676f1d13b9904e84403afb418c13d3ee23c3120e09032c53cb4c762091af1a4b0fb",
+      "sha1": "4e02b8bfb7f4eb693f22b611b02bc2b7385614a7",
+      "downloadUrl": "https://cdn.modrinth.com/data/mOgUt4GM/versions/WdLLrOzD/modmenu-20.0.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "mOgUt4GM",
-        "versionId": "njXb639R"
+        "versionId": "WdLLrOzD"
       },
       "metadata": {
         "description": "Adds a mod menu to view the list of mods you have installed.",
@@ -3745,18 +3728,18 @@
       "id": "mru",
       "name": "MRU",
       "side": "client",
-      "filename": "mru-1.0.33+26.2-fabric.jar",
-      "size": 122808,
-      "sha256": "e6bd3b6a2be100fbe96fb44f528bfae913d79b24537e95fc4899c99f75fa88cc",
-      "sha512": "857c571d6e347fe520f07da36f8901a06b3a1f56e62ba11f1f5fd3af100ca261566cae88cfc08a5a6a56cce34cf4dac63a91325e0c84730d9eca02bcecf11c62",
-      "sha1": "e5c3477d3997153c2dfb5f82683ad1eee0731af7",
-      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/zCkjKVHx/mru-1.0.33%2B26.2-fabric.jar",
+      "filename": "mru-1.0.40+26.2-fabric.jar",
+      "size": 155133,
+      "sha256": "5557f5d966a9c6414fe7d0a8dba109c67e5304d3b33e6d82cc02c2519381fc8a",
+      "sha512": "93f0b1f10a8d73ccc6746f2b8c3a230fefcd0accada7d4c3fdf0abff67e51e8c7be29785f5ca43d94b2ad1912b86b31a47fd14e8dd47e861be9858da1e8eebe4",
+      "sha1": "520633ce05a822cb8c892c005d2aa98515aa1608",
+      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/hwBIFbwv/mru-1.0.40%2B26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "SNVQ2c0g",
-        "versionId": "zCkjKVHx"
+        "versionId": "hwBIFbwv"
       },
       "metadata": {
         "description": "A library mod used by Cassian and IMB11's mods to function.",
@@ -4644,6 +4627,35 @@
         "serverSide": "required"
       }
     },
+    "really-fast-paintings": {
+      "id": "really-fast-paintings",
+      "name": "Really Fast Paintings",
+      "side": "both",
+      "filename": "fast-paintings-1.1.0.jar",
+      "size": 94505,
+      "sha256": "58779fc2ccd7368c90f53fb74a64657450ab67820bf0db19519283dea85c84ca",
+      "sha512": "5579895ca9d65a20dc6a2b0bf2f5171298516cc60e0e02eae40d9813880dc025f896e8dcfcdb7c408bf674597e62cb4eae7bc59d9cbcebe699fb59f2724877f1",
+      "sha1": "e3d123f9829fb4780d7d2e0fa405fa3b2b48dac5",
+      "downloadUrl": "https://cdn.modrinth.com/data/8wqs2Gov/versions/9xOnhjEM/fast-paintings-1.1.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "8wqs2Gov",
+        "versionId": "9xOnhjEM"
+      },
+      "metadata": {
+        "description": "Block-backed paintings for Minecraft on Fabric.",
+        "iconUrl": "https://cdn.modrinth.com/data/8wqs2Gov/dc453388c6fabd34954f310695aba9297bcf0f7a_96.webp",
+        "categories": [
+          "optimization",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/really-fast-paintings",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "rechiseled": {
       "id": "rechiseled",
       "name": "Rechiseled",
@@ -5473,34 +5485,6 @@
         "serverSide": "required"
       }
     },
-    "superresolution": {
-      "id": "superresolution",
-      "name": "Super Resolution",
-      "side": "client",
-      "filename": "super_resolution-fabric-26.2-0.9.1-alpha.1+opengl.jar",
-      "size": 27240600,
-      "sha256": "480993af18379abd89d0ebb17b85d4a984d1c1b2ccf83d28313074a756931604",
-      "sha512": "d414103ad28573eea89195455307daff119bf2730504409b1ec2da15ce911fe7fbee908726e9e5ae43f75c3da7803e60fcf78924a32048f935c1f528881ad97a",
-      "sha1": "74e5c3d3d5a6fc69f6d930f33bffabd6f265f04b",
-      "downloadUrl": "https://cdn.modrinth.com/data/Hf3Qz2H3/versions/Nydspzyq/super_resolution-fabric-26.2-0.9.1-alpha.1%2Bopengl.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "Hf3Qz2H3",
-        "versionId": "Nydspzyq"
-      },
-      "metadata": {
-        "description": "This mod integrates several super-resolution algorithms in Minecraft to enhance performance or visual quality.",
-        "iconUrl": "https://cdn.modrinth.com/data/Hf3Qz2H3/d7ebf8589c92b3be53f1f296f8a0184273008d76_96.webp",
-        "categories": [
-          "optimization"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/superresolution",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "tables-chairs-2": {
       "id": "tables-chairs-2",
       "name": "Tables & Chairs 2",
@@ -5535,18 +5519,18 @@
       "id": "tectonic",
       "name": "Tectonic",
       "side": "server",
-      "filename": "tectonic-3.0.26-fabric-26.2.jar",
-      "size": 461405,
-      "sha256": "4fa2b27fdccb60da9942af70b2d157feea4609049ad80950ec4c33db36502168",
-      "sha512": "6ca2ac61ce7fa9e8758bdf83bff99c97d39a300efbec12db2714557aef420739b46a68aa62ee93cdd6339f8f7ad8cbbeca59f5be3c6361b8d0ea09e34a45864c",
-      "sha1": "93b62a1e7646f76088cdf38838837dc5c1efd387",
-      "downloadUrl": "https://cdn.modrinth.com/data/lWDHr9jE/versions/rc4JXlpP/tectonic-3.0.26-fabric-26.2.jar",
+      "filename": "tectonic-3.0.28-fabric-26.2.jar",
+      "size": 451635,
+      "sha256": "9e57f7ff2d0e39808f1523ce46e87feee2c66c9a2050839eaba9be7f9b0eaaf0",
+      "sha512": "c653ee42fe48c1be9512fa7791e8495095ae01cb607555202714bbb95cb49da272128bb295e8f8c262b63739e7ca2de4bba9196e1738b06012b498d220b55acf",
+      "sha1": "11268df5a441a6f47644560c3e76266291b4940c",
+      "downloadUrl": "https://cdn.modrinth.com/data/lWDHr9jE/versions/tGbplDzo/tectonic-3.0.28-fabric-26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "lWDHr9jE",
-        "versionId": "rc4JXlpP"
+        "versionId": "tGbplDzo"
       },
       "metadata": {
         "description": "Terrain shaping brought to new heights, grander and more varied than ever before!",
@@ -6363,6 +6347,36 @@
         "sourceUrl": "https://modrinth.com/mod/zfastsurface",
         "clientSide": "unsupported",
         "serverSide": "required"
+      }
+    },
+    "bsl-shaders": {
+      "id": "bsl-shaders",
+      "name": "BSL Shaders",
+      "side": "client",
+      "filename": "BSL_v10.1.5.zip",
+      "size": 1133936,
+      "sha256": "1038c018934c43018f9517e326c0cafcf8a3fb83db0d2cce0697fa8ee1289838",
+      "sha512": "ee5f5445b101e6a85942b78e9da1d4266d7ed277a56a83189ac5dc4fab3ce1f8de4c66c52cf87c747f94e871fb2888684aa6763ab907e1c5c9926594d1996504",
+      "sha1": "49bed4894881b22fa680b97504f0c3265bafbcbc",
+      "downloadUrl": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/yFTiE1Nc/BSL_v10.1.5.zip",
+      "artifactType": "shader",
+      "targetDir": "shaderpacks",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "Q1vvjJYV",
+        "versionId": "yFTiE1Nc"
+      },
+      "metadata": {
+        "description": "Shaderpack for Minecraft: Java Edition. It's bright, colorful, and distinct.",
+        "iconUrl": "https://cdn.modrinth.com/data/Q1vvjJYV/2a611a3cb434fb52fb81fa5dace13c5d8b67e55d_96.webp",
+        "categories": [
+          "bloom",
+          "cartoon",
+          "low"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/bsl-shaders",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "complementary-reimagined": {

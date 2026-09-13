@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.17",
+  "version": "2.1.19",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -205,7 +205,7 @@
       "sourceUrl": "https://modrinth.com/mod/bclib"
     },
     {
-      "id": "beb",
+      "id": "beautiful-enchanted-books-mod-edition",
       "name": "Beautiful Enchanted Books [MOD EDITION]",
       "side": "both",
       "filename": "BEB-Fabric-26.1.2-6.0.0.jar",
@@ -220,7 +220,7 @@
       "sourceUrl": "https://modrinth.com/mod/beautiful-enchanted-books-mod-edition"
     },
     {
-      "id": "beautiful_potions",
+      "id": "beautiful-potions-mod-edition",
       "name": "Beautiful Potions [MOD EDITION]",
       "side": "both",
       "filename": "BTP-Fabric-26.1.2-2.0.1.jar",
@@ -297,8 +297,8 @@
       "id": "biolith",
       "name": "Biolith",
       "side": "both",
-      "filename": "biolith-fabric-3.7.0-alpha.2.jar",
-      "size": 237324,
+      "filename": "biolith-fabric-3.7.0-beta.1.jar",
+      "size": 237369,
       "description": "A biome placement mod focusing on configurability and consistent distribution of modded biomes",
       "iconUrl": "https://cdn.modrinth.com/data/iGEl6Crx/3e39acc5f90937448161367728e9670f51d1e969_96.webp",
       "categories": [
@@ -306,6 +306,22 @@
         "worldgen"
       ],
       "sourceUrl": "https://modrinth.com/mod/biolith"
+    },
+    {
+      "id": "bsl-shaders",
+      "name": "BSL Shaders",
+      "side": "client",
+      "filename": "BSL_v10.1.5.zip",
+      "size": 1133936,
+      "description": "Shaderpack for Minecraft: Java Edition. It's bright, colorful, and distinct.",
+      "iconUrl": "https://cdn.modrinth.com/data/Q1vvjJYV/2a611a3cb434fb52fb81fa5dace13c5d8b67e55d_96.webp",
+      "categories": [
+        "shader",
+        "bloom",
+        "cartoon",
+        "low"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/bsl-shaders"
     },
     {
       "id": "builders-boundry",
@@ -432,8 +448,8 @@
       "id": "c2me-fabric",
       "name": "Concurrent Chunk Management Engine (Fabric)",
       "side": "both",
-      "filename": "c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
-      "size": 3833382,
+      "filename": "c2me-fabric-mc26.2-0.4.2-alpha.0.52.jar",
+      "size": 3842500,
       "description": "A Fabric mod designed to improve the chunk performance of Minecraft.",
       "iconUrl": "https://cdn.modrinth.com/data/VSNURh3q/3c2ce471054466712a44c8758a03e03bb868f93b_96.webp",
       "categories": [
@@ -619,10 +635,10 @@
     },
     {
       "id": "distant-decorations",
-      "name": "distant-decorations-0.1.0",
+      "name": "distant-decorations-1.0.0",
       "side": "both",
-      "filename": "distant-decorations-0.2.0.jar",
-      "size": 100686,
+      "filename": "distant-decorations-1.0.0.jar",
+      "size": 112209,
       "categories": []
     },
     {
@@ -910,14 +926,6 @@
       "sourceUrl": "https://modrinth.com/mod/zfastnoise"
     },
     {
-      "id": "fast-paintings",
-      "name": "fast-paintings-1.2.0",
-      "side": "both",
-      "filename": "fast-paintings-1.0.0.jar",
-      "size": 78874,
-      "categories": []
-    },
-    {
       "id": "ferrite-core",
       "name": "FerriteCore",
       "side": "both",
@@ -1192,7 +1200,7 @@
       "id": "jei",
       "name": "Just Enough Items (JEI)",
       "side": "both",
-      "filename": "jei-26.2-fabric-30.32.0.212.jar",
+      "filename": "jei-26.2-fabric-30.32.0.215.jar",
       "size": 1920506,
       "description": "View Items and Recipes",
       "iconUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/4a3f18ac0d096c9f8e9176984c44be4e58f94c89_96.webp",
@@ -1545,8 +1553,8 @@
       "id": "modmenu",
       "name": "Mod Menu",
       "side": "both",
-      "filename": "modmenu-20.0.1.jar",
-      "size": 614002,
+      "filename": "modmenu-20.0.2.jar",
+      "size": 616610,
       "description": "Adds a mod menu to view the list of mods you have installed.",
       "iconUrl": "https://cdn.modrinth.com/data/mOgUt4GM/5a20ed1450a0e1e79a1fe04e61bb4e5878bf1d20.png",
       "categories": [
@@ -1706,8 +1714,8 @@
       "id": "mru",
       "name": "MRU",
       "side": "client",
-      "filename": "mru-1.0.33+26.2-fabric.jar",
-      "size": 122808,
+      "filename": "mru-1.0.40+26.2-fabric.jar",
+      "size": 155133,
       "description": "A library mod used by Cassian and IMB11's mods to function.",
       "iconUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/82339bfc8a0a3a6a3c376f5c29555a378379cfa0_96.webp",
       "categories": [
@@ -2046,6 +2054,20 @@
       "sourceUrl": "https://modrinth.com/mod/rsls"
     },
     {
+      "id": "really-fast-paintings",
+      "name": "Really Fast Paintings",
+      "side": "both",
+      "filename": "fast-paintings-1.1.0.jar",
+      "size": 94505,
+      "description": "Block-backed paintings for Minecraft on Fabric.",
+      "iconUrl": "https://cdn.modrinth.com/data/8wqs2Gov/dc453388c6fabd34954f310695aba9297bcf0f7a_96.webp",
+      "categories": [
+        "optimization",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/really-fast-paintings"
+    },
+    {
       "id": "rechiseled",
       "name": "Rechiseled",
       "side": "both",
@@ -2348,19 +2370,6 @@
         "worldgen"
       ],
       "sourceUrl": "https://modrinth.com/mod/streams-reflowing"
-    },
-    {
-      "id": "superresolution",
-      "name": "Super Resolution",
-      "side": "client",
-      "filename": "super_resolution-fabric-26.2-0.9.1-alpha.1+opengl.jar",
-      "size": 27240600,
-      "description": "This mod integrates several super-resolution algorithms in Minecraft to enhance performance or visual quality.",
-      "iconUrl": "https://cdn.modrinth.com/data/Hf3Qz2H3/d7ebf8589c92b3be53f1f296f8a0184273008d76_96.webp",
-      "categories": [
-        "optimization"
-      ],
-      "sourceUrl": "https://modrinth.com/mod/superresolution"
     },
     {
       "id": "supermartijn642configlib",
@@ -2776,6 +2785,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/BEB-Fabric-26.1.2-6.0.0.jar",
+      "size": 1617542,
+      "hashes": {
+        "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
+        "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/BTP-Fabric-26.1.2-2.0.1.jar",
       "size": 1860484,
       "hashes": {
@@ -2797,19 +2819,6 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/DhSSvaxs/versions/YWck5vON/beautify-fabric-2.0.0%2B26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/BEB-Fabric-26.1.2-6.0.0.jar",
-      "size": 1617542,
-      "hashes": {
-        "sha256": "08819eb4b0773d389b850dad7cc0c2134a1fcb5d3693d28e03cc8c309181fa8f",
-        "sha512": "acab485d64cd194a0b20660f2f83224ef6be9913706f4be43e5c01a26c64a42b7e93f56907ddbddcdd23b6954a3f7e7b90cdf43e8e26f3f3760c484368d752c6"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/pcqEicMM/versions/jBOCNqVv/BEB-Fabric-26.1.2-6.0.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2854,14 +2863,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/biolith-fabric-3.7.0-alpha.2.jar",
-      "size": 237324,
+      "path": "mods/biolith-fabric-3.7.0-beta.1.jar",
+      "size": 237369,
       "hashes": {
-        "sha256": "29473e19176547785221f3d1abd48623204f93030059d0a28c9b31293bd255e8",
-        "sha512": "92535804fcb63ba45f17a138f5b86c5faf9d25ba2bba712cedc3612cbe73e697d42f55b1333be4addf4792773d4a17792490a6e117f433ba0935a89c5ecee758"
+        "sha256": "4311d6005d4c08b2cecae9ed2b4a7e1731d313a2e759b738b6469ba8a0df40a9",
+        "sha512": "53e2e3d45dd2566c5d4a4d02da85c096929f8da27ddc7d85eba0918f77b1fcda92eceb974418b4306aee6a6db37b39ab6d021dee5d873de04ee072e17a894c1f"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/iGEl6Crx/versions/6aikmCOR/biolith-fabric-3.7.0-alpha.2.jar",
+        "url": "https://cdn.modrinth.com/data/iGEl6Crx/versions/qSLRk6dS/biolith-fabric-3.7.0-beta.1.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2880,14 +2889,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
-      "size": 3833382,
+      "path": "mods/c2me-fabric-mc26.2-0.4.2-alpha.0.52.jar",
+      "size": 3842500,
       "hashes": {
-        "sha256": "b013229383f51789c57684cbcfc12981c8d791206f3b594866dfeb74aed3770b",
-        "sha512": "c9c9c9babe4d94e06abf72c92e453aaa39c82634a7ae646d1041f673e12eff3d99e77e205a686ea53d0a5ae143e9e1e6ed595b3ccfcaeafe64cbfb6327e2f375"
+        "sha256": "3395a95eb44753ae7cadb78519f1d5dda1a1b0cecee024d3f1e1a6138b803532",
+        "sha512": "76a7c52ea9b22295c15d02be7f1ca4b68fc67368465f1bd3cffb47cd36bf3bf6b9dd925bca02ccb2c7cb2c26df1235538d98ddbac43f85985c39fd183c9f3468"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/VSNURh3q/versions/jSMMstCy/c2me-fabric-mc26.2-0.4.2-alpha.0.43.jar",
+        "url": "https://cdn.modrinth.com/data/VSNURh3q/versions/LmKTn6Yc/c2me-fabric-mc26.2-0.4.2-alpha.0.52.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3348,19 +3357,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/fast-paintings-1.0.0.jar",
-      "size": 78874,
-      "hashes": {
-        "sha256": "1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-        "sha512": "e49d9d02c9baa0f4651d29cbcc65f73143d261ae03f4be8667f06129f103bd5b6c3bdc25c9366c0b91439da493c3557c2be08f26e3825c979643a8b9cbad2801"
-      },
-      "download": {
-        "url": "/api/v1/blobs/1c20fe8e5fe7fa0f98941a41d9b9d1e721016c3bb70cd8a1b3412bc3e7b149d6",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/FastItemFrames-v26.2.1-mc26.2.x-Fabric.jar",
       "size": 100440,
       "hashes": {
@@ -3387,14 +3383,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/distant-decorations-0.2.0.jar",
-      "size": 100686,
+      "path": "mods/distant-decorations-1.0.0.jar",
+      "size": 112209,
       "hashes": {
-        "sha256": "61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
-        "sha512": "a0a79654be42d0e414b6f6a6e43b3ff0411a68090fbafb2dd0a2fd75e322a86e799525c01bf7779a0c4457bd7a1f60647b2f4d2566b049da609c7d82526635e7"
+        "sha256": "107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
+        "sha512": "220cf84841a82ca6247a48b746a7280a72cc121e23bd4108ae3b24d1153df046dca4f0a7582aae30e0069786721d3d731806e00b1a6ea546dae4d166400b0213"
       },
       "download": {
-        "url": "/api/v1/blobs/61f8a7f17234e3388dbd2b7928e6c5d058ffd2e8930aa4bf79b8c21ed4bb1e12",
+        "url": "/api/v1/blobs/107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3608,14 +3604,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/jei-26.2-fabric-30.32.0.212.jar",
+      "path": "mods/jei-26.2-fabric-30.32.0.215.jar",
       "size": 1920506,
       "hashes": {
-        "sha256": "e8e043f3172f2590f5eadf41a6c67a4d572247bf0001b0f85a6ec160f012967d",
-        "sha512": "4dd5fdf24663fe1d3a03c9f8f87008a3cf79fe5be74e4b67cf5c517c9f2b385aaa1a69337a3d4fe3638b63ca8eea9205cf5ffe370470f037c51110bd6c6cb2a8"
+        "sha256": "4384e311c031b922f17dcf7ac306f8bd122f0ea9c34d21cd1baffe2b0116042a",
+        "sha512": "36b7cbfb03880e3747701baf527a1a22e7ad7d07a294f6017d12498ca41f6806a06f2fd7bd1aaab105c315f42494e8170130fae043fc1314de065696581dab99"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/SdabrSLO/jei-26.2-fabric-30.32.0.212.jar",
+        "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/9ZUrEGIL/jei-26.2-fabric-30.32.0.215.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -4037,14 +4033,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/modmenu-20.0.1.jar",
-      "size": 614002,
+      "path": "mods/modmenu-20.0.2.jar",
+      "size": 616610,
       "hashes": {
-        "sha256": "81bfbca06012c57c74949072f2ffaad06360badee4d00dc59bfaeac80dd24bd8",
-        "sha512": "1aa297ab5e6fac71ad6af750fe6f8cd25281bd00c0340e5fe1c1e9d153d1198df03be1df55727a4a2116db97dcaad541d41754f3fc0063abfe4345b60f193fb4"
+        "sha256": "1bf32f327b2257266e9dbd00b394800885c3a7c5ff86dc62be0dec129c1da482",
+        "sha512": "9baebd229ff5a0a377a0269f2a8783dd9bde682b0773d9ce380dedf61b214676f1d13b9904e84403afb418c13d3ee23c3120e09032c53cb4c762091af1a4b0fb"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/njXb639R/modmenu-20.0.1.jar",
+        "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/WdLLrOzD/modmenu-20.0.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -4115,14 +4111,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/mru-1.0.33+26.2-fabric.jar",
-      "size": 122808,
+      "path": "mods/mru-1.0.40+26.2-fabric.jar",
+      "size": 155133,
       "hashes": {
-        "sha256": "e6bd3b6a2be100fbe96fb44f528bfae913d79b24537e95fc4899c99f75fa88cc",
-        "sha512": "857c571d6e347fe520f07da36f8901a06b3a1f56e62ba11f1f5fd3af100ca261566cae88cfc08a5a6a56cce34cf4dac63a91325e0c84730d9eca02bcecf11c62"
+        "sha256": "5557f5d966a9c6414fe7d0a8dba109c67e5304d3b33e6d82cc02c2519381fc8a",
+        "sha512": "93f0b1f10a8d73ccc6746f2b8c3a230fefcd0accada7d4c3fdf0abff67e51e8c7be29785f5ca43d94b2ad1912b86b31a47fd14e8dd47e861be9858da1e8eebe4"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/zCkjKVHx/mru-1.0.33%2B26.2-fabric.jar",
+        "url": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/hwBIFbwv/mru-1.0.40%2B26.2-fabric.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -4440,6 +4436,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/fast-paintings-1.1.0.jar",
+      "size": 94505,
+      "hashes": {
+        "sha256": "58779fc2ccd7368c90f53fb74a64657450ab67820bf0db19519283dea85c84ca",
+        "sha512": "5579895ca9d65a20dc6a2b0bf2f5171298516cc60e0e02eae40d9813880dc025f896e8dcfcdb7c408bf674597e62cb4eae7bc59d9cbcebe699fb59f2724877f1"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/8wqs2Gov/versions/9xOnhjEM/fast-paintings-1.1.0.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/rechiseled-1.2.5-fabric-mc26.2.jar",
       "size": 12265078,
       "hashes": {
@@ -4752,19 +4761,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/super_resolution-fabric-26.2-0.9.1-alpha.1+opengl.jar",
-      "size": 27240600,
-      "hashes": {
-        "sha256": "480993af18379abd89d0ebb17b85d4a984d1c1b2ccf83d28313074a756931604",
-        "sha512": "d414103ad28573eea89195455307daff119bf2730504409b1ec2da15ce911fe7fbee908726e9e5ae43f75c3da7803e60fcf78924a32048f935c1f528881ad97a"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/Hf3Qz2H3/versions/Nydspzyq/super_resolution-fabric-26.2-0.9.1-alpha.1%2Bopengl.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/tables-chairs-2-0.6.jar",
       "size": 2781375,
       "hashes": {
@@ -5046,6 +5042,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/OnlVIpq5/versions/RxI4fDfx/zfastnoise-1.1.0-beta.6%2B26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "shaderpacks/BSL_v10.1.5.zip",
+      "size": 1133936,
+      "hashes": {
+        "sha256": "1038c018934c43018f9517e326c0cafcf8a3fb83db0d2cce0697fa8ee1289838",
+        "sha512": "ee5f5445b101e6a85942b78e9da1d4266d7ed277a56a83189ac5dc4fab3ce1f8de4c66c52cf87c747f94e871fb2888684aa6763ab907e1c5c9926594d1996504"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/yFTiE1Nc/BSL_v10.1.5.zip",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
