@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.20",
+  "version": "2.1.21",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1318,7 +1318,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1189960,
+      "size": 1192662,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -4281,13 +4281,13 @@
     },
     {
       "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1189960,
+      "size": 1192662,
       "hashes": {
-        "sha256": "0d04eb692c5aee74cffb424cabbdf8947444a97250d145a23ad50c9fdf56d70a",
-        "sha512": "b61732a8da93c06f1527529752a09407a41bf714eb02e9324f5ea0a19fcd593ee5dc30fdc08d37d182dc0e9edde528a08813c5e4945f64953961c80af344d9f7"
+        "sha256": "6d6bd396b10bafef863f57cea3f5e7e24729c7361631de1aa4aeeb2bb185cafb",
+        "sha512": "6d41fd8a0cdaf7c6fca5890e2c64309c3b8286351c5cc4fa94cdc2e28775aecd11de26e1cb15606b96906296d893e6335506c1ff575faf44046c062053e8407f"
       },
       "download": {
-        "url": "/api/v1/blobs/0d04eb692c5aee74cffb424cabbdf8947444a97250d145a23ad50c9fdf56d70a",
+        "url": "/api/v1/blobs/6d6bd396b10bafef863f57cea3f5e7e24729c7361631de1aa4aeeb2bb185cafb",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -8747,6 +8747,32 @@
       },
       "download": {
         "url": "/api/v1/blobs/078579b01dd6860509d49268052837918ad83336f383c19c08435bad9b3f079d",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/enchantmentinsights-client.toml",
+      "size": 7781,
+      "hashes": {
+        "sha256": "c29bb0f4fa05baa9f7efa39d5299e5ec1adaeccc2098e314c2582b6f7af763e5",
+        "sha512": "6e9992b7143c4fed3dfa6d4388d587e1e3f5011c09c8ab346899655f797a1f4376dacde3f9ace76702b212c470f0e67979bd63e8bcde6be3b70237e57b770295"
+      },
+      "download": {
+        "url": "/api/v1/blobs/c29bb0f4fa05baa9f7efa39d5299e5ec1adaeccc2098e314c2582b6f7af763e5",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "config/enchantmentlevelcapindicator.json5",
+      "size": 438,
+      "hashes": {
+        "sha256": "59caef6a922e8e5c30d19a9c54c8af07932b44db0f589d6cd10210982cf75059",
+        "sha512": "a030cbeb42136c6dd944afd4d791f2f7f202eb082321e56c22bd3c67e70f809c7b0db31c1a3d4bb611c09a70b28c1db8886113afc56cc259a947f15b3b6d2f0c"
+      },
+      "download": {
+        "url": "/api/v1/blobs/59caef6a922e8e5c30d19a9c54c8af07932b44db0f589d6cd10210982cf75059",
         "provider": "lampas"
       },
       "policy": "MANAGED"
