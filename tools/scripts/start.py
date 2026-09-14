@@ -103,7 +103,7 @@ def main():
     parser = argparse.ArgumentParser(description="Lampas Minecraft Server Starter")
     parser.add_argument("--no-sync", action="store_true", help="Skip automatic pack synchronization before launch")
     parser.add_argument("--allow-stale", action="store_true", help="Allow server launch even if pack synchronization fails")
-    parser.add_argument("--memory", default=os.getenv("JAVA_MEMORY", "2560M"), help="JVM heap memory (default: 2560M)")
+    parser.add_argument("--memory", default=os.getenv("JAVA_MEMORY", "3360M"), help="JVM heap memory (default: 2560M)")
     parser.add_argument("--portal-url", default=os.getenv("PORTAL_URL", "https://dev.lampas.town"), help="Lampas Portal URL for sync")
     parser.add_argument("--channel", default=os.getenv("RELEASE_CHANNEL", "dev"), help="Release channel (stable/beta/dev)")
     parser.add_argument("--version", default=None, help="Specific pack release version to deploy (overrides --channel)")
@@ -210,6 +210,10 @@ def main():
         "-Dfile.encoding=UTF-8",
         "-Dlog4j2.formatMsgNoLookups=true",
     ]
+
+    log4j_cfg = os.path.join(SERVER_DIR, "log4j2.xml")
+    if os.path.exists(log4j_cfg):
+        optimized_jvm_flags.append(f"-Dlog4j2.configurationFile={log4j_cfg}")
 
     # Combine flags and extra arguments
     base_cmd = ["cmd.exe", "/c", java_bin] if (sys.platform == "win32" and (java_bin.lower().endswith(".bat") or java_bin.lower().endswith(".cmd"))) else [java_bin]
