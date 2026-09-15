@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.1.23",
+  "version": "2.1.24",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -454,6 +454,20 @@
         "utility"
       ],
       "sourceUrl": "https://modrinth.com/mod/dbtools"
+    },
+    {
+      "id": "debugify",
+      "name": "Debugify",
+      "side": "both",
+      "filename": "debugify-26.2.0.0.jar",
+      "size": 368634,
+      "description": "Fixes Minecraft bugs found on the bug tracker",
+      "iconUrl": "https://cdn.modrinth.com/data/QwxR6Gcd/d16ec025a7f2d9908248bb4d1477e3e624a2f17f_96.webp",
+      "categories": [
+        "optimization",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/debugify"
     },
     {
       "id": "decorativelamps",
@@ -2823,6 +2837,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/6SWRzDjk/versions/qM0ms2u5/DBTools-2.2.3%2BMC26.2-AX6.0.5.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/debugify-26.2.0.0.jar",
+      "size": 368634,
+      "hashes": {
+        "sha256": "f972d4d63ec9bd3f5464f1e64259dd47c8f9e8c907b3dfb680c8b4f3c032bae9",
+        "sha512": "41999eeff94c6a69810d65571bb09cb49a6c29a1e134f49fe31fe826e41f7a6cf7997350fb0d175270fe10c81e5e6433738562f8a22a57725a6f76544414e396"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/QwxR6Gcd/versions/V2I3yC58/debugify-26.2.0.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

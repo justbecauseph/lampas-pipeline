@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.1.23",
+  "packVersion": "2.1.24",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-14T22:44:39.534Z",
+  "updated": "2026-09-15T03:40:48.971Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -502,6 +502,35 @@
         "serverSide": "required"
       }
     },
+    "bettergrassify": {
+      "id": "bettergrassify",
+      "name": "BetterGrassify",
+      "side": "client",
+      "filename": "BetterGrassify-1.8.7+fabric.26.2.jar",
+      "size": 88858,
+      "sha256": "823e14c7b41c0656d66948eb9e00cced829cdfac19a92d64f4b830df05a2ddf9",
+      "sha512": "7b70e796cea2ee57a6022108092517b6aa39d5a19b8da1de26685ae53b8fbb4717cd91ee1d232c54efa8e210ebe9b760d3dab79bf9a5fdb5ae75d97b461a1fab",
+      "sha1": "0f4a890d07402280686a518579fa9fa02309e315",
+      "downloadUrl": "https://cdn.modrinth.com/data/m5T5xmUy/versions/r4yqxYQl/BetterGrassify-1.8.7%2Bfabric.26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "m5T5xmUy",
+        "versionId": "r4yqxYQl"
+      },
+      "metadata": {
+        "description": "Gamers can finally touch grass!?\n\nOptiFine's Fancy and Fast better grass implemented on Fabric and NeoForge!",
+        "iconUrl": "https://cdn.modrinth.com/data/m5T5xmUy/a69f6abbc0c2007e7b630f55f797c505c23c11f5_96.webp",
+        "categories": [
+          "optimization",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/bettergrassify",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "betternether": {
       "id": "betternether",
       "name": "BetterNether",
@@ -846,6 +875,36 @@
         "serverSide": "unsupported"
       }
     },
+    "consumableoptimizer": {
+      "id": "consumableoptimizer",
+      "name": "Consumable Optimizer",
+      "side": "client",
+      "filename": "ConsumableOptimizer-2.2.2-26.2.jar",
+      "size": 149959,
+      "sha256": "b815d66a556a22169f05bd63e177e4d5778feee815e5eb4b9f0cf316b49cc5a3",
+      "sha512": "35ecb8bc4e2d07d49e33d65f5058759bfae3ee23e887c255517e69401ada741d139b1680416f59c0376c325c32f7a083cef486f263822d1a367426798d966e97",
+      "sha1": "34af4e1546abeca1a725db6809811345b306f940",
+      "downloadUrl": "https://cdn.modrinth.com/data/4alTd2ag/versions/tEmd4FGS/ConsumableOptimizer-2.2.2-26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "4alTd2ag",
+        "versionId": "tEmd4FGS"
+      },
+      "metadata": {
+        "description": "Handles eating client-side, ensuring servers don't slow down the eating process",
+        "iconUrl": "https://cdn.modrinth.com/data/4alTd2ag/861eb3ac98f0610c9987caae3ee8ee905ec3eac8_96.webp",
+        "categories": [
+          "equipment",
+          "game-mechanics",
+          "optimization"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/consumableoptimizer",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "continuity": {
       "id": "continuity",
       "name": "Continuity",
@@ -963,6 +1022,34 @@
         "serverSide": "required"
       }
     },
+    "cubes-without-borders": {
+      "id": "cubes-without-borders",
+      "name": "Cubes Without Borders",
+      "side": "client",
+      "filename": "cwb-4.1.0+26.2.jar",
+      "size": 91405,
+      "sha256": "3123c15a5840e2bc5f44a5cc1b4785f75e96bdb903fd5dc901d10e08e53faaaa",
+      "sha512": "b63b07080cb6ff69f52afb1e33fc1664b25b04bcda54b482ca76d50851de76491238b4e6e4adaca5ed478dc67ea26ade69908aea268a75aae9d3f62d3cff19eb",
+      "sha1": "9420614dd8f95a9ca1e1b2371f342e92855bb354",
+      "downloadUrl": "https://cdn.modrinth.com/data/ETlrkaYF/versions/Zn8JbMkF/cwb-4.1.0%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "ETlrkaYF",
+        "versionId": "Zn8JbMkF"
+      },
+      "metadata": {
+        "description": "Allows you to play Minecraft in a borderless fullscreen window.",
+        "iconUrl": "https://cdn.modrinth.com/data/ETlrkaYF/6c1711b4b788b5f25cc1e99ed8805aea94d9e167_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/cubes-without-borders",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "cutthrough": {
       "id": "cutthrough",
       "name": "Cut Through",
@@ -1048,6 +1135,35 @@
         "sourceUrl": "https://modrinth.com/mod/dbtools",
         "clientSide": "required",
         "serverSide": "required"
+      }
+    },
+    "debugify": {
+      "id": "debugify",
+      "name": "Debugify",
+      "side": "both",
+      "filename": "debugify-26.2.0.0.jar",
+      "size": 368634,
+      "sha256": "f972d4d63ec9bd3f5464f1e64259dd47c8f9e8c907b3dfb680c8b4f3c032bae9",
+      "sha512": "41999eeff94c6a69810d65571bb09cb49a6c29a1e134f49fe31fe826e41f7a6cf7997350fb0d175270fe10c81e5e6433738562f8a22a57725a6f76544414e396",
+      "sha1": "a1b34d3b6f069569df9ad99b1e40eb765f0baa06",
+      "downloadUrl": "https://cdn.modrinth.com/data/QwxR6Gcd/versions/V2I3yC58/debugify-26.2.0.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "QwxR6Gcd",
+        "versionId": "V2I3yC58"
+      },
+      "metadata": {
+        "description": "Fixes Minecraft bugs found on the bug tracker",
+        "iconUrl": "https://cdn.modrinth.com/data/QwxR6Gcd/d16ec025a7f2d9908248bb4d1477e3e624a2f17f_96.webp",
+        "categories": [
+          "optimization",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/debugify",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "decorativelamps": {
@@ -6260,6 +6376,36 @@
         "serverSide": "unsupported"
       }
     },
+    "walksylib": {
+      "id": "walksylib",
+      "name": "WalksyLib",
+      "side": "client",
+      "filename": "WalksyLib-1.0.12+26.2.jar",
+      "size": 283491,
+      "sha256": "3480e7a04d31d7e8cde0c47fce2290a2d837b415149718317001a30e19867449",
+      "sha512": "d381ff432026ae9fd3db837baf87b344c283b18a124fd36645db2e53f9d00454f268da8bc16f98d3bd9ebd29aed7cf204c728a51132aa18feccb6c5ec9d3d07d",
+      "sha1": "215feafd6a59e35dd32e0e3e19d22ea888d2952e",
+      "downloadUrl": "https://cdn.modrinth.com/data/7P86n6Vg/versions/XoYFvwqe/WalksyLib-1.0.12%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "7P86n6Vg",
+        "versionId": "XoYFvwqe"
+      },
+      "metadata": {
+        "description": "A config / utility library for my mods",
+        "iconUrl": "https://cdn.modrinth.com/data/7P86n6Vg/ae681f3326e26337b61ccb660ffba988565c017d.png",
+        "categories": [
+          "library",
+          "management",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/walksylib",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "wilderwild": {
       "id": "wilderwild",
       "name": "Wilder Wild",
@@ -6966,11 +7112,11 @@
       "name": "Figura",
       "side": "client",
       "filename": "figura-0.1.6-rc.1+26.2.jar",
-      "size": 3228383,
-      "sha256": "700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
-      "sha512": "c759fc632346382d00b4f827ee7751287f9bde5ffdf2553475d6b894f98f64520136b64ec8a9b3db6da162beb86cfc0cfd813fad943fa3ae60a2949da363a623",
-      "sha1": "1df0d8d43e1a10970015b55c3f2626341e3c95b5",
-      "downloadUrl": "/api/v1/blobs/700a5c46ff78cbfdd1d80dd1622d016914a85582ebf0925cec3d47bdc870fe94",
+      "size": 3228916,
+      "sha256": "6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
+      "sha512": "b1b98499179cb017fa931c74184d31f53c3c2a1d03fc79e006c4ed3b4aae7d66e010bec6cc789944a340e622177edd36e600040dec17e0eb2acc0cfcccd6ce5e",
+      "sha1": "e8cd5df414bfb7fb14f5ff261fb6b347ea143851",
+      "downloadUrl": "/api/v1/blobs/6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
