@@ -4,6 +4,7 @@
 - `/etc/systemd/system/lampas-server.service`
 - `/etc/systemd/system/lampas-server-restart.timer`
 - `/etc/systemd/system/lampas-server-restart.service`
+- `/etc/systemd/system/lampas-discord-monitor.service`
 
 # Scripts:
 
@@ -11,6 +12,7 @@
 - `/home/server/start.sh`
 - `/home/server/start.py`
 - `/home/server/deploy_pack.py`
+- `/home/server/lampas-discord-monitor.py`
 
 # Env
 
