@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.2",
+  "packVersion": "2.2.3",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-20T09:12:40.967Z",
+  "updated": "2026-09-20T09:14:48.488Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -4849,32 +4849,30 @@
         "serverSide": "required"
       }
     },
-    "reeses-sodium-options": {
-      "id": "reeses-sodium-options",
-      "name": "Reese's Sodium Options",
-      "side": "client",
-      "filename": "reeses-sodium-options-fabric-2.2.4+mc26.2.jar",
-      "size": 257483,
-      "sha256": "b590be708faf191b9ffd30c601a63f6bdd31cc6d41d7cce462d520f858ff4058",
-      "sha512": "d0d313f1db8f792b3b097dcbce095669c2a638e8995f2ba3dfdc5e517afcbc24de5e4d6c24dd77b3f44558490e7a6b408fa7661a8be52113327a4a560f984edc",
-      "sha1": "2afa030032453550d89ccdf1f235f85c0166568d",
-      "downloadUrl": "https://cdn.modrinth.com/data/Bh37bMuy/versions/nnz8j4Hu/reeses-sodium-options-fabric-2.2.4%2Bmc26.2.jar",
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
+      "side": "both",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 1194573,
+      "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+      "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7",
+      "sha1": "4a32592c06b46c7fad4f176243eb48a97b8ed557",
+      "downloadUrl": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "Bh37bMuy",
-        "versionId": "nnz8j4Hu"
+        "type": "lampas",
+        "file": "custom/lampas2-overrides-1.0.0.jar"
       },
       "metadata": {
-        "description": "Alternative Options Menu for Sodium",
-        "iconUrl": "https://cdn.modrinth.com/data/Bh37bMuy/icon.png",
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
         "categories": [
+          "protocol",
+          "core",
           "utility"
         ],
-        "sourceUrl": "https://modrinth.com/mod/reeses-sodium-options",
-        "clientSide": "required",
-        "serverSide": "unsupported"
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "replaymod": {
@@ -6027,30 +6025,21 @@
         "serverSide": "required"
       }
     },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1194573,
-      "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
-      "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7",
-      "sha1": "4a32592c06b46c7fad4f176243eb48a97b8ed557",
-      "downloadUrl": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "twod_projectiles": {
@@ -6787,21 +6776,21 @@
         "serverSide": "unsupported"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
       "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
+      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
+      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
       }
     },
     "photon-shader": {
@@ -6924,21 +6913,21 @@
         "serverSide": "unsupported"
       }
     },
-    "crazy_chambers-1_0_0_26_2": {
-      "id": "crazy_chambers-1_0_0_26_2",
-      "name": "crazy_chambers-1.0.0+26.2",
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
       "side": "both",
-      "filename": "crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
-      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
-      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
       }
     },
     "recolourful-containers-gui-hud-dark": {
@@ -7001,21 +6990,32 @@
         "serverSide": "unsupported"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
-      "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+    "reeses-sodium-options": {
+      "id": "reeses-sodium-options",
+      "name": "Reese's Sodium Options",
+      "side": "client",
+      "filename": "reeses-sodium-options-fabric-2.2.3+mc26.2.jar",
+      "size": 259465,
+      "sha256": "49b68a887f5691b805efbe73c4e6e622cda5c322431ef68f81c8953de4041911",
+      "sha512": "2dbd97ca7013c6e88a475a55b828c50234c6060cc7a20843c9aadecdd561e1a690d7d0ba0ddb9dce30f8ebfdc02e113ffce7c9067ab63cf5c780a2e1d4139aa7",
+      "sha1": "111c74b99d265d0b378ad842dfafdd7c4d6d5445",
+      "downloadUrl": "https://cdn.modrinth.com/data/Bh37bMuy/versions/PH4SPorH/reeses-sodium-options-fabric-2.2.3%2Bmc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "type": "modrinth",
+        "projectId": "Bh37bMuy",
+        "versionId": "PH4SPorH"
+      },
+      "metadata": {
+        "description": "Alternative Options Menu for Sodium",
+        "iconUrl": "https://cdn.modrinth.com/data/Bh37bMuy/icon.png",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/reeses-sodium-options",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "lampas2": {
@@ -7059,23 +7059,6 @@
         ]
       }
     },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
-      "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
-      }
-    },
     "figura-0-1-6-rc-1": {
       "id": "figura-0-1-6-rc-1",
       "name": "Figura",
@@ -7098,6 +7081,23 @@
           "cosmetic",
           "avatar"
         ]
+      }
+    },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
     "apothicenchanting-26_2-3_0_1": {

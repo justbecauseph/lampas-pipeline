@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -4210,6 +4210,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 1194573,
+      "hashes": {
+        "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+        "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7"
+      },
+      "download": {
+        "url": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/ResourcefulConfig-5.0.0.jar",
       "size": 443979,
       "hashes": {
@@ -4574,14 +4587,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1194573,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
       "hashes": {
-        "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
-        "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7"
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
       },
       "download": {
-        "url": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4817,19 +4830,6 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/FRSaEVFk/versions/jX39WwtA/zfastsurface-1.0.0-beta.5%2B26.2.jar",
         "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
-      },
-      "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
