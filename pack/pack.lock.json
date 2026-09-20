@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.0",
+  "packVersion": "2.2.2",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-19T22:33:54.920Z",
+  "updated": "2026-09-20T09:12:40.967Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -1111,18 +1111,18 @@
       "id": "dbtools",
       "name": "DBTools for Axiom",
       "side": "both",
-      "filename": "DBTools-2.2.3+MC26.2-AX6.0.5.jar",
-      "size": 4208401,
-      "sha256": "afb5cc2224dcf79d6f3c20780f4aff34994d92f4e00680ed60ccff95de6487fb",
-      "sha512": "17a80d27bb4dd3a90b4e1bd32df1ad314634ffd51798c9dbb8ad76531e576016dc4968b6ff09fd0a4e59ff0e2bff763fcee6bb04174f6c7c4745dc1b8be26a3a",
-      "sha1": "ff0ccefd43dc8420b545ab5e37795ec676c0edb4",
-      "downloadUrl": "https://cdn.modrinth.com/data/6SWRzDjk/versions/qM0ms2u5/DBTools-2.2.3%2BMC26.2-AX6.0.5.jar",
+      "filename": "DBTools-2.3.0+MC26.2-AX6.0.5.jar",
+      "size": 4236289,
+      "sha256": "692741b8c7b26e7cd685d89160a402b18214072ec6b604775232cefeecfeea56",
+      "sha512": "617402f3939b23cd43b8e52bac55e6f20122f1001c9bda99cc27ba3c28667f1e12b1c3f47b60d0b66775c2e10ab41b9942cbe1e70fd8b2a71d3feecd62fb78d9",
+      "sha1": "a41f3031571234194c364b78e6700bc0f523d14c",
+      "downloadUrl": "https://cdn.modrinth.com/data/6SWRzDjk/versions/H4P6sMwE/DBTools-2.3.0%2BMC26.2-AX6.0.5.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "6SWRzDjk",
-        "versionId": "qM0ms2u5"
+        "versionId": "H4P6sMwE"
       },
       "metadata": {
         "description": "DBTools is a mod for Axiom that provides various tools to enhance the build experience.",
@@ -1306,6 +1306,36 @@
           "utility"
         ],
         "sourceUrl": "https://modrinth.com/mod/display-delight-fabric",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "distant-decorations": {
+      "id": "distant-decorations",
+      "name": "Distant Decorations",
+      "side": "both",
+      "filename": "distant-decorations-1.0.0.jar",
+      "size": 112219,
+      "sha256": "4d2a138a3a65c0cf9df9e1faf2b6d8fae9165235de382842c16a4bc091d68964",
+      "sha512": "cf101f4fe5430751537a6fd7ba5ec33855a827ba899cbca7dc0abedd35370ce51d19f0bb4442e1c160908b438d176cde580ccd1614ea8d365945e1ca5da91d81",
+      "sha1": "1199ec06f6b7e06a4c3d27a1744bfc020d01afa0",
+      "downloadUrl": "https://cdn.modrinth.com/data/BTxCZXDZ/versions/yBpuUdLY/distant-decorations-1.0.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "BTxCZXDZ",
+        "versionId": "yBpuUdLY"
+      },
+      "metadata": {
+        "description": "Distant Decorations is a high-performance Fabric framework that lets participating mods persist and render decorative block-entity visuals far beyond vanilla chunk distances.",
+        "iconUrl": "https://cdn.modrinth.com/data/BTxCZXDZ/0791abdc60178a7e0253566ab73a369ed180e75b_96.webp",
+        "categories": [
+          "library",
+          "optimization",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/distant-decorations",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -1749,18 +1779,18 @@
       "id": "entityculling",
       "name": "Entity Culling",
       "side": "client",
-      "filename": "entityculling-fabric-1.10.5-mc26.2.jar",
-      "size": 1583775,
-      "sha256": "05a36decbb1bbb0f785d974068c0d9c191975e0d8d637e1eb1f2f6bb84eab05a",
-      "sha512": "338813c344a2d924abbaaf249da2b52f5e162bd92407f3099c6ff1bce1c1efecde9df80efcc7b4de3b3a0044cc5735b96594b04da4594bb26793459fc6c960a6",
-      "sha1": "f66f9d8cbb1f76466aaf45e46fb11b18207e3aef",
-      "downloadUrl": "https://cdn.modrinth.com/data/NNAgCjsB/versions/iiF6U3Ne/entityculling-fabric-1.10.5-mc26.2.jar",
+      "filename": "entityculling-fabric-1.11.0-mc26.2.jar",
+      "size": 1508209,
+      "sha256": "0c0b256077f325ce991fe5bd6b249a3b5ad00d860a474d1c29195f1e4abf21f0",
+      "sha512": "a1abcdc3ee1803206fe0a9b4e55e5f2397697fb64132e8cb0c5cc0f0804c928a156b803c92073168543d8f82f2b6ad121ae21150f54636b467e3df3db6eed18a",
+      "sha1": "8fa9908d188fbb3048c3a8c67a6be9531430e20c",
+      "downloadUrl": "https://cdn.modrinth.com/data/NNAgCjsB/versions/YYc9iJQ4/entityculling-fabric-1.11.0-mc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "NNAgCjsB",
-        "versionId": "iiF6U3Ne"
+        "versionId": "YYc9iJQ4"
       },
       "metadata": {
         "description": "Using async path-tracing to hide Block-/Entities that are not visible",
@@ -2061,23 +2091,6 @@
         "sourceUrl": "https://modrinth.com/mod/ferrite-core",
         "clientSide": "optional",
         "serverSide": "optional"
-      }
-    },
-    "distant-decorations": {
-      "id": "distant-decorations",
-      "name": "distant-decorations-1.0.0",
-      "side": "both",
-      "filename": "distant-decorations-1.0.0.jar",
-      "size": 112209,
-      "sha256": "107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
-      "sha512": "220cf84841a82ca6247a48b746a7280a72cc121e23bd4108ae3b24d1153df046dca4f0a7582aae30e0069786721d3d731806e00b1a6ea546dae4d166400b0213",
-      "sha1": "3c56dd1717a78be67120721c3045ca988d02a088",
-      "downloadUrl": "/api/v1/blobs/107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/distant-decorations-1.0.0.jar"
       }
     },
     "forcecloseworldloadingscreen": {
@@ -2950,21 +2963,21 @@
         "file": "custom/levelledmobs-apotheosis-1.0.0.jar"
       }
     },
-    "eastersdelight-fabric-26_2-1_3_1": {
-      "id": "eastersdelight-fabric-26_2-1_3_1",
-      "name": "eastersdelight-fabric-26.2-1.3.1",
+    "levelledmobs-fabric-1_0_0": {
+      "id": "levelledmobs-fabric-1_0_0",
+      "name": "levelledmobs-fabric-1.0.0",
       "side": "both",
-      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
-      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
-      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "filename": "levelledmobs-fabric-1.0.0.jar",
+      "size": 170272,
+      "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+      "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2",
+      "sha1": "a0d9cde5aaea750e003471f1b2f60f1445988ea4",
+      "downloadUrl": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
+        "file": "custom/levelledmobs-fabric-1.0.0.jar"
       }
     },
     "libipn": {
@@ -3621,21 +3634,34 @@
         "serverSide": "required"
       }
     },
-    "levelledmobs-fabric-1_0_0": {
-      "id": "levelledmobs-fabric-1_0_0",
-      "name": "levelledmobs-fabric-1.0.0",
-      "side": "both",
-      "filename": "levelledmobs-fabric-1.0.0.jar",
-      "size": 170272,
-      "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
-      "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2",
-      "sha1": "a0d9cde5aaea750e003471f1b2f60f1445988ea4",
-      "downloadUrl": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+    "modern-player-ladder": {
+      "id": "modern-player-ladder",
+      "name": "Modern Player Ladder",
+      "side": "server",
+      "filename": "modern-player-ladder-1.0.0.jar",
+      "size": 31067,
+      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
+      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
+      "downloadUrl": "https://cdn.modrinth.com/data/gEHa0QZs/versions/Qq1SzWUy/modern-player-ladder-1.0.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/levelledmobs-fabric-1.0.0.jar"
+        "type": "modrinth",
+        "projectId": "gEHa0QZs",
+        "versionId": "Qq1SzWUy"
+      },
+      "metadata": {
+        "description": "Ride your friend(s) - with consent. Player Ladder mod inspired from ForwarD-NerN",
+        "iconUrl": "https://cdn.modrinth.com/data/gEHa0QZs/5ad5e499b410e0916f61b9096417055efd1603a6_96.webp",
+        "categories": [
+          "cursed",
+          "game-mechanics",
+          "transportation"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/modern-player-ladder",
+        "clientSide": "unsupported",
+        "serverSide": "required"
       }
     },
     "modmenu": {
@@ -4075,18 +4101,18 @@
       "id": "not-enough-animations",
       "name": "Not Enough Animations",
       "side": "client",
-      "filename": "notenoughanimations-fabric-1.12.4-mc26.2.jar",
-      "size": 1937831,
-      "sha256": "8533f2a27ce9cfed184859f4fa33c48a29fd91830a5a2d922a8a6e34be7770f3",
-      "sha512": "41c05f531298cce723a84639fb6b9510bfa25e65ff27a041083d47900d743d44473e1f7bdbcd87d7cd149f1291a1359dc3d8553a176be21c432ea15bbbdda92e",
-      "sha1": "b445a6c551ac0c6535d3411db13236bf69728ef1",
-      "downloadUrl": "https://cdn.modrinth.com/data/MPCX6s5C/versions/67xQnLDS/notenoughanimations-fabric-1.12.4-mc26.2.jar",
+      "filename": "notenoughanimations-fabric-1.12.5-mc26.2.jar",
+      "size": 1863477,
+      "sha256": "8ef1069d4639299e473077ded3f5a6b22045e581e8a9fd51bbc470fc50675c9e",
+      "sha512": "9f15eddd257f0ee892fc761fbe416fe513dd53a31857a5cafccb28d92ed9598c4a999d11200fdc2d36e8baaa5ccf5e3665081a72289e11471a0c52800735fa30",
+      "sha1": "a497dfeb1a7c27c5376a9a7a54ef7634a90d9c3d",
+      "downloadUrl": "https://cdn.modrinth.com/data/MPCX6s5C/versions/ocinaOmO/notenoughanimations-fabric-1.12.5-mc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "MPCX6s5C",
-        "versionId": "67xQnLDS"
+        "versionId": "ocinaOmO"
       },
       "metadata": {
         "description": "Bringing first-person animations to the third-person",
@@ -4215,47 +4241,38 @@
         "serverSide": "unsupported"
       }
     },
-    "modern-player-ladder-1_0_0": {
-      "id": "modern-player-ladder-1_0_0",
-      "name": "modern-player-ladder-1.0.0",
+    "eastersdelight-fabric-26_2-1_3_1": {
+      "id": "eastersdelight-fabric-26_2-1_3_1",
+      "name": "eastersdelight-fabric-26.2-1.3.1",
       "side": "both",
-      "filename": "modern-player-ladder-1.0.0.jar",
-      "size": 31067,
-      "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-      "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2",
-      "sha1": "f7671f38f77880263efba11396e0140c38560d86",
-      "downloadUrl": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
+      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
+      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/modern-player-ladder-1.0.0.jar"
+        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
       }
     },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1194546,
-      "sha256": "10e4d3c46f66fff9c32fc609354678d3f0022ce9fcd1be22cb1e0e5e94862b26",
-      "sha512": "61ba3933aa79458b39f74c1add2fb14d9a90a48af4ec79ed51e5fcfd9c4c3e81f6713c540c2ac6e988d4773981b1f8810ff2dced38ff6a984eefbc74d152be2a",
-      "sha1": "7d6d666c24ed6bcfa4d084fa14dac2d724e07c15",
-      "downloadUrl": "/api/v1/blobs/10e4d3c46f66fff9c32fc609354678d3f0022ce9fcd1be22cb1e0e5e94862b26",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+        "file": "custom/Placebo-26.2-11.0.1.jar"
       }
     },
     "placeholder-api": {
@@ -6010,21 +6027,30 @@
         "serverSide": "required"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 1194573,
+      "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+      "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7",
+      "sha1": "4a32592c06b46c7fad4f176243eb48a97b8ed557",
+      "downloadUrl": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "file": "custom/lampas2-overrides-1.0.0.jar"
+      },
+      "metadata": {
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+        "categories": [
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
       }
     },
     "twod_projectiles": {

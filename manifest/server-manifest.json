@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -444,8 +444,8 @@
       "id": "dbtools",
       "name": "DBTools for Axiom",
       "side": "both",
-      "filename": "DBTools-2.2.3+MC26.2-AX6.0.5.jar",
-      "size": 4208401,
+      "filename": "DBTools-2.3.0+MC26.2-AX6.0.5.jar",
+      "size": 4236289,
       "description": "DBTools is a mod for Axiom that provides various tools to enhance the build experience.",
       "iconUrl": "https://cdn.modrinth.com/data/6SWRzDjk/a78be857d4d726c98bc39ed77358616e624383da_96.webp",
       "categories": [
@@ -554,11 +554,18 @@
     },
     {
       "id": "distant-decorations",
-      "name": "distant-decorations-1.0.0",
+      "name": "Distant Decorations",
       "side": "both",
       "filename": "distant-decorations-1.0.0.jar",
-      "size": 112209,
-      "categories": []
+      "size": 112219,
+      "description": "Distant Decorations is a high-performance Fabric framework that lets participating mods persist and render decorative block-entity visuals far beyond vanilla chunk distances.",
+      "iconUrl": "https://cdn.modrinth.com/data/BTxCZXDZ/0791abdc60178a7e0253566ab73a369ed180e75b_96.webp",
+      "categories": [
+        "library",
+        "optimization",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/distant-decorations"
     },
     {
       "id": "double-doors",
@@ -1124,7 +1131,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1194546,
+      "size": 1194573,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -1412,12 +1419,19 @@
       "sourceUrl": "https://modrinth.com/mod/modmenu"
     },
     {
-      "id": "modern-player-ladder-1_0_0",
-      "name": "modern-player-ladder-1.0.0",
-      "side": "both",
+      "id": "modern-player-ladder",
+      "name": "Modern Player Ladder",
+      "side": "server",
       "filename": "modern-player-ladder-1.0.0.jar",
       "size": 31067,
-      "categories": []
+      "description": "Ride your friend(s) - with consent. Player Ladder mod inspired from ForwarD-NerN",
+      "iconUrl": "https://cdn.modrinth.com/data/gEHa0QZs/5ad5e499b410e0916f61b9096417055efd1603a6_96.webp",
+      "categories": [
+        "cursed",
+        "game-mechanics",
+        "transportation"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/modern-player-ladder"
     },
     {
       "id": "moogs_structures",
@@ -2844,14 +2858,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/DBTools-2.2.3+MC26.2-AX6.0.5.jar",
-      "size": 4208401,
+      "path": "mods/DBTools-2.3.0+MC26.2-AX6.0.5.jar",
+      "size": 4236289,
       "hashes": {
-        "sha256": "afb5cc2224dcf79d6f3c20780f4aff34994d92f4e00680ed60ccff95de6487fb",
-        "sha512": "17a80d27bb4dd3a90b4e1bd32df1ad314634ffd51798c9dbb8ad76531e576016dc4968b6ff09fd0a4e59ff0e2bff763fcee6bb04174f6c7c4745dc1b8be26a3a"
+        "sha256": "692741b8c7b26e7cd685d89160a402b18214072ec6b604775232cefeecfeea56",
+        "sha512": "617402f3939b23cd43b8e52bac55e6f20122f1001c9bda99cc27ba3c28667f1e12b1c3f47b60d0b66775c2e10ab41b9942cbe1e70fd8b2a71d3feecd62fb78d9"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/6SWRzDjk/versions/qM0ms2u5/DBTools-2.2.3%2BMC26.2-AX6.0.5.jar",
+        "url": "https://cdn.modrinth.com/data/6SWRzDjk/versions/H4P6sMwE/DBTools-2.3.0%2BMC26.2-AX6.0.5.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -2930,6 +2944,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/jK2xMxSG/versions/MSrMWH4D/display-delight-1.8.4-mc26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/distant-decorations-1.0.0.jar",
+      "size": 112219,
+      "hashes": {
+        "sha256": "4d2a138a3a65c0cf9df9e1faf2b6d8fae9165235de382842c16a4bc091d68964",
+        "sha512": "cf101f4fe5430751537a6fd7ba5ec33855a827ba899cbca7dc0abedd35370ce51d19f0bb4442e1c160908b438d176cde580ccd1614ea8d365945e1ca5da91d81"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/BTxCZXDZ/versions/yBpuUdLY/distant-decorations-1.0.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3165,19 +3192,6 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/d5ddUdiB/ferritecore-9.0.0-fabric.jar",
         "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/distant-decorations-1.0.0.jar",
-      "size": 112209,
-      "hashes": {
-        "sha256": "107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
-        "sha512": "220cf84841a82ca6247a48b746a7280a72cc121e23bd4108ae3b24d1153df046dca4f0a7582aae30e0069786721d3d731806e00b1a6ea546dae4d166400b0213"
-      },
-      "download": {
-        "url": "/api/v1/blobs/107744e166d9e429fd0c7ad7129948a24252ca036c0d349b9c7863eacaec9279",
-        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -3494,14 +3508,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
+      "path": "mods/levelledmobs-fabric-1.0.0.jar",
+      "size": 170272,
       "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+        "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+        "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2"
       },
       "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "url": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -3793,15 +3807,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/levelledmobs-fabric-1.0.0.jar",
-      "size": 170272,
+      "path": "mods/modern-player-ladder-1.0.0.jar",
+      "size": 31067,
       "hashes": {
-        "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
-        "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2"
+        "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+        "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2"
       },
       "download": {
-        "url": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/gEHa0QZs/versions/Qq1SzWUy/modern-player-ladder-1.0.0.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -3949,27 +3963,27 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/modern-player-ladder-1.0.0.jar",
-      "size": 31067,
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
       "hashes": {
-        "sha256": "248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
-        "sha512": "6afff4acd44e07de23fc2def0c3b2658974c1b201bb00c7768f81f84197802e02c76963182a8ac6f76927d7b912a9ef24ff1e47042fbf7391d1a42a5eea000d2"
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
       },
       "download": {
-        "url": "/api/v1/blobs/248b827ac7d49bd5d8d6d42bb564826423579b6b4f7694eb9dda7f7931d78f6e",
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
         "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1194546,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "10e4d3c46f66fff9c32fc609354678d3f0022ce9fcd1be22cb1e0e5e94862b26",
-        "sha512": "61ba3933aa79458b39f74c1add2fb14d9a90a48af4ec79ed51e5fcfd9c4c3e81f6713c540c2ac6e988d4773981b1f8810ff2dced38ff6a984eefbc74d152be2a"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/10e4d3c46f66fff9c32fc609354678d3f0022ce9fcd1be22cb1e0e5e94862b26",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4560,14 +4574,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 1194573,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
+        "sha512": "b87ffc2f5e94484986597bd024debdaf33e0fd1f079af4a36dedc8a7211fcca3a9605f0ca8f27338756301a532ce7a3cd6a74296fdbd090a742f8265ee7110b7"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/3b4615b25162973265830adf2c8370c87a28efcb714d4b19cd60879c7522266f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
