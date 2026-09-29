@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.6",
+  "packVersion": "2.2.7",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-28T08:57:21.286Z",
+  "updated": "2026-09-29T12:40:45.164Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -4933,6 +4933,23 @@
         "serverSide": "required"
       }
     },
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
+      "side": "both",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+      }
+    },
     "really-fast-paintings": {
       "id": "really-fast-paintings",
       "name": "Really Fast Paintings",
@@ -5016,6 +5033,30 @@
         "sourceUrl": "https://modrinth.com/mod/reeses-sodium-options",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "camerapture-2_0_0_mc26_2": {
+      "id": "camerapture-2_0_0_mc26_2",
+      "name": "camerapture-2.0.0+mc26.2",
+      "side": "both",
+      "filename": "camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
+      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
+      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+      },
+      "metadata": {
+        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "categories": [
+          "utility",
+          "media"
+        ]
       }
     },
     "replaymod": {
@@ -6170,21 +6211,21 @@
         "serverSide": "required"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "file": "custom/Placebo-26.2-11.0.1.jar"
       }
     },
     "twod_projectiles": {
@@ -6921,21 +6962,21 @@
         "serverSide": "unsupported"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "photon-shader": {
@@ -7058,28 +7099,21 @@
         "serverSide": "unsupported"
       }
     },
-    "camerapture-2_0_0_mc26_2": {
-      "id": "camerapture-2_0_0_mc26_2",
-      "name": "camerapture-2.0.0+mc26.2",
-      "side": "both",
-      "filename": "camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
-      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
-      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "artifactType": "mod",
-      "targetDir": "mods",
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
       "provider": {
         "type": "lampas",
-        "file": "custom/camerapture-2.0.0+mc26.2.jar"
-      },
-      "metadata": {
-        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
-        "categories": [
-          "utility",
-          "media"
-        ]
+        "file": "custom/lampas2-resource-pack.zip"
       }
     },
     "recolourful-containers-gui-hud-dark": {
@@ -7140,40 +7174,6 @@
         "sourceUrl": "https://modrinth.com/mod/recolourful-containers-gui",
         "clientSide": "required",
         "serverSide": "unsupported"
-      }
-    },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
-      "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
-      }
-    },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
       }
     },
     "bloomingnature": {
@@ -7300,6 +7300,65 @@
       "provider": {
         "type": "lampas",
         "file": "custom/Apotheosis-26.2-10.0.1.jar"
+      }
+    },
+    "ranged-weapon-api": {
+      "id": "ranged-weapon-api",
+      "name": "Ranged Weapon API",
+      "side": "both",
+      "filename": "ranged_weapon_api-fabric-4.0.0+26.2.jar",
+      "size": 157327,
+      "sha256": "87b84bea0ab193257a7666d40d098bb8de392735b736e3440f9553d52ffb27e1",
+      "sha512": "a9a7be96366a1156804971083849b8d6a3cb4420f9d16c168eebf0f9934e347612f8fb1412f16e5ecfcb58caa2ac71f8be049e4ec698c2fde28b4bfcac589487",
+      "sha1": "b232234a29b9eecc5c2a1e7b4681db4f74db7406",
+      "downloadUrl": "https://cdn.modrinth.com/data/AqaIIO6D/versions/pAKK9B14/ranged_weapon_api-fabric-4.0.0%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "AqaIIO6D",
+        "versionId": "pAKK9B14"
+      },
+      "metadata": {
+        "description": "🏹 Create fully functional bows and crossbows, with ease",
+        "iconUrl": "https://cdn.modrinth.com/data/AqaIIO6D/cf4d822d2fa89e72d37eebcfb1113a6389a0abe6_96.webp",
+        "categories": [
+          "equipment",
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/ranged-weapon-api",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "relics-rpg": {
+      "id": "relics-rpg",
+      "name": "Relics (RPG Series)",
+      "side": "both",
+      "filename": "relics-fabric-1.4.1+26.2.jar",
+      "size": 2204611,
+      "sha256": "013eae223a352138342e5d629e5fec75ee7f19405b82589435993f403be8469f",
+      "sha512": "660056c41bef97245883127871a8c35b4dec4f0829f2478e3ea64ddc315681c4bf60b6823938647e58a3f73e0292320c02289044fa64f3da758f7502a3b90f92",
+      "sha1": "0b6466de20c90ccf8a3bc5b70e2af19a4948558d",
+      "downloadUrl": "https://cdn.modrinth.com/data/BDQucwF0/versions/LlhxEeBi/relics-fabric-1.4.1%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "BDQucwF0",
+        "versionId": "LlhxEeBi"
+      },
+      "metadata": {
+        "description": "🎖 Unleash your true potential with powerful trinkets! 🔮",
+        "iconUrl": "https://cdn.modrinth.com/data/BDQucwF0/6aac428c17df067875dfff8a37b6f2a3535ea2cc_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "magic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/relics-rpg",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     }
   }
