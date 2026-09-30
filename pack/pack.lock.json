@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.7",
+  "packVersion": "2.2.8",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-09-29T12:40:45.164Z",
+  "updated": "2026-09-30T14:04:26.446Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -852,18 +852,18 @@
       "id": "compose-multiplatform",
       "name": "Compose Multiplatform",
       "side": "client",
-      "filename": "compose-bundle-1.0.4+compose.1.12.0.jar",
-      "size": 77957708,
-      "sha256": "796bd31e5fd7f37a14650b2785257f1025ff6b631fefe9cf07eb198b07ee146d",
-      "sha512": "13b26534cfc5ed4c67c2d891ba70b8e2a90f874374e8b3547aef031770c87b3caed68f2947846beb6a538336fa1799bb300a68c92b84f65f392debf4d36c1ee4",
-      "sha1": "8f9722743955dca08fa557193ef0a4673217ef0c",
-      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/8rpN5puy/compose-bundle-1.0.4%2Bcompose.1.12.0.jar",
+      "filename": "compose-bundle-1.0.5+compose.1.12.1.jar",
+      "size": 77960443,
+      "sha256": "5da091a4930a3ebfcfb93a3c84159fa24cdfad44456a18c3710f632265cac443",
+      "sha512": "8addb93b585e3ace9493b995abf455aae92d29eac4f2359aafbc2cd9317fbfb7960735d9eaa9a3d053e07272c0369ea3f9c91c9070d84058b4cc436a30ffb538",
+      "sha1": "521987ca499497a8f7a4df33367cdf7fdd1fc1e4",
+      "downloadUrl": "https://cdn.modrinth.com/data/eHe8QhtD/versions/un1Ye4Ye/compose-bundle-1.0.5%2Bcompose.1.12.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "eHe8QhtD",
-        "versionId": "8rpN5puy"
+        "versionId": "un1Ye4Ye"
       },
       "metadata": {
         "description": "Library mod bundling JetBrains' Compose Multiplatform libs",
@@ -2778,18 +2778,18 @@
       "id": "jei",
       "name": "Just Enough Items (JEI)",
       "side": "both",
-      "filename": "jei-26.2-fabric-30.38.0.230.jar",
-      "size": 2320833,
-      "sha256": "bdb99cc9b70cab0fc6f63536b0eb547de3268c4416ff2a024219b879ad47542f",
-      "sha512": "d982440bbdf38d583fda56d39b94dd5fa7f9cd46e91f3f15771a14f9c33239c44c3b4473eb65dc26e506a6aee3cca0d5786376594f14452353aa930736aca428",
-      "sha1": "d2ea1339a7739160f13c513a2d07b8f3d32a8954",
-      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/1k2V4h4s/jei-26.2-fabric-30.38.0.230.jar",
+      "filename": "jei-26.2-fabric-30.38.0.231.jar",
+      "size": 2321360,
+      "sha256": "23d5cabe3913c411caf17cd454eb00b80d8d3fc7ef72d715fc00d7408982d7ef",
+      "sha512": "9b5d2147d87448ee2a12fd2ab423f49ca31fe3d22e7deadf6b80ea87d343f07e664b98fde4ba8a0d700897a692223d3029f4361b633bc33b1e5c16d008d68703",
+      "sha1": "b6e9295646119b913be1e5568a0cfb8ad4aeed5c",
+      "downloadUrl": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/xkIOPwWN/jei-26.2-fabric-30.38.0.231.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "u6dRKJwZ",
-        "versionId": "1k2V4h4s"
+        "versionId": "xkIOPwWN"
       },
       "metadata": {
         "description": "View Items and Recipes",
@@ -3770,18 +3770,18 @@
       "id": "moogs_structures",
       "name": "Moog's Structure Lib (moogs_structures)",
       "side": "server",
-      "filename": "MoogsStructureLib-fabric-26.2-3.3.0.jar",
-      "size": 431649,
-      "sha256": "016edb2b658c9ec671e053b886ec933050ea6e61f3c5bed9028d58a39a70d4e1",
-      "sha512": "eebf703c925ed7c96ac83d6ae894c09c422ff1b45c5932145eeec394312c7d9021bfa3e279e17bee5e6c65114d61925500b23c49ec7e8c4bad6ddcf929972150",
-      "sha1": "293ab920ba77e4d7a40595b0cda9240cadc7a1e6",
-      "downloadUrl": "https://cdn.modrinth.com/data/1oUDhxuy/versions/Yvc02xg9/MoogsStructureLib-fabric-26.2-3.3.0.jar",
+      "filename": "MoogsStructureLib-fabric-26.2-3.4.0.jar",
+      "size": 433346,
+      "sha256": "311331fcbbe1206870a8df9411b681c8662449d8d4554d171bba349bd4a180f4",
+      "sha512": "585674498b851578d718932df5ea3533a7f3967e5053088d75b1302c444b1a91037de21b5bffaa713bfccffd668c5d2cbdf9258558edd0da40f1c0fd4e1f3be9",
+      "sha1": "cfa325497965ab594964c8c1079d571098424091",
+      "downloadUrl": "https://cdn.modrinth.com/data/1oUDhxuy/versions/5Dq4FhKI/MoogsStructureLib-fabric-26.2-3.4.0.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "1oUDhxuy",
-        "versionId": "Yvc02xg9"
+        "versionId": "5Dq4FhKI"
       },
       "metadata": {
         "description": "This is a library mod for the Moogs Structure series",
@@ -3946,18 +3946,18 @@
       "id": "mru",
       "name": "MRU",
       "side": "client",
-      "filename": "mru-1.0.40+26.2-fabric.jar",
-      "size": 155133,
-      "sha256": "5557f5d966a9c6414fe7d0a8dba109c67e5304d3b33e6d82cc02c2519381fc8a",
-      "sha512": "93f0b1f10a8d73ccc6746f2b8c3a230fefcd0accada7d4c3fdf0abff67e51e8c7be29785f5ca43d94b2ad1912b86b31a47fd14e8dd47e861be9858da1e8eebe4",
-      "sha1": "520633ce05a822cb8c892c005d2aa98515aa1608",
-      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/hwBIFbwv/mru-1.0.40%2B26.2-fabric.jar",
+      "filename": "mru-1.0.41+26.2-fabric.jar",
+      "size": 155863,
+      "sha256": "e7fd51a3f35a5d17d8eefd3b4ee64d07d82a926f3235703ec97bc356e3965ca3",
+      "sha512": "3ad629d4f1acf2699b1a3980239ba851e119c90b3da62d80d627b668195d5005c7ebcc7ef137debe0374037a837366d9b9513233c090eb2573f140ec28da1ee1",
+      "sha1": "b495d49611468caf7a7288f550631374480d4f7c",
+      "downloadUrl": "https://cdn.modrinth.com/data/SNVQ2c0g/versions/bXhWTAZu/mru-1.0.41%2B26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "SNVQ2c0g",
-        "versionId": "hwBIFbwv"
+        "versionId": "bXhWTAZu"
       },
       "metadata": {
         "description": "A library mod used by Cassian and IMB11's mods to function.",
@@ -4117,18 +4117,18 @@
       "id": "no-chat-restrictions",
       "name": "No Chat Restrictions",
       "side": "client",
-      "filename": "NoChatRestrictions-Fabric-MC26.2-v1.2.2.jar",
-      "size": 16002,
-      "sha256": "5328e5a09dcc682c8943f1cd1c7c8d0d5ec673e0a55bf7e615172f2a95b2413f",
-      "sha512": "b7a7fd7efeaf9aaac4cf821d42fda8157e1cdced7b4f12ee7f8f9ac31d8a5b4f97ccd88cc6f4f36cf437f5c576239219509a7513524c42c5d6cc65e0c8bc7f14",
-      "sha1": "1a0feff2a71be42406136fa5852c5fa8896601d0",
-      "downloadUrl": "https://cdn.modrinth.com/data/z440MEwJ/versions/qJSCnxEv/NoChatRestrictions-Fabric-MC26.2-v1.2.2.jar",
+      "filename": "NoChatRestrictions-Fabric-MC26.2-v1.2.3.jar",
+      "size": 14644,
+      "sha256": "89aad1ae9336974fcc19d2ba3bbe2b8feb6efc3cd67e7150e380c2da290047de",
+      "sha512": "3d5113f50d2284edadcc5e52b97c67e3a79e0f3eae7024e9b8837bd14a52e4f7515784d88ae117efd79f3c36fd84c09760092774b6969c2fa4927ddaf75b122d",
+      "sha1": "6f887a7fd946353426d210b99ea522365077cd76",
+      "downloadUrl": "https://cdn.modrinth.com/data/z440MEwJ/versions/Z2T582gj/NoChatRestrictions-Fabric-MC26.2-v1.2.3.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "z440MEwJ",
-        "versionId": "qJSCnxEv"
+        "versionId": "Z2T582gj"
       },
       "metadata": {
         "description": "Restores access to game chat for all accounts",
@@ -4260,18 +4260,18 @@
       "id": "oneconfigbootstrap",
       "name": "OneConfig",
       "side": "client",
-      "filename": "OneConfig-26.2-fabric-1.2.7.jar",
-      "size": 11648837,
-      "sha256": "7f6d654e30b3ffd036462403cf7ac89ae46480baa4941fb829460d8206dbbef2",
-      "sha512": "f706b7dd95217fe4ae21c003bb26935bdf857a6fead7dd47a1cb7d4f0d63b5d70d2817234e64ec6a159c711fc1722e4e87d8d536751729ee942aeb992a64398b",
-      "sha1": "04fa29da62bdba60928b9dec19a55549ef9d6183",
-      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/teAEaIFG/OneConfig-26.2-fabric-1.2.7.jar",
+      "filename": "OneConfig-26.2-fabric-1.2.8.jar",
+      "size": 11662826,
+      "sha256": "a5c02c1392c178871291d6d64b20a6ef2030056c6f93c8eb786d3aa969e3717f",
+      "sha512": "c4f3316ccdbeae4fdfec25cc9c83b8fa452fc3ff9e746c269231d72df813b55ed245c09d3072392035f9e74dc367448b2d0f65a16e64f9711e98bebbccb61ffe",
+      "sha1": "a2f9818face8ba75e69912a0be1da8dc1a6113d2",
+      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/99C3HBI0/OneConfig-26.2-fabric-1.2.8.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "AibBIVmj",
-        "versionId": "teAEaIFG"
+        "versionId": "99C3HBI0"
       },
       "metadata": {
         "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
@@ -4448,18 +4448,18 @@
       "id": "plasmovoice",
       "name": "Plasmo Voice",
       "side": "both",
-      "filename": "plasmovoice-fabric-26.2-2.1.17.jar",
-      "size": 12247451,
-      "sha256": "582801b829760fe80d236416fda658ec9791e02b6e34ffe89e44a08423148a66",
-      "sha512": "653fb434622343ca3758f46ad6fac6de73120aeb5e842bc258170b2c66c44a146401bd487c9213926a4eecc34506a0978245f8b8ddd38d304cef49f231599c88",
-      "sha1": "c7313bca7a4e0c9273a6a79f159ebb4c6f3e1584",
-      "downloadUrl": "https://cdn.modrinth.com/data/1bZhdhsH/versions/lmQvyHuY/plasmovoice-fabric-26.2-2.1.17.jar",
+      "filename": "plasmovoice-fabric-26.2-2.2.0-beta.1.jar",
+      "size": 12764508,
+      "sha256": "c5fa9ec9af1776b1fe56de3cb6c765ee7515c6cb707c41446383e28b89bdccca",
+      "sha512": "0ec14d2dd774598636cd79ae7946d0ff5246477954067d10a68238b55f5452820c803a635b1a2780eb71f5373de315a1a1116c9bdf8528209c510a281bc0c030",
+      "sha1": "8c65c289b496cfa898667d8ee05b6717c44113cd",
+      "downloadUrl": "https://cdn.modrinth.com/data/1bZhdhsH/versions/1GCOJqws/plasmovoice-fabric-26.2-2.2.0-beta.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "1bZhdhsH",
-        "versionId": "lmQvyHuY"
+        "versionId": "1GCOJqws"
       },
       "metadata": {
         "description": "A proximity voice chat mod with audio positioning and lots of features",
@@ -4622,18 +4622,18 @@
       "id": "puddleflood",
       "name": "Puddles & Floods",
       "side": "client",
-      "filename": "puddleflood-1.1.5+26.2-fabric.jar",
-      "size": 207996,
-      "sha256": "f6678189b02cfe8db043aae57a0e42d1fe11f7d5971e07e712e451d94f4cf1ea",
-      "sha512": "e326c52f9fdce4783f1e506debe9f29f2ab273dea8dca2637def646a2f5748edc6dea80881d9a968ac2b097c86928e165bd5fc13cd9addad8891a1b9d88051d5",
-      "sha1": "a90ae317ffe6a159e655923412289e6abbf9a45c",
-      "downloadUrl": "https://cdn.modrinth.com/data/xeRVd78z/versions/HYCqhi9a/puddleflood-1.1.5%2B26.2-fabric.jar",
+      "filename": "puddleflood-1.1.6+26.2-fabric.jar",
+      "size": 208225,
+      "sha256": "e5789d0a134f63edbbd0961ed4138df71cfe56cb3303268b3e6c2ba1c75abe39",
+      "sha512": "d137018f8b6a589e7ccd5a5bb7c311e4d23002ba557e35a30d9cc68a1a8c057618875a4008197f7e070a48fc809f0414909abfe3c131f4a1e7c1d8c320706f60",
+      "sha1": "eae4a520699d441468eb404cef30e3292f266b27",
+      "downloadUrl": "https://cdn.modrinth.com/data/xeRVd78z/versions/3Lk0In7q/puddleflood-1.1.6%2B26.2-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "xeRVd78z",
-        "versionId": "HYCqhi9a"
+        "versionId": "3Lk0In7q"
       },
       "metadata": {
         "description": "Adds detailed puddles and allows rivers to visually flood their banks",
@@ -4933,21 +4933,33 @@
         "serverSide": "required"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "ranged-weapon-api": {
+      "id": "ranged-weapon-api",
+      "name": "Ranged Weapon API",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "filename": "ranged_weapon_api-fabric-4.0.0+26.2.jar",
+      "size": 157327,
+      "sha256": "87b84bea0ab193257a7666d40d098bb8de392735b736e3440f9553d52ffb27e1",
+      "sha512": "a9a7be96366a1156804971083849b8d6a3cb4420f9d16c168eebf0f9934e347612f8fb1412f16e5ecfcb58caa2ac71f8be049e4ec698c2fde28b4bfcac589487",
+      "sha1": "b232234a29b9eecc5c2a1e7b4681db4f74db7406",
+      "downloadUrl": "https://cdn.modrinth.com/data/AqaIIO6D/versions/pAKK9B14/ranged_weapon_api-fabric-4.0.0%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "type": "modrinth",
+        "projectId": "AqaIIO6D",
+        "versionId": "pAKK9B14"
+      },
+      "metadata": {
+        "description": "🏹 Create fully functional bows and crossbows, with ease",
+        "iconUrl": "https://cdn.modrinth.com/data/AqaIIO6D/cf4d822d2fa89e72d37eebcfb1113a6389a0abe6_96.webp",
+        "categories": [
+          "equipment",
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/ranged-weapon-api",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "really-fast-paintings": {
@@ -5035,28 +5047,34 @@
         "serverSide": "unsupported"
       }
     },
-    "camerapture-2_0_0_mc26_2": {
-      "id": "camerapture-2_0_0_mc26_2",
-      "name": "camerapture-2.0.0+mc26.2",
+    "relics-rpg": {
+      "id": "relics-rpg",
+      "name": "Relics (RPG Series)",
       "side": "both",
-      "filename": "camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
-      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
-      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "filename": "relics-fabric-1.4.1+26.2.jar",
+      "size": 2204611,
+      "sha256": "013eae223a352138342e5d629e5fec75ee7f19405b82589435993f403be8469f",
+      "sha512": "660056c41bef97245883127871a8c35b4dec4f0829f2478e3ea64ddc315681c4bf60b6823938647e58a3f73e0292320c02289044fa64f3da758f7502a3b90f92",
+      "sha1": "0b6466de20c90ccf8a3bc5b70e2af19a4948558d",
+      "downloadUrl": "https://cdn.modrinth.com/data/BDQucwF0/versions/LlhxEeBi/relics-fabric-1.4.1%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+        "type": "modrinth",
+        "projectId": "BDQucwF0",
+        "versionId": "LlhxEeBi"
       },
       "metadata": {
-        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "description": "🎖 Unleash your true potential with powerful trinkets! 🔮",
+        "iconUrl": "https://cdn.modrinth.com/data/BDQucwF0/6aac428c17df067875dfff8a37b6f2a3535ea2cc_96.webp",
         "categories": [
-          "utility",
-          "media"
-        ]
+          "adventure",
+          "equipment",
+          "magic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/relics-rpg",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "replaymod": {
@@ -5606,18 +5624,18 @@
       "id": "spell-engine",
       "name": "Spell Engine",
       "side": "both",
-      "filename": "spell_engine-fabric-1.10.5+26.2.jar",
-      "size": 4722174,
-      "sha256": "247dc6b63c9f1df62862b39ec6345666a1cade22a1cda560e6ebde27059bf832",
-      "sha512": "c58fd3170fa104df237b8b2e623109302922e8f0ab9a0fe8df2d3a2f20a5786f2162997afaeca8c4208b7c6d00518e2d3e0310f8bf5290a7bd1c4aaf13095f0a",
-      "sha1": "02035629a530c3935a4506f2f0c900a654c2c0da",
-      "downloadUrl": "https://cdn.modrinth.com/data/XvoWJaA2/versions/GIHnkp7Z/spell_engine-fabric-1.10.5%2B26.2.jar",
+      "filename": "spell_engine-fabric-1.10.9+26.2.jar",
+      "size": 4758073,
+      "sha256": "bfc258875662071d76c448e603f05f0f519bf3e8a0c32207d232d820cab0ab2a",
+      "sha512": "9210a8348b89cbb999d81aa96b1bafaacc287dc5a820ce75d9a33a162bf9ed0f7ddc5a408ce11147f6dfdc6f4ede46f9a027c43bc44fccb8e3d61db862a48f92",
+      "sha1": "d004b43373ceaa0e656c80067a8c43e37c7b9a06",
+      "downloadUrl": "https://cdn.modrinth.com/data/XvoWJaA2/versions/QBsRwj9A/spell_engine-fabric-1.10.9%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "XvoWJaA2",
-        "versionId": "GIHnkp7Z"
+        "versionId": "QBsRwj9A"
       },
       "metadata": {
         "description": "🪄 Data driven magic library",
@@ -5898,18 +5916,18 @@
       "id": "supermartijn642configlib",
       "name": "SuperMartijn642's Config Lib",
       "side": "both",
-      "filename": "supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
-      "size": 206149,
-      "sha256": "3546d8d49ac587aa3aed70b0cd68461366a6f78b9575b8f7ba757866905aca6f",
-      "sha512": "415c6ce953ccc618a98653c08eb36bfa1344227ef9e17c4c7603a07882f71e29266091e67b391dde59f76836b7d7d783342c65e75b6c4cffaaf31d0d929dacef",
-      "sha1": "56c3d9cb1c5b7d6a1f6eef525ef0487e79503ada",
-      "downloadUrl": "https://cdn.modrinth.com/data/LN9BxssP/versions/tg619S8t/supermartijn642configlib-1.1.8-fabric-mc26.2.jar",
+      "filename": "supermartijn642configlib-1.1.8a-fabric-mc26.2.jar",
+      "size": 206152,
+      "sha256": "d6bd5555c1ce734f4f0ad27338d2c309bae406f54c1dac79ba8f192bfa1c84a5",
+      "sha512": "5479b2dc62b73706817007803c4b2bac4c007705484d8b57daef20649793ae524f2123a66842e6490da766a0eada3c3469dcc1bba6b4a430dbdb16d221d6c9f1",
+      "sha1": "32c0220d9f22d16615f350cdfbb8cdffd19ca5aa",
+      "downloadUrl": "https://cdn.modrinth.com/data/LN9BxssP/versions/iInTTGso/supermartijn642configlib-1.1.8a-fabric-mc26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "LN9BxssP",
-        "versionId": "tg619S8t"
+        "versionId": "iInTTGso"
       },
       "metadata": {
         "description": "Config Lib makes dealing with config files just a bit easier.",
@@ -6070,18 +6088,18 @@
       "id": "travelersbackpack",
       "name": "Traveler's Backpack",
       "side": "both",
-      "filename": "travelersbackpack-fabric-26.2-11.3.2.jar",
-      "size": 1499083,
-      "sha256": "b06753dbd277700e97efaefa541e757fa7fd6cdd91538bf4a1df851072b981de",
-      "sha512": "55641958666fda1c94064c2f16e2791687ed2f78137c4a23b75a6df3e6396be58dcf6dbaf925059f2fb6466c81b5bb814b7518a4ea4624646757497fc9d267ec",
-      "sha1": "835f412743f0dd72459abbaa38a96acb5695c5b1",
-      "downloadUrl": "https://cdn.modrinth.com/data/rlloIFEV/versions/jp51VM8M/travelersbackpack-fabric-26.2-11.3.2.jar",
+      "filename": "travelersbackpack-fabric-26.2-11.3.3.jar",
+      "size": 1515465,
+      "sha256": "421a2f55bb2b78fdf47053d00f606c5a6a1e90e4381d48d379fefacee97ed2d2",
+      "sha512": "aa2b34ef57aa24d5ee91bb5a899983238bc9476a41f640a571801b336270f8f94941abee5836b7bd4dd9ce6fa7f50167ce88b5fb7ee02bbae9d29565fdd16d03",
+      "sha1": "52cf9b206d0a4237c1a17d7381360f5adba66d48",
+      "downloadUrl": "https://cdn.modrinth.com/data/rlloIFEV/versions/I6Fg8UrJ/travelersbackpack-fabric-26.2-11.3.3.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "rlloIFEV",
-        "versionId": "jp51VM8M"
+        "versionId": "I6Fg8UrJ"
       },
       "metadata": {
         "description": "Unique and upgradeable backpacks with customisation, Curios API/Trinkets integration and more!",
@@ -6211,21 +6229,21 @@
         "serverSide": "required"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "twod_projectiles": {
@@ -6381,18 +6399,18 @@
       "id": "vanillahud",
       "name": "VanillaHUD",
       "side": "client",
-      "filename": "vanillahud-3.5.0+26.2.jar",
-      "size": 176131,
-      "sha256": "a6016fa52c593fb1fef3100cb489fa9726138500753fffdcae38f21445796fbc",
-      "sha512": "077ad437d121f79de8c19bd0a2170effae6016a8c274f707ff772bdc7571200e810a02a2106280acc9c0ace05cc9d3e467706900ba4ed3634a1e1979f1e4993f",
-      "sha1": "ae624c39a2b2ead41bc402366c892a434ebf8b12",
-      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/GXDY6yps/vanillahud-3.5.0%2B26.2.jar",
+      "filename": "vanillahud-3.5.1+26.2.jar",
+      "size": 176666,
+      "sha256": "0b6ddc56ac98a91eba298cc9f567dec92b2cdfaf8fbc396bb1d43bb00812d213",
+      "sha512": "2c8e5955385e7f4a8a4c090b8c809e28b2561ca6d504b10368106149f6283846aecb8a21f3c62dd5b238b22eceb61bf1236c00c1eef29145c57fe2613b7e5479",
+      "sha1": "5631c531f3c57438e19cc9ef33a7dcc34253ba53",
+      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/sKqtfYI4/vanillahud-3.5.1%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "pWXJaKrX",
-        "versionId": "GXDY6yps"
+        "versionId": "sKqtfYI4"
       },
       "metadata": {
         "description": "A mod that modifies various vanilla HUD elements, such as the bossbar, action bar, and sidebar.",
@@ -6496,17 +6514,17 @@
       "name": "Voxy Server Side",
       "side": "both",
       "filename": "voxy-server-side-fabric.jar",
-      "size": 8164816,
-      "sha256": "3af6b92f87cbac8f1cf6a999f86aeade415737ef3f60fac373fe02087fcc1f71",
-      "sha512": "7102217624c4083f0839ad4db6c302afa458beae300c13cc3aa0b54862156bae092c5bc3978ac414711aedcdbf8cac0e6f644b81969353b080af170580e2a0ea",
-      "sha1": "1e1ff7e2565a7f80ffc447479ca83403f45fb205",
-      "downloadUrl": "https://cdn.modrinth.com/data/84zcagOb/versions/t4rwmG4z/voxy-server-side-fabric.jar",
+      "size": 8771177,
+      "sha256": "6afd7880fac5df3f8fac492b7582b60eab8141f56b88b335a0bcfac2e8f6324b",
+      "sha512": "1936e9341b94b294b978bdf5bc7cde536a37b04f7a08c3d5c5aa7ce0f8c9c8287b669cd7350eee1499332214221f63e786550a33ffdd78aaf611f8fffe094cdf",
+      "sha1": "f63196831ac0aa03f9b77be807b2f5bb8e418fc4",
+      "downloadUrl": "https://cdn.modrinth.com/data/84zcagOb/versions/oUpq4mJx/voxy-server-side-fabric.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "84zcagOb",
-        "versionId": "t4rwmG4z"
+        "versionId": "oUpq4mJx"
       },
       "metadata": {
         "description": "Render distant Voxy LODs on servers",
@@ -6614,18 +6632,18 @@
       "id": "wizards",
       "name": "Wizards (RPG Series)",
       "side": "both",
-      "filename": "wizards-fabric-3.1.2+26.2.jar",
-      "size": 4565603,
-      "sha256": "a79ebc6c52ac0a066435c572f0685ae6000114d271c67f5b161286e9fadf39b4",
-      "sha512": "49725b48a085657e48b0e752bc3ce451d18bfced06402a0c5075cc08ef7d010ae6467a6c5119cea8fc7f192be4a6be074fba9c60ac9977e6e0d98d7fc3cb5ea3",
-      "sha1": "52498c25de25a5ad6b8a991b4de5703710729479",
-      "downloadUrl": "https://cdn.modrinth.com/data/NkGaQMDA/versions/Dx5XKjXr/wizards-fabric-3.1.2%2B26.2.jar",
+      "filename": "wizards-fabric-3.1.3.003+26.2.jar",
+      "size": 4569857,
+      "sha256": "ced172215b3f5fb4301252d171e26c621fbebcc579fc67bd639fb2d92a8034a2",
+      "sha512": "8e4dc5d383b032ee5487e774203e1c9030ee7e8ed2cf3ded12db76abf291862aa97f40c170975a78e7ca516a541dee51b15e9559273012483ee1b5a1d0498d5f",
+      "sha1": "0923793a45b6a24a50794c333764713bb01d1a26",
+      "downloadUrl": "https://cdn.modrinth.com/data/NkGaQMDA/versions/P9kBKtsV/wizards-fabric-3.1.3.003%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "NkGaQMDA",
-        "versionId": "Dx5XKjXr"
+        "versionId": "P9kBKtsV"
       },
       "metadata": {
         "description": "🧙🏻‍♂️ Destroy your enemies with Arcane, Fire and Frost magic",
@@ -6962,21 +6980,21 @@
         "serverSide": "unsupported"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
       "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
       }
     },
     "photon-shader": {
@@ -7099,21 +7117,28 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
+    "camerapture-2_0_0_mc26_2": {
+      "id": "camerapture-2_0_0_mc26_2",
+      "name": "camerapture-2.0.0+mc26.2",
+      "side": "both",
+      "filename": "camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
+      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
+      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "artifactType": "mod",
+      "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
+        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+      },
+      "metadata": {
+        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "categories": [
+          "utility",
+          "media"
+        ]
       }
     },
     "recolourful-containers-gui-hud-dark": {
@@ -7176,6 +7201,40 @@
         "serverSide": "unsupported"
       }
     },
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
+      "side": "both",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/Placebo-26.2-11.0.1.jar"
+      }
+    },
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas2-resource-pack.zip"
+      }
+    },
     "bloomingnature": {
       "id": "bloomingnature",
       "name": "letsdo-bloomingnature",
@@ -7222,11 +7281,11 @@
       "name": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT",
       "side": "client",
       "filename": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 2796925,
-      "sha256": "9bbe42947a949e9f12c75c12ce17235a08aa825714ebc41db4f8a62a8473f720",
-      "sha512": "5b574e588cde4ba55a357bf916401b6c1c4d0624a9e674de8f0ca86aad69311afa3c12d5ac36b2969b0dc9b0057f316abe27201569f62facb1fa87dd9a42069a",
-      "sha1": "c82ae3ee2c2e6ea50bf24fe352007f9125395358",
-      "downloadUrl": "/api/v1/blobs/9bbe42947a949e9f12c75c12ce17235a08aa825714ebc41db4f8a62a8473f720",
+      "size": 2904243,
+      "sha256": "5f9b72f5f1f40be6f05e36fecd5d29174286cbf5fd461a65c94a84d3a54c3d5b",
+      "sha512": "28a90c981efd410a0f0f129c847eba08c93ba6b6d218ba564f647dee977d02f732e22e2e227cfac7735f57e6ae0bcac187aafceb977e02a621338a71a984f841",
+      "sha1": "5c8a4a4e694e9af059ee3ec633f05f26884932e1",
+      "downloadUrl": "/api/v1/blobs/5f9b72f5f1f40be6f05e36fecd5d29174286cbf5fd461a65c94a84d3a54c3d5b",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
@@ -7300,65 +7359,6 @@
       "provider": {
         "type": "lampas",
         "file": "custom/Apotheosis-26.2-10.0.1.jar"
-      }
-    },
-    "ranged-weapon-api": {
-      "id": "ranged-weapon-api",
-      "name": "Ranged Weapon API",
-      "side": "both",
-      "filename": "ranged_weapon_api-fabric-4.0.0+26.2.jar",
-      "size": 157327,
-      "sha256": "87b84bea0ab193257a7666d40d098bb8de392735b736e3440f9553d52ffb27e1",
-      "sha512": "a9a7be96366a1156804971083849b8d6a3cb4420f9d16c168eebf0f9934e347612f8fb1412f16e5ecfcb58caa2ac71f8be049e4ec698c2fde28b4bfcac589487",
-      "sha1": "b232234a29b9eecc5c2a1e7b4681db4f74db7406",
-      "downloadUrl": "https://cdn.modrinth.com/data/AqaIIO6D/versions/pAKK9B14/ranged_weapon_api-fabric-4.0.0%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "AqaIIO6D",
-        "versionId": "pAKK9B14"
-      },
-      "metadata": {
-        "description": "🏹 Create fully functional bows and crossbows, with ease",
-        "iconUrl": "https://cdn.modrinth.com/data/AqaIIO6D/cf4d822d2fa89e72d37eebcfb1113a6389a0abe6_96.webp",
-        "categories": [
-          "equipment",
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/ranged-weapon-api",
-        "clientSide": "required",
-        "serverSide": "required"
-      }
-    },
-    "relics-rpg": {
-      "id": "relics-rpg",
-      "name": "Relics (RPG Series)",
-      "side": "both",
-      "filename": "relics-fabric-1.4.1+26.2.jar",
-      "size": 2204611,
-      "sha256": "013eae223a352138342e5d629e5fec75ee7f19405b82589435993f403be8469f",
-      "sha512": "660056c41bef97245883127871a8c35b4dec4f0829f2478e3ea64ddc315681c4bf60b6823938647e58a3f73e0292320c02289044fa64f3da758f7502a3b90f92",
-      "sha1": "0b6466de20c90ccf8a3bc5b70e2af19a4948558d",
-      "downloadUrl": "https://cdn.modrinth.com/data/BDQucwF0/versions/LlhxEeBi/relics-fabric-1.4.1%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "BDQucwF0",
-        "versionId": "LlhxEeBi"
-      },
-      "metadata": {
-        "description": "🎖 Unleash your true potential with powerful trinkets! 🔮",
-        "iconUrl": "https://cdn.modrinth.com/data/BDQucwF0/6aac428c17df067875dfff8a37b6f2a3535ea2cc_96.webp",
-        "categories": [
-          "adventure",
-          "equipment",
-          "magic"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/relics-rpg",
-        "clientSide": "required",
-        "serverSide": "required"
       }
     }
   }
