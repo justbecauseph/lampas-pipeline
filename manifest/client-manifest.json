@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -397,8 +397,8 @@
       "id": "chatting",
       "name": "Chatting",
       "side": "client",
-      "filename": "chatting-3.2.0+26.2.jar",
-      "size": 236131,
+      "filename": "chatting-3.2.2+26.2.jar",
+      "size": 249540,
       "description": "Chatting is a chat mod adding utilities such as extremely customizable chat tabs, chat shortcuts, chat screenshots, and message copying.",
       "iconUrl": "https://cdn.modrinth.com/data/8pJYUDNi/790dfffda5974fccda843477cfe8ed19b1347ea3_96.webp",
       "categories": [
@@ -411,7 +411,7 @@
       "name": "ChatTweaks",
       "side": "client",
       "filename": "chattweaks-1.2.1+26.2.jar",
-      "size": 80372,
+      "size": 80425,
       "description": "Modify the contents of your chat with additional information",
       "iconUrl": "https://cdn.modrinth.com/data/8LNT47ZH/b52a701cc5fb2e2e9b7c5c4a6d50336db20b597a_96.webp",
       "categories": [
@@ -449,8 +449,8 @@
       "id": "collective",
       "name": "Collective",
       "side": "both",
-      "filename": "collective-26.2.0-8.40.jar",
-      "size": 1081485,
+      "filename": "collective-26.2.0-8.41.jar",
+      "size": 1081455,
       "description": "🎓 Collective is a shared library with common code for all of Serilum's mods.",
       "iconUrl": "https://cdn.modrinth.com/data/e0M1UDsY/f5e4fe9ac298e2c14591920d6bda937c566accd0_96.webp",
       "categories": [
@@ -909,8 +909,8 @@
       "id": "enchantment-level-cap-indicator",
       "name": "Enchantment Level Cap Indicator",
       "side": "client",
-      "filename": "enchantmentlevelcapindicator-26.2.0-1.2.jar",
-      "size": 36305,
+      "filename": "enchantmentlevelcapindicator-26.2.0-1.3.jar",
+      "size": 33381,
       "description": "⭐ Displays a symbol next to enchanted item tooltips when they reach their max level.",
       "iconUrl": "https://cdn.modrinth.com/data/82BWabBj/b4d4d9cbfc75c82314d29886d5c77e99f0c43630.png",
       "categories": [
@@ -1991,8 +1991,8 @@
       "id": "oneconfigbootstrap",
       "name": "OneConfig",
       "side": "client",
-      "filename": "OneConfig-26.2-fabric-1.2.9.jar",
-      "size": 11669559,
+      "filename": "OneConfig-26.2-fabric-1.2.10.jar",
+      "size": 11672719,
       "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
       "iconUrl": "https://cdn.modrinth.com/data/AibBIVmj/073a92ecc8bb5650456758f1a58990801de64db5_96.webp",
       "categories": [
@@ -2794,8 +2794,8 @@
       "id": "vanillahud",
       "name": "VanillaHUD",
       "side": "client",
-      "filename": "vanillahud-3.5.1+26.2.jar",
-      "size": 176666,
+      "filename": "vanillahud-3.5.3+26.2.jar",
+      "size": 187005,
       "description": "A mod that modifies various vanilla HUD elements, such as the bossbar, action bar, and sidebar.",
       "iconUrl": "https://cdn.modrinth.com/data/pWXJaKrX/b84b1b6024006e54b2496c12689eaa7ad6d630c2_96.webp",
       "categories": [
@@ -2820,8 +2820,8 @@
       "id": "villager-names-serilum",
       "name": "Villager Names",
       "side": "both",
-      "filename": "villagernames-26.2.0-8.6.jar",
-      "size": 80176,
+      "filename": "villagernames-26.2.0-8.7.jar",
+      "size": 77376,
       "description": "🧑‍🌾 Gives all villager entities a default or custom name to liven up the world.",
       "iconUrl": "https://cdn.modrinth.com/data/gqRXDo8B/44a24693e277ae99295054691d0acbbbf0d56774_96.webp",
       "categories": [
@@ -3280,32 +3280,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/chatting-3.2.0+26.2.jar",
-      "size": 236131,
-      "hashes": {
-        "sha256": "02842f1ef6ed4bf2e1fe98d24dd026ac1da1118eb96e46ebac549f94111749d2",
-        "sha512": "fb255afcbfdbc624053ee96fea998bcba1dc46dc05db6a373bf06cdab843d33f464a2fd144f16c6e170233f10346f159fa1b3df289174ed8553f7d8fd5fe9966"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/8pJYUDNi/versions/W65evu0r/chatting-3.2.0%2B26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/chattweaks-1.2.1+26.2.jar",
-      "size": 80372,
-      "hashes": {
-        "sha256": "a4cac898bedda5370e6f7fe5494a313b84a7bf067046793779504ec93d36ce20",
-        "sha512": "77d591eae0a300ce1b5c7680e916f734e1bf4f45a6d7c96ca59fde50c0e32600f4f679ddfa8dd5d4cebfef4100048c512e38ced37231f2082e4abc76ec34e40d"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/8LNT47ZH/versions/YsMHVRjz/chattweaks-1.2.1%2B26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/cicada-lib-0.15.3+26.2.jar",
       "size": 360541,
       "hashes": {
@@ -3327,19 +3301,6 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/Nv3xnWXd/cloth-config-26.2.155.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/collective-26.2.0-8.40.jar",
-      "size": 1081485,
-      "hashes": {
-        "sha256": "5d08c5ba2aaaad12fd83eb8d3a51eac885eb9fba3f154ccea5879dd2335924c4",
-        "sha512": "1c35fa28b2ec42cc130c578ad9bb1f320477d881816044a4ba28429ec633c8bd6725fd1378a8ae41b88337ab43aff174d55db0468ed23c5cd16cca776d001c93"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/e0M1UDsY/versions/k9G2Omhm/collective-26.2.0-8.40.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -3432,6 +3393,19 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/9rlXSyLg/versions/bh14ODmF/cratedelight-26.07.01-26.2-fabric.jar",
         "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/ApothicSpawners-26.2-3.0.1.jar",
+      "size": 161628,
+      "hashes": {
+        "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
+        "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a"
+      },
+      "download": {
+        "url": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -3592,6 +3566,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/ApothicAttributes-26.2-4.0.1.jar",
+      "size": 357463,
+      "hashes": {
+        "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+        "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2"
+      },
+      "download": {
+        "url": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/dungeons-and-taverns-ancient-city-overhaul-3.4.jar",
       "size": 1070006,
       "hashes": {
@@ -3696,15 +3683,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/enchantmentlevelcapindicator-26.2.0-1.2.jar",
-      "size": 36305,
+      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
       "hashes": {
-        "sha256": "939f4b8fc26ba3c2cb6e44dedb59a3bc428e4322632b9e7cc7ddcee67bb1c7b1",
-        "sha512": "9b706334a2585f3ef197dd91c2672343dac3619244261130800315133897e8de8cdc2724f0500c478aa879ee0727acf169ab7d3f0b7c7c4b693850957aa44f69"
+        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/82BWabBj/versions/jdFjWETu/enchantmentlevelcapindicator-26.2.0-1.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -3878,6 +3865,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/enchantmentlevelcapindicator-26.2.0-1.3.jar",
+      "size": 33381,
+      "hashes": {
+        "sha256": "58a7ce16fde2b96e2aa5466384b7e514a21eedf0a0fe9cc711a6a40ae22a9eac",
+        "sha512": "c6a3ea53e7826c5e625066a03edc02c4ddc9f61ecb67d461352e1522739886fe786c91f9f77a9453294eb78b4d126b3d1f4df4f71f4c0896b50308a42dab09d0"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/82BWabBj/versions/8a0jJryO/enchantmentlevelcapindicator-26.2.0-1.3.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/forcecloseloadingscreen-2.3.6.jar",
       "size": 120931,
       "hashes": {
@@ -3904,15 +3904,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicSpawners-26.2-3.0.1.jar",
-      "size": 161628,
+      "path": "mods/FriendlyFire-fabric-MC26.2-26.2.0.1.jar",
+      "size": 31377,
       "hashes": {
-        "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
-        "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a"
+        "sha256": "72b9cb935ade6e30326215daf8c3f8b2913372e277e25cbec18bc9139f092ea3",
+        "sha512": "e2fe4025c8d46fcf3f5f7ee4b3aa613c764e7e857a4e5e069747ef1f826c1036d0a1d6c1404724a62546a61cdca1e9ac1a7fec7220d144daf812160142993201"
       },
       "download": {
-        "url": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/FTaA4pRW/versions/JvJIbhWt/FriendlyFire-fabric-MC26.2-26.2.0.1.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -3969,14 +3969,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ApothicAttributes-26.2-4.0.1.jar",
-      "size": 357463,
+      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
       "hashes": {
-        "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
-        "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2"
+        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
       },
       "download": {
-        "url": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4190,6 +4190,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "hashes": {
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
+      },
+      "download": {
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/GatewaysToEternity-26.2-7.0.1.jar",
       "size": 663471,
       "hashes": {
@@ -4203,28 +4216,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
+      "path": "mods/collective-26.2.0-8.41.jar",
+      "size": 1081455,
       "hashes": {
-        "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017"
+        "sha256": "99860aab78be752449ff2c871be3bba57bfcbcdd7c52fa221090ebd649ea0fe1",
+        "sha512": "7b1bb2add04a7e35d41b6463d643331fa4870861892d84d47943289266801f10fcca6873fd5c34481213cf298ba45408ad6bcafb38e87a7c3259370a8672254d"
       },
       "download": {
-        "url": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "hashes": {
-        "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6"
-      },
-      "download": {
-        "url": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/e0M1UDsY/versions/RCPUFFy1/collective-26.2.0-8.41.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -4242,14 +4242,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/levelledmobs-fabric-1.0.0.jar",
-      "size": 170272,
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
       "hashes": {
-        "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
-        "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2"
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
       },
       "download": {
-        "url": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4528,6 +4528,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/levelledmobs-fabric-1.0.0.jar",
+      "size": 170272,
+      "hashes": {
+        "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+        "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2"
+      },
+      "download": {
+        "url": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/MoreBarrelVariants-2.0.5+26.1(2)-Fabric.jar",
       "size": 145981,
       "hashes": {
@@ -4736,15 +4749,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/OneConfig-26.2-fabric-1.2.9.jar",
-      "size": 11669559,
+      "path": "mods/lampas2-overrides-1.0.0.jar",
+      "size": 1183394,
       "hashes": {
-        "sha256": "d0a3b35244b84f1269ed58835531d616b2b4e33773ed523204e1926fb52e69ba",
-        "sha512": "8f02aad5a54877bde33751cc6e937a711355ee3fc385487f03dc93157178903cf34342a3d8542c0d5764e109fc94814ec4772de1e91af7c2b6b062cd223d2b77"
+        "sha256": "4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
+        "sha512": "aa093d233d7c2981a2ad0e3e477b995aecc944feaf0a0c58177b75dfdde5d39c3ec5d7d4baf30c6b653807b2a19ddbd89a93d4973575a060a1f07f9bd8942504"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/AibBIVmj/versions/ClTP2twh/OneConfig-26.2-fabric-1.2.9.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4801,27 +4814,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1183394,
+      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
+      "size": 3228916,
       "hashes": {
-        "sha256": "4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
-        "sha512": "aa093d233d7c2981a2ad0e3e477b995aecc944feaf0a0c58177b75dfdde5d39c3ec5d7d4baf30c6b653807b2a19ddbd89a93d4973575a060a1f07f9bd8942504"
+        "sha256": "6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
+        "sha512": "b1b98499179cb017fa931c74184d31f53c3c2a1d03fc79e006c4ed3b4aae7d66e010bec6cc789944a340e622177edd36e600040dec17e0eb2acc0cfcccd6ce5e"
       },
       "download": {
-        "url": "/api/v1/blobs/4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
-      },
-      "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "url": "/api/v1/blobs/6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5438,14 +5438,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5490,15 +5490,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/vanillahud-3.5.1+26.2.jar",
-      "size": 176666,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
       "hashes": {
-        "sha256": "0b6ddc56ac98a91eba298cc9f567dec92b2cdfaf8fbc396bb1d43bb00812d213",
-        "sha512": "2c8e5955385e7f4a8a4c090b8c809e28b2561ca6d504b10368106149f6283846aecb8a21f3c62dd5b238b22eceb61bf1236c00c1eef29145c57fe2613b7e5479"
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/pWXJaKrX/versions/sKqtfYI4/vanillahud-3.5.1%2B26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -5516,15 +5516,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/villagernames-26.2.0-8.6.jar",
-      "size": 80176,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "32b65d66690513aa787e55f760d014073aa93de662a0840ac9a624c2f4fafeda",
-        "sha512": "d41d260b3464253bfb6302227634f9234b674f27ef941b5efd2c284963afa1ca4d80d06b97096e4121a98aca74f50589aa029e84e60c92810d4cad925eff6367"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/gqRXDo8B/versions/D78qWxUx/villagernames-26.2.0-8.6.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -5750,14 +5750,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 2926405,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
+        "sha512": "fdf5041f0820e25dacba9c0d3c38bd797838d9bd59f7e85673f0c9ce0e483d5b3ded8fa48cc36f254455457344e251c0582efc89053db5f8be81991c643cfd47"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5815,14 +5815,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
+      "path": "mods/ApothicEnchanting-26.2-3.0.1.jar",
+      "size": 5440070,
       "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+        "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+        "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50"
       },
       "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "url": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5854,53 +5854,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
+      "path": "mods/Apotheosis-26.2-10.0.1.jar",
+      "size": 8204968,
       "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
+        "sha256": "44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
+        "sha512": "d9f2e249240e9a29e1ef6561fe8d7f30e36c66d1f707637585c958ef1efa27cc24e6e276d529928753f108854da923782a8665b2da24d74b28214202d50d1b09"
       },
       "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
-      "size": 3228916,
-      "hashes": {
-        "sha256": "6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
-        "sha512": "b1b98499179cb017fa931c74184d31f53c3c2a1d03fc79e006c4ed3b4aae7d66e010bec6cc789944a340e622177edd36e600040dec17e0eb2acc0cfcccd6ce5e"
-      },
-      "download": {
-        "url": "/api/v1/blobs/6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 2926405,
-      "hashes": {
-        "sha256": "dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
-        "sha512": "fdf5041f0820e25dacba9c0d3c38bd797838d9bd59f7e85673f0c9ce0e483d5b3ded8fa48cc36f254455457344e251c0582efc89053db5f8be81991c643cfd47"
-      },
-      "download": {
-        "url": "/api/v1/blobs/dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/ApothicEnchanting-26.2-3.0.1.jar",
-      "size": 5440070,
-      "hashes": {
-        "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
-        "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50"
-      },
-      "download": {
-        "url": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+        "url": "/api/v1/blobs/44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5919,27 +5880,66 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Apotheosis-26.2-10.0.1.jar",
-      "size": 8204968,
+      "path": "mods/chatting-3.2.2+26.2.jar",
+      "size": 249540,
       "hashes": {
-        "sha256": "44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
-        "sha512": "d9f2e249240e9a29e1ef6561fe8d7f30e36c66d1f707637585c958ef1efa27cc24e6e276d529928753f108854da923782a8665b2da24d74b28214202d50d1b09"
+        "sha256": "af1561983aca38ae0fdd8d2173fa56b0e18d7bedf3e07329ce1825f6b3859ac6",
+        "sha512": "27d5afb7a2be655134eb34c0c52147e0159459a5daf7301510c4d861a01d5557d0f0180fac4385c6a785b912974deb91080f60b6cc571071444eb80b1e9bb111"
       },
       "download": {
-        "url": "/api/v1/blobs/44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/8pJYUDNi/versions/OgYV2xUV/chatting-3.2.2%2B26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "mods/FriendlyFire-fabric-MC26.2-26.2.0.1.jar",
-      "size": 31377,
+      "path": "mods/vanillahud-3.5.3+26.2.jar",
+      "size": 187005,
       "hashes": {
-        "sha256": "72b9cb935ade6e30326215daf8c3f8b2913372e277e25cbec18bc9139f092ea3",
-        "sha512": "e2fe4025c8d46fcf3f5f7ee4b3aa613c764e7e857a4e5e069747ef1f826c1036d0a1d6c1404724a62546a61cdca1e9ac1a7fec7220d144daf812160142993201"
+        "sha256": "8ac4eb69557f51da206ce309669e9f86e0c04e4cd41b55bee108162aefebc300",
+        "sha512": "17e668b76047e44965c297e83d3defae6a94c09d7fed21601e5c624922449f09980e07d24950f2c8e998996f6e7da0d8aca9aa228ec28e4dd674a6565affd392"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/FTaA4pRW/versions/JvJIbhWt/FriendlyFire-fabric-MC26.2-26.2.0.1.jar",
+        "url": "https://cdn.modrinth.com/data/pWXJaKrX/versions/RUApEBe7/vanillahud-3.5.3%2B26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/villagernames-26.2.0-8.7.jar",
+      "size": 77376,
+      "hashes": {
+        "sha256": "ea1500a80e35ee5e4287a5270c1bd9bac27293d8490496a7e2ae55295aeb6343",
+        "sha512": "8018f940e5c04959ff1de3c6cc2d599991527ccb075c8ff7ebd45ff2f30c208b22b9f95a896939c7cec0b5d157742a6f903de73c4a907b025e8eef5d823d4b1f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/gqRXDo8B/versions/gVKMFrn7/villagernames-26.2.0-8.7.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/OneConfig-26.2-fabric-1.2.10.jar",
+      "size": 11672719,
+      "hashes": {
+        "sha256": "9a49cbe1d1172e479370800376ef37560611e4343114745790a82bc125815873",
+        "sha512": "eeec4dc02168d087c622287224674cb5b8da06461c4417756ec196ccc4391e3aa263bb21f6a403824bb5a06ab1aee5cc4c9e2836f0c7a969141770e6c29b4a3e"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/AibBIVmj/versions/54Q7xUjq/OneConfig-26.2-fabric-1.2.10.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/chattweaks-1.2.1+26.2.jar",
+      "size": 80425,
+      "hashes": {
+        "sha256": "609a95f69eeade241600ef846800c4502610d4d0b9c6a5d404c837b9d2921287",
+        "sha512": "c757158efb1efb5c9fed8b432ee0efabc3156298f751d9c7d0460675bd2fd5b4406daee9e11cf2d08c0fe645620eb61ee0279823e7c3caacd0a68d54b47cac2f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/8LNT47ZH/versions/sCDVyXhW/chattweaks-1.2.1%2B26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
