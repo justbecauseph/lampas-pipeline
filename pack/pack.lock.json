@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.13",
+  "packVersion": "2.2.14",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-03T02:56:21.994Z",
+  "updated": "2026-10-03T06:49:17.480Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -4453,21 +4453,33 @@
         "serverSide": "unsupported"
       }
     },
-    "crazy_chambers-1_0_0_26_2": {
-      "id": "crazy_chambers-1_0_0_26_2",
-      "name": "crazy_chambers-1.0.0+26.2",
-      "side": "both",
-      "filename": "crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
-      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
-      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+    "oneconfigbootstrap": {
+      "id": "oneconfigbootstrap",
+      "name": "OneConfig",
+      "side": "client",
+      "filename": "OneConfig-26.2-fabric-1.2.14.jar",
+      "size": 11675990,
+      "sha256": "4036ec61404087461ae8bac81fd6ca380ae7beed676c766f3c86d454feaa0ec1",
+      "sha512": "4a2304f8152ccbf04ffe2dcc89ad46cf766fa7d80e933f254926d29948e454ea1ea00ead6e0fabd52ef25f646b9f8d16d971bf177abce059f53f27ed16eaa030",
+      "sha1": "f7a971b2ba0513b4ea8297e5836ffc23684185f3",
+      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/n0xKb4O7/OneConfig-26.2-fabric-1.2.14.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+        "type": "modrinth",
+        "projectId": "AibBIVmj",
+        "versionId": "n0xKb4O7"
+      },
+      "metadata": {
+        "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
+        "iconUrl": "https://cdn.modrinth.com/data/AibBIVmj/073a92ecc8bb5650456758f1a58990801de64db5_96.webp",
+        "categories": [
+          "library",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/oneconfig",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "optigui": {
@@ -4586,6 +4598,23 @@
         "serverSide": "unsupported"
       }
     },
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
+      "side": "both",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
+      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
+      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+      }
+    },
     "lampas2-overrides-1_0_0": {
       "id": "lampas2-overrides-1_0_0",
       "name": "lampas2-overrides-1.0.0",
@@ -4610,30 +4639,6 @@
           "utility"
         ],
         "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
-      }
-    },
-    "camerapture-2_0_0_mc26_2": {
-      "id": "camerapture-2_0_0_mc26_2",
-      "name": "camerapture-2.0.0+mc26.2",
-      "side": "both",
-      "filename": "camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
-      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
-      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/camerapture-2.0.0+mc26.2.jar"
-      },
-      "metadata": {
-        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
-        "categories": [
-          "utility",
-          "media"
-        ]
       }
     },
     "placeholder-api": {
@@ -6508,21 +6513,21 @@
         "serverSide": "required"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "twod_projectiles": {
@@ -7287,21 +7292,21 @@
         "serverSide": "unsupported"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
       "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
       }
     },
     "photon-shader": {
@@ -7424,21 +7429,28 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
+    "camerapture-2_0_0_mc26_2": {
+      "id": "camerapture-2_0_0_mc26_2",
+      "name": "camerapture-2.0.0+mc26.2",
+      "side": "both",
+      "filename": "camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
+      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
+      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "artifactType": "mod",
+      "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
+        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+      },
+      "metadata": {
+        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "categories": [
+          "utility",
+          "media"
+        ]
       }
     },
     "recolourful-containers-gui-hud-dark": {
@@ -7501,21 +7513,38 @@
         "serverSide": "unsupported"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "file": "custom/Placebo-26.2-11.0.1.jar"
+      }
+    },
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas2-resource-pack.zip"
       }
     },
     "bloomingnature": {
@@ -7564,11 +7593,11 @@
       "name": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT",
       "side": "client",
       "filename": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 2935127,
-      "sha256": "fc61c36671c20ecb532749f527f978d54ab92458c6ab692121405e39e0b29d5c",
-      "sha512": "93023396e9334937b1da22282c15815d3459604f310fac4b0a8d2692ab7499a1bbc77c4a2c9715834b8c93f63cbcb5f15c96a57cb5ac152cf71e8e31bab102fb",
-      "sha1": "6347d5dc1a6b85b01eef6adaded5e5491e1a35a1",
-      "downloadUrl": "/api/v1/blobs/fc61c36671c20ecb532749f527f978d54ab92458c6ab692121405e39e0b29d5c",
+      "size": 2988379,
+      "sha256": "a686ca3f832c44c094857d1e135bd934d2f201b7238f09f9ecbe8f0b51e2006a",
+      "sha512": "cbc089743d1cc820d7f62ffc2842d82117ff852edac6c383280ff56a0845b54ce267c4f2bcfecda982f2f361c33b102bcaa9faa81a4357e6b05841d57d270690",
+      "sha1": "5c910a959a63160ab804831cbea68bbf309bc37c",
+      "downloadUrl": "/api/v1/blobs/a686ca3f832c44c094857d1e135bd934d2f201b7238f09f9ecbe8f0b51e2006a",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
@@ -7642,35 +7671,6 @@
       "provider": {
         "type": "lampas",
         "file": "custom/Apotheosis-26.2-10.0.1.jar"
-      }
-    },
-    "oneconfigbootstrap": {
-      "id": "oneconfigbootstrap",
-      "name": "OneConfig",
-      "side": "client",
-      "filename": "OneConfig-26.2-fabric-1.2.14.jar",
-      "size": 11675990,
-      "sha256": "4036ec61404087461ae8bac81fd6ca380ae7beed676c766f3c86d454feaa0ec1",
-      "sha512": "4a2304f8152ccbf04ffe2dcc89ad46cf766fa7d80e933f254926d29948e454ea1ea00ead6e0fabd52ef25f646b9f8d16d971bf177abce059f53f27ed16eaa030",
-      "sha1": "f7a971b2ba0513b4ea8297e5836ffc23684185f3",
-      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/n0xKb4O7/OneConfig-26.2-fabric-1.2.14.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "AibBIVmj",
-        "versionId": "n0xKb4O7"
-      },
-      "metadata": {
-        "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
-        "iconUrl": "https://cdn.modrinth.com/data/AibBIVmj/073a92ecc8bb5650456758f1a58990801de64db5_96.webp",
-        "categories": [
-          "library",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/oneconfig",
-        "clientSide": "required",
-        "serverSide": "unsupported"
       }
     }
   }
