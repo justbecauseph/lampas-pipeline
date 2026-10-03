@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.12",
+  "packVersion": "2.2.13",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-02T12:45:20.454Z",
+  "updated": "2026-10-03T02:56:21.994Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -706,6 +706,62 @@
         "serverSide": "required"
       }
     },
+    "chatting": {
+      "id": "chatting",
+      "name": "Chatting",
+      "side": "client",
+      "filename": "chatting-3.2.2+26.2.jar",
+      "size": 249540,
+      "sha256": "af1561983aca38ae0fdd8d2173fa56b0e18d7bedf3e07329ce1825f6b3859ac6",
+      "sha512": "27d5afb7a2be655134eb34c0c52147e0159459a5daf7301510c4d861a01d5557d0f0180fac4385c6a785b912974deb91080f60b6cc571071444eb80b1e9bb111",
+      "sha1": "5611eaf1e9590e9fbccd93b8efa907cd5d348c0d",
+      "downloadUrl": "https://cdn.modrinth.com/data/8pJYUDNi/versions/OgYV2xUV/chatting-3.2.2%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "8pJYUDNi",
+        "versionId": "OgYV2xUV"
+      },
+      "metadata": {
+        "description": "Chatting is a chat mod adding utilities such as extremely customizable chat tabs, chat shortcuts, chat screenshots, and message copying.",
+        "iconUrl": "https://cdn.modrinth.com/data/8pJYUDNi/790dfffda5974fccda843477cfe8ed19b1347ea3_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/chatting",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
+    "chattweaks": {
+      "id": "chattweaks",
+      "name": "ChatTweaks",
+      "side": "client",
+      "filename": "chattweaks-1.2.1+26.2.jar",
+      "size": 80425,
+      "sha256": "609a95f69eeade241600ef846800c4502610d4d0b9c6a5d404c837b9d2921287",
+      "sha512": "c757158efb1efb5c9fed8b432ee0efabc3156298f751d9c7d0460675bd2fd5b4406daee9e11cf2d08c0fe645620eb61ee0279823e7c3caacd0a68d54b47cac2f",
+      "sha1": "2528a1051074244904ead6f10ee1302cc1392621",
+      "downloadUrl": "https://cdn.modrinth.com/data/8LNT47ZH/versions/sCDVyXhW/chattweaks-1.2.1%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "8LNT47ZH",
+        "versionId": "sCDVyXhW"
+      },
+      "metadata": {
+        "description": "Modify the contents of your chat with additional information",
+        "iconUrl": "https://cdn.modrinth.com/data/8LNT47ZH/b52a701cc5fb2e2e9b7c5c4a6d50336db20b597a_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/chattweaks",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "chunky": {
       "id": "chunky",
       "name": "Chunky",
@@ -788,6 +844,34 @@
           "library"
         ],
         "sourceUrl": "https://modrinth.com/mod/cloth-config",
+        "clientSide": "optional",
+        "serverSide": "optional"
+      }
+    },
+    "collective": {
+      "id": "collective",
+      "name": "Collective",
+      "side": "both",
+      "filename": "collective-26.2.0-8.41.jar",
+      "size": 1081455,
+      "sha256": "99860aab78be752449ff2c871be3bba57bfcbcdd7c52fa221090ebd649ea0fe1",
+      "sha512": "7b1bb2add04a7e35d41b6463d643331fa4870861892d84d47943289266801f10fcca6873fd5c34481213cf298ba45408ad6bcafb38e87a7c3259370a8672254d",
+      "sha1": "74b76a9b0e8a55449a04e8244415792dd01593c4",
+      "downloadUrl": "https://cdn.modrinth.com/data/e0M1UDsY/versions/RCPUFFy1/collective-26.2.0-8.41.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "e0M1UDsY",
+        "versionId": "RCPUFFy1"
+      },
+      "metadata": {
+        "description": "🎓 Collective is a shared library with common code for all of Serilum's mods.",
+        "iconUrl": "https://cdn.modrinth.com/data/e0M1UDsY/f5e4fe9ac298e2c14591920d6bda937c566accd0_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/collective",
         "clientSide": "optional",
         "serverSide": "optional"
       }
@@ -992,23 +1076,6 @@
         "sourceUrl": "https://modrinth.com/mod/crate-delight",
         "clientSide": "required",
         "serverSide": "required"
-      }
-    },
-    "apothicspawners-26_2-3_0_1": {
-      "id": "apothicspawners-26_2-3_0_1",
-      "name": "ApothicSpawners-26.2-3.0.1",
-      "side": "both",
-      "filename": "ApothicSpawners-26.2-3.0.1.jar",
-      "size": 161628,
-      "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
-      "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a",
-      "sha1": "abb7bd5b57bbff09af32d51b2b12b9d5018a1263",
-      "downloadUrl": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicSpawners-26.2-3.0.1.jar"
       }
     },
     "cubes-without-borders": {
@@ -1357,21 +1424,33 @@
         "serverSide": "required"
       }
     },
-    "apothicattributes-26_2-4_0_1": {
-      "id": "apothicattributes-26_2-4_0_1",
-      "name": "ApothicAttributes-26.2-4.0.1",
-      "side": "both",
-      "filename": "ApothicAttributes-26.2-4.0.1.jar",
-      "size": 357463,
-      "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
-      "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2",
-      "sha1": "a7cf7dbd085f90c30cdc2ff2f2fa6372db30dd1f",
-      "downloadUrl": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+    "double-doors": {
+      "id": "double-doors",
+      "name": "Double Doors",
+      "side": "server",
+      "filename": "doubledoors-26.2.0-7.3.jar",
+      "size": 75418,
+      "sha256": "0296dff66be8854436a394b710fc8aee56d73036815af666e31b665316aa2674",
+      "sha512": "984f3233bb7e7ba82cdbb0962c8eb477f39a8ec11cce8ffea22572443d2b303e06a17f3aa876a6739074ae2449e504fe67490833df8a03537d3c578acf3c9d3d",
+      "sha1": "f9329644ae8bcac57ecbb058ae3347361d2435a5",
+      "downloadUrl": "https://cdn.modrinth.com/data/JrvR9OHr/versions/8PpB7JBJ/doubledoors-26.2.0-7.3.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/ApothicAttributes-26.2-4.0.1.jar"
+        "type": "modrinth",
+        "projectId": "JrvR9OHr",
+        "versionId": "8PpB7JBJ"
+      },
+      "metadata": {
+        "description": "🚪 Multiple identical double doors, trapdoors and fence gates can be opened simultaneously.",
+        "iconUrl": "https://cdn.modrinth.com/data/JrvR9OHr/bf25550d32342e00b8a8065a99f83f22e34b3d88_96.webp",
+        "categories": [
+          "game-mechanics",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/double-doors",
+        "clientSide": "unsupported",
+        "serverSide": "required"
       }
     },
     "dungeons-and-taverns-ancient-city-overhaul": {
@@ -1548,35 +1627,6 @@
         "serverSide": "required"
       }
     },
-    "double-doors": {
-      "id": "double-doors",
-      "name": "Double Doors",
-      "side": "server",
-      "filename": "doubledoors-26.2.0-7.3.jar",
-      "size": 75418,
-      "sha256": "0296dff66be8854436a394b710fc8aee56d73036815af666e31b665316aa2674",
-      "sha512": "984f3233bb7e7ba82cdbb0962c8eb477f39a8ec11cce8ffea22572443d2b303e06a17f3aa876a6739074ae2449e504fe67490833df8a03537d3c578acf3c9d3d",
-      "sha1": "f9329644ae8bcac57ecbb058ae3347361d2435a5",
-      "downloadUrl": "https://cdn.modrinth.com/data/JrvR9OHr/versions/8PpB7JBJ/doubledoors-26.2.0-7.3.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "JrvR9OHr",
-        "versionId": "8PpB7JBJ"
-      },
-      "metadata": {
-        "description": "🚪 Multiple identical double doors, trapdoors and fence gates can be opened simultaneously.",
-        "iconUrl": "https://cdn.modrinth.com/data/JrvR9OHr/bf25550d32342e00b8a8065a99f83f22e34b3d88_96.webp",
-        "categories": [
-          "game-mechanics",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/double-doors",
-        "clientSide": "unsupported",
-        "serverSide": "required"
-      }
-    },
     "easy-elytra-takeoff": {
       "id": "easy-elytra-takeoff",
       "name": "Easy Elytra Takeoff",
@@ -1722,21 +1772,33 @@
         "serverSide": "unsupported"
       }
     },
-    "eastersdelight-fabric-26_2-1_3_1": {
-      "id": "eastersdelight-fabric-26_2-1_3_1",
-      "name": "eastersdelight-fabric-26.2-1.3.1",
-      "side": "both",
-      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
-      "size": 1097421,
-      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
-      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
-      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
-      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+    "enchantment-level-cap-indicator": {
+      "id": "enchantment-level-cap-indicator",
+      "name": "Enchantment Level Cap Indicator",
+      "side": "client",
+      "filename": "enchantmentlevelcapindicator-26.2.0-1.3.jar",
+      "size": 33381,
+      "sha256": "58a7ce16fde2b96e2aa5466384b7e514a21eedf0a0fe9cc711a6a40ae22a9eac",
+      "sha512": "c6a3ea53e7826c5e625066a03edc02c4ddc9f61ecb67d461352e1522739886fe786c91f9f77a9453294eb78b4d126b3d1f4df4f71f4c0896b50308a42dab09d0",
+      "sha1": "9990aacb62541883b76c29ccb7aa5f58bd92877c",
+      "downloadUrl": "https://cdn.modrinth.com/data/82BWabBj/versions/8a0jJryO/enchantmentlevelcapindicator-26.2.0-1.3.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
+        "type": "modrinth",
+        "projectId": "82BWabBj",
+        "versionId": "8a0jJryO"
+      },
+      "metadata": {
+        "description": "⭐ Displays a symbol next to enchanted item tooltips when they reach their max level.",
+        "iconUrl": "https://cdn.modrinth.com/data/82BWabBj/b4d4d9cbfc75c82314d29886d5c77e99f0c43630.png",
+        "categories": [
+          "equipment",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/enchantment-level-cap-indicator",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "ender-zoology": {
@@ -2171,35 +2233,6 @@
         "serverSide": "optional"
       }
     },
-    "enchantment-level-cap-indicator": {
-      "id": "enchantment-level-cap-indicator",
-      "name": "Enchantment Level Cap Indicator",
-      "side": "client",
-      "filename": "enchantmentlevelcapindicator-26.2.0-1.3.jar",
-      "size": 33381,
-      "sha256": "58a7ce16fde2b96e2aa5466384b7e514a21eedf0a0fe9cc711a6a40ae22a9eac",
-      "sha512": "c6a3ea53e7826c5e625066a03edc02c4ddc9f61ecb67d461352e1522739886fe786c91f9f77a9453294eb78b4d126b3d1f4df4f71f4c0896b50308a42dab09d0",
-      "sha1": "9990aacb62541883b76c29ccb7aa5f58bd92877c",
-      "downloadUrl": "https://cdn.modrinth.com/data/82BWabBj/versions/8a0jJryO/enchantmentlevelcapindicator-26.2.0-1.3.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "82BWabBj",
-        "versionId": "8a0jJryO"
-      },
-      "metadata": {
-        "description": "⭐ Displays a symbol next to enchanted item tooltips when they reach their max level.",
-        "iconUrl": "https://cdn.modrinth.com/data/82BWabBj/b4d4d9cbfc75c82314d29886d5c77e99f0c43630.png",
-        "categories": [
-          "equipment",
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/enchantment-level-cap-indicator",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
     "forcecloseworldloadingscreen": {
       "id": "forcecloseworldloadingscreen",
       "name": "kennytvs-epic-force-close-loading-screen-mod-for-fabric",
@@ -2487,21 +2520,21 @@
         "serverSide": "required"
       }
     },
-    "crazy_chambers-1_0_0_26_2": {
-      "id": "crazy_chambers-1_0_0_26_2",
-      "name": "crazy_chambers-1.0.0+26.2",
+    "apothicspawners-26_2-3_0_1": {
+      "id": "apothicspawners-26_2-3_0_1",
+      "name": "ApothicSpawners-26.2-3.0.1",
       "side": "both",
-      "filename": "crazy_chambers-1.0.0+26.2.jar",
-      "size": 1910498,
-      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
-      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
-      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
-      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "filename": "ApothicSpawners-26.2-3.0.1.jar",
+      "size": 161628,
+      "sha256": "bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
+      "sha512": "b475df537b97bb1f9139ca583f3881abb997c404fccd4389ab7a2051464b0e87ea40964ede4546dbb0b40cc9355ee26bc56d61188f9be1da74c681cc7e76f42a",
+      "sha1": "abb7bd5b57bbff09af32d51b2b12b9d5018a1263",
+      "downloadUrl": "/api/v1/blobs/bb69ab414e95dfa4f8281bf2bf9e42a338a0e6cb0627d00369301588163f2886",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
+        "file": "custom/ApothicSpawners-26.2-3.0.1.jar"
       }
     },
     "geckolib": {
@@ -2591,6 +2624,35 @@
         "sourceUrl": "https://modrinth.com/mod/grim-kingdoms-lost-structures-ruins",
         "clientSide": "optional",
         "serverSide": "required"
+      }
+    },
+    "headpat": {
+      "id": "headpat",
+      "name": "Headpat a Friend!",
+      "side": "both",
+      "filename": "headpats-1.0.7+26.2.jar",
+      "size": 208616,
+      "sha256": "bf08fa03eebb1e4def05cdfe3b27384aefc0ca7414980c22c2c884e1e3322cae",
+      "sha512": "8ba3e0f4ca6c890d327dae41070c803dba48616e955bd42ff998f86a78737cdeb76dc9ea5f60c5254e7650d596a72d69bdf60df356be67944af0264c32a7b990",
+      "sha1": "4a16337864aabacc023a036c2e3439b9f24302df",
+      "downloadUrl": "https://cdn.modrinth.com/data/vETxChiy/versions/kq9IEA2S/headpats-1.0.7%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "vETxChiy",
+        "versionId": "kq9IEA2S"
+      },
+      "metadata": {
+        "description": "Give headpats to other players!",
+        "iconUrl": "https://cdn.modrinth.com/data/vETxChiy/8a0525ad1b8313cea130cc6b9a0d2cc2f575d658_96.webp",
+        "categories": [
+          "magic",
+          "social"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/headpat",
+        "clientSide": "optional",
+        "serverSide": "optional"
       }
     },
     "hopobettermineshaft": {
@@ -2997,6 +3059,23 @@
         "serverSide": "unsupported"
       }
     },
+    "apothicattributes-26_2-4_0_1": {
+      "id": "apothicattributes-26_2-4_0_1",
+      "name": "ApothicAttributes-26.2-4.0.1",
+      "side": "both",
+      "filename": "ApothicAttributes-26.2-4.0.1.jar",
+      "size": 357463,
+      "sha256": "c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+      "sha512": "d3cb28d878c0d19d4311f8a1b5f508874d5eb79e1f9351aaf28c6a1d2bb28ba23fe789e3db8d1d67570ef2895e1e1bfe4bc4a7719217b29c7c12cc61746e99e2",
+      "sha1": "a7cf7dbd085f90c30cdc2ff2f2fa6372db30dd1f",
+      "downloadUrl": "/api/v1/blobs/c26ada4e6597c88eab48fcec230559af39f584c6a83d1532d4f6855b65cf973c",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/ApothicAttributes-26.2-4.0.1.jar"
+      }
+    },
     "lampas-addons-1_0_0": {
       "id": "lampas-addons-1_0_0",
       "name": "lampas-addons-1.0.0",
@@ -3012,23 +3091,6 @@
       "provider": {
         "type": "lampas",
         "file": "custom/lampas-addons-1.0.0.jar"
-      }
-    },
-    "lampas-aria": {
-      "id": "lampas-aria",
-      "name": "lampas-aria",
-      "side": "both",
-      "filename": "lampas-aria-0.1.0-alpha.2.jar",
-      "size": 106401,
-      "sha256": "962c05b59e4d1ea7313185dbf62beecaa7eb10fcbee2117e36d26e9323876b4c",
-      "sha512": "d040fbe6a2b5af82a2ea0844202ffe87b6c6721c6b821e4ec670cc0b2efe43e8707376aa08b0749c3a69acce170140f70625ff80134c198d1fb4495ce9cd965a",
-      "sha1": "4aa3a044e200766d92c928ab5fd623aa4a255c38",
-      "downloadUrl": "/api/v1/blobs/962c05b59e4d1ea7313185dbf62beecaa7eb10fcbee2117e36d26e9323876b4c",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas-aria-0.1.0-alpha.2.jar"
       }
     },
     "lampas-yggdrasil-client-fabric-0_1_0-snapshot": {
@@ -3048,28 +3110,21 @@
         "file": "custom/lampas-yggdrasil-client-fabric-0.1.0-SNAPSHOT.jar"
       }
     },
-    "camerapture-2_0_0_mc26_2": {
-      "id": "camerapture-2_0_0_mc26_2",
-      "name": "camerapture-2.0.0+mc26.2",
+    "lampas-aria": {
+      "id": "lampas-aria",
+      "name": "lampas-aria",
       "side": "both",
-      "filename": "camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
-      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
-      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "filename": "lampas-aria-0.1.0-alpha.2.jar",
+      "size": 106401,
+      "sha256": "962c05b59e4d1ea7313185dbf62beecaa7eb10fcbee2117e36d26e9323876b4c",
+      "sha512": "d040fbe6a2b5af82a2ea0844202ffe87b6c6721c6b821e4ec670cc0b2efe43e8707376aa08b0749c3a69acce170140f70625ff80134c198d1fb4495ce9cd965a",
+      "sha1": "4aa3a044e200766d92c928ab5fd623aa4a255c38",
+      "downloadUrl": "/api/v1/blobs/962c05b59e4d1ea7313185dbf62beecaa7eb10fcbee2117e36d26e9323876b4c",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/camerapture-2.0.0+mc26.2.jar"
-      },
-      "metadata": {
-        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
-        "categories": [
-          "utility",
-          "media"
-        ]
+        "file": "custom/lampas-aria-0.1.0-alpha.2.jar"
       }
     },
     "gatewaystoeternity-26_2-7_0_1": {
@@ -3089,32 +3144,21 @@
         "file": "custom/GatewaysToEternity-26.2-7.0.1.jar"
       }
     },
-    "collective": {
-      "id": "collective",
-      "name": "Collective",
+    "eastersdelight-fabric-26_2-1_3_1": {
+      "id": "eastersdelight-fabric-26_2-1_3_1",
+      "name": "eastersdelight-fabric-26.2-1.3.1",
       "side": "both",
-      "filename": "collective-26.2.0-8.41.jar",
-      "size": 1081455,
-      "sha256": "99860aab78be752449ff2c871be3bba57bfcbcdd7c52fa221090ebd649ea0fe1",
-      "sha512": "7b1bb2add04a7e35d41b6463d643331fa4870861892d84d47943289266801f10fcca6873fd5c34481213cf298ba45408ad6bcafb38e87a7c3259370a8672254d",
-      "sha1": "74b76a9b0e8a55449a04e8244415792dd01593c4",
-      "downloadUrl": "https://cdn.modrinth.com/data/e0M1UDsY/versions/RCPUFFy1/collective-26.2.0-8.41.jar",
+      "filename": "eastersdelight-fabric-26.2-1.3.1.jar",
+      "size": 1097421,
+      "sha256": "5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
+      "sha512": "b5a2d9a02d142abfe520da9d1d9bb303927932a902da210d326b541ec2ef41f77d978fb1369e3b2319e74fe51c5d2ceff429d5db80ca6dbf8fefa1f5c8712017",
+      "sha1": "badf6672736c4599a299e7530cd09200680c5cb2",
+      "downloadUrl": "/api/v1/blobs/5a3fe92f0b4081fa893bb14c4551f5232449a06b0f1d8745a7538f5ba4bb2909",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "e0M1UDsY",
-        "versionId": "RCPUFFy1"
-      },
-      "metadata": {
-        "description": "🎓 Collective is a shared library with common code for all of Serilum's mods.",
-        "iconUrl": "https://cdn.modrinth.com/data/e0M1UDsY/f5e4fe9ac298e2c14591920d6bda937c566accd0_96.webp",
-        "categories": [
-          "library"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/collective",
-        "clientSide": "optional",
-        "serverSide": "optional"
+        "type": "lampas",
+        "file": "custom/eastersdelight-fabric-26.2-1.3.1.jar"
       }
     },
     "leavesbegone": {
@@ -3162,21 +3206,21 @@
         "file": "custom/levelledmobs-apotheosis-1.0.0.jar"
       }
     },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
+    "levelledmobs-fabric-1_0_0": {
+      "id": "levelledmobs-fabric-1_0_0",
+      "name": "levelledmobs-fabric-1.0.0",
       "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "filename": "levelledmobs-fabric-1.0.0.jar",
+      "size": 170272,
+      "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+      "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2",
+      "sha1": "a0d9cde5aaea750e003471f1b2f60f1445988ea4",
+      "downloadUrl": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+        "file": "custom/levelledmobs-fabric-1.0.0.jar"
       }
     },
     "libipn": {
@@ -3891,21 +3935,33 @@
         "serverSide": "unsupported"
       }
     },
-    "levelledmobs-fabric-1_0_0": {
-      "id": "levelledmobs-fabric-1_0_0",
-      "name": "levelledmobs-fabric-1.0.0",
-      "side": "both",
-      "filename": "levelledmobs-fabric-1.0.0.jar",
-      "size": 170272,
-      "sha256": "b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
-      "sha512": "c91ab4ecfa65ec8908f9ce27c07033dd84eb2db71d200f1f0e998c7d4e3e9483b87cb63c922895b6386a8c1e726c50a87914372a257ca85d830110a268a256c2",
-      "sha1": "a0d9cde5aaea750e003471f1b2f60f1445988ea4",
-      "downloadUrl": "/api/v1/blobs/b1cd53c7c12d9f6dc24c9b9035d88eae4163be7c4398eed68dda1b55a29e2e36",
+    "moogs_structures": {
+      "id": "moogs_structures",
+      "name": "Moog's Structure Lib (moogs_structures)",
+      "side": "server",
+      "filename": "MoogsStructureLib-fabric-26.2-3.4.1.jar",
+      "size": 460087,
+      "sha256": "49c66bde88069dab59a703cafb6a192519f2844d092c64b7f09928ca6f612774",
+      "sha512": "eaeb9be18dc672810cdb334a82ef2ba2d160e15212213cf54f1b9c8dbfead5c32e54da44edc25dafa4bf6fb2c8f92915bc810402e6d08d0bc2b5e60825f5ac90",
+      "sha1": "41f48b557b747b2f69e98ec0f7360306c3473983",
+      "downloadUrl": "https://cdn.modrinth.com/data/1oUDhxuy/versions/8WrqJ2I4/MoogsStructureLib-fabric-26.2-3.4.1.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/levelledmobs-fabric-1.0.0.jar"
+        "type": "modrinth",
+        "projectId": "1oUDhxuy",
+        "versionId": "8WrqJ2I4"
+      },
+      "metadata": {
+        "description": "This is a library mod for the Moogs Structure series",
+        "iconUrl": "https://cdn.modrinth.com/data/1oUDhxuy/fef0b294bd97cb59292df315fa46013a6db76bd5_96.webp",
+        "categories": [
+          "utility",
+          "worldgen"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/moogs-structure-lib",
+        "clientSide": "unsupported",
+        "serverSide": "required"
       }
     },
     "more-barrel-variants": {
@@ -4397,30 +4453,21 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2-overrides-1_0_0": {
-      "id": "lampas2-overrides-1_0_0",
-      "name": "lampas2-overrides-1.0.0",
+    "crazy_chambers-1_0_0_26_2": {
+      "id": "crazy_chambers-1_0_0_26_2",
+      "name": "crazy_chambers-1.0.0+26.2",
       "side": "both",
-      "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1183394,
-      "sha256": "4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
-      "sha512": "aa093d233d7c2981a2ad0e3e477b995aecc944feaf0a0c58177b75dfdde5d39c3ec5d7d4baf30c6b653807b2a19ddbd89a93d4973575a060a1f07f9bd8942504",
-      "sha1": "3b5f9221052080a089219a0d3c7540b8207684ba",
-      "downloadUrl": "/api/v1/blobs/4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
+      "filename": "crazy_chambers-1.0.0+26.2.jar",
+      "size": 1910498,
+      "sha256": "783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
+      "sha512": "f9b67445bed120515c4d6fc7343219bf5390d17c402d0804f3abd87e9b56a4c810157f05c752e6d1f4f2c7f894964483fd3dfbe1d75565618e239510dae407f6",
+      "sha1": "e6bc4fa8db3ad9758b5c32e96c319ae726e1c1d3",
+      "downloadUrl": "/api/v1/blobs/783ad8fb7c07f57dce359b57dae7109071d5522d05b5d53798223f755861297d",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas2-overrides-1.0.0.jar"
-      },
-      "metadata": {
-        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
-        "categories": [
-          "protocol",
-          "core",
-          "utility"
-        ],
-        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+        "file": "custom/crazy_chambers-1.0.0+26.2.jar"
       }
     },
     "optigui": {
@@ -4539,56 +4586,53 @@
         "serverSide": "unsupported"
       }
     },
-    "moogs_structures": {
-      "id": "moogs_structures",
-      "name": "Moog's Structure Lib (moogs_structures)",
-      "side": "server",
-      "filename": "MoogsStructureLib-fabric-26.2-3.4.1.jar",
-      "size": 460087,
-      "sha256": "49c66bde88069dab59a703cafb6a192519f2844d092c64b7f09928ca6f612774",
-      "sha512": "eaeb9be18dc672810cdb334a82ef2ba2d160e15212213cf54f1b9c8dbfead5c32e54da44edc25dafa4bf6fb2c8f92915bc810402e6d08d0bc2b5e60825f5ac90",
-      "sha1": "41f48b557b747b2f69e98ec0f7360306c3473983",
-      "downloadUrl": "https://cdn.modrinth.com/data/1oUDhxuy/versions/8WrqJ2I4/MoogsStructureLib-fabric-26.2-3.4.1.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "1oUDhxuy",
-        "versionId": "8WrqJ2I4"
-      },
-      "metadata": {
-        "description": "This is a library mod for the Moogs Structure series",
-        "iconUrl": "https://cdn.modrinth.com/data/1oUDhxuy/fef0b294bd97cb59292df315fa46013a6db76bd5_96.webp",
-        "categories": [
-          "utility",
-          "worldgen"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/moogs-structure-lib",
-        "clientSide": "unsupported",
-        "serverSide": "required"
-      }
-    },
-    "figura-0-1-6-rc-1": {
-      "id": "figura-0-1-6-rc-1",
-      "name": "Figura",
-      "side": "client",
-      "filename": "figura-0.1.6-rc.1+26.2.jar",
-      "size": 3228916,
-      "sha256": "6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
-      "sha512": "b1b98499179cb017fa931c74184d31f53c3c2a1d03fc79e006c4ed3b4aae7d66e010bec6cc789944a340e622177edd36e600040dec17e0eb2acc0cfcccd6ce5e",
-      "sha1": "e8cd5df414bfb7fb14f5ff261fb6b347ea143851",
-      "downloadUrl": "/api/v1/blobs/6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
+    "lampas2-overrides-1_0_0": {
+      "id": "lampas2-overrides-1_0_0",
+      "name": "lampas2-overrides-1.0.0",
+      "side": "both",
+      "filename": "lampas2-overrides-1.0.0.jar",
+      "size": 1183394,
+      "sha256": "4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
+      "sha512": "aa093d233d7c2981a2ad0e3e477b995aecc944feaf0a0c58177b75dfdde5d39c3ec5d7d4baf30c6b653807b2a19ddbd89a93d4973575a060a1f07f9bd8942504",
+      "sha1": "3b5f9221052080a089219a0d3c7540b8207684ba",
+      "downloadUrl": "/api/v1/blobs/4962f4f2c29554c91849feb209a0399e073c4c850ae73bc881c2a9e9e0698672",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/figura-0.1.6-rc.1+26.2.jar"
+        "file": "custom/lampas2-overrides-1.0.0.jar"
       },
       "metadata": {
-        "description": "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
+        "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
         "categories": [
-          "cosmetic",
-          "avatar"
+          "protocol",
+          "core",
+          "utility"
+        ],
+        "sourceUrl": "https://github.com/justbecauseph/lampas2-overrides"
+      }
+    },
+    "camerapture-2_0_0_mc26_2": {
+      "id": "camerapture-2_0_0_mc26_2",
+      "name": "camerapture-2.0.0+mc26.2",
+      "side": "both",
+      "filename": "camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617",
+      "sha1": "d677db542c846088dea830ef02088ea9c2858981",
+      "downloadUrl": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/camerapture-2.0.0+mc26.2.jar"
+      },
+      "metadata": {
+        "description": "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+        "categories": [
+          "utility",
+          "media"
         ]
       }
     },
@@ -5651,6 +5695,36 @@
         "serverSide": "unsupported"
       }
     },
+    "snappytappy": {
+      "id": "snappytappy",
+      "name": "SnappyTappy",
+      "side": "client",
+      "filename": "SnappyTappy-26.3.jar",
+      "size": 60964,
+      "sha256": "2f68d8af604337363c06976bab07a2885d471bdb37d1b1509154212e0657ed34",
+      "sha512": "db9eb26ad9e50e2e898a31f15f0c2e4a6fd0cbdeec24f9dad8c12d8425671fdfa88b30ddf4425bee37c126ce14229c1f344ff43702ca470ac6d762f5e16d4628",
+      "sha1": "3acc78b06238d366d85c7870a98b0e6464994181",
+      "downloadUrl": "https://cdn.modrinth.com/data/dWOPoahl/versions/ER3HfIOr/SnappyTappy-26.3.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "dWOPoahl",
+        "versionId": "ER3HfIOr"
+      },
+      "metadata": {
+        "description": "Adds Snappy Tappy the feature from wooting and other high end keyboards into minecraft! Improves movement by a lot!",
+        "iconUrl": "https://cdn.modrinth.com/data/dWOPoahl/a5986641aa51e1eb45ea0f77efc4e82726bf89d8_96.webp",
+        "categories": [
+          "equipment",
+          "game-mechanics",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/snappytappy",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "sodium-extra": {
       "id": "sodium-extra",
       "name": "Sodium Extra",
@@ -6434,21 +6508,21 @@
         "serverSide": "required"
       }
     },
-    "patchouli": {
-      "id": "patchouli",
-      "name": "Patchouli",
+    "placebo-26_2-11_0_1": {
+      "id": "placebo-26_2-11_0_1",
+      "name": "Placebo-26.2-11.0.1",
       "side": "both",
-      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
-      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
-      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "filename": "Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
+      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
+      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+        "file": "custom/Placebo-26.2-11.0.1.jar"
       }
     },
     "twod_projectiles": {
@@ -6600,21 +6674,32 @@
         "serverSide": "required"
       }
     },
-    "tweeter-inc-1_0_0": {
-      "id": "tweeter-inc-1_0_0",
-      "name": "tweeter-inc",
-      "side": "both",
-      "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+    "vanillahud": {
+      "id": "vanillahud",
+      "name": "VanillaHUD",
+      "side": "client",
+      "filename": "vanillahud-3.5.3+26.2.jar",
+      "size": 187005,
+      "sha256": "8ac4eb69557f51da206ce309669e9f86e0c04e4cd41b55bee108162aefebc300",
+      "sha512": "17e668b76047e44965c297e83d3defae6a94c09d7fed21601e5c624922449f09980e07d24950f2c8e998996f6e7da0d8aca9aa228ec28e4dd674a6565affd392",
+      "sha1": "03c755a2abcb0cd9c117458c51e7b4eedf57f19f",
+      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/RUApEBe7/vanillahud-3.5.3%2B26.2.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/tweeter-inc-1.0.0.jar"
+        "type": "modrinth",
+        "projectId": "pWXJaKrX",
+        "versionId": "RUApEBe7"
+      },
+      "metadata": {
+        "description": "A mod that modifies various vanilla HUD elements, such as the bossbar, action bar, and sidebar.",
+        "iconUrl": "https://cdn.modrinth.com/data/pWXJaKrX/b84b1b6024006e54b2496c12689eaa7ad6d630c2_96.webp",
+        "categories": [
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/vanillahud",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "vibrant-parrots": {
@@ -6645,21 +6730,34 @@
         "serverSide": "required"
       }
     },
-    "placebo-26_2-11_0_1": {
-      "id": "placebo-26_2-11_0_1",
-      "name": "Placebo-26.2-11.0.1",
+    "villager-names-serilum": {
+      "id": "villager-names-serilum",
+      "name": "Villager Names",
       "side": "both",
-      "filename": "Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-      "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa",
-      "sha1": "cee7348c5a2a394dae1a6f1a8eb74d7610305f86",
-      "downloadUrl": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+      "filename": "villagernames-26.2.0-8.7.jar",
+      "size": 77376,
+      "sha256": "ea1500a80e35ee5e4287a5270c1bd9bac27293d8490496a7e2ae55295aeb6343",
+      "sha512": "8018f940e5c04959ff1de3c6cc2d599991527ccb075c8ff7ebd45ff2f30c208b22b9f95a896939c7cec0b5d157742a6f903de73c4a907b025e8eef5d823d4b1f",
+      "sha1": "526a69ec810856a3478b03736351b41f9a0042ce",
+      "downloadUrl": "https://cdn.modrinth.com/data/gqRXDo8B/versions/gVKMFrn7/villagernames-26.2.0-8.7.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "lampas",
-        "file": "custom/Placebo-26.2-11.0.1.jar"
+        "type": "modrinth",
+        "projectId": "gqRXDo8B",
+        "versionId": "gVKMFrn7"
+      },
+      "metadata": {
+        "description": "🧑‍🌾 Gives all villager entities a default or custom name to liven up the world.",
+        "iconUrl": "https://cdn.modrinth.com/data/gqRXDo8B/44a24693e277ae99295054691d0acbbbf0d56774_96.webp",
+        "categories": [
+          "adventure",
+          "game-mechanics",
+          "social"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/villager-names-serilum",
+        "clientSide": "optional",
+        "serverSide": "required"
       }
     },
     "visualworkbench": {
@@ -7189,21 +7287,21 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot": {
-      "id": "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot",
-      "name": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT",
-      "side": "client",
-      "filename": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 2926405,
-      "sha256": "dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
-      "sha512": "fdf5041f0820e25dacba9c0d3c38bd797838d9bd59f7e85673f0c9ce0e483d5b3ded8fa48cc36f254455457344e251c0582efc89053db5f8be81991c643cfd47",
-      "sha1": "3de7bf02880107a50a919932c4e59c330e983262",
-      "downloadUrl": "/api/v1/blobs/dfc4220aa0dbe102e3b023d8bce8455cf358734768d9f7b5137a5018505ebbef",
+    "tweeter-inc-1_0_0": {
+      "id": "tweeter-inc-1_0_0",
+      "name": "tweeter-inc",
+      "side": "both",
+      "filename": "tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
+      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
+      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar"
+        "file": "custom/tweeter-inc-1.0.0.jar"
       }
     },
     "photon-shader": {
@@ -7326,21 +7424,21 @@
         "serverSide": "unsupported"
       }
     },
-    "apothicenchanting-26_2-3_0_1": {
-      "id": "apothicenchanting-26_2-3_0_1",
-      "name": "ApothicEnchanting-26.2-3.0.1",
-      "side": "both",
-      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
-      "size": 5440070,
-      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
-      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
-      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
-      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
-      "artifactType": "mod",
-      "targetDir": "mods",
+    "lampas2": {
+      "id": "lampas2",
+      "name": "Lampas Official Resources",
+      "side": "client",
+      "filename": "lampas2-resource-pack.zip",
+      "size": 207714,
+      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
+      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
+      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
+      "artifactType": "resourcepack",
+      "targetDir": "resourcepacks",
       "provider": {
         "type": "lampas",
-        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
+        "file": "custom/lampas2-resource-pack.zip"
       }
     },
     "recolourful-containers-gui-hud-dark": {
@@ -7403,38 +7501,96 @@
         "serverSide": "unsupported"
       }
     },
-    "lampas2": {
-      "id": "lampas2",
-      "name": "Lampas Official Resources",
-      "side": "client",
-      "filename": "lampas2-resource-pack.zip",
-      "size": 207714,
-      "sha256": "19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "sha512": "ee982be59ed4d766ca095ecce43d3f0c9c38eda6f4a14555bf036669ea5f7828bf58976b86fcddf59889d9aa1186a79d10d99ca9d9d3391f2b25d2b25f8c08d0",
-      "sha1": "3d9935f341f148e30db0c8f1123063f945375cfd",
-      "downloadUrl": "/api/v1/blobs/19d1e73ee54225cfc9071668c1dd8b9650a53c6b74ae7c33c2abb672aadf4b39",
-      "artifactType": "resourcepack",
-      "targetDir": "resourcepacks",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/lampas2-resource-pack.zip"
-      }
-    },
-    "apotheosis-26_2-10_0_1": {
-      "id": "apotheosis-26_2-10_0_1",
-      "name": "Apotheosis-26.2-10.0.1",
+    "patchouli": {
+      "id": "patchouli",
+      "name": "Patchouli",
       "side": "both",
-      "filename": "Apotheosis-26.2-10.0.1.jar",
-      "size": 8204968,
-      "sha256": "44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
-      "sha512": "d9f2e249240e9a29e1ef6561fe8d7f30e36c66d1f707637585c958ef1efa27cc24e6e276d529928753f108854da923782a8665b2da24d74b28214202d50d1b09",
-      "sha1": "365d2b41f25308b5c2fca903dbf8394fb036052a",
-      "downloadUrl": "/api/v1/blobs/44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
+      "filename": "patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
+      "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+      "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c",
+      "sha1": "b6127f4444958696b008d1b7688249669aeac43d",
+      "downloadUrl": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "lampas",
-        "file": "custom/Apotheosis-26.2-10.0.1.jar"
+        "file": "custom/patchouli-fabric-26.2-95-SNAPSHOT.jar"
+      }
+    },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+      }
+    },
+    "figura-0-1-6-rc-1": {
+      "id": "figura-0-1-6-rc-1",
+      "name": "Figura",
+      "side": "client",
+      "filename": "figura-0.1.6-rc.1+26.2.jar",
+      "size": 3228916,
+      "sha256": "6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
+      "sha512": "b1b98499179cb017fa931c74184d31f53c3c2a1d03fc79e006c4ed3b4aae7d66e010bec6cc789944a340e622177edd36e600040dec17e0eb2acc0cfcccd6ce5e",
+      "sha1": "e8cd5df414bfb7fb14f5ff261fb6b347ea143851",
+      "downloadUrl": "/api/v1/blobs/6b64d0698a94b1cc87453ed9558f09a4388e0fab1f86efa3674bb391cd4920bf",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/figura-0.1.6-rc.1+26.2.jar"
+      },
+      "metadata": {
+        "description": "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
+        "categories": [
+          "cosmetic",
+          "avatar"
+        ]
+      }
+    },
+    "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot": {
+      "id": "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot",
+      "name": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT",
+      "side": "client",
+      "filename": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 2935127,
+      "sha256": "fc61c36671c20ecb532749f527f978d54ab92458c6ab692121405e39e0b29d5c",
+      "sha512": "93023396e9334937b1da22282c15815d3459604f310fac4b0a8d2692ab7499a1bbc77c4a2c9715834b8c93f63cbcb5f15c96a57cb5ac152cf71e8e31bab102fb",
+      "sha1": "6347d5dc1a6b85b01eef6adaded5e5491e1a35a1",
+      "downloadUrl": "/api/v1/blobs/fc61c36671c20ecb532749f527f978d54ab92458c6ab692121405e39e0b29d5c",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar"
+      }
+    },
+    "apothicenchanting-26_2-3_0_1": {
+      "id": "apothicenchanting-26_2-3_0_1",
+      "name": "ApothicEnchanting-26.2-3.0.1",
+      "side": "both",
+      "filename": "ApothicEnchanting-26.2-3.0.1.jar",
+      "size": 5440070,
+      "sha256": "d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+      "sha512": "8e30152157a54aec6a27baec6b77940a96129923e869d702b2a3dde7355c6d6ffebda24935b5c3c202f52c0cb503f0439de4865424b37ca2c599403cb1806b50",
+      "sha1": "9974f53f1ce9a4c79bde9d094a5ad61673ee0d29",
+      "downloadUrl": "/api/v1/blobs/d1ac1e77ddd34f9c9e538606e68c140fd524c5329859428cc14d5b1cb9573865",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/ApothicEnchanting-26.2-3.0.1.jar"
       }
     },
     "lampas-photon-aria": {
@@ -7471,108 +7627,39 @@
         "file": "custom/lampas-yggdrasil-server-fabric-0.1.0-SNAPSHOT.jar"
       }
     },
-    "chatting": {
-      "id": "chatting",
-      "name": "Chatting",
-      "side": "client",
-      "filename": "chatting-3.2.2+26.2.jar",
-      "size": 249540,
-      "sha256": "af1561983aca38ae0fdd8d2173fa56b0e18d7bedf3e07329ce1825f6b3859ac6",
-      "sha512": "27d5afb7a2be655134eb34c0c52147e0159459a5daf7301510c4d861a01d5557d0f0180fac4385c6a785b912974deb91080f60b6cc571071444eb80b1e9bb111",
-      "sha1": "5611eaf1e9590e9fbccd93b8efa907cd5d348c0d",
-      "downloadUrl": "https://cdn.modrinth.com/data/8pJYUDNi/versions/OgYV2xUV/chatting-3.2.2%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8pJYUDNi",
-        "versionId": "OgYV2xUV"
-      },
-      "metadata": {
-        "description": "Chatting is a chat mod adding utilities such as extremely customizable chat tabs, chat shortcuts, chat screenshots, and message copying.",
-        "iconUrl": "https://cdn.modrinth.com/data/8pJYUDNi/790dfffda5974fccda843477cfe8ed19b1347ea3_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/chatting",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "vanillahud": {
-      "id": "vanillahud",
-      "name": "VanillaHUD",
-      "side": "client",
-      "filename": "vanillahud-3.5.3+26.2.jar",
-      "size": 187005,
-      "sha256": "8ac4eb69557f51da206ce309669e9f86e0c04e4cd41b55bee108162aefebc300",
-      "sha512": "17e668b76047e44965c297e83d3defae6a94c09d7fed21601e5c624922449f09980e07d24950f2c8e998996f6e7da0d8aca9aa228ec28e4dd674a6565affd392",
-      "sha1": "03c755a2abcb0cd9c117458c51e7b4eedf57f19f",
-      "downloadUrl": "https://cdn.modrinth.com/data/pWXJaKrX/versions/RUApEBe7/vanillahud-3.5.3%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "pWXJaKrX",
-        "versionId": "RUApEBe7"
-      },
-      "metadata": {
-        "description": "A mod that modifies various vanilla HUD elements, such as the bossbar, action bar, and sidebar.",
-        "iconUrl": "https://cdn.modrinth.com/data/pWXJaKrX/b84b1b6024006e54b2496c12689eaa7ad6d630c2_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/vanillahud",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "villager-names-serilum": {
-      "id": "villager-names-serilum",
-      "name": "Villager Names",
+    "apotheosis-26_2-10_0_1": {
+      "id": "apotheosis-26_2-10_0_1",
+      "name": "Apotheosis-26.2-10.0.1",
       "side": "both",
-      "filename": "villagernames-26.2.0-8.7.jar",
-      "size": 77376,
-      "sha256": "ea1500a80e35ee5e4287a5270c1bd9bac27293d8490496a7e2ae55295aeb6343",
-      "sha512": "8018f940e5c04959ff1de3c6cc2d599991527ccb075c8ff7ebd45ff2f30c208b22b9f95a896939c7cec0b5d157742a6f903de73c4a907b025e8eef5d823d4b1f",
-      "sha1": "526a69ec810856a3478b03736351b41f9a0042ce",
-      "downloadUrl": "https://cdn.modrinth.com/data/gqRXDo8B/versions/gVKMFrn7/villagernames-26.2.0-8.7.jar",
+      "filename": "Apotheosis-26.2-10.0.1.jar",
+      "size": 8204968,
+      "sha256": "44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
+      "sha512": "d9f2e249240e9a29e1ef6561fe8d7f30e36c66d1f707637585c958ef1efa27cc24e6e276d529928753f108854da923782a8665b2da24d74b28214202d50d1b09",
+      "sha1": "365d2b41f25308b5c2fca903dbf8394fb036052a",
+      "downloadUrl": "/api/v1/blobs/44ad9e12d13af202e8a9f7d0e1674bc641f20bfed4cab8d44a2d01103700a265",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
-        "type": "modrinth",
-        "projectId": "gqRXDo8B",
-        "versionId": "gVKMFrn7"
-      },
-      "metadata": {
-        "description": "🧑‍🌾 Gives all villager entities a default or custom name to liven up the world.",
-        "iconUrl": "https://cdn.modrinth.com/data/gqRXDo8B/44a24693e277ae99295054691d0acbbbf0d56774_96.webp",
-        "categories": [
-          "adventure",
-          "game-mechanics",
-          "social"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/villager-names-serilum",
-        "clientSide": "optional",
-        "serverSide": "required"
+        "type": "lampas",
+        "file": "custom/Apotheosis-26.2-10.0.1.jar"
       }
     },
     "oneconfigbootstrap": {
       "id": "oneconfigbootstrap",
       "name": "OneConfig",
       "side": "client",
-      "filename": "OneConfig-26.2-fabric-1.2.10.jar",
-      "size": 11672719,
-      "sha256": "9a49cbe1d1172e479370800376ef37560611e4343114745790a82bc125815873",
-      "sha512": "eeec4dc02168d087c622287224674cb5b8da06461c4417756ec196ccc4391e3aa263bb21f6a403824bb5a06ab1aee5cc4c9e2836f0c7a969141770e6c29b4a3e",
-      "sha1": "b6ba272e03221534818e65295b3b3d3789e9a9f0",
-      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/54Q7xUjq/OneConfig-26.2-fabric-1.2.10.jar",
+      "filename": "OneConfig-26.2-fabric-1.2.14.jar",
+      "size": 11675990,
+      "sha256": "4036ec61404087461ae8bac81fd6ca380ae7beed676c766f3c86d454feaa0ec1",
+      "sha512": "4a2304f8152ccbf04ffe2dcc89ad46cf766fa7d80e933f254926d29948e454ea1ea00ead6e0fabd52ef25f646b9f8d16d971bf177abce059f53f27ed16eaa030",
+      "sha1": "f7a971b2ba0513b4ea8297e5836ffc23684185f3",
+      "downloadUrl": "https://cdn.modrinth.com/data/AibBIVmj/versions/n0xKb4O7/OneConfig-26.2-fabric-1.2.14.jar",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
         "type": "modrinth",
         "projectId": "AibBIVmj",
-        "versionId": "54Q7xUjq"
+        "versionId": "n0xKb4O7"
       },
       "metadata": {
         "description": "Access all your mod settings in one place, with a sleek and intuitive interface.",
@@ -7582,34 +7669,6 @@
           "utility"
         ],
         "sourceUrl": "https://modrinth.com/mod/oneconfig",
-        "clientSide": "required",
-        "serverSide": "unsupported"
-      }
-    },
-    "chattweaks": {
-      "id": "chattweaks",
-      "name": "ChatTweaks",
-      "side": "client",
-      "filename": "chattweaks-1.2.1+26.2.jar",
-      "size": 80425,
-      "sha256": "609a95f69eeade241600ef846800c4502610d4d0b9c6a5d404c837b9d2921287",
-      "sha512": "c757158efb1efb5c9fed8b432ee0efabc3156298f751d9c7d0460675bd2fd5b4406daee9e11cf2d08c0fe645620eb61ee0279823e7c3caacd0a68d54b47cac2f",
-      "sha1": "2528a1051074244904ead6f10ee1302cc1392621",
-      "downloadUrl": "https://cdn.modrinth.com/data/8LNT47ZH/versions/sCDVyXhW/chattweaks-1.2.1%2B26.2.jar",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "modrinth",
-        "projectId": "8LNT47ZH",
-        "versionId": "sCDVyXhW"
-      },
-      "metadata": {
-        "description": "Modify the contents of your chat with additional information",
-        "iconUrl": "https://cdn.modrinth.com/data/8LNT47ZH/b52a701cc5fb2e2e9b7c5c4a6d50336db20b597a_96.webp",
-        "categories": [
-          "utility"
-        ],
-        "sourceUrl": "https://modrinth.com/mod/chattweaks",
         "clientSide": "required",
         "serverSide": "unsupported"
       }
