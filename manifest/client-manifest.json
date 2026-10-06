@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.18",
+  "version": "2.2.19",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1101,7 +1101,7 @@
       "name": "Figura",
       "side": "client",
       "filename": "figura-0.1.6-rc.1+26.2.jar",
-      "size": 3231067,
+      "size": 3231093,
       "description": "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
       "categories": [
         "cosmetic",
@@ -1489,7 +1489,7 @@
       "name": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT",
       "side": "client",
       "filename": "lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 3000085,
+      "size": 3000081,
       "categories": []
     },
     {
@@ -1497,7 +1497,7 @@
       "name": "lampas2-overrides-1.0.0",
       "side": "both",
       "filename": "lampas2-overrides-1.0.0.jar",
-      "size": 1182839,
+      "size": 1200519,
       "description": "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
       "categories": [
         "protocol",
@@ -2512,8 +2512,8 @@
       "id": "snappytappy",
       "name": "SnappyTappy",
       "side": "client",
-      "filename": "SnappyTappy-26.3.jar",
-      "size": 60964,
+      "filename": "SnappyTappy-26.2.jar",
+      "size": 31660,
       "description": "Adds Snappy Tappy the feature from wooting and other high end keyboards into minecraft! Improves movement by a lot!",
       "iconUrl": "https://cdn.modrinth.com/data/dWOPoahl/a5986641aa51e1eb45ea0f77efc4e82726bf89d8_96.webp",
       "categories": [
@@ -4866,13 +4866,13 @@
     },
     {
       "path": "mods/lampas2-overrides-1.0.0.jar",
-      "size": 1182839,
+      "size": 1200519,
       "hashes": {
-        "sha256": "80be0de1351fff9197c432714c57d548f342f4044d4cc20a2923c38e291a63ce",
-        "sha512": "6c4df11544c766367c84c825895ce1434f9e7810fad997f9e73b3df4a5548fcaca235bd88e6872a113464a21fcad695d7829e52b77ac7c5e22744b01392fc21c"
+        "sha256": "7efacfbb125d93ab9eb17de2d796c61feaf3d04547cd62294f1ba0f5ad319a71",
+        "sha512": "3c22f8bafbde09faf5304e377c83ed41cd8ace9dd04f825cd82735b2c614ad6921715f264b9d9ab95212d8e997c9cd10e7ef509c91a07819d6a12f6930bb2d5d"
       },
       "download": {
-        "url": "/api/v1/blobs/80be0de1351fff9197c432714c57d548f342f4044d4cc20a2923c38e291a63ce",
+        "url": "/api/v1/blobs/7efacfbb125d93ab9eb17de2d796c61feaf3d04547cd62294f1ba0f5ad319a71",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5242,14 +5242,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/SnappyTappy-26.3.jar",
-      "size": 60964,
+      "path": "mods/SnappyTappy-26.2.jar",
+      "size": 31660,
       "hashes": {
-        "sha256": "2f68d8af604337363c06976bab07a2885d471bdb37d1b1509154212e0657ed34",
-        "sha512": "db9eb26ad9e50e2e898a31f15f0c2e4a6fd0cbdeec24f9dad8c12d8425671fdfa88b30ddf4425bee37c126ce14229c1f344ff43702ca470ac6d762f5e16d4628"
+        "sha256": "694816e9b84f80b623184abf29f32c971e4bb8c25bc40b7aeb6c7bea10ddca64",
+        "sha512": "3daaed54e74956e4f9756a7f52b1dd3ee65a0c468f584d3aeeda1e7e1dc140153d5da1b54d7b2be3b8e395f74b467f44f0611b7e069ec6aad12c30cd330512a9"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/dWOPoahl/versions/ER3HfIOr/SnappyTappy-26.3.jar",
+        "url": "https://cdn.modrinth.com/data/dWOPoahl/versions/ISW3ltTi/SnappyTappy-26.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -5945,26 +5945,26 @@
     },
     {
       "path": "mods/figura-0.1.6-rc.1+26.2.jar",
-      "size": 3231067,
+      "size": 3231093,
       "hashes": {
-        "sha256": "e568627118b6541412f5631b6bed21c6631f53cc586322f3cb62dbbc34e9fd8d",
-        "sha512": "b0c15e22d2431db40fc596cd1dd2ed6c942f298fa523ce99707110ff3e097f0eecbd9ef866741fccdf9d78fee347fa7b2b13b876c4f766b392b3bbe62c12e9ab"
+        "sha256": "a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
+        "sha512": "e7c83fb65d4bad981d8ac0033241844e8d340de8572e4ee8719540d0de38d482c6053d7ce5b14d16ece4560ebbdbaddb1709b15fb26643769db841c3bdf4ced0"
       },
       "download": {
-        "url": "/api/v1/blobs/e568627118b6541412f5631b6bed21c6631f53cc586322f3cb62dbbc34e9fd8d",
+        "url": "/api/v1/blobs/a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
         "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
       "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 3000085,
+      "size": 3000081,
       "hashes": {
-        "sha256": "57780ce7e48e3ab1d376470c13423e0e931b4969acf9887f4155a1a33552cd06",
-        "sha512": "ac6acba71b59c55895086b40da44db859680e9c71229efcc8c1fba8d2767d334dc5f1be1588e2720071d4b5c768c5bf27326d5bed6349932a8d136785a273aa7"
+        "sha256": "75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
+        "sha512": "8fca900bafaf1a49b1e40ce33d21bfd5f48437d25da523c12b25311b15e4fe3500cbbbfc6ddc4bdf88d6e007a6d1317a8f0779a3f8efb5f5390e359fefad28c9"
       },
       "download": {
-        "url": "/api/v1/blobs/57780ce7e48e3ab1d376470c13423e0e931b4969acf9887f4155a1a33552cd06",
+        "url": "/api/v1/blobs/75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
