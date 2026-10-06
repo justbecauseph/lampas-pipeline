@@ -2,6 +2,44 @@ export type Side = "client" | "server" | "both";
 
 export type FilePolicy = "MANAGED" | "PRESERVE" | "OPTIONAL" | "GENERATED";
 
+export type BlacklistRule =
+  | {
+      scope: "mod_id";
+      id: string;
+      reason?: string;
+    }
+  | {
+      scope: "project_id";
+      provider: "modrinth";
+      id: string;
+      reason?: string;
+    }
+  | {
+      scope: "project_id";
+      provider: "curseforge";
+      id: number;
+      reason?: string;
+    }
+  | {
+      scope: "version_id";
+      provider: "modrinth";
+      id: string;
+      reason?: string;
+    }
+  | {
+      scope: "version_id";
+      provider: "curseforge";
+      id: number;
+      reason?: string;
+    };
+
+export interface BlacklistTarget {
+  modId: string;
+  provider: ProviderConfig["type"];
+  projectId?: string | number;
+  versionId?: string | number;
+}
+
 export interface PackConfig {
   pack: {
     name: string;
@@ -39,6 +77,7 @@ export interface PackConfig {
       uuid?: string;
     };
   };
+  blacklist?: BlacklistRule[];
 }
 
 export interface ReleaseRequiredResourcePack {

@@ -50,6 +50,68 @@
         }
       }
     },
+    "blacklist": {
+      "type": "array",
+      "description": "Exact provider or descriptor identities that check-updates and validate reject unless check-updates is explicitly forced.",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["scope", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "const": "mod_id" },
+              "id": { "type": "string", "minLength": 1, "pattern": "^\\S+$" },
+              "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["scope", "provider", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "const": "project_id" },
+              "provider": { "const": "modrinth" },
+              "id": { "type": "string", "minLength": 1, "pattern": "^\\S+$" },
+              "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["scope", "provider", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "const": "project_id" },
+              "provider": { "const": "curseforge" },
+              "id": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+              "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["scope", "provider", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "const": "version_id" },
+              "provider": { "const": "modrinth" },
+              "id": { "type": "string", "minLength": 1, "pattern": "^\\S+$" },
+              "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["scope", "provider", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "scope": { "const": "version_id" },
+              "provider": { "const": "curseforge" },
+              "id": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+              "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          }
+        ]
+      }
+    },
     "launcher": {
       "type": "object",
       "properties": {

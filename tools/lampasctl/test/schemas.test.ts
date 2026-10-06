@@ -31,6 +31,31 @@ describe("schemas and IDE validation configuration", () => {
     }
   });
 
+  test("pack blacklist schema admits only the five typed scope/provider forms", () => {
+    const schema = JSON.parse(fs.readFileSync(path.join(schemasDir, "pack.schema.json"), "utf-8"));
+    const variants = schema.properties.blacklist.items.oneOf as Array<any>;
+
+    expect(variants).toHaveLength(5);
+    for (const variant of variants) {
+      expect(variant.type).toBe("object");
+      expect(variant.additionalProperties).toBe(false);
+      expect(variant.required).toContain("scope");
+      expect(variant.required).toContain("id");
+    }
+
+    const providerVariants = variants.filter((variant) => variant.properties.scope.const !== "mod_id");
+    expect(providerVariants).toHaveLength(4);
+    expect(providerVariants.every((variant) => variant.required.includes("provider"))).toBe(true);
+    expect(variants.find((variant) => variant.properties.scope.const === "mod_id")?.properties.provider).toBeUndefined();
+    expect(providerVariants.map((variant) => [variant.properties.scope.const, variant.properties.provider.const, variant.properties.id.type]))
+      .toEqual([
+        ["project_id", "modrinth", "string"],
+        ["project_id", "curseforge", "integer"],
+        ["version_id", "modrinth", "string"],
+        ["version_id", "curseforge", "integer"],
+      ]);
+  });
+
   test(".vscode/settings.json maps all schemas to appropriate file patterns", () => {
     expect(fs.existsSync(vscodeSettingsPath)).toBe(true);
     const settings = JSON.parse(fs.readFileSync(vscodeSettingsPath, "utf-8"));

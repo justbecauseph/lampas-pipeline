@@ -32,10 +32,12 @@ jobs:
         run: |
           bun run tools/lampasctl/src/cli.ts check-updates --apply --markdown update_report.md
           if [ -f update_report.md ]; then
-            echo "updates_found=true" >> "$GITHUB_OUTPUT"
-            cat update_report.md >> $GITHUB_STEP_SUMMARY
-          else
+            cat update_report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if git diff --quiet -- pack/mods && [ -z "$(git ls-files --others --exclude-standard -- pack/mods)" ]; then
             echo "updates_found=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "updates_found=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Re-resolve pack and build manifests

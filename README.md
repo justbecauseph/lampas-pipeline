@@ -254,7 +254,44 @@ bun run lampasctl check-updates --apply
 
 # Export Markdown changelog (used in GitHub Actions)
 bun run lampasctl check-updates --markdown update_summary.md
+
+# Ignore configured blacklist rules for this invocation only
+bun run lampasctl check-updates --force
+bun run lampasctl check-updates --force --apply
 ```
+
+Add typed rules to the root of `pack.toml`. A `mod_id` is the descriptor basename under `pack/mods/`, without `.toml`:
+
+```toml
+[[blacklist]]
+scope = "mod_id"
+id = "example-mod"
+reason = "Temporarily excluded from upstream update scans"
+```
+
+Project and release rules name their provider and exact ID. CurseForge `version_id` values are integer file IDs. This example excludes the known SnappyTappy release `ER3HfIOr`:
+
+```toml
+[[blacklist]]
+scope = "project_id"
+provider = "modrinth"
+id = "project-id"
+reason = "Skip this project's update scan"
+
+[[blacklist]]
+scope = "version_id"
+provider = "modrinth"
+id = "ER3HfIOr"
+reason = "SnappyTappy 26.3 is blocked for the Lampas 26.2 pack."
+
+[[blacklist]]
+scope = "version_id"
+provider = "curseforge"
+id = 123456
+reason = "Known incompatible CurseForge file"
+```
+
+The checker skips matching descriptors and releases, then can choose the newest allowed release newer than the current pin; it never selects an older release. `lampasctl validate` rejects descriptor pins and lockfile artifacts that match blacklist rules. `check-updates --force` overrides blacklist filtering for that scan or application only; it still validates the policy, and `validate` has no bypass. `add` and `resolve` do not consult these rules.
 
 ### 3. Lockfile & Manifest Generation
 ```bash

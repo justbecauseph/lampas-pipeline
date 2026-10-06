@@ -1,9 +1,68 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
-import type { PackConfig, PackLock } from "./types";
+import type { BlacklistTarget, PackConfig, PackLock, ProviderConfig } from "./types";
+import { describeBlacklistRule, matchingBlacklistRules, parsePackBlacklistRules } from "./blacklist";
 import { validateConfigPatches } from "./config-patches";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
+
+function requireExactStringIdentity(value: unknown, label: string): string {
+  if (typeof value !== "string" || value.length === 0 || value.trim() !== value || /\s/.test(value)) {
+    throw new Error(`${label} must be a non-empty exact string without whitespace.`);
+  }
+  return value;
+}
+
+function requirePositiveIntegerIdentity(value: unknown, label: string): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${label} must be a positive safe integer.`);
+  }
+  return value;
+}
+
+function blacklistTarget(
+  modId: string,
+  providerInput: unknown,
+  sourceKind: "descriptor" | "lock"
+): BlacklistTarget {
+  const provider = providerInput && typeof providerInput === "object"
+    ? providerInput as Record<string, unknown>
+    : {};
+  const type = typeof provider.type === "string" ? provider.type : "direct";
+  const target: BlacklistTarget = {
+    modId,
+    provider: type as ProviderConfig["type"],
+  };
+
+  if (type === "modrinth") {
+    const projectId = sourceKind === "descriptor" ? provider.project_id : provider.projectId;
+    const versionId = sourceKind === "descriptor" ? provider.version_id : provider.versionId;
+    target.projectId = requireExactStringIdentity(projectId, "Modrinth project_id");
+    target.versionId = requireExactStringIdentity(versionId, "Modrinth version_id");
+  } else if (type === "curseforge") {
+    const projectId = sourceKind === "descriptor" ? provider.project_id : provider.projectId;
+    const fileId = sourceKind === "descriptor" ? provider.file_id : provider.fileId;
+    target.projectId = requirePositiveIntegerIdentity(projectId, "CurseForge project_id");
+    target.versionId = requirePositiveIntegerIdentity(fileId, sourceKind === "descriptor" ? "CurseForge file_id" : "CurseForge fileId");
+
+    if (sourceKind === "lock" && provider.versionId !== undefined && provider.versionId !== provider.fileId) {
+      throw new Error("CurseForge lock versionId must equal its authoritative fileId when both are present.");
+    }
+  }
+  return target;
+}
+
+function logBlacklistMatches(
+  rules: ReturnType<typeof parsePackBlacklistRules>,
+  target: BlacklistTarget,
+  source: string
+): boolean {
+  const matches = matchingBlacklistRules(rules, target);
+  for (const rule of matches) {
+    console.error(`  ✗ [Blacklisted Artifact] ${source} matches ${describeBlacklistRule(rule)}`);
+  }
+  return matches.length > 0;
+}
 
 export interface LoaderDefinition {
   type: "fabric";
@@ -54,6 +113,13 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   }
 
   const packConfig = parseTomlFile<PackConfig>(packTomlPath);
+  let blacklistRules: ReturnType<typeof parsePackBlacklistRules>;
+  try {
+    blacklistRules = parsePackBlacklistRules(packConfig, "pack.toml");
+  } catch (err: any) {
+    console.error(`  ✗ [Invalid Blacklist] ${err.message}`);
+    return false;
+  }
   console.log(`[Validator] Validating ${packConfig.pack.name} v${packConfig.pack.version}...`);
 
   let loaderDef: LoaderDefinition;
@@ -72,6 +138,45 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   const lock = readJsonFile<PackLock>(options.lockFile);
 
   let hasErrors = false;
+
+  // Apply exact blacklist identities from descriptors and the lock before any optional network checks.
+  if (blacklistRules.length > 0) {
+    for (const directory of ["mods", "shaderpacks", "shaders", "resourcepacks"]) {
+      const artifactDir = path.join(options.packDir, directory);
+      if (!fs.existsSync(artifactDir)) continue;
+
+      for (const file of fs.readdirSync(artifactDir).filter((name) => name.endsWith(".toml"))) {
+        const modId = path.basename(file, ".toml");
+        const source = `pack/${directory}/${file}`;
+        let definition: Record<string, unknown>;
+        try {
+          definition = parseTomlFile<Record<string, unknown>>(path.join(artifactDir, file));
+        } catch (err: any) {
+          console.error(`  ✗ [Invalid Artifact Definition] ${source}: ${err.message}`);
+          hasErrors = true;
+          continue;
+        }
+        try {
+          const target = blacklistTarget(modId, definition.provider, "descriptor");
+          if (logBlacklistMatches(blacklistRules, target, source)) hasErrors = true;
+        } catch (err: any) {
+          console.error(`  ✗ [Invalid Provider Identity] ${source}: ${err.message}`);
+          hasErrors = true;
+        }
+      }
+    }
+
+    for (const [id, artifact] of Object.entries(lock.artifacts)) {
+      const source = `pack.lock.json artifact '${id}'`;
+      try {
+        const target = blacklistTarget(id, artifact.provider, "lock");
+        if (logBlacklistMatches(blacklistRules, target, source)) hasErrors = true;
+      } catch (err: any) {
+        console.error(`  ✗ [Invalid Provider Identity] ${source}: ${err.message}`);
+        hasErrors = true;
+      }
+    }
+  }
 
   // Check lock consistency with pack.toml
   if (lock.minecraft !== packConfig.pack.minecraft) {

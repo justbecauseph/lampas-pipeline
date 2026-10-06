@@ -3,6 +3,14 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Typed `pack.toml` blacklist rules for descriptor, upstream project, and exact release IDs in `lampasctl check-updates`.
+- `lampasctl validate` checks blacklist structure and placement and rejects matching descriptor pins and lockfile artifacts.
+- `lampasctl check-updates --force` to ignore blacklist matches for one invocation, with explicit console and Markdown diagnostics.
+- Fresh Markdown update reports for zero-update scans and workflow update detection based on changed mod descriptors.
+
 ## [1.0.5] - 2026-09-05
 
 ### Added

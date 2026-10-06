@@ -24,3 +24,10 @@ required = ["fresh-animations-extensions", "fresh-animations", "fa-player-extens
 artifact = "lampas2"
 required = true
 prompt = '{"text":"The Lampas 2 resource pack"}'
+
+# SnappyTappy project dWOPoahl; retain the approved 26.2 release ISW3ltTi.
+[[blacklist]]
+scope = "version_id"
+provider = "modrinth"
+id = "ER3HfIOr"
+reason = "SnappyTappy 26.3 is blocked for the Lampas 26.2 pack."

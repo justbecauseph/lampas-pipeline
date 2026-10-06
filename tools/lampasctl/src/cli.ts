@@ -88,6 +88,7 @@ Commands:
   check-updates         Check Modrinth & CurseForge for newer upstream releases
     -p, --pack <path>   Pack directory (default: ./pack)
     --apply             Automatically update TOML descriptors with latest version IDs
+    --force             Ignore blacklist rules for this invocation only
     --markdown <path>   Write markdown summary to file (useful for GitHub Actions / PRs)
 
   diff                  Compare two pack manifests for added/removed/updated mods & size delta
@@ -354,6 +355,7 @@ async function main() {
         await checkPackUpdates({
           packDir,
           apply,
+          force: flags.force === "true",
           markdownOut,
         });
         break;
