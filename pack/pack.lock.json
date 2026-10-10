@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.2.23",
+  "packVersion": "2.3.1",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-10T09:40:15.382Z",
+  "updated": "2026-10-10T10:03:02.173Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -95,6 +95,36 @@
         "sourceUrl": "https://modrinth.com/mod/animaticarefabricated",
         "clientSide": "required",
         "serverSide": "unsupported"
+      }
+    },
+    "archers": {
+      "id": "archers",
+      "name": "Archers (RPG Series)",
+      "side": "both",
+      "filename": "archers-fabric-3.1.3.003+26.2.jar",
+      "size": 963965,
+      "sha256": "4ee9c35f54d74f28f742f36a4f0b319d4d3936bc0731bd95cb823c17225db22d",
+      "sha512": "9a7968fc8cf90ec7e50ae5f612cbb55061d1ca8e9ba0d5744ffc610547e681d7297c7c2cc01254639cfc2a3ff77f60f8ef1c346bfd408ad43f20fb100341b972",
+      "sha1": "f33e2ceddb27b34a52b30a1e3b83772386e21acb",
+      "downloadUrl": "https://cdn.modrinth.com/data/QgooUXAJ/versions/YeNcwLgu/archers-fabric-3.1.3.003%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "QgooUXAJ",
+        "versionId": "YeNcwLgu"
+      },
+      "metadata": {
+        "description": "🏹 Draw, Release, Conquer - Master the art of Archery!",
+        "iconUrl": "https://cdn.modrinth.com/data/QgooUXAJ/cd623d827366323dd4d604a25c4b7f74cfda353d_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "game-mechanics"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/archers",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "architectury-api": {
@@ -1103,6 +1133,36 @@
           "food"
         ],
         "sourceUrl": "https://modrinth.com/mod/crate-delight",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "critical-strike": {
+      "id": "critical-strike",
+      "name": "Critical Strike",
+      "side": "both",
+      "filename": "critical_strike-fabric-1.0.6+26.2.jar",
+      "size": 157427,
+      "sha256": "69872634bcd03e8cb0c8d39d5371a83693b9444a5305f63be972f63de3791234",
+      "sha512": "e3441d2a5fe61693578e589dc22b4209677004a0affe248268f5a8a8b5503c1ff01dae201b8ca49ffaa760194c50952aa5fe2a3068d1919e7a0f6f8ad13099ef",
+      "sha1": "5d1a5944a99b3e6a0447e406bd16ac69bc0e58b9",
+      "downloadUrl": "https://cdn.modrinth.com/data/ilvNBzFn/versions/eozhJvBr/critical_strike-fabric-1.0.6%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "ilvNBzFn",
+        "versionId": "eozhJvBr"
+      },
+      "metadata": {
+        "description": "🍀 Chance based critical hits for melee and ranged attacks!",
+        "iconUrl": "https://cdn.modrinth.com/data/ilvNBzFn/105a93920143c5f87703a7db10f0edb3e4ca4a75_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "game-mechanics"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/critical-strike",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -3283,7 +3343,7 @@
     "libjf": {
       "id": "libjf",
       "name": "LibJF",
-      "side": "client",
+      "side": "both",
       "filename": "libjf-26.2.2.jar",
       "size": 1507878,
       "sha256": "cc71e13151e6de521afd3d0dd6b67ad35a39f1c8212fc007b0bf70684e743f13",
@@ -4625,6 +4685,36 @@
         "serverSide": "required"
       }
     },
+    "paladins-and-priests": {
+      "id": "paladins-and-priests",
+      "name": "Paladins & Priests (RPG Series)",
+      "side": "both",
+      "filename": "paladins-fabric-3.1.3.003+26.2.jar",
+      "size": 3138662,
+      "sha256": "f36009e6a60fae66ca195fc9165a2d7a59c92bd55fd75b1e2e18620ffa4fc492",
+      "sha512": "237dc9e2cbcb28c4a1b02a73a14afd5b062ec23dce486b18d3f391d3cbc2cc9e760cff226efef1a267b6cc5f4b2c1ced3276c3912a1bd3e8d78e36eb540f8dca",
+      "sha1": "1ea01519868ee3ea8b1037d4992e0e7b09ac23b1",
+      "downloadUrl": "https://cdn.modrinth.com/data/FxXkHaLe/versions/efOiZaIv/paladins-fabric-3.1.3.003%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "FxXkHaLe",
+        "versionId": "efOiZaIv"
+      },
+      "metadata": {
+        "description": "✨ Protect and heal your friends as a Paladin or a Priest",
+        "iconUrl": "https://cdn.modrinth.com/data/FxXkHaLe/0d64c2fad819691a42c9b6e436c4914c6ce4b413_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "magic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/paladins-and-priests",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "particle-core": {
       "id": "particle-core",
       "name": "Particle Core",
@@ -5471,6 +5561,36 @@
         "serverSide": "optional"
       }
     },
+    "rogues-and-warriors": {
+      "id": "rogues-and-warriors",
+      "name": "Rogues & Warriors (RPG Series)",
+      "side": "both",
+      "filename": "rogues-fabric-3.1.3.003+26.2.jar",
+      "size": 1808868,
+      "sha256": "77bdff881c01011bff6e6e722a1f47dc01ca7d377a1f08231d305fc11b08f113",
+      "sha512": "e4fb7e9db8d0c31a5e50d5f0401b13d7c3ec4f203f512f68fbf8bbe262dcd9b2736203239dc6c07f50cc3ff30659bad80699323c5b7358f396742a7438d2339f",
+      "sha1": "376ca75ab0e03f195398ee245b4090d218f9b01d",
+      "downloadUrl": "https://cdn.modrinth.com/data/3MKqoGuP/versions/rlNs4IpI/rogues-fabric-3.1.3.003%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "3MKqoGuP",
+        "versionId": "rlNs4IpI"
+      },
+      "metadata": {
+        "description": "🗡️ Silent Blades, Mighty Blows - Dominate with martial skills!",
+        "iconUrl": "https://cdn.modrinth.com/data/3MKqoGuP/5dc4e73e3a2fa08fdcba074961b28bd842847037_96.webp",
+        "categories": [
+          "adventure",
+          "equipment",
+          "magic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/rogues-and-warriors",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
     "roomfortwo": {
       "id": "roomfortwo",
       "name": "Room For Two",
@@ -5726,6 +5846,66 @@
         "sourceUrl": "https://modrinth.com/mod/signtweaks",
         "clientSide": "unknown",
         "serverSide": "unknown"
+      }
+    },
+    "skill-tree": {
+      "id": "skill-tree",
+      "name": "Skill Tree (RPG Series)",
+      "side": "both",
+      "filename": "skill_tree-fabric-1.6.2+26.2.jar",
+      "size": 2990760,
+      "sha256": "405ff761ba518c87a14d8923f0c8db5f01311b86d58ca78c3e1f2731d3469901",
+      "sha512": "80e5158712fc46b2bc886dcc51c6079f83d911238c2990705bf03d961086866e3a53bcddfa4c16ec9fa95f2b18af6fcaf383fdf6744c9971efbb2e086896e921",
+      "sha1": "b07642f9c375d94ca61d7c3238caddf818655ec6",
+      "downloadUrl": "https://cdn.modrinth.com/data/PjDhruSC/versions/74NAhRtm/skill_tree-fabric-1.6.2%2B26.2.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "PjDhruSC",
+        "versionId": "74NAhRtm"
+      },
+      "metadata": {
+        "description": "⭐️ Choose your path - Skills that shape your class",
+        "iconUrl": "https://cdn.modrinth.com/data/PjDhruSC/bace75ef00b3f21b8a1bba68ba7888702c233067_96.webp",
+        "categories": [
+          "adventure",
+          "game-mechanics",
+          "magic"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/skill-tree",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "skills": {
+      "id": "skills",
+      "name": "Pufferfish's Skills",
+      "side": "both",
+      "filename": "puffish_skills-0.19.2-26.2-fabric.jar",
+      "size": 640069,
+      "sha256": "7ee73289c8653ab198bb1fa47b53973e36baad5482c6892b10aafe130053cbed",
+      "sha512": "b39d1ba62d6c81369dd3e2e05058f6e53ccd1ea7be4b4014573cc732e31e4eab86271bddea926d85d0ca2a4c1203d420967c5d08e2cb733e2093d67a6408135a",
+      "sha1": "bc0f8d4a6e9e62fad9b4cefe7175ea34bc36d514",
+      "downloadUrl": "https://cdn.modrinth.com/data/hqQqvaa4/versions/uijj8Imm/puffish_skills-0.19.2-26.2-fabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "hqQqvaa4",
+        "versionId": "uijj8Imm"
+      },
+      "metadata": {
+        "description": "Adds a fully configurable skill system to the game.",
+        "iconUrl": "https://cdn.modrinth.com/data/hqQqvaa4/03ee8cc78c05ab021cfc96664741dd66fc69e515.png",
+        "categories": [
+          "adventure",
+          "game-mechanics",
+          "utility"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/skills",
+        "clientSide": "required",
+        "serverSide": "required"
       }
     },
     "skinlayers3d": {
