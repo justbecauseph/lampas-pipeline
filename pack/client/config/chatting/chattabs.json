@@ -7,13 +7,29 @@
       "lowercase": false,
 
       "ignore_contains": [
-        "[OOC]"
+        "[OOC]",
+        "[Local]"
       ],
 
       "color": 14737632,
       "hovered_color": 16777120,
       "selected_color": 10526880,
       "prefix": ""
+    },
+    {
+      "enabled": true,
+      "name": "Local",
+      "unformatted": true,
+      "lowercase": false,
+
+      "contains": [
+        "[Local]"
+      ],
+
+      "color": 14737632,
+      "hovered_color": 16777120,
+      "selected_color": 10526880,
+      "prefix": "/local "
     },
     {
       "enabled": true,
