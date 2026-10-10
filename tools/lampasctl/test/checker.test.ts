@@ -529,3 +529,103 @@ describe("update checker output and blacklist handling", () => {
     }
   });
 });
+
+describe("update checker artifact coverage", () => {
+  function writeDescriptor(packDir: string, dir: string, id: string, lines: string[]): string {
+    const descriptorDir = path.join(packDir, dir);
+    fs.mkdirSync(descriptorDir, { recursive: true });
+    const filePath = path.join(descriptorDir, `${id}.toml`);
+    fs.writeFileSync(filePath, [...lines, ""].join("\n"));
+    return filePath;
+  }
+
+  function useModrinthProjects(projects: Record<string, unknown[]>): { requests: URL[] } {
+    const requests: URL[] = [];
+    globalThis.fetch = (async (input: string | URL | Request) => {
+      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      requests.push(url);
+      const match = url.pathname.match(/^\/v2\/project\/([^/]+)\/version$/);
+      if (match && projects[match[1]]) return Response.json(projects[match[1]]);
+      return new Response("not found", { status: 404 });
+    }) as typeof fetch;
+    return { requests };
+  }
+
+  test("checks shaderpacks and resourcepacks with their Modrinth loaders and applies updates", async () => {
+    const fixture = createFixture();
+    const shader = writeDescriptor(fixture.packDir, "shaderpacks", "example-shader", [
+      'name = "Example Shader"', 'side = "client"', 'type = "shader"', "[provider]", 'type = "modrinth"',
+      'project_id = "shader-project"', 'version_id = "old-version-id"',
+    ]);
+    const resourcepack = writeDescriptor(fixture.packDir, "resourcepacks", "example-pack", [
+      'name = "Example Pack"', 'side = "client"', 'type = "resourcepack"', "[provider]", 'type = "modrinth"',
+      'project_id = "pack-project"', 'version_id = "old-version-id"',
+    ]);
+    const releases = (id: string) => [modrinthRelease(id, "2.0.0", "2026-08-22T00:00:00Z"), modrinthRelease("old-version-id", "1.0.0")];
+    const { requests } = useModrinthProjects({
+      "example-project": [modrinthRelease("old-version-id", "1.0.0")],
+      "shader-project": releases("new-shader-id"),
+      "pack-project": releases("new-pack-id"),
+    });
+    console.log = () => {};
+    try {
+      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const loadersFor = (projectId: string) =>
+        requests.find((url) => url.pathname === `/v2/project/${projectId}/version`)?.searchParams.get("loaders");
+      expect(loadersFor("example-project")).toBe('["fabric"]');
+      expect(loadersFor("shader-project")).toBe('["iris"]');
+      expect(loadersFor("pack-project")).toBe('["minecraft"]');
+      expect(updates.map((update) => update.modId)).toEqual(["example-pack", "example-shader"]);
+      expect(fs.readFileSync(shader, "utf-8")).toContain('version_id = "new-shader-id"');
+      expect(fs.readFileSync(resourcepack, "utf-8")).toContain('version_id = "new-pack-id"');
+      const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
+      expect(markdown).toContain("https://modrinth.com/shader/shader-project/version/new-shader-id");
+      expect(markdown).toContain("https://modrinth.com/resourcepack/pack-project/version/new-pack-id");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("uses the descriptor directory default type when a shader descriptor omits type", async () => {
+    const fixture = createFixture();
+    writeDescriptor(fixture.packDir, "shaders", "untyped-shader", [
+      'name = "Untyped Shader"', 'side = "client"', "[provider]", 'type = "modrinth"',
+      'project_id = "shader-project"', 'version_id = "old-version-id"',
+    ]);
+    const { requests } = useModrinthProjects({
+      "example-project": [modrinthRelease("old-version-id", "1.0.0")],
+      "shader-project": [modrinthRelease("old-version-id", "1.0.0")],
+    });
+    console.log = () => {};
+    try {
+      await checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 });
+      const shaderRequest = requests.find((url) => url.pathname === "/v2/project/shader-project/version");
+      expect(shaderRequest?.searchParams.get("loaders")).toBe('["iris"]');
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("omits the CurseForge mod loader filter for shaders and links the shaders section", async () => {
+    const fixture = createFixture({ provider: "curseforge" });
+    fs.rmSync(fixture.descriptor);
+    const shader = writeDescriptor(fixture.packDir, "shaderpacks", "example-cf-shader", [
+      'name = "Example CF Shader"', 'side = "client"', 'type = "shader"', "[provider]", 'type = "curseforge"',
+      "project_id = 100", "file_id = 200",
+    ]);
+    const { requests } = useCurseForge({
+      files: [curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z")],
+    });
+    console.log = () => {};
+    try {
+      await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const filesRequest = requests.map((url) => new URL(url)).find((url) => url.pathname === "/v1/mods/100/files");
+      expect(filesRequest?.searchParams.get("gameVersion")).toBe("26.2");
+      expect(filesRequest?.searchParams.has("modLoaderType")).toBe(false);
+      expect(fs.readFileSync(shader, "utf-8")).toContain("file_id = 201");
+      expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("https://www.curseforge.com/minecraft/shaders/example-cf/files/201");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+});

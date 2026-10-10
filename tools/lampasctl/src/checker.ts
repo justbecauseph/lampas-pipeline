@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { matchingBlacklistRules, parsePackBlacklistRules, describeBlacklistRule } from "./blacklist";
-import type { BlacklistRule, BlacklistTarget, ModDefinition, PackConfig } from "./types";
+import type { ArtifactType, BlacklistRule, BlacklistTarget, ModDefinition, PackConfig } from "./types";
 import { CURSEFORGE_FABRIC_LOADER_TYPE, CurseForgeClient, type CurseForgeFile } from "./curseforge";
 import { parseTomlFile, writeTomlFile } from "./utils";
 
@@ -36,6 +36,28 @@ interface PreparedDescriptor {
   file: string;
   filePath: string;
   definition: ModDefinition;
+  artifactType: ArtifactType;
+}
+
+// Mirrors the resolver's descriptor directories so every resolved artifact is also update-checked.
+const DESCRIPTOR_DIRS: ReadonlyArray<{ dir: string; defaultType: ArtifactType }> = [
+  { dir: "mods", defaultType: "mod" },
+  { dir: "shaderpacks", defaultType: "shader" },
+  { dir: "shaders", defaultType: "shader" },
+  { dir: "resourcepacks", defaultType: "resourcepack" },
+];
+
+const CURSEFORGE_SITE_SECTIONS: Record<ArtifactType, string> = {
+  mod: "mc-mods",
+  shader: "shaders",
+  resourcepack: "texture-packs",
+};
+
+// Modrinth tags shaders and resource packs with their own loaders, never the pack's mod loader.
+function modrinthLoaderFor(artifactType: ArtifactType, packLoader: string): string {
+  if (artifactType === "shader") return "iris";
+  if (artifactType === "resourcepack") return "minecraft";
+  return packLoader;
 }
 
 export interface CheckUpdatesOptions {
@@ -247,13 +269,17 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   const targetMc = packConfig.pack.minecraft;
   const targetLoader = packConfig.loader.type;
 
-  const modFiles = fs.readdirSync(modsDir).filter((file) => file.endsWith(".toml")).sort();
-  const descriptors: PreparedDescriptor[] = modFiles.map((file) => {
-    const filePath = path.join(modsDir, file);
-    const definition = parseTomlFile<ModDefinition>(filePath);
-    validateDescriptorProviderIds(file, definition);
-    return { file, filePath, definition };
-  });
+  const descriptors: PreparedDescriptor[] = [];
+  for (const { dir, defaultType } of DESCRIPTOR_DIRS) {
+    const descriptorDir = path.join(options.packDir, dir);
+    if (!fs.existsSync(descriptorDir)) continue;
+    for (const file of fs.readdirSync(descriptorDir).filter((name) => name.endsWith(".toml")).sort()) {
+      const filePath = path.join(descriptorDir, file);
+      const definition = parseTomlFile<ModDefinition>(filePath);
+      validateDescriptorProviderIds(file, definition);
+      descriptors.push({ file, filePath, definition, artifactType: definition.type || defaultType });
+    }
+  }
 
   console.log(`[Update Checker] Scanning upstream updates for Minecraft ${targetMc} (${targetLoader})...\n`);
 
@@ -275,7 +301,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
     while (queue.length > 0) {
       const descriptor = queue.shift();
       if (!descriptor) break;
-      const { file, filePath, definition: def } = descriptor;
+      const { file, filePath, definition: def, artifactType } = descriptor;
       const modId = path.basename(file, ".toml");
       const provider = def.provider;
 
@@ -321,7 +347,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
         }
 
         try {
-          const url = `https://api.modrinth.com/v2/project/${encodeURIComponent(projectId)}/version?game_versions=[%22${encodeURIComponent(targetMc)}%22]&loaders=[%22${encodeURIComponent(targetLoader)}%22]`;
+          const url = `https://api.modrinth.com/v2/project/${encodeURIComponent(projectId)}/version?game_versions=[%22${encodeURIComponent(targetMc)}%22]&loaders=[%22${encodeURIComponent(modrinthLoaderFor(artifactType, targetLoader))}%22]`;
           const res = await fetch(url, {
             headers: {
               "User-Agent": "Lampas-Pipeline/2.0 (update-checker)",
@@ -433,7 +459,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
             currentVersionName: currentVersionMetadata?.version_number || currentVersionMetadata?.name || currentVersionId,
             latestVersionId: latestId,
             latestVersionName: latest.version_number || latest.name || latestId,
-            latestVersionUrl: `https://modrinth.com/mod/${encodeURIComponent(projectId)}/version/${encodeURIComponent(latestId)}`,
+            latestVersionUrl: `https://modrinth.com/${artifactType}/${encodeURIComponent(projectId)}/version/${encodeURIComponent(latestId)}`,
             latestFileName: primaryFile?.filename || latest.name || latestId,
             changelog: latest.changelog ? latest.changelog.trim().substring(0, 300) : undefined,
             publishedAt: latest.date_published,
@@ -498,7 +524,8 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
         try {
           const files = await CurseForgeClient.getModFiles(projectId, {
             gameVersion: targetMc,
-            modLoaderType: CURSEFORGE_FABRIC_LOADER_TYPE,
+            // CurseForge shader and resource pack files carry no mod loader tag.
+            modLoaderType: artifactType === "mod" ? CURSEFORGE_FABRIC_LOADER_TYPE : undefined,
           });
           if (files.some((candidate) => !Number.isSafeInteger(candidate.id) || candidate.id <= 0)) {
             recordSkip(modId, def.name, "CurseForge returned malformed file ID metadata.");
@@ -577,7 +604,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
             associateDescriptorOverrideWithUpdate(blacklistDiagnostics, modId, broadMatches, latest);
           }
           const project = await CurseForgeClient.getMod(projectId);
-          const latestVersionUrl = `https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${latest.id}`;
+          const latestVersionUrl = `https://www.curseforge.com/minecraft/${CURSEFORGE_SITE_SECTIONS[artifactType]}/${project.slug}/files/${latest.id}`;
           const updateInfo: ModUpdateInfo = {
             modId,
             name: def.name,

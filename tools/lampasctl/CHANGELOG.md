@@ -3,6 +3,12 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- `lampasctl check-updates` now checks shader (`shaderpacks/`, `shaders/`) and resource pack (`resourcepacks/`) descriptors, not only `mods/`.
+- Modrinth update queries use the loader tag for each artifact type (`iris` for shaders, `minecraft` for resource packs). CurseForge queries for non-mod artifacts no longer filter by the Fabric loader. Update links point to the matching shader or resource pack section.
+
 ## [1.0.6] - 2026-10-06
 
 ### Added
