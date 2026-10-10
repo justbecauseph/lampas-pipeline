@@ -4,6 +4,7 @@ import { importExistingMods } from "./importer";
 import { resolvePack } from "./resolver";
 import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
+import { DEFAULT_PORTAL_BASE_URL } from "./portal";
 import { deployServer, syncInstance } from "./sync";
 import { DeploymentTransaction } from "./transaction";
 import { publishRelease } from "./publisher";
@@ -59,10 +60,14 @@ Commands:
     -p, --pack <path>   Pack directory (default: ./pack)
     -l, --lock <path>   Lockfile destination (default: ./pack/pack.lock.json)
     -o, --out <path>    Manifest output directory (default: ./manifest)
+    --portal <url>      Portal base URL for blob/release URLs
+                        (default: PORTAL_BASE_URL, pack.toml [portal] base_url,
+                        then https://portal.lampas.town)
     --skip-meta-check   Skip upstream Fabric Meta compatibility verification
 
   publish               Publish release and upload blobs to Lampas Portal
-    --portal <url>      Lampas Portal URL (e.g. http://localhost:3000)
+    --portal <url>      Lampas Portal URL (default: PACK_PORTAL_URL, then
+                        pack.toml [portal] base_url)
     --secret <token>    Publish bearer secret token
     --channel <name>    Channel pointer to update (dev | beta | stable, or all if omitted)
     -p, --pack <path>   Pack directory (default: ./pack)
@@ -267,7 +272,8 @@ async function main() {
           packDir,
           lockFile,
           outDir,
-          portalBaseUrl: flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL || "https://portal.lampas.town",
+          portalBaseUrl: flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL,
+          defaultPortalBaseUrl: DEFAULT_PORTAL_BASE_URL,
           checkFabricMeta: flags["skip-meta-check"] !== "true",
         });
         break;

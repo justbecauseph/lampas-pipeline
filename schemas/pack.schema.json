@@ -112,6 +112,17 @@
         ]
       }
     },
+    "portal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "pattern": "^https?://[^/?#]+(/[^?#]*)?$",
+          "description": "Lampas Portal base URL used for manifest blob/release URLs and as the default 'publish' target (e.g. 'https://portal.lampas.town'). The --portal flag and PORTAL_BASE_URL / PACK_PORTAL_URL environment variables override it."
+        }
+      }
+    },
     "launcher": {
       "type": "object",
       "properties": {

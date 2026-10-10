@@ -50,6 +50,9 @@ export interface PackConfig {
     type: "fabric";
     version: string;
   };
+  portal?: {
+    base_url?: string;
+  };
   launcher?: {
     minimum_version?: string;
     protocol?: number;

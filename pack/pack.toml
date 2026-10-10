@@ -9,6 +9,11 @@ minecraft = "26.2"
 type = "fabric"
 version = "0.19.5"
 
+# Lampas Portal used for manifest blob/release URLs and as the default publish target.
+# Overridden by --portal, PORTAL_BASE_URL (manifest) or PACK_PORTAL_URL (publish).
+[portal]
+base_url = "https://dev.lampas.town"
+
 [launcher]
 minimum_version = "1.2.0"
 protocol = 3

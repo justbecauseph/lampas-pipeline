@@ -1,7 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { readJsonFile } from "./utils";
-import type { PackManifest, ReleaseDescriptor } from "./types";
+import { parseTomlFile, readJsonFile } from "./utils";
+import type { PackConfig, PackManifest, ReleaseDescriptor } from "./types";
+import { normalizePortalBaseUrl, readPackPortalBaseUrl } from "./portal";
 import {
   discoverLocalLampasBlobs,
   prepareBlobs,
@@ -18,7 +19,7 @@ export const ALL_RELEASE_CHANNELS: readonly ReleaseChannel[] = ["dev", "beta", "
 export interface PublishOptions {
   manifestDir: string;
   packDir: string;
-  portalUrl: string;
+  portalUrl?: string;
   publishSecret: string;
   channel?: ReleaseChannel | ReleaseChannel[] | string;
   maxConcurrency?: number;
@@ -52,6 +53,19 @@ export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel
   return channels as ReleaseChannel[];
 }
 
+/** Resolve the publish target: --portal / PACK_PORTAL_URL, then pack.toml [portal] base_url. */
+export function resolvePublishPortalUrl(options: Pick<PublishOptions, "portalUrl" | "packDir">): string {
+  if (options.portalUrl) {
+    return normalizePortalBaseUrl(options.portalUrl, "--portal / PACK_PORTAL_URL");
+  }
+  const packTomlPath = path.join(options.packDir, "pack.toml");
+  const fromPack = fs.existsSync(packTomlPath) ? readPackPortalBaseUrl(parseTomlFile<PackConfig>(packTomlPath)) : undefined;
+  if (!fromPack) {
+    throw new Error("Portal URL is required for 'publish'. Specify --portal <url>, PACK_PORTAL_URL, or [portal] base_url in pack.toml.");
+  }
+  return fromPack;
+}
+
 export async function publishRelease(options: PublishOptions): Promise<void> {
   const releasePath = path.join(options.manifestDir, "release.json");
   const clientManifestPath = path.join(options.manifestDir, "client-manifest.json");
@@ -61,9 +75,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     throw new Error(`Manifests missing in ${options.manifestDir}. Run 'lampasctl manifest' first.`);
   }
 
-  if (!options.portalUrl) {
-    throw new Error("Portal URL is required for 'publish'. Specify --portal <url> or PACK_PORTAL_URL.");
-  }
+  const portalUrl = resolvePublishPortalUrl(options);
 
   const release = readJsonFile<ReleaseDescriptor>(releasePath);
   const clientManifest = readJsonFile<PackManifest>(clientManifestPath);
@@ -93,7 +105,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     await verifyFabricLoaderCompatibility(release.minecraft, release.loader.version);
   }
 
-  console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${options.portalUrl} (channels: ${targetChannels.join(", ")})...`);
+  console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${portalUrl} (channels: ${targetChannels.join(", ")})...`);
 
   // 1. Discover, locate, and validate all local Lampas blobs without buffering them into memory
   const localBlobs: LocalPublishBlob[] = await discoverLocalLampasBlobs({
@@ -109,7 +121,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
   // 2. Prepare blobs: query portal for missing vs already-stored blobs in object storage
   if (localBlobs.length > 0) {
     console.log("[Publish] Checking remote blob state...");
-    const preparedBlobs = await prepareBlobs(options.portalUrl, options.publishSecret, localBlobs);
+    const preparedBlobs = await prepareBlobs(portalUrl, options.publishSecret, localBlobs);
 
     const missingPrepared = preparedBlobs.filter((b) => b.status === "upload");
     const existingCount = preparedBlobs.length - missingPrepared.length;
@@ -140,7 +152,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
   }
 
   // 4. Send single release metadata payload with all target channels and NO base64 payload
-  const publishUrl = `${options.portalUrl.replace(/\/+$/, "")}/api/v1/releases/publish`;
+  const publishUrl = `${portalUrl.replace(/\/+$/, "")}/api/v1/releases/publish`;
   const payload = {
     version: release.version,
     minecraftVersion: release.minecraft,

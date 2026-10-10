@@ -305,6 +305,15 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
+The Portal base URL baked into manifest blob and release URLs comes from `pack.toml`:
+
+```toml
+[portal]
+base_url = "https://dev.lampas.town"
+```
+
+Precedence for `manifest` (and `add` / `remove` / `enrich`): `--portal` → `PORTAL_BASE_URL` → `[portal] base_url` → `https://portal.lampas.town`. `publish` uses `--portal` → `PACK_PORTAL_URL` → `[portal] base_url`. `lampasctl validate` rejects a malformed `base_url`.
+
 ### 4. Managed Configuration Patches
 In addition to distributing whole files, Lampas supports **property-level / targeted config management** defined in `pack/config-patches/client.json`.
 
@@ -334,7 +343,8 @@ bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server
 Publish Lampas-owned artifacts to content-addressed object storage and atomically publish release metadata to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
 
 ```bash
-# Supply these through the shell or CI secret store; never commit the token.
+# Supply the token through the shell or CI secret store; never commit it.
+# PACK_PORTAL_URL is optional when pack.toml defines [portal] base_url.
 export PACK_PORTAL_URL=https://portal.lampas.town
 export PACK_PUBLISH_SECRET="<PUBLISH_TOKEN>"
 

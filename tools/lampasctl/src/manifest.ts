@@ -5,6 +5,7 @@ import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, 
 import { validateConfigPatches } from "./config-patches";
 import { validateLoaderDefinition } from "./validator";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
+import { resolvePortalBaseUrl } from "./portal";
 
 export const PACK_MANIFEST_SCHEMA_VERSION = 2;
 
@@ -12,7 +13,10 @@ export interface ManifestOptions {
   packDir: string;
   lockFile: string;
   outDir: string;
+  /** Overrides `[portal] base_url` from pack.toml. */
   portalBaseUrl?: string;
+  /** Used when neither `portalBaseUrl` nor pack.toml defines a portal URL. */
+  defaultPortalBaseUrl?: string;
   checkFabricMeta?: boolean;
 }
 
@@ -278,7 +282,7 @@ export async function buildManifests(options: ManifestOptions): Promise<{
 
   // Build server resource pack configuration
   let serverResourcePackConfig: ServerResourcePackConfig | undefined = undefined;
-  const portalBase = options.portalBaseUrl || "";
+  const portalBase = resolvePortalBaseUrl(packConfig, options.portalBaseUrl, options.defaultPortalBaseUrl) || "";
 
   if (srpDef?.artifact) {
     const artifact = lock.artifacts[srpDef.artifact];

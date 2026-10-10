@@ -5,6 +5,7 @@ import type { BlacklistTarget, PackConfig, PackLock, ProviderConfig } from "./ty
 import { describeBlacklistRule, matchingBlacklistRules, parsePackBlacklistRules } from "./blacklist";
 import { validateConfigPatches } from "./config-patches";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
+import { readPackPortalBaseUrl } from "./portal";
 
 function requireExactStringIdentity(value: unknown, label: string): string {
   if (typeof value !== "string" || value.length === 0 || value.trim() !== value || /\s/.test(value)) {
@@ -127,6 +128,13 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     loaderDef = validateLoaderDefinition(packConfig.pack?.minecraft, packConfig.loader);
   } catch (err: any) {
     console.error(`  ✗ [Invalid Loader] ${err.message}`);
+    return false;
+  }
+
+  try {
+    readPackPortalBaseUrl(packConfig);
+  } catch (err: any) {
+    console.error(`  ✗ [Invalid Portal] ${err.message}`);
     return false;
   }
 
