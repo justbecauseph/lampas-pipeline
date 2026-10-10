@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.22",
+  "version": "2.2.23",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -2011,6 +2011,19 @@
         "library"
       ],
       "sourceUrl": "https://modrinth.com/mod/resourceful-config"
+    },
+    {
+      "id": "respackopts",
+      "name": "Respackopts",
+      "side": "both",
+      "filename": "respackopts-26.2.2.jar",
+      "size": 930821,
+      "description": "Config menus for resource packs",
+      "iconUrl": "https://cdn.modrinth.com/data/TiF5QWZY/16b68a9cf4a526e0b03e77310c98040ac2e6225c_96.webp",
+      "categories": [
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/respackopts"
     },
     {
       "id": "roomfortwo",
@@ -4523,6 +4536,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/M1953qlQ/versions/WcCx1Mqe/ResourcefulConfig-5.0.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/respackopts-26.2.2.jar",
+      "size": 930821,
+      "hashes": {
+        "sha256": "bba276c08b2f49acec54f085cf8dd7f4b9480ca88f7c3f0cb82580ebb213694b",
+        "sha512": "3f85acaa6c9119dd24d58c31f90de848eb6828f2ce4f28339e7ac6a19308ec550d6a97d2ef313a10ed19c7b31c8a89517450afdf5c0e7c91cc24afc98a787640"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/TiF5QWZY/versions/ajKcHatH/respackopts-26.2.2.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

@@ -3,7 +3,7 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.8] - 2026-10-10
 
 ### Added
 - `[portal] base_url` in `pack.toml` sets the Portal base URL. `lampasctl manifest`, `add`, `remove` and `enrich` use it for blob and release URLs. `lampasctl publish` uses it as the default target. `--portal`, `PORTAL_BASE_URL` (manifest) and `PACK_PORTAL_URL` (publish) still override it.

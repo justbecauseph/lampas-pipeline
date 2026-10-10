@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.22",
+  "version": "2.2.23",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -151,6 +151,20 @@
         "library"
       ],
       "sourceUrl": "https://modrinth.com/mod/armor-model-api"
+    },
+    {
+      "id": "async-pack-scan",
+      "name": "Async Pack Scan",
+      "side": "client",
+      "filename": "async-pack-scan-26.2.1.jar",
+      "size": 136493,
+      "description": "Speeds up the resource pack organizer screen",
+      "iconUrl": "https://cdn.modrinth.com/data/FuRR0tKd/8f70a4a1c82eb0fd3af78cda02160fc521159dd1_96.webp",
+      "categories": [
+        "cursed",
+        "optimization"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/async-pack-scan"
     },
     {
       "id": "asyncparticles",
@@ -1299,6 +1313,21 @@
       "sourceUrl": "https://modrinth.com/mod/horseman"
     },
     {
+      "id": "hud-reignited",
+      "name": "HUD Reignited",
+      "side": "client",
+      "filename": "HUD Reignited v4.1.zip",
+      "size": 419949,
+      "description": "This resource pack changes the boring to HUD to something great",
+      "iconUrl": "https://cdn.modrinth.com/data/uHHDTuOT/8aaf2a28aed0b7c840ec76af019d2b2ae5ff1e20_96.webp",
+      "categories": [
+        "gui",
+        "tweaks",
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/hud-reignited"
+    },
+    {
       "id": "illagerinvasion",
       "name": "Illager Invasion",
       "side": "both",
@@ -1542,6 +1571,19 @@
         "library"
       ],
       "sourceUrl": "https://modrinth.com/mod/libipn"
+    },
+    {
+      "id": "libjf",
+      "name": "LibJF",
+      "side": "client",
+      "filename": "libjf-26.2.2.jar",
+      "size": 1507878,
+      "description": "A library for my mods",
+      "iconUrl": "https://cdn.modrinth.com/data/WKwQAwke/icon.png",
+      "categories": [
+        "library"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/libjf"
     },
     {
       "id": "lithium",
@@ -2390,6 +2432,19 @@
       "sourceUrl": "https://modrinth.com/mod/replaymod-audio-render"
     },
     {
+      "id": "respackopts",
+      "name": "Respackopts",
+      "side": "both",
+      "filename": "respackopts-26.2.2.jar",
+      "size": 930821,
+      "description": "Config menus for resource packs",
+      "iconUrl": "https://cdn.modrinth.com/data/TiF5QWZY/16b68a9cf4a526e0b03e77310c98040ac2e6225c_96.webp",
+      "categories": [
+        "utility"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/respackopts"
+    },
+    {
       "id": "runes",
       "name": "Runes",
       "side": "both",
@@ -3105,6 +3160,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/onz2NN2n/versions/v25Jo0f4/armor_model_api-fabric-1.1.2%2B26.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/async-pack-scan-26.2.1.jar",
+      "size": 136493,
+      "hashes": {
+        "sha256": "5980dd0148a8d17b0ea8d28c16e0b2e8a20ab2f1400b6ecc5a5c0a4f82468a5c",
+        "sha512": "4fa20a9074f4ca8858ac4ba0f81f8ccc0c043b866b05f20fbbd3485f3f3c0f0282146cde4e464b065d09887883727681e6b02ed9b4303f52abaef8f8e38752a4"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/FuRR0tKd/versions/tU2mpH7W/async-pack-scan-26.2.1.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -4319,6 +4387,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/libjf-26.2.2.jar",
+      "size": 1507878,
+      "hashes": {
+        "sha256": "cc71e13151e6de521afd3d0dd6b67ad35a39f1c8212fc007b0bf70684e743f13",
+        "sha512": "83885e9d73ee54629dcb0e5f0f7ca00bf4616b1625cddb5ad0f9a650085fb7f30ccccc059e5789a9850296cb2ed3a890d1ce5c5361149d1381ada11cf7039c38"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/WKwQAwke/versions/I5brbhNh/libjf-26.2.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/lithium-fabric-0.25.3+mc26.2.jar",
       "size": 912850,
       "hashes": {
@@ -5112,6 +5193,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/respackopts-26.2.2.jar",
+      "size": 930821,
+      "hashes": {
+        "sha256": "bba276c08b2f49acec54f085cf8dd7f4b9480ca88f7c3f0cb82580ebb213694b",
+        "sha512": "3f85acaa6c9119dd24d58c31f90de848eb6828f2ce4f28339e7ac6a19308ec550d6a97d2ef313a10ed19c7b31c8a89517450afdf5c0e7c91cc24afc98a787640"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/TiF5QWZY/versions/ajKcHatH/respackopts-26.2.2.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/rsls-1.3.0.jar",
       "size": 51302,
       "hashes": {
@@ -5775,6 +5869,45 @@
       "policy": "MANAGED"
     },
     {
+      "path": "shaderpacks/BSL_v10.1.8.zip",
+      "size": 1134153,
+      "hashes": {
+        "sha256": "36b0a50ff7918bf10e9422c401d93779f9d0088a26acea975b435243f96930b5",
+        "sha512": "94a3c25d6820868db624e11347873e6b572e7cd571967d9ac6f4690ca5d37ca302a7645d85eec800e0654541e3825fba14d37b5a25d3996aaf038178552be26f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/Y68yiql9/BSL_v10.1.8.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "shaderpacks/ComplementaryReimagined_r5.9.3.zip",
+      "size": 553397,
+      "hashes": {
+        "sha256": "fed6c879e732cf7fc7bc6570ebb1def43235aa7e96f62859fbdbdbfa0b484b38",
+        "sha512": "45304b1d7862afdb2177b7e6226fc9c6737911d17a4ad46cc9c519ca4deb935f05072cd337cd8b19a15bb8062b57b54eceec7bdee4cd572d94858e2946d37d85"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/HVnmMxH1/versions/Bqen1mJX/ComplementaryReimagined_r5.9.3.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "shaderpacks/ComplementaryUnbound_r5.9.3.zip",
+      "size": 553400,
+      "hashes": {
+        "sha256": "98ac741dee294d2a3c82d153349148c3bb7fb688c30eb3b49c3b9ac37e968c5a",
+        "sha512": "a085d1d8cda67cd17a2b414eeba48bbd809da069f269bab46246235ec8fe714a275013c70d0504527b0987d810deddddba4564332414ab3b3bd7435932ff808c"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/B1kyfoUZ/ComplementaryUnbound_r5.9.3.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
       "size": 884979,
       "hashes": {
@@ -5783,45 +5916,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
-      },
-      "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
-      },
-      "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
-      "size": 3231093,
-      "hashes": {
-        "sha256": "a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
-        "sha512": "e7c83fb65d4bad981d8ac0033241844e8d340de8572e4ee8719540d0de38d482c6053d7ce5b14d16ece4560ebbdbaddb1709b15fb26643769db841c3bdf4ced0"
-      },
-      "download": {
-        "url": "/api/v1/blobs/a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5840,14 +5934,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
       "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
       },
       "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5892,6 +5986,84 @@
       "policy": "MANAGED"
     },
     {
+      "path": "resourcepacks/HUD Reignited v4.1.zip",
+      "size": 419949,
+      "hashes": {
+        "sha256": "d4cee993508e241030e2584061e5838ccd37a256b762937a8a6c339ab86aefc3",
+        "sha512": "e13ca8c70c61f59ebae7474b1fb75cb1d27c7e4e1ed95c65a48618d17d91b9f22ee5c2fe914efbdb8f4e1a656408c665a5cb8442a1769013b659f79c3ffb1508"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/uHHDTuOT/versions/bE7yRV9i/HUD%20Reignited%20v4.1.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
+      "hashes": {
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "resourcepacks/Recolourful Containers DARK 3.1.4 (1.19.4+).zip",
+      "size": 2119579,
+      "hashes": {
+        "sha256": "5c8fa6124a0ed473f136537bb97705768e4ee72ca9a55ec3c6fa71152df77644",
+        "sha512": "3b2e067a51177e2fc20f9d1ae999d580a604650287a29f9786ab6e8adfc2b99432ae8fb1be92e21bbe4134560332e70ce7b86191eb8d3a647b367505d1708a0d"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/YT13xMrw/Recolourful%20Containers%20DARK%203.1.4%20%281.19.4%2B%29.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "resourcepacks/Recolourful Containers 3.1.4 (1.19.4+).zip",
+      "size": 2011177,
+      "hashes": {
+        "sha256": "2a9a32f68bdaf825374f58e8b7cdc6bb1c7e378540ef558c7c5ccbcd0d4811d1",
+        "sha512": "e0c57831d2f9ba461c6dbdd886a9908e354a4a3c03fc2252482680ace6833c6d2228611aaca90c03a3ec0e96edc4a8b0457375769057f22e35d3b1e4bf806fd8"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/lewweaHO/versions/aQ7jLjk8/Recolourful%20Containers%203.1.4%20%281.19.4%2B%29.zip",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
+      "size": 3231093,
+      "hashes": {
+        "sha256": "a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
+        "sha512": "e7c83fb65d4bad981d8ac0033241844e8d340de8572e4ee8719540d0de38d482c6053d7ce5b14d16ece4560ebbdbaddb1709b15fb26643769db841c3bdf4ced0"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "hashes": {
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
+      },
+      "download": {
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
       "size": 3000081,
       "hashes": {
@@ -5901,45 +6073,6 @@
       "download": {
         "url": "/api/v1/blobs/75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "shaderpacks/ComplementaryUnbound_r5.9.3.zip",
-      "size": 553400,
-      "hashes": {
-        "sha256": "98ac741dee294d2a3c82d153349148c3bb7fb688c30eb3b49c3b9ac37e968c5a",
-        "sha512": "a085d1d8cda67cd17a2b414eeba48bbd809da069f269bab46246235ec8fe714a275013c70d0504527b0987d810deddddba4564332414ab3b3bd7435932ff808c"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/B1kyfoUZ/ComplementaryUnbound_r5.9.3.zip",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "shaderpacks/ComplementaryReimagined_r5.9.3.zip",
-      "size": 553397,
-      "hashes": {
-        "sha256": "fed6c879e732cf7fc7bc6570ebb1def43235aa7e96f62859fbdbdbfa0b484b38",
-        "sha512": "45304b1d7862afdb2177b7e6226fc9c6737911d17a4ad46cc9c519ca4deb935f05072cd337cd8b19a15bb8062b57b54eceec7bdee4cd572d94858e2946d37d85"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/HVnmMxH1/versions/Bqen1mJX/ComplementaryReimagined_r5.9.3.zip",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "shaderpacks/BSL_v10.1.8.zip",
-      "size": 1134153,
-      "hashes": {
-        "sha256": "36b0a50ff7918bf10e9422c401d93779f9d0088a26acea975b435243f96930b5",
-        "sha512": "94a3c25d6820868db624e11347873e6b572e7cd571967d9ac6f4690ca5d37ca302a7645d85eec800e0654541e3825fba14d37b5a25d3996aaf038178552be26f"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/Y68yiql9/BSL_v10.1.8.zip",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5970,19 +6103,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "resourcepacks/Recolourful Containers 3.1.4 (1.19.4+).zip",
-      "size": 2011177,
-      "hashes": {
-        "sha256": "2a9a32f68bdaf825374f58e8b7cdc6bb1c7e378540ef558c7c5ccbcd0d4811d1",
-        "sha512": "e0c57831d2f9ba461c6dbdd886a9908e354a4a3c03fc2252482680ace6833c6d2228611aaca90c03a3ec0e96edc4a8b0457375769057f22e35d3b1e4bf806fd8"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/lewweaHO/versions/aQ7jLjk8/Recolourful%20Containers%203.1.4%20%281.19.4%2B%29.zip",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/Apotheosis-26.2-10.0.1.jar",
       "size": 8204983,
       "hashes": {
@@ -5992,19 +6112,6 @@
       "download": {
         "url": "/api/v1/blobs/342263903d1c652f1d5e3bc10517d5ce140c6fae104510a1097f394912df9f60",
         "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "resourcepacks/Recolourful Containers DARK 3.1.4 (1.19.4+).zip",
-      "size": 2119579,
-      "hashes": {
-        "sha256": "5c8fa6124a0ed473f136537bb97705768e4ee72ca9a55ec3c6fa71152df77644",
-        "sha512": "3b2e067a51177e2fc20f9d1ae999d580a604650287a29f9786ab6e8adfc2b99432ae8fb1be92e21bbe4134560332e70ce7b86191eb8d3a647b367505d1708a0d"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/YT13xMrw/Recolourful%20Containers%20DARK%203.1.4%20%281.19.4%2B%29.zip",
-        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
