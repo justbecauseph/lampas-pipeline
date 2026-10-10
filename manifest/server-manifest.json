@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.20",
+  "version": "2.2.21",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -2003,8 +2003,8 @@
       "id": "resourceful-config",
       "name": "Resourceful Config",
       "side": "server",
-      "filename": "ResourcefulConfig-5.0.0.jar",
-      "size": 443979,
+      "filename": "ResourcefulConfig-5.0.1.jar",
+      "size": 444767,
       "description": "Resourceful Config is a mod that allows for developers to make cross-platform configs",
       "iconUrl": "https://cdn.modrinth.com/data/M1953qlQ/cadcab644905f7e9ee92220d29f5c27113eb167b_96.webp",
       "categories": [
@@ -2265,8 +2265,8 @@
       "id": "supermartijn642corelib",
       "name": "SuperMartijn642's Core Lib",
       "side": "both",
-      "filename": "supermartijn642corelib-1.1.24b-fabric-mc26.2.jar",
-      "size": 687657,
+      "filename": "supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
+      "size": 687844,
       "description": "SuperMartijn642's Core Lib adds lots of basic implementations that allow for similar code between different Minecraft versions!",
       "iconUrl": "https://cdn.modrinth.com/data/rOUBggPv/e745e719d7fe2aa0335d819ca9c97defbf2e0bcb_96.webp",
       "categories": [
@@ -4515,15 +4515,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/ResourcefulConfig-5.0.0.jar",
-      "size": 443979,
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
       "hashes": {
-        "sha256": "e1f3138849b7ec68d029ba07a8158e9bec4032c02f20c3999fe335c638fc8d89",
-        "sha512": "c9834fbcb557d6f96b99ccafc69346f8da3887cdc4e26f780f9f4fe1c712071bab2e97362ecf69cd308aaafa76ea3cb98e7bee35b61d94addae2797788156457"
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/M1953qlQ/versions/RqoPv70U/ResourcefulConfig-5.0.0.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4762,15 +4762,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/supermartijn642corelib-1.1.24b-fabric-mc26.2.jar",
-      "size": 687657,
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
       "hashes": {
-        "sha256": "860628ec62741c9046c4f731253561df9ad2bc8d611086439c56e94d09855c1b",
-        "sha512": "cf751d0411173c45a5bc29324f636c1c124b317e5fae6b000a238df3585a23f69199fa8f193e6ae5ca21964b60202cfa4122399d448d7d164ed26434b9ca5ed6"
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/PLE2X9vq/supermartijn642corelib-1.1.24b-fabric-mc26.2.jar",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -4892,14 +4892,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4957,6 +4957,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
+      "hashes": {
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+      },
+      "download": {
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/VibrantParrots-v26.2.2-mc26.2.x-Fabric.jar",
       "size": 127813,
       "hashes": {
@@ -5005,6 +5018,19 @@
       "download": {
         "url": "https://cdn.modrinth.com/data/84zcagOb/versions/oUpq4mJx/voxy-server-side-fabric.jar",
         "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "hashes": {
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
+      },
+      "download": {
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -5152,54 +5178,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
+      "path": "mods/ResourcefulConfig-5.0.1.jar",
+      "size": 444767,
       "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+        "sha256": "3e9801c8c2f5f788b03256c29f6c9f7c9c7404cd22879ba3e9c35b2e35660856",
+        "sha512": "0654d6a4acda3889602067495775875f4974ae83f19b499b008be58ab39111410560b383e62b8392672ce0e8b066ae338bc5a79e8f475727687323488f19e69a"
       },
       "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
-      },
-      "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
-      },
-      "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
-      },
-      "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/M1953qlQ/versions/WcCx1Mqe/ResourcefulConfig-5.0.1.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5213,6 +5200,19 @@
       "download": {
         "url": "/api/v1/blobs/0280f58b6b95951e265ca82aac8528e4c8d5f508b4acdc6fec466a52556cdc4c",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
+      "size": 687844,
+      "hashes": {
+        "sha256": "ec1775a64d8dc32112c10d061e39f77f907cd86b8de726781391cdeee523a577",
+        "sha512": "fb1aa508fd92f57ef299b6cb5524e236c2e8d2faced7bf5370b42e3d1e8f015e10841c64c58a37c2edd17146602c9f2c3766e3132717975982171396065da72e"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/iM74Il9u/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
