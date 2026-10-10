@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.3.4",
+  "version": "2.3.6",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -1231,7 +1231,7 @@
       "name": "lampas-addons-1.0.0",
       "side": "both",
       "filename": "lampas-addons-1.0.0.jar",
-      "size": 148920,
+      "size": 151102,
       "categories": []
     },
     {
@@ -1876,6 +1876,17 @@
         "library"
       ],
       "sourceUrl": "https://modrinth.com/mod/pneumono_core"
+    },
+    {
+      "id": "potion-stacking",
+      "name": "Potion Stacking",
+      "side": "both",
+      "filename": "potionstacking-1.1.4-26.1.jar",
+      "size": 10124,
+      "description": "Stack your potions up to 16! Configurable stack size, and works with vanilla and modded potions",
+      "iconUrl": "https://cdn.modrinth.com/data/1hvxU3F5/9ab38b1096ce0a2d911e2a8e08746528d940fed1.webp",
+      "categories": [],
+      "sourceUrl": "https://modrinth.com/mod/potion-stacking"
     },
     {
       "id": "prickle",
@@ -2548,7 +2559,7 @@
       "name": "tweeter-inc",
       "side": "both",
       "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "size": 24941,
       "categories": []
     },
     {
@@ -3853,13 +3864,13 @@
     },
     {
       "path": "mods/lampas-addons-1.0.0.jar",
-      "size": 148920,
+      "size": 151102,
       "hashes": {
-        "sha256": "bf2193f981756826a9d1b3eed16c4119442937ce7fe02dff6499cce3cab5fbbe",
-        "sha512": "0bb44e962d2853273cce2d38f160a68e064603f0313a86a4f5e92496a2b4221dca0e25fa0b019e2a2bdff3ca1522d45df472037b99bea5c205737f4f165eb42c"
+        "sha256": "77c320114b30bf9bf97f8fc72bdb583c41576f7027f63be6cceb04cbf16a46e1",
+        "sha512": "c3b2d4fb07723190ba6c52bf79e222e9ea57ba9bd8f8d99673ae5089e5fbd84060832e95addc0c7b9317944c1dbe1f57b54a854eece10c6e121b9f74fa9592e5"
       },
       "download": {
-        "url": "/api/v1/blobs/bf2193f981756826a9d1b3eed16c4119442937ce7fe02dff6499cce3cab5fbbe",
+        "url": "/api/v1/blobs/77c320114b30bf9bf97f8fc72bdb583c41576f7027f63be6cceb04cbf16a46e1",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -4528,6 +4539,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/potionstacking-1.1.4-26.1.jar",
+      "size": 10124,
+      "hashes": {
+        "sha256": "272b6a926a22fda3343a586362dae1ec8a09fbf9d27054ee42e3c1431114cecd",
+        "sha512": "66866673f273626aff14cae9ee28d1a33c59298844ced2a9ea109f43c583b851f572d3633a7672e5ef3ca52efc135b60504d1d306cd02dd832a81e0b4e77c074"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/1hvxU3F5/versions/QvjGfrlH/potionstacking-1.1.4-26.1.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/PrickleMC-fabric-MC26.2-26.2.0.3.jar",
       "size": 84889,
       "hashes": {
@@ -5140,13 +5164,13 @@
     },
     {
       "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "size": 24941,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "url": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -6843,13 +6867,13 @@
     },
     {
       "path": "config/tweeter-inc.json",
-      "size": 122,
+      "size": 153,
       "hashes": {
-        "sha256": "3d3d06183af5f674f64a4c2d42cde05047cfe19d732e14854f76255ae2057a04",
-        "sha512": "8fbd734bc80ffea4191fcfaf533df1556e4c96b1f8dc7a21f870c5aca83bee7e41e87c145ec3b6d3276a717b9c86c79255835e22660fd7ba3cef2f1ed720e60d"
+        "sha256": "2de74805155008f02b08b2e9c8cb6fb440ca492c3508739b1fc3a3a66a4ba31a",
+        "sha512": "402bb75636da7faa440078acb4cf6544b29a124e75459b91600ba95c98719dc6fca3028f916db9a7d5db4fda3640ab24f109d92e040be74218132fc0b91967fb"
       },
       "download": {
-        "url": "/api/v1/blobs/3d3d06183af5f674f64a4c2d42cde05047cfe19d732e14854f76255ae2057a04",
+        "url": "/api/v1/blobs/2de74805155008f02b08b2e9c8cb6fb440ca492c3508739b1fc3a3a66a4ba31a",
         "provider": "lampas"
       },
       "policy": "MANAGED"

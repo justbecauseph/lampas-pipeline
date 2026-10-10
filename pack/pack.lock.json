@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.3.4",
+  "packVersion": "2.3.6",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-10T12:04:16.645Z",
+  "updated": "2026-10-10T13:07:28.677Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -3199,11 +3199,11 @@
       "name": "lampas-addons-1.0.0",
       "side": "both",
       "filename": "lampas-addons-1.0.0.jar",
-      "size": 148920,
-      "sha256": "bf2193f981756826a9d1b3eed16c4119442937ce7fe02dff6499cce3cab5fbbe",
-      "sha512": "0bb44e962d2853273cce2d38f160a68e064603f0313a86a4f5e92496a2b4221dca0e25fa0b019e2a2bdff3ca1522d45df472037b99bea5c205737f4f165eb42c",
-      "sha1": "b29832d849883552dab1891c6a1c4f15fd99f537",
-      "downloadUrl": "/api/v1/blobs/bf2193f981756826a9d1b3eed16c4119442937ce7fe02dff6499cce3cab5fbbe",
+      "size": 151102,
+      "sha256": "77c320114b30bf9bf97f8fc72bdb583c41576f7027f63be6cceb04cbf16a46e1",
+      "sha512": "c3b2d4fb07723190ba6c52bf79e222e9ea57ba9bd8f8d99673ae5089e5fbd84060832e95addc0c7b9317944c1dbe1f57b54a854eece10c6e121b9f74fa9592e5",
+      "sha1": "3aa32137e7b47be1a120db2ce4686735cf14ad56",
+      "downloadUrl": "/api/v1/blobs/77c320114b30bf9bf97f8fc72bdb583c41576f7027f63be6cceb04cbf16a46e1",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
@@ -4958,6 +4958,32 @@
         ],
         "sourceUrl": "https://modrinth.com/mod/pneumono_core",
         "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "potion-stacking": {
+      "id": "potion-stacking",
+      "name": "Potion Stacking",
+      "side": "both",
+      "filename": "potionstacking-1.1.4-26.1.jar",
+      "size": 10124,
+      "sha256": "272b6a926a22fda3343a586362dae1ec8a09fbf9d27054ee42e3c1431114cecd",
+      "sha512": "66866673f273626aff14cae9ee28d1a33c59298844ced2a9ea109f43c583b851f572d3633a7672e5ef3ca52efc135b60504d1d306cd02dd832a81e0b4e77c074",
+      "sha1": "5854fae21391cebf878fbb3d21ceb847320e2260",
+      "downloadUrl": "https://cdn.modrinth.com/data/1hvxU3F5/versions/QvjGfrlH/potionstacking-1.1.4-26.1.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "1hvxU3F5",
+        "versionId": "QvjGfrlH"
+      },
+      "metadata": {
+        "description": "Stack your potions up to 16! Configurable stack size, and works with vanilla and modded potions",
+        "iconUrl": "https://cdn.modrinth.com/data/1hvxU3F5/9ab38b1096ce0a2d911e2a8e08746528d940fed1.webp",
+        "categories": [],
+        "sourceUrl": "https://modrinth.com/mod/potion-stacking",
+        "clientSide": "optional",
         "serverSide": "required"
       }
     },
@@ -6812,11 +6838,11 @@
       "name": "tweeter-inc",
       "side": "both",
       "filename": "tweeter-inc-1.0.0.jar",
-      "size": 22731,
-      "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-      "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73",
-      "sha1": "d8053b284c3b341eccba6d1d2c8d382a74bd767d",
-      "downloadUrl": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+      "size": 24941,
+      "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+      "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725",
+      "sha1": "ba19a8201a2974c8ad2ebd649502c949ea379c2f",
+      "downloadUrl": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
       "artifactType": "mod",
       "targetDir": "mods",
       "provider": {
@@ -7870,23 +7896,6 @@
         "file": "custom/lampas2-resource-pack.zip"
       }
     },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
-      "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
-      }
-    },
     "figura-0-1-6-rc-1": {
       "id": "figura-0-1-6-rc-1",
       "name": "Figura",
@@ -7909,6 +7918,23 @@
           "cosmetic",
           "avatar"
         ]
+      }
+    },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
     "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot": {
