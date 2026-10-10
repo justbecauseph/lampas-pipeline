@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.3.1",
+  "packVersion": "2.3.3",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-10T10:03:02.173Z",
+  "updated": "2026-10-10T10:59:28.257Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2827,6 +2827,35 @@
           "utility"
         ],
         "sourceUrl": "https://modrinth.com/mod/horseman",
+        "clientSide": "required",
+        "serverSide": "required"
+      }
+    },
+    "illagerblabber": {
+      "id": "illagerblabber",
+      "name": "IllagerBlabber",
+      "side": "both",
+      "filename": "illagerblabber-26.2-Fabric-1.1.0.jar",
+      "size": 6424668,
+      "sha256": "ceecc1248d29786d4b1b595e50dd61f9be49b647f015d30b4373c544fcd9b0e5",
+      "sha512": "3c9aabe370be2b6705d7acf1b5acfc01952fc512c4ee69d5940faf892c70d39c2e249760e72925f2531bbb837d1b2f39a278c5c00cea0a61288129d5c714ca5f",
+      "sha1": "881d339143affc11f41f2f822d8ac62d08fc04f0",
+      "downloadUrl": "https://cdn.modrinth.com/data/WS4FswTq/versions/UrxK3Zzq/illagerblabber-26.2-Fabric-1.1.0.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "WS4FswTq",
+        "versionId": "UrxK3Zzq"
+      },
+      "metadata": {
+        "description": "Adds dynamically yapping Illagers! Why? Glad you asked!",
+        "iconUrl": "https://cdn.modrinth.com/data/WS4FswTq/990b278e5c48b94181eb1330f4e126dad63e4ab8_96.webp",
+        "categories": [
+          "cursed",
+          "mobs"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/illagerblabber",
         "clientSide": "required",
         "serverSide": "required"
       }
@@ -7841,6 +7870,23 @@
         "file": "custom/lampas2-resource-pack.zip"
       }
     },
+    "bloomingnature": {
+      "id": "bloomingnature",
+      "name": "letsdo-bloomingnature",
+      "side": "both",
+      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
+      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
+      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
+      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "lampas",
+        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
+      }
+    },
     "figura-0-1-6-rc-1": {
       "id": "figura-0-1-6-rc-1",
       "name": "Figura",
@@ -7863,23 +7909,6 @@
           "cosmetic",
           "avatar"
         ]
-      }
-    },
-    "bloomingnature": {
-      "id": "bloomingnature",
-      "name": "letsdo-bloomingnature",
-      "side": "both",
-      "filename": "letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
-      "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a",
-      "sha1": "3afc0a7034d799c5000d2c4898b30528da42119d",
-      "downloadUrl": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-      "artifactType": "mod",
-      "targetDir": "mods",
-      "provider": {
-        "type": "lampas",
-        "file": "custom/letsdo-bloomingnature-fabric-1.1.10.jar"
       }
     },
     "lampas-yggdrasil-editor-client-fabric-0_1_0-snapshot": {

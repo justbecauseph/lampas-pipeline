@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.3.1",
+  "version": "2.3.3",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -1129,6 +1129,20 @@
         "worldgen"
       ],
       "sourceUrl": "https://modrinth.com/mod/illager-invasion"
+    },
+    {
+      "id": "illagerblabber",
+      "name": "IllagerBlabber",
+      "side": "both",
+      "filename": "illagerblabber-26.2-Fabric-1.1.0.jar",
+      "size": 6424668,
+      "description": "Adds dynamically yapping Illagers! Why? Glad you asked!",
+      "iconUrl": "https://cdn.modrinth.com/data/WS4FswTq/990b278e5c48b94181eb1330f4e126dad63e4ab8_96.webp",
+      "categories": [
+        "cursed",
+        "mobs"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/illagerblabber"
     },
     {
       "id": "incendium",
@@ -3716,6 +3730,19 @@
       },
       "download": {
         "url": "https://cdn.modrinth.com/data/qIv5FhAA/versions/xU6ysEWF/horseman-fabric-26.2-1.7.5.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/illagerblabber-26.2-Fabric-1.1.0.jar",
+      "size": 6424668,
+      "hashes": {
+        "sha256": "ceecc1248d29786d4b1b595e50dd61f9be49b647f015d30b4373c544fcd9b0e5",
+        "sha512": "3c9aabe370be2b6705d7acf1b5acfc01952fc512c4ee69d5940faf892c70d39c2e249760e72925f2531bbb837d1b2f39a278c5c00cea0a61288129d5c714ca5f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/WS4FswTq/versions/UrxK3Zzq/illagerblabber-26.2-Fabric-1.1.0.jar",
         "provider": "modrinth"
       },
       "policy": "MANAGED"

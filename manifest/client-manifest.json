@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.3.1",
+  "version": "2.3.3",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -1371,6 +1371,20 @@
         "worldgen"
       ],
       "sourceUrl": "https://modrinth.com/mod/illager-invasion"
+    },
+    {
+      "id": "illagerblabber",
+      "name": "IllagerBlabber",
+      "side": "both",
+      "filename": "illagerblabber-26.2-Fabric-1.1.0.jar",
+      "size": 6424668,
+      "description": "Adds dynamically yapping Illagers! Why? Glad you asked!",
+      "iconUrl": "https://cdn.modrinth.com/data/WS4FswTq/990b278e5c48b94181eb1330f4e126dad63e4ab8_96.webp",
+      "categories": [
+        "cursed",
+        "mobs"
+      ],
+      "sourceUrl": "https://modrinth.com/mod/illagerblabber"
     },
     {
       "id": "immediatelyfast",
@@ -4256,6 +4270,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/illagerblabber-26.2-Fabric-1.1.0.jar",
+      "size": 6424668,
+      "hashes": {
+        "sha256": "ceecc1248d29786d4b1b595e50dd61f9be49b647f015d30b4373c544fcd9b0e5",
+        "sha512": "3c9aabe370be2b6705d7acf1b5acfc01952fc512c4ee69d5940faf892c70d39c2e249760e72925f2531bbb837d1b2f39a278c5c00cea0a61288129d5c714ca5f"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/WS4FswTq/versions/UrxK3Zzq/illagerblabber-26.2-Fabric-1.1.0.jar",
+        "provider": "modrinth"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/IllagerInvasion-v26.2.0-mc26.2.x-Fabric.jar",
       "size": 2193249,
       "hashes": {
@@ -6206,19 +6233,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
-      "size": 3231093,
-      "hashes": {
-        "sha256": "a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
-        "sha512": "e7c83fb65d4bad981d8ac0033241844e8d340de8572e4ee8719540d0de38d482c6053d7ce5b14d16ece4560ebbdbaddb1709b15fb26643769db841c3bdf4ced0"
-      },
-      "download": {
-        "url": "/api/v1/blobs/a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
       "size": 3240497,
       "hashes": {
@@ -6227,6 +6241,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/figura-0.1.6-rc.1+26.2.jar",
+      "size": 3231093,
+      "hashes": {
+        "sha256": "a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
+        "sha512": "e7c83fb65d4bad981d8ac0033241844e8d340de8572e4ee8719540d0de38d482c6053d7ce5b14d16ece4560ebbdbaddb1709b15fb26643769db841c3bdf4ced0"
+      },
+      "download": {
+        "url": "/api/v1/blobs/a0ba3613b17248f4808a528fed8b38f350cd0c0ad6ffe6753b9e56e35d72f8f1",
         "provider": "lampas"
       },
       "policy": "MANAGED"
