@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -2174,8 +2174,8 @@
       "id": "particle-core",
       "name": "Particle Core",
       "side": "client",
-      "filename": "particle_core-0.3.3+26.2.jar",
-      "size": 141246,
+      "filename": "particle_core-0.3.3+fix1+26.2.jar",
+      "size": 141191,
       "description": "Particle optimizations: Culling, rendering optimizations, configurable particle-type-specific spawn reduction, and potion particle disabling. Compatible with Sodium, improves performance over Sodium alone.",
       "iconUrl": "https://cdn.modrinth.com/data/RSeLon5O/147110a6a4457b2f287f68fc626771f0f8ef2cde_96.webp",
       "categories": [
@@ -5087,19 +5087,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/particle_core-0.3.3+26.2.jar",
-      "size": 141246,
-      "hashes": {
-        "sha256": "1f07d37347e1e9b8a54e65c5aea90c358b567ac34bed0624d66c401e2b736ef8",
-        "sha512": "75467791b669b8cb0450b31766afd0ebfb734c0cdff020c0f1f9e95491440260823fa507d3515f347cb913143e4600feb88400174fc3d84b098ee3126fb91f48"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/RSeLon5O/versions/VFv6uQKM/particle_core-0.3.3%2B26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/crazy_chambers-1.0.0+26.2.jar",
       "size": 1910498,
       "hashes": {
@@ -5121,6 +5108,19 @@
       },
       "download": {
         "url": "/api/v1/blobs/e072bd07ef2a4ef652eea9417491ebc24fed44e39409cf43640fc67f549a4af3",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "hashes": {
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
+      },
+      "download": {
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5815,14 +5815,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 24941,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
-        "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -6127,14 +6127,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 24941,
       "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
+        "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725"
       },
       "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "url": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -6153,15 +6153,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
+      "path": "mods/particle_core-0.3.3+fix1+26.2.jar",
+      "size": 141191,
       "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
+        "sha256": "63faafcec078ea567a410f75fe449ae6895d29028686a144c18e5121c9552a6b",
+        "sha512": "7818227221913c2be92f7ef2882abfa85629e126fdd86c5715772df27334c1774aa30a87e88cd373d7d65cebdde2576592b10767ac62fcb5de2cf54d41a8bca5"
       },
       "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/RSeLon5O/versions/NPLw1nMG/particle_core-0.3.3%2Bfix1%2B26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -6218,14 +6218,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
         "provider": "lampas"
       },
       "policy": "MANAGED"

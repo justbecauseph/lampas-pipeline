@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "target": "server",
   "minecraft": "26.2",
   "loader": {
@@ -4474,6 +4474,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
+      "hashes": {
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
+      },
+      "download": {
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/placeholder-api-3.1.0-beta.1+26.2.jar",
       "size": 254973,
       "hashes": {
@@ -5163,14 +5176,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 24941,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
-        "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5423,6 +5436,19 @@
       "policy": "MANAGED"
     },
     {
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 24941,
+      "hashes": {
+        "sha256": "4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "sha512": "21fa658e186e1daa45eba0a548c8f3eaa31c6312f3ab99c05e947375c1304c840cb528cd8b074da49b688bf190ab3e62ba6d2bc1321aa1dcec6698e81750c725"
+      },
+      "download": {
+        "url": "/api/v1/blobs/4328d3041384a1378fc2169b55978e62d35ab60df568bde84826e193b38d6673",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
       "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
       "size": 884979,
       "hashes": {
@@ -5431,32 +5457,6 @@
       },
       "download": {
         "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
-      "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
-      },
-      "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
-      "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
-      },
-      "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
         "provider": "lampas"
       },
       "policy": "MANAGED"
