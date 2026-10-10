@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "pack": "Lampas 2",
-  "version": "2.2.21",
+  "version": "2.2.22",
   "target": "client",
   "minecraft": "26.2",
   "loader": {
@@ -339,8 +339,8 @@
       "id": "bsl-shaders",
       "name": "BSL Shaders",
       "side": "client",
-      "filename": "BSL_v10.1.5.zip",
-      "size": 1133936,
+      "filename": "BSL_v10.1.8.zip",
+      "size": 1134153,
       "description": "Shaderpack for Minecraft: Java Edition. It's bright, colorful, and distinct.",
       "iconUrl": "https://cdn.modrinth.com/data/Q1vvjJYV/2a611a3cb434fb52fb81fa5dace13c5d8b67e55d_96.webp",
       "categories": [
@@ -462,8 +462,8 @@
       "id": "complementary-reimagined",
       "name": "Complementary Shaders - Reimagined",
       "side": "client",
-      "filename": "ComplementaryReimagined_r5.8.1.zip",
-      "size": 546925,
+      "filename": "ComplementaryReimagined_r5.9.3.zip",
+      "size": 553397,
       "description": "Preserving the elements of Minecraft with exceptional quality, detail, and performance.",
       "iconUrl": "https://cdn.modrinth.com/data/HVnmMxH1/79cb7c8123bbc54945305b2ebad6b8881efdf5f8_96.webp",
       "categories": [
@@ -477,8 +477,8 @@
       "id": "complementary-unbound",
       "name": "Complementary Shaders - Unbound",
       "side": "client",
-      "filename": "ComplementaryUnbound_r5.8.1.zip",
-      "size": 546928,
+      "filename": "ComplementaryUnbound_r5.9.3.zip",
+      "size": 553400,
       "description": "Transforming the visuals of Minecraft with exceptional quality, detail, and performance.",
       "iconUrl": "https://cdn.modrinth.com/data/R6NEzAwj/c85ce4049aac76360d2cd24fd9a7003de01ef312_96.webp",
       "categories": [
@@ -2309,8 +2309,8 @@
       "id": "recolourful-containers-gui",
       "name": "Recolourful Containers GUI + HUD",
       "side": "client",
-      "filename": "Recolourful Containers 3.1.3 (1.19.4+).zip",
-      "size": 2104807,
+      "filename": "Recolourful Containers 3.1.4 (1.19.4+).zip",
+      "size": 2011177,
       "description": "Do you want more immersive, more interesting, more colourful GUIs and HUD? Than this pack is for you!",
       "iconUrl": "https://cdn.modrinth.com/data/lewweaHO/1d7b77d200481c0a4a3e2ae2cfafecdbc762de10_96.webp",
       "categories": [
@@ -2324,8 +2324,8 @@
       "id": "recolourful-containers-gui-hud-dark",
       "name": "Recolourful Containers GUI + HUD (DARK)",
       "side": "client",
-      "filename": "Recolourful Containers DARK 3.1.3 (1.19.4+).zip",
-      "size": 2215671,
+      "filename": "Recolourful Containers DARK 3.1.4 (1.19.4+).zip",
+      "size": 2119579,
       "description": "Do you want more immersive and more colourful GUIs and HUD? Than this pack is for you! NOW IN DARK",
       "iconUrl": "https://cdn.modrinth.com/data/sQCUH0Mr/ea7fb8092c2d318e5388159d9dffc3091f636f66.png",
       "categories": [
@@ -5112,19 +5112,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
-      "size": 884979,
-      "hashes": {
-        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
-      },
-      "download": {
-        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
-        "provider": "lampas"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "mods/rsls-1.3.0.jar",
       "size": 51302,
       "hashes": {
@@ -5450,15 +5437,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/camerapture-2.0.0+mc26.2.jar",
-      "size": 2496366,
+      "path": "mods/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
+      "size": 687844,
       "hashes": {
-        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
+        "sha256": "ec1775a64d8dc32112c10d061e39f77f907cd86b8de726781391cdeee523a577",
+        "sha512": "fb1aa508fd92f57ef299b6cb5524e236c2e8d2faced7bf5370b42e3d1e8f015e10841c64c58a37c2edd17146602c9f2c3766e3132717975982171396065da72e"
       },
       "download": {
-        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/iM74Il9u/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5515,14 +5502,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/Placebo-26.2-11.0.1.jar",
-      "size": 547340,
+      "path": "mods/tweeter-inc-1.0.0.jar",
+      "size": 22731,
       "hashes": {
-        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
-        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
+        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
+        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
       },
       "download": {
-        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5567,15 +5554,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/tweeter-inc-1.0.0.jar",
-      "size": 22731,
+      "path": "mods/vanillahud-3.5.9+26.2.jar",
+      "size": 248743,
       "hashes": {
-        "sha256": "25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "sha512": "58cc026892ebcf571100bf71d6c1300103179fea0f5a5b13fbc2f49c86eca64d665d142dc4ea00c1c6d1975eab9ddec2dc63e4e59d115569b93832feceb9fd73"
+        "sha256": "b91690922d13757378a5d3bbe4cd4327ebb7e09f2c543c123010bbc622e09bfb",
+        "sha512": "a2f3014483964b7354f0b6042d3d05805bf9ba9d69bae5fe16f9d187c35ac1ea25cdb1a8e1c96eb1662630a000a9cbc7acb2c9649d0aef5f1671b52e18055412"
       },
       "download": {
-        "url": "/api/v1/blobs/25aa11b0be11190937abeefcf66c7971291884e3482fbe4f7d2db19b483d4402",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/pWXJaKrX/versions/xnrsxyJU/vanillahud-3.5.9%2B26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5645,15 +5632,15 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
-      "size": 3240497,
+      "path": "mods/WalksyLib-2.0.1+26.2.jar",
+      "size": 1746393,
       "hashes": {
-        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
+        "sha256": "89785b746d0ecbefaa4b7527737afcee14cda7a5c18d8dedf1f9efcbc84cb3cd",
+        "sha512": "4be2137be3ca76dd2f5231f8adb7e498149fb0e7020ed2e28274abce86ca55f68b451a44db557424de782ac44155a828537bb8b8db0c87c15fea0d99547e7b44"
       },
       "download": {
-        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
-        "provider": "lampas"
+        "url": "https://cdn.modrinth.com/data/7P86n6Vg/versions/cyN9RA9J/WalksyLib-2.0.1%2B26.2.jar",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
@@ -5788,41 +5775,41 @@
       "policy": "MANAGED"
     },
     {
-      "path": "shaderpacks/BSL_v10.1.5.zip",
-      "size": 1133936,
+      "path": "mods/patchouli-fabric-26.2-95-SNAPSHOT.jar",
+      "size": 884979,
       "hashes": {
-        "sha256": "1038c018934c43018f9517e326c0cafcf8a3fb83db0d2cce0697fa8ee1289838",
-        "sha512": "ee5f5445b101e6a85942b78e9da1d4266d7ed277a56a83189ac5dc4fab3ce1f8de4c66c52cf87c747f94e871fb2888684aa6763ab907e1c5c9926594d1996504"
+        "sha256": "bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "sha512": "4ba1e2d38b1ce92f4c17e3f47377d048fb1d7642d7145bcdd87e62f724b20d004c47ead22900741e4c2a0d91115a25396acae5140967d2dac18a6c26c0917d1c"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/yFTiE1Nc/BSL_v10.1.5.zip",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/bee3d057b3d108bbca7a9a13c1ae1d498afb1de6c0f7278b89f9dd911c260364",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "shaderpacks/ComplementaryReimagined_r5.8.1.zip",
-      "size": 546925,
+      "path": "mods/camerapture-2.0.0+mc26.2.jar",
+      "size": 2496366,
       "hashes": {
-        "sha256": "3f1cd389e717b2e62f58edff222059b9c60de71b14bb49b517eb58318ce35b15",
-        "sha512": "6bd95215755d25812556ce790d976221f7d677d63112e3e4d3e70b08a62ed41348fa3792dd31bbe720d1e46fe2d525cadb4f66e6358118e1f4aa8e0d11f25c39"
+        "sha256": "3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "sha512": "d7d0a6fe6d7d1c08110174677caefa4ca7e5a783c88e82bfc92e621380fb80e34ce2de3daf579605871cdbf20e18da5e658b70096eb2d912daed40f42cf15617"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/HVnmMxH1/versions/yCCduG44/ComplementaryReimagined_r5.8.1.zip",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/3fbb661bb59394cbf28265c460c45b32be44a20f4392d113120c70a7bb17ced9",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "shaderpacks/ComplementaryUnbound_r5.8.1.zip",
-      "size": 546928,
+      "path": "mods/Placebo-26.2-11.0.1.jar",
+      "size": 547340,
       "hashes": {
-        "sha256": "bb89b1fc54687d4147a837fb2e3c3f7261a13bee51819761e9b6a91cb7915965",
-        "sha512": "9098dd9e0c18b80f7aba2839cea33ce9a614d97665bbfcac87ccce6e4771667c41602d99088852cb1642ccab20b2ceff9b98af8f2e795bd0d3b90b7c9cbab914"
+        "sha256": "a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "sha512": "9cbb5a4c8344f94ba6e3c535bfb7507beab75b6ba3a66ed35a8791edbeed0e1ab807ce408589f26dac41ce476d32d9b28bd06b2f90ce2629ea9f5d18469d9caa"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/VMHXIk50/ComplementaryUnbound_r5.8.1.zip",
-        "provider": "modrinth"
+        "url": "/api/v1/blobs/a389582d11381210444d7fb627afd60a867c6841f8fe44e14902905ad2a399e8",
+        "provider": "lampas"
       },
       "policy": "MANAGED"
     },
@@ -5853,14 +5840,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
-      "size": 3000081,
+      "path": "mods/letsdo-bloomingnature-fabric-1.1.10.jar",
+      "size": 3240497,
       "hashes": {
-        "sha256": "75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
-        "sha512": "8fca900bafaf1a49b1e40ce33d21bfd5f48437d25da523c12b25311b15e4fe3500cbbbfc6ddc4bdf88d6e007a6d1317a8f0779a3f8efb5f5390e359fefad28c9"
+        "sha256": "e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
+        "sha512": "905dbea3435a2fa4b7e7f4048672e6beb942a201ae5429093afe04258828bfae190331fc7b904b2f921e04e5d04cad33fed94c7d17137f39060b813bb5ea001a"
       },
       "download": {
-        "url": "/api/v1/blobs/75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
+        "url": "/api/v1/blobs/e5abbb21723e3f1458b10c275e4aae8c396c4b8e881dcbccc86da5d3f234b01f",
         "provider": "lampas"
       },
       "policy": "MANAGED"
@@ -5905,40 +5892,53 @@
       "policy": "MANAGED"
     },
     {
-      "path": "resourcepacks/Recolourful Containers DARK 3.1.3 (1.19.4+).zip",
-      "size": 2215671,
+      "path": "mods/lampas-yggdrasil-editor-client-fabric-0.1.0-SNAPSHOT.jar",
+      "size": 3000081,
       "hashes": {
-        "sha256": "cd4878ce5fa00e61e02f326ce2751026be30fc8e79d65041986d8b66cdade89d",
-        "sha512": "d6812799a98d478647052ef23e64ec7e59f941e37a674e2ca81db55b34c2128aa3b31292daae73b7b13ce42472f83eddc46d15d352ec412a74477d4f15d46d5e"
+        "sha256": "75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
+        "sha512": "8fca900bafaf1a49b1e40ce33d21bfd5f48437d25da523c12b25311b15e4fe3500cbbbfc6ddc4bdf88d6e007a6d1317a8f0779a3f8efb5f5390e359fefad28c9"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/RHDuyTyw/Recolourful%20Containers%20DARK%203.1.3%20%281.19.4%2B%29.zip",
+        "url": "/api/v1/blobs/75bd51d1fb01d0db964e447f32c59a30953f14e14594cbd67035fa56a3f2b7c9",
+        "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "shaderpacks/ComplementaryUnbound_r5.9.3.zip",
+      "size": 553400,
+      "hashes": {
+        "sha256": "98ac741dee294d2a3c82d153349148c3bb7fb688c30eb3b49c3b9ac37e968c5a",
+        "sha512": "a085d1d8cda67cd17a2b414eeba48bbd809da069f269bab46246235ec8fe714a275013c70d0504527b0987d810deddddba4564332414ab3b3bd7435932ff808c"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/B1kyfoUZ/ComplementaryUnbound_r5.9.3.zip",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "resourcepacks/Recolourful Containers 3.1.3 (1.19.4+).zip",
-      "size": 2104807,
+      "path": "shaderpacks/ComplementaryReimagined_r5.9.3.zip",
+      "size": 553397,
       "hashes": {
-        "sha256": "fe14f85cf5c551fb1d0f122d7fa07a4b371186f15e23b467a409999658974948",
-        "sha512": "aafdff0a660527c6ddd856708d4a9e2870b108da79f43c6e3f339d9a2fbabdee008a8327360aeee2500c6d8bc4ce7e160ba1a5bba44b70f66c9437d740a3b03d"
+        "sha256": "fed6c879e732cf7fc7bc6570ebb1def43235aa7e96f62859fbdbdbfa0b484b38",
+        "sha512": "45304b1d7862afdb2177b7e6226fc9c6737911d17a4ad46cc9c519ca4deb935f05072cd337cd8b19a15bb8062b57b54eceec7bdee4cd572d94858e2946d37d85"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/lewweaHO/versions/Req8KKc8/Recolourful%20Containers%203.1.3%20%281.19.4%2B%29.zip",
+        "url": "https://cdn.modrinth.com/data/HVnmMxH1/versions/Bqen1mJX/ComplementaryReimagined_r5.9.3.zip",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
     {
-      "path": "mods/vanillahud-3.5.9+26.2.jar",
-      "size": 248743,
+      "path": "shaderpacks/BSL_v10.1.8.zip",
+      "size": 1134153,
       "hashes": {
-        "sha256": "b91690922d13757378a5d3bbe4cd4327ebb7e09f2c543c123010bbc622e09bfb",
-        "sha512": "a2f3014483964b7354f0b6042d3d05805bf9ba9d69bae5fe16f9d187c35ac1ea25cdb1a8e1c96eb1662630a000a9cbc7acb2c9649d0aef5f1671b52e18055412"
+        "sha256": "36b0a50ff7918bf10e9422c401d93779f9d0088a26acea975b435243f96930b5",
+        "sha512": "94a3c25d6820868db624e11347873e6b572e7cd571967d9ac6f4690ca5d37ca302a7645d85eec800e0654541e3825fba14d37b5a25d3996aaf038178552be26f"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/pWXJaKrX/versions/xnrsxyJU/vanillahud-3.5.9%2B26.2.jar",
+        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/Y68yiql9/BSL_v10.1.8.zip",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -5957,19 +5957,6 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
-      "size": 687844,
-      "hashes": {
-        "sha256": "ec1775a64d8dc32112c10d061e39f77f907cd86b8de726781391cdeee523a577",
-        "sha512": "fb1aa508fd92f57ef299b6cb5524e236c2e8d2faced7bf5370b42e3d1e8f015e10841c64c58a37c2edd17146602c9f2c3766e3132717975982171396065da72e"
-      },
-      "download": {
-        "url": "https://cdn.modrinth.com/data/rOUBggPv/versions/iM74Il9u/supermartijn642corelib-1.1.25-fabric-mc26.2.jar",
-        "provider": "modrinth"
-      },
-      "policy": "MANAGED"
-    },
-    {
       "path": "shaderpacks/lampas-photon-aria.zip",
       "size": 3838738,
       "hashes": {
@@ -5983,14 +5970,14 @@
       "policy": "MANAGED"
     },
     {
-      "path": "mods/WalksyLib-2.0.1+26.2.jar",
-      "size": 1746393,
+      "path": "resourcepacks/Recolourful Containers 3.1.4 (1.19.4+).zip",
+      "size": 2011177,
       "hashes": {
-        "sha256": "89785b746d0ecbefaa4b7527737afcee14cda7a5c18d8dedf1f9efcbc84cb3cd",
-        "sha512": "4be2137be3ca76dd2f5231f8adb7e498149fb0e7020ed2e28274abce86ca55f68b451a44db557424de782ac44155a828537bb8b8db0c87c15fea0d99547e7b44"
+        "sha256": "2a9a32f68bdaf825374f58e8b7cdc6bb1c7e378540ef558c7c5ccbcd0d4811d1",
+        "sha512": "e0c57831d2f9ba461c6dbdd886a9908e354a4a3c03fc2252482680ace6833c6d2228611aaca90c03a3ec0e96edc4a8b0457375769057f22e35d3b1e4bf806fd8"
       },
       "download": {
-        "url": "https://cdn.modrinth.com/data/7P86n6Vg/versions/cyN9RA9J/WalksyLib-2.0.1%2B26.2.jar",
+        "url": "https://cdn.modrinth.com/data/lewweaHO/versions/aQ7jLjk8/Recolourful%20Containers%203.1.4%20%281.19.4%2B%29.zip",
         "provider": "modrinth"
       },
       "policy": "MANAGED"
@@ -6005,6 +5992,19 @@
       "download": {
         "url": "/api/v1/blobs/342263903d1c652f1d5e3bc10517d5ce140c6fae104510a1097f394912df9f60",
         "provider": "lampas"
+      },
+      "policy": "MANAGED"
+    },
+    {
+      "path": "resourcepacks/Recolourful Containers DARK 3.1.4 (1.19.4+).zip",
+      "size": 2119579,
+      "hashes": {
+        "sha256": "5c8fa6124a0ed473f136537bb97705768e4ee72ca9a55ec3c6fa71152df77644",
+        "sha512": "3b2e067a51177e2fc20f9d1ae999d580a604650287a29f9786ab6e8adfc2b99432ae8fb1be92e21bbe4134560332e70ce7b86191eb8d3a647b367505d1708a0d"
+      },
+      "download": {
+        "url": "https://cdn.modrinth.com/data/sQCUH0Mr/versions/YT13xMrw/Recolourful%20Containers%20DARK%203.1.4%20%281.19.4%2B%29.zip",
+        "provider": "modrinth"
       },
       "policy": "MANAGED"
     },
