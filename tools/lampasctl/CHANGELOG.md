@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
 
 ### Added
+- `lampasctl restart` command: scheduled and immediate server restart sequencer replacing `tools/scripts/lampas-scheduled-restart.sh`.
+  - Built-in native Minecraft RCON client (`tools/lampasctl/src/restart/rcon.ts`) implementing Source RCON protocol over TCP with Type 3 login authentication, Type 2 command execution, multi-packet response support, and automatic configuration resolution (`--rcon-*` flags, env vars, `.minecraft-env`, `server.properties`).
+  - Phased in-game countdown warnings at T-5m, T-3m, T-1m, and T-0m (`say [Scheduled Restart] ...`) with `save-all` world preservation.
+  - Integration with systemd service lifecycle (`systemctl restart <service>` and `systemctl is-active`).
+  - `--immediate` flag for rapid restarts without countdown warnings, and `--dry-run` flag to test sequences without restarting the systemd service.
 - `lampasctl monitor` command: native Minecraft status monitor and Discord webhook notifier replacing `tools/scripts/lampas-discord-monitor.py`.
   - Built-in native Minecraft Server List Ping (SLP) client (`tools/lampasctl/src/monitor/slp.ts`) with VarInt encoding/decoding and Protocol 767 (Minecraft 1.21.x / 26.2) handshake.
   - Rich Discord embed notifications (`tools/lampasctl/src/monitor/discord.ts`) dispatching green online embeds with player count and version, and red offline embeds with dynamic relative downtime timestamps.

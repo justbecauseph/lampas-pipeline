@@ -14,6 +14,7 @@ import { addMod, removeMod } from "./manager";
 import { enrichPackLock } from "./enricher";
 import { startServer } from "./launcher/start";
 import { runMonitor } from "./monitor";
+import { runScheduledRestart } from "./restart";
 
 declare const LAMPASCTL_VERSION: string | undefined;
 
@@ -107,6 +108,16 @@ Commands:
     --threshold <num>   Consecutive failure count before declaring OFFLINE (default: 2)
     --once              Perform a single ping probe and exit (exit code 0 if online, 1 if offline)
 
+  restart               Perform scheduled or immediate Minecraft server restart
+    --service <name>    Systemd service name to restart (default: lampas-server.service)
+    --countdown <min>   Countdown duration in minutes (default: 5)
+    --immediate         Skip countdown warnings and restart immediately
+    --rcon-host <host>  Minecraft RCON host (default: RCON_HOST, 127.0.0.1)
+    -p, --rcon-port <p> Minecraft RCON port (default: RCON_PORT, server.properties, 25575)
+    --rcon-password <p> Minecraft RCON password (default: RCON_PASSWORD or server.properties)
+    --dry-run           Perform countdown & RCON notices but skip systemctl restart
+    -t, --target <path> Target Minecraft server directory (default: current directory)
+
   recover               Recover an interrupted deployment transaction on a Minecraft server
     -t, --target <path> Target Minecraft server directory (default: current directory)
 
@@ -189,6 +200,7 @@ export function parseArgs(args: string[]): ParsedArgs {
     "force",
     "skip-meta-check",
     "once",
+    "immediate",
   ]);
 
   for (let i = 1; i < mainArgs.length; i++) {
@@ -442,6 +454,33 @@ async function main() {
           failureThreshold,
           once,
           targetDir: rootDir,
+        });
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+        }
+        break;
+      }
+
+      case "restart": {
+        const targetDir = flags.target || positional[0] || rootDir;
+        const serviceName = flags.service || "lampas-server.service";
+        const countdownMinutes = flags.countdown ? parseInt(flags.countdown, 10) : 5;
+        const immediate = flags.immediate === "true";
+        const rconHost = flags["rcon-host"] || flags.host;
+        const portStr = flags["rcon-port"] || flags.port || flags.p;
+        const rconPort = portStr ? parseInt(portStr, 10) : undefined;
+        const rconPassword = flags["rcon-password"] || flags.password;
+        const dryRun = flags["dry-run"] === "true";
+
+        const exitCode = await runScheduledRestart({
+          targetDir: path.resolve(targetDir),
+          serviceName,
+          countdownMinutes,
+          immediate,
+          rconHost,
+          rconPort,
+          rconPassword,
+          dryRun,
         });
         if (exitCode !== 0) {
           process.exit(exitCode);
