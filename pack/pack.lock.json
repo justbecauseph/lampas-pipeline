@@ -2,13 +2,13 @@
   "$schema": "../schemas/pack-lock.schema.json",
   "schema": 1,
   "packName": "Lampas 2",
-  "packVersion": "2.3.9",
+  "packVersion": "2.3.10",
   "minecraft": "26.2",
   "loader": {
     "type": "fabric",
     "version": "0.19.5"
   },
-  "updated": "2026-10-11T08:55:16.010Z",
+  "updated": "2026-10-11T09:04:17.661Z",
   "artifacts": {
     "additionallanterns": {
       "id": "additionallanterns",
@@ -2976,6 +2976,36 @@
         "serverSide": "required"
       }
     },
+    "inventory-particles": {
+      "id": "inventory-particles",
+      "name": "Inventory Particles",
+      "side": "client",
+      "filename": "InventoryParticles-3.2.0+26.2+fabric.jar",
+      "size": 1730531,
+      "sha256": "dd461dba2de86a9e18a7e16c36889aaddee4773d3abf1c282648547b6f67e04d",
+      "sha512": "cdc1ab1002337f2306e5253adf64b8123ed1158cb9e5f89be40184180bffd8174844880510222187080eb1a11493b9ed14f30d59994c799f66b57becc71ac1ac",
+      "sha1": "35b5d8a84efcb79fad37eaa80233e6aa5ce41b4f",
+      "downloadUrl": "https://cdn.modrinth.com/data/XYnKrsxH/versions/6fZZmxDU/InventoryParticles-3.2.0%2B26.2%2Bfabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "XYnKrsxH",
+        "versionId": "6fZZmxDU"
+      },
+      "metadata": {
+        "description": "Beautiful particles for your inventory items! Make your inventory more alive and dynamic! \n✨ Now with modded items support! ✨",
+        "iconUrl": "https://cdn.modrinth.com/data/XYnKrsxH/e6973926d0f896e2bf7df8d69a7e53e78502606f_96.webp",
+        "categories": [
+          "cursed",
+          "decoration",
+          "game-mechanics"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/inventory-particles",
+        "clientSide": "required",
+        "serverSide": "unsupported"
+      }
+    },
     "iris": {
       "id": "iris",
       "name": "Iris Shaders",
@@ -4255,6 +4285,34 @@
         "sourceUrl": "https://modrinth.com/mod/moss-ruins",
         "clientSide": "optional",
         "serverSide": "required"
+      }
+    },
+    "mossylib": {
+      "id": "mossylib",
+      "name": "MossyLib",
+      "side": "client",
+      "filename": "MossyLib-1.6.0+26.2+fabric.jar",
+      "size": 183664,
+      "sha256": "0cf82f1ad21b89c6787c11eaaca9c71a601218c640ee5831a3ca7fa7bdbe7abd",
+      "sha512": "b41712b34c9b95e8263e195780d156c067035bdf0b0716ad67e81b53d3931d5c49d7d90fdd507abffcdf420e8bafd087c4700e59caf737f2c68dfa862a97755a",
+      "sha1": "1ece29f3588479ca6109ed19b905c9af0c0dd348",
+      "downloadUrl": "https://cdn.modrinth.com/data/ffLDUGbm/versions/sL8KZEzW/MossyLib-1.6.0%2B26.2%2Bfabric.jar",
+      "artifactType": "mod",
+      "targetDir": "mods",
+      "provider": {
+        "type": "modrinth",
+        "projectId": "ffLDUGbm",
+        "versionId": "sL8KZEzW"
+      },
+      "metadata": {
+        "description": "Library with basic utilities for Mossy projects.",
+        "iconUrl": "https://cdn.modrinth.com/data/ffLDUGbm/1787470c1ca81b2d0e0b3a9370d6f039d4f13207_96.webp",
+        "categories": [
+          "library"
+        ],
+        "sourceUrl": "https://modrinth.com/mod/mossylib",
+        "clientSide": "required",
+        "serverSide": "unsupported"
       }
     },
     "mru": {
