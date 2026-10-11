@@ -165,7 +165,7 @@ sequenceDiagram
 
 ```text
 lampas-pipeline/
-├── pack/
+├── pack/                         # Local modpack authoring workspace (gitignored)
 │   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack vX.X.X, [launcher.play], [launcher.resourcepacks])
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
 │   ├── mods/                     # Declarative mod TOML definitions
@@ -175,7 +175,7 @@ lampas-pipeline/
 │   ├── common/                   # Shared configs, scripts, and assets (synced to both client & server)
 │   ├── client/                   # Client-only mods and configs
 │   ├── server/                   # Server-only mods and configs
-├── manifest/                     # Generated release artifacts
+├── manifest/                     # Generated release artifacts (gitignored)
 │   ├── client-manifest.json      # Client distribution manifest
 │   ├── server-manifest.json      # Dedicated server distribution manifest
 │   └── release.json              # Canonical release descriptor
@@ -207,6 +207,9 @@ lampas-pipeline/
     ├── release-lampasctl.yml     # Tagged lampasctl CLI builds, smoke tests, & GitHub release
     └── update-check.yml          # Daily cron job for upstream mod update PRs
 ```
+
+> [!NOTE]
+> **Gitignored Local Workspaces**: `pack/` and `manifest/` are local workspaces excluded from Git tracking via `.gitignore`. The repository tracks pipeline tooling, type schemas, systemd service templates, and CI automation. Modpack authoring and generated manifests live in local disk workspaces, and distribution is handled via immutable Portal releases.
 
 ---
 
@@ -521,7 +524,11 @@ The official desktop client launcher is maintained in its dedicated repository:
 
 ---
 
-## 🖥️ Dedicated Server Deployment (`lampasctl deploy`)
+## 🖥️ Dedicated Server Operations (`lampasctl`)
+
+Dedicated servers operate using the compiled, standalone `lampasctl` CLI binary. All server lifecycle phases—deployment, transaction recovery, adaptive JVM startup, status monitoring, and scheduled maintenance—are built directly into `lampasctl`, eliminating third-party tools, Python runtime requirements, and shell scripts.
+
+### 1. Server Deployment (`lampasctl deploy`)
 
 Dedicated servers synchronize using the compiled, standalone `lampasctl deploy` command (or low-level `lampasctl install`).
 
@@ -538,7 +545,7 @@ It consumes manifest URLs directly, without needing to know whether bytes origin
 # Full deployment with an automatic timestamped world backup (latest two retained)
 lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev
 
-# Skip backup (for automated CI/CD runs)
+# Skip backup (for automated CI/CD runs or space-constrained hosts)
 lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev --no-backup
 
 # Deploy specific release version
@@ -547,14 +554,14 @@ lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --v
 
 When `--version` is omitted, `deploy` resolves the selected channel (default: `dev`) through the Portal, then fetches that exact release descriptor and server manifest. Resolution is fail-closed: an invalid channel, non-success response, missing channel pointer/version, missing release, or missing manifest aborts deployment. There is no fallback to a latest release. Supplying `--version` bypasses the channel pointer but still fetches and validates the immutable release from the Portal.
 
-### Safeguards:
+#### Safeguards:
 - **Chunked Streaming**: Downloads are streamed directly to temporary files.
 - **Dual Validation**: Validates both total byte count and SHA-256 hash before replacing files.
 - **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
 - **Automatic Recovery**: Corrupted or truncated files (e.g. incomplete network aborts) are detected on disk and automatically re-downloaded.
 - **Protected Paths**: Never overwrites runtime data such as `world/`, `whitelist.json`, `ops.json`, or player logs. `server.properties` is preserved except for the five explicitly managed server-resource-pack keys, which are reconciled and verified from the manifest.
 
-### ⚙️ Dedicated Server Runtime Provisioning & Transactional Safety
+### 2. Runtime Provisioning & Transactional Safety (`lampasctl recover`)
 
 Dedicated servers use an immutable, manifest-defined runtime managed exclusively by `lampasctl`:
 
@@ -576,24 +583,130 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
    - If an interrupted transaction is detected upon startup or subsequent deploy, `recoverIfInterrupted()` validates the journal schema, strictly enforces path safety (forbidding `.` or `..` traversal segments and `.lampas` directory tampering), and executes the rollback.
    - Operators can also run `lampasctl recover --target <path>` directly.
 
-4. **Managed Server Startup (`lampasctl start`)**:
-   - `lampasctl start` synchronizes the server via `deploy` and launches exclusively from the canonical Lampas-managed `.lampas/runtime/fabric-server-launch.jar` (legacy glob-first discovery of `fabric-server-*.jar` and root `server.jar` is removed).
-   - Pre-launch recovery guard: Every startup path (including `--no-sync` and normal boot) checks for an interrupted transaction journal. If present, it executes transactional recovery and fails closed if recovery fails.
-   - `--allow-stale`: If `lampasctl deploy` fails on startup, attempts transaction recovery before launching the recovered coherent runtime.
-   - Host-aware JVM sizing: detects usable CPUs and RAM (cgroup v1/v2 limits, `/proc/meminfo`, Windows `GlobalMemoryStatusEx`), computes the heap as RAM minus an OS reserve and max(1.5 GiB, 15%) non-heap reserve, and leaves GC/JIT thread counts to JDK 25 ergonomics. Overrides: `--memory`/`JAVA_MEMORY`, `--gc zgc`/`LAMPAS_GC`, `LAMPAS_RAM`, `LAMPAS_CPUS`, `LAMPAS_EXTRA_RESERVE`, `LAMPAS_COMPACT_HEADERS=0`. `--dry-run` prints the Java command.
-   - Legacy launcher scripts (`start.py` and `start.sh`) are preserved in `SERVER_PROTECTED` so `lampasctl deploy` never deletes them on existing servers.
+### 3. Server Startup & Adaptive Host Sizing (`lampasctl start`)
 
-5. **Discord Status Monitoring (`lampasctl monitor`)**:
-   - Built-in native Minecraft Server List Ping (SLP) client (`node:net`) with Protocol 767 handshake, status parsing, and rich Discord webhook alerts.
-   - Automatically posts green online status embeds with player count and version, and red offline alerts with dynamic relative downtime timestamps.
-   - Debounced failure thresholding and state persistence prevent false alerts during transient tick stalls. Single-shot probe mode (`--once`) exits 0 if online and 1 if offline.
-   - Replaces legacy Python-based `lampas-discord-monitor.py`.
+`lampasctl start` synchronizes the server via `deploy`, resolves local environment variables, performs host-aware adaptive JVM sizing, and executes the server exclusively from `.lampas/runtime/fabric-server-launch.jar`.
 
-6. **Scheduled Server Restarts (`lampasctl restart`)**:
-   - Built-in native Minecraft RCON client (`node:net`) with Source RCON protocol implementation, automatic credential resolution, and systemd service management.
-   - Executes multi-stage in-game countdown warnings (`say`) at T-5m, T-3m, T-1m, and T-0m, forces world save (`save-all`), restarts the systemd service (`systemctl restart`), and verifies active state.
-   - Supports `--immediate` for zero-countdown emergency restarts and `--dry-run` for non-destructive dry-run testing.
-   - Replaces legacy bash script `lampas-scheduled-restart.sh` and eliminates external `rcon-cli` dependency.
+```bash
+# Standard server launch (in-process pack sync + adaptive JVM sizing)
+lampasctl start --target /home/server --portal https://portal.lampas.town --channel dev
+
+# Fast launch skipping deployment synchronization
+lampasctl start --target /home/server --no-sync
+
+# Launch with transactional recovery fallback if pack sync encounters errors
+lampasctl start --target /home/server --allow-stale
+
+# Dry-run inspection of JVM flags, memory sizing, and Java binary
+lampasctl start --target /home/server --dry-run
+
+# Pass extra arbitrary JVM arguments using '--' separator
+lampasctl start --target /home/server -- -Dfabric.development=false -XX:+AlwaysPreTouch
+```
+
+#### Command Options (`lampasctl start`)
+| Flag / Option | Environment Variable | Default | Description |
+|---|---|---|---|
+| `-t, --target <path>` | — | Current directory | Minecraft server root directory |
+| `--no-sync` | — | `false` | Skip Portal deployment check; launch existing runtime immediately |
+| `--allow-stale` | — | `false` | If pack deployment fails, recover coherent state and launch anyway |
+| `--memory <size>` | `JAVA_MEMORY` | Auto-sized | Explicit heap allocation (e.g. `4G`, `6144M`) |
+| `--gc <g1\|zgc>` | `LAMPAS_GC` | `g1` | Garbage collector: Aikar-tuned `g1` or generational `zgc` |
+| `--dry-run` | — | `false` | Log host sizing and Java execution command without launching |
+| `--portal <url>` | `PORTAL_URL` | `https://dev.lampas.town` | Portal URL for sync |
+| `-c, --channel <name>` | `RELEASE_CHANNEL` | `dev` | Target channel pointer |
+| `-v, --version <ver>` | — | — | Explicit immutable release version |
+| `--no-backup` | — | `false` | Skip automatic pre-deployment world backup |
+| `--verify <fast\|full>` | — | `fast` | Artifact validation mode |
+| `-- <extra-args>` | — | — | Forward extra arguments directly to the JVM before `-jar` |
+
+#### Adaptive Host Sizing Architecture
+- **Host Detection**: Inspects cgroup v2 (`cpu.max`, `memory.max`/`memory.high` walked up the hierarchy), cgroup v1 (`cpu.cfs_quota_us`, `memory.limit_in_bytes`), `/proc/meminfo` (`MemTotal`), and Windows memory APIs (`GlobalMemoryStatusEx`).
+- **Dynamic Heap Computation**: Calculated as `RAM - OS_RESERVE - max(1.5 GiB, 15% RAM) - EXTRA_RESERVE`, aligned to 256 MiB boundaries. Capped at 16 GiB for G1 (24 GiB for ZGC). Fails closed if computed heap is below 2 GiB.
+- **Tuned JVM Profiles**:
+  - **G1**: Aikar's profile (`-XX:G1ReservePercent=15`, `-XX:MaxTenuringThreshold=1`), shifting to large-heap parameters (`G1NewSizePercent=40`, `G1HeapRegionSize=16M`, `InitiatingHeapOccupancyPercent=20`) when heap exceeds 12 GiB.
+  - **Generational ZGC**: Enabled via `--gc zgc` (`-XX:+UseZGC`).
+  - **JDK 25 Ergonomics**: Compiler and GC thread counts are left to JDK 25 ergonomics (`ParallelGCThreads`, `ConcGCThreads`, and `CICompilerCount` are unpinned).
+  - **Compact Object Headers**: Enabled by default via `-XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders` (disable via `LAMPAS_COMPACT_HEADERS=0`).
+  - **Transparent Huge Pages (THP)**: Auto-detected via `/sys/kernel/mm/transparent_hugepage/enabled` (`always` or `madvise`).
+  - **Oracle GraalVM Inlining**: Automatically detects Oracle GraalVM via the runtime `release` file and sets `-Djdk.graal.TuneInlinerExploration=1`.
+- **Environment Overrides**:
+  - `LAMPAS_RAM`: Override detected RAM (e.g. `8G`).
+  - `LAMPAS_CPUS`: Override CPU count (sets `-XX:ActiveProcessorCount` and Chunky tiers).
+  - `LAMPAS_EXTRA_RESERVE`: Reserve RAM for co-located processes (e.g. `1G` for PostgreSQL).
+  - `.minecraft-env`: Automatically loaded from target directory (existing process environment keys take precedence).
+- **Process Management**: Spawns Java in target directory with signal forwarding (SIGINT/SIGTERM) ensuring clean server shutdown, and preserves legacy launcher scripts in `SERVER_PROTECTED`.
+
+### 4. Discord Status Monitoring (`lampasctl monitor`)
+
+`lampasctl monitor` is a standalone daemon and single-shot health checker that tracks Minecraft server availability and dispatches status alerts to Discord.
+
+```bash
+# Run monitoring daemon (default 10s interval, debounced 2-failure threshold)
+lampasctl monitor --port 25576 --webhook https://discord.com/api/webhooks/...
+
+# Single-shot diagnostic probe (exits 0 if online, 1 if offline)
+lampasctl monitor --host 127.0.0.1 --port 25576 --once
+
+# Customize threshold and check interval
+lampasctl monitor --interval 15 --threshold 3 --public-address "play.lampas.town:25576"
+```
+
+#### Command Options (`lampasctl monitor`)
+| Flag / Option | Environment Variable | Default | Description |
+|---|---|---|---|
+| `--host <host>` | `MC_HOST` | `127.0.0.1` | Minecraft server host or IP |
+| `-p, --port <port>` | `MC_PORT` | `25576` | Minecraft server port |
+| `--public-address <addr>` | `MC_PUBLIC_ADDRESS` | `play.lampas.town:25576` | Display address in Discord notifications |
+| `--webhook <url>` | `DISCORD_WEBHOOK_URL` | Auto-detected | Discord webhook URL (also loaded from `.minecraft-env`) |
+| `--state-file <path>` | `MONITOR_STATE_FILE` | `~/.lampas-monitor-state.json` | Persistent state file for debouncing across restarts |
+| `--interval <sec>` | — | `10` | Seconds between consecutive status checks |
+| `--threshold <count>` | — | `2` | Number of consecutive failures before triggering offline alert |
+| `--once` | — | `false` | Single-shot check; exits `0` if online, `1` if offline |
+
+#### Key Features:
+- **Zero-Dependency Native SLP**: Native Minecraft Server List Ping implementation using `node:net` and VarInt framing. Compatible with Protocol 767 (Minecraft 1.21.x / 26.2).
+- **Rich Embed Notifications**: Dispatches formatted Discord webhook embeds:
+  - **Online**: Green embed (`#2ecc71`) displaying server version, live player count (`X / Y`), and public address.
+  - **Offline**: Red embed (`#e74c3c`) with dynamic relative downtime timestamp (`<t:...:R>`).
+- **Debounced Transitions**: Consecutive failure counter prevents false alerts during transient tick stalls or garbage collection pauses.
+
+### 5. Scheduled Server Restarts (`lampasctl restart`)
+
+`lampasctl restart` coordinates graceful server restarts by broadcasting timed in-game countdown notices via RCON, forcing world data persistence, restarting the systemd service, and verifying daemon health.
+
+```bash
+# Standard 5-minute graceful countdown sequence
+lampasctl restart --target /home/server --service lampas-server.service
+
+# Immediate restart (forces save-all and restarts systemd service without countdown)
+lampasctl restart --target /home/server --immediate
+
+# Non-destructive dry-run (executes RCON notices and save-all, skips systemctl restart)
+lampasctl restart --target /home/server --dry-run
+
+# Custom countdown duration
+lampasctl restart --target /home/server --countdown 3
+```
+
+#### Command Options (`lampasctl restart`)
+| Flag / Option | Environment Variable | Default | Description |
+|---|---|---|---|
+| `-t, --target <path>` | — | Current directory | Minecraft server directory (used to read `server.properties`) |
+| `--service <name>` | — | `lampas-server.service` | Systemd service unit to restart |
+| `--countdown <min>` | — | `5` | Countdown duration in minutes |
+| `--immediate` | — | `false` | Skip countdown warnings and restart immediately |
+| `--rcon-host <host>` | `RCON_HOST` | `127.0.0.1` | RCON hostname |
+| `-p, --rcon-port <port>` | `RCON_PORT` | Auto-detected | RCON port (read from `server.properties` or default `25575`) |
+| `--rcon-password <pwd>` | `RCON_PASSWORD` | Auto-detected | RCON password (read from `server.properties` or `.minecraft-env`) |
+| `--dry-run` | — | `false` | Test broadcast and save-all without restarting systemd service |
+
+#### Key Features:
+- **Zero-Dependency Native RCON**: Built-in Source RCON client (`node:net`) with Type 3 login authentication, Type 2 command execution, multi-packet response support, and automatic credential resolution from `server.properties`.
+- **Phased Countdown Warnings**: Broadcasts notices via in-game chat (`say [Scheduled Restart] ...`) at T-5m, T-3m, T-1m, and T-0m.
+- **World Data Persistence**: Sends `save-all` via RCON to flush chunks before daemon restarts.
+- **Systemd Lifecycle & Active Verification**: Executes `systemctl restart <service>` and verifies active state using `systemctl is-active`.
+- **Offline Tolerance**: If the Minecraft server is unreachable via RCON (e.g. stopped or unresponsive), broadcasts are cleanly skipped and systemd restart proceeds.
 
 ---
 
@@ -614,7 +727,7 @@ Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verific
 
 ### Release gates and version tags
 
-The pack version is authoritative in `pack/pack.toml` and must match the generated lockfile and manifests. For a pack release, run the same gates locally before authorizing publication:
+The pack version is authoritative in local `pack/pack.toml` and must match the generated lockfile and manifests. Because `pack/` and `manifest/` are gitignored local workspaces, run the release gates locally before authorizing publication:
 
 ```bash
 bun install --frozen-lockfile

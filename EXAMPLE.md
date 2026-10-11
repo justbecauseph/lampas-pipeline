@@ -16,7 +16,7 @@ bun run lampasctl help
 
 Use only the top-level `help` command. Do not run forms such as `lampasctl manifest --help` or `lampasctl deploy --help`; this CLI parses and executes the named subcommand.
 
-The current checked-in pack version is `2.0.2`, and the current standalone CLI release is `1.0.0`. Treat those as examples, not defaults for a future release.
+The current example pack version is `2.0.2`, and the current standalone CLI release is `1.0.0`. Note that `pack/` and `manifest/` are local workspaces excluded from Git tracking via `.gitignore`. Treat those versions as examples, not defaults for a future release.
 
 The active automation is:
 
@@ -58,10 +58,13 @@ bun run lampasctl resolve
 bun run lampasctl manifest
 bun run lampasctl validate
 git diff --check
-git diff -- pack manifest
+git status --short
+
+# Compare generated manifest deltas using lampasctl diff
+bun run lampasctl diff --from <prior-manifest.json> --to manifest/client-manifest.json
 ```
 
-Do not discard generated lockfile or manifest changes just because they contain timestamps. Review the complete diff and preserve unrelated worktree changes.
+Review generated changes in local workspaces (`pack/` and `manifest/` are gitignored) and preserve unrelated worktree changes.
 
 ## Prepare a pack release
 
@@ -83,10 +86,9 @@ bun run typecheck
 bun test
 git diff --check
 git status --short
-git diff -- pack/pack.toml pack/pack.lock.json manifest
 ```
 
-Before publication, confirm that the version agrees across:
+Before publication, confirm that the version agrees across local workspace files:
 
 - `pack/pack.toml`
 - `pack/pack.lock.json`
@@ -213,9 +215,11 @@ git ls-remote origin refs/heads/main "refs/tags/$cliTag"
 
 Pushing `lampasctl-v*` starts [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml), which builds Linux and Windows packages, smoke-tests them, generates checksums, and creates the GitHub release.
 
-## Deploy an exact server state
+## Dedicated server operations
 
-Deployment must be separately authorized and must always name a target outside this repository.
+Deployment and server management actions must always name a target outside this repository.
+
+### Deploy an exact server state (`lampasctl deploy`)
 
 ```powershell
 # Resolve the configured dev channel and perform the normal world backup.
@@ -229,5 +233,47 @@ lampasctl deploy --target C:\servers\lampas2 --portal https://portal.lampas.town
 ```
 
 Never rely on `deploy`'s current-directory default. A missing channel, release, or server manifest aborts deployment; there is no fallback to a default, latest, or prior release.
+
+### Start the dedicated server (`lampasctl start`)
+
+```powershell
+# Synchronize pack changes via Portal and launch with adaptive JVM sizing
+lampasctl start --target C:\servers\lampas2 --portal https://portal.lampas.town --channel dev
+
+# Launch immediately without Portal deployment synchronization (fast reboot)
+lampasctl start --target C:\servers\lampas2 --no-sync
+
+# Launch with transactional rollback recovery fallback if Portal deployment fails
+lampasctl start --target C:\servers\lampas2 --allow-stale
+
+# Inspect adaptive JVM sizing, flags, and Java binary without launching
+lampasctl start --target C:\servers\lampas2 --dry-run
+
+# Override memory allocation or select generational ZGC
+lampasctl start --target C:\servers\lampas2 --memory 6G --gc zgc
+```
+
+### Monitor server health & Discord notifications (`lampasctl monitor`)
+
+```powershell
+# Run the monitoring daemon with 10s interval and 2-failure debouncing threshold
+lampasctl monitor --port 25576 --webhook $env:DISCORD_WEBHOOK_URL
+
+# Perform a single-shot diagnostic probe (returns exit code 0 if online, 1 if offline)
+lampasctl monitor --port 25576 --once
+```
+
+### Scheduled server restarts (`lampasctl restart`)
+
+```powershell
+# Run 5-minute graceful countdown with in-game broadcasts, save-all, and systemd service restart
+lampasctl restart --target /home/server --service lampas-server.service
+
+# Emergency immediate restart without countdown warnings
+lampasctl restart --target /home/server --immediate
+
+# Test RCON connection, countdown, and save-all without restarting the systemd service
+lampasctl restart --target /home/server --dry-run
+```
 
 For launcher development and packaging, use the [lampas-launcher repository](https://github.com/justbecauseph/lampas-launcher).

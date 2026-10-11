@@ -12,7 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Removed Python-based launcher test suites (`start-sizing.test.ts` and `start-script.test.ts`), now fully covered natively in TypeScript by `launcher-sizing.test.ts` and `start-command.test.ts`.
 
 ### Changed
-- `tools/scripts/start.py` sizes the JVM from the host. It detects usable CPUs and RAM, honoring cgroup v1/v2 CPU quotas and `memory.max`/`memory.high` limits, with a Windows fallback. The heap is RAM minus an OS reserve and max(1.5 GiB, 15%) for non-heap memory, capped at 16 GiB for G1, and the launcher refuses to start below 2 GiB. `--memory`/`JAVA_MEMORY` still override it.
+- `lampasctl start` sizes the JVM dynamically from the host environment. It detects usable CPUs and RAM, honoring cgroup v1/v2 CPU quotas and `memory.max`/`memory.high` limits, with a Windows fallback. The heap is RAM minus an OS reserve and max(1.5 GiB, 15%) for non-heap memory, capped at 16 GiB for G1, and the launcher refuses to start below 2 GiB. `--memory`/`JAVA_MEMORY` still override it.
+- Dedicated server operations documentation and operational recipes updated across `README.md` and `EXAMPLE.md` covering native commands (`lampasctl start`, `monitor`, `restart`) and gitignored local workspaces (`pack/`, `manifest/`).
 - GC and JIT thread counts are left to JDK 25 ergonomics: `ParallelGCThreads`, `ConcGCThreads` and `CICompilerCount` are no longer pinned.
 - G1 uses Aikar's profile with `G1ReservePercent=15` and `MaxTenuringThreshold=1`, and switches to the large-heap values above a 12 GiB heap. The restated defaults `ParallelRefProcEnabled` and `MaxGCPauseMillis=200` are dropped.
 - `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
