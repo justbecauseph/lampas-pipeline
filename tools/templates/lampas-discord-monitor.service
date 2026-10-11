@@ -8,9 +8,8 @@ Type=simple
 User=server
 Group=server
 WorkingDirectory=/home/server
-Environment=PYTHONUNBUFFERED=1
 EnvironmentFile=/home/server/.minecraft-env
-ExecStart=/usr/bin/python3 /usr/local/bin/lampas-discord-monitor.py
+ExecStart=/usr/local/bin/lampasctl monitor
 Restart=always
 RestartSec=10
 

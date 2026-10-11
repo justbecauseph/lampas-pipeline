@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/lampas-scheduled-restart.sh
+ExecStart=/usr/local/bin/lampasctl restart
 TimeoutStartSec=600
 StandardOutput=journal
 StandardError=journal

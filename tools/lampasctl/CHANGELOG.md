@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Removed
+- Removed legacy dedicated server automation scripts `tools/scripts/lampas-discord-monitor.py` and `tools/scripts/lampas-scheduled-restart.sh` (retiring `tools/scripts/` directory) in favor of native `lampasctl monitor` and `lampasctl restart`.
+- Removed external Python 3 and `rcon-cli` requirements from dedicated server templates and deployments; dedicated servers now require only Java (OpenJDK 25) and the standalone `lampasctl` executable.
 - Removed legacy dedicated server launcher scripts `tools/scripts/start.py` and `tools/scripts/start.sh` in favor of native `lampasctl start`. Legacy launcher files remain in `SERVER_PROTECTED` so `lampasctl deploy` never deletes them on existing servers.
 - Removed Python-based launcher test suites (`start-sizing.test.ts` and `start-script.test.ts`), now fully covered natively in TypeScript by `launcher-sizing.test.ts` and `start-command.test.ts`.
 
@@ -33,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-XX:+UseTransparentHugePages` when THP is `always` or `madvise` (ZGC also needs `shmem_enabled`), and a rotated GC log at `logs/gc.log` when `logs/` is writable.
 - `LAMPAS_RAM`, `LAMPAS_CPUS` (sets `-XX:ActiveProcessorCount`), `LAMPAS_EXTRA_RESERVE` (RAM kept for co-located services such as PostgreSQL) and `LAMPAS_COMPACT_HEADERS=0`.
 - `chunky.maxWorkingCount` scales with CPU count, as on the live server.
+- Dedicated server systemd service templates (`tools/templates/lampas-discord-monitor.service`, `tools/templates/lampas-server-restart.service`) updated to invoke `lampasctl monitor` and `lampasctl restart` natively, replacing all Python and bash script wrappers.
 
 ## [1.0.8] - 2026-10-10
 

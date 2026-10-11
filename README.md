@@ -187,16 +187,20 @@ lampas-pipeline/
 │       ├── diff.ts               # Release & manifest visual diff tool
 │       ├── launcher/             # Dedicated server launcher (host sizing, JVM flags, start command)
 │       ├── manifest.ts           # Manifest builder for client/server distribution
+│       ├── monitor/              # Server status monitor & Discord webhook alerts
 │       ├── publisher.ts          # Release publication and multi-channel metadata publishing
 │       ├── release-resolver.ts   # Remote Portal channel and release resolver
 │       ├── resolver.ts           # Upstream API dependency resolver
+│       ├── restart/              # Scheduled server restart sequencer & RCON client
 │       ├── validator.ts          # Fabric metadata & JiJ integrity validator
 │       ├── sync.ts               # Headless installation and server deployment engine
 │       └── backup.ts             # World backup utility
 │
-├── tools/scripts/                # Server operations & automation scripts
-│   ├── lampas-discord-monitor.py # Discord server status & uptime monitor
-│   └── lampas-scheduled-restart.sh # Scheduled server maintenance restart script
+├── tools/templates/              # Systemd unit & timer service templates
+│   ├── lampas-server.service     # Dedicated server systemd unit (lampasctl start)
+│   ├── lampas-server-restart.service # Scheduled restart systemd unit (lampasctl restart)
+│   ├── lampas-server-restart.timer   # Systemd restart timer
+│   └── lampas-discord-monitor.service # Discord status monitor unit (lampasctl monitor)
 │
 └── .github/workflows/
     ├── validate-pack.yml         # PR automated smoke testing & lockfile validation
@@ -578,6 +582,18 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
    - `--allow-stale`: If `lampasctl deploy` fails on startup, attempts transaction recovery before launching the recovered coherent runtime.
    - Host-aware JVM sizing: detects usable CPUs and RAM (cgroup v1/v2 limits, `/proc/meminfo`, Windows `GlobalMemoryStatusEx`), computes the heap as RAM minus an OS reserve and max(1.5 GiB, 15%) non-heap reserve, and leaves GC/JIT thread counts to JDK 25 ergonomics. Overrides: `--memory`/`JAVA_MEMORY`, `--gc zgc`/`LAMPAS_GC`, `LAMPAS_RAM`, `LAMPAS_CPUS`, `LAMPAS_EXTRA_RESERVE`, `LAMPAS_COMPACT_HEADERS=0`. `--dry-run` prints the Java command.
    - Legacy launcher scripts (`start.py` and `start.sh`) are preserved in `SERVER_PROTECTED` so `lampasctl deploy` never deletes them on existing servers.
+
+5. **Discord Status Monitoring (`lampasctl monitor`)**:
+   - Built-in native Minecraft Server List Ping (SLP) client (`node:net`) with Protocol 767 handshake, status parsing, and rich Discord webhook alerts.
+   - Automatically posts green online status embeds with player count and version, and red offline alerts with dynamic relative downtime timestamps.
+   - Debounced failure thresholding and state persistence prevent false alerts during transient tick stalls. Single-shot probe mode (`--once`) exits 0 if online and 1 if offline.
+   - Replaces legacy Python-based `lampas-discord-monitor.py`.
+
+6. **Scheduled Server Restarts (`lampasctl restart`)**:
+   - Built-in native Minecraft RCON client (`node:net`) with Source RCON protocol implementation, automatic credential resolution, and systemd service management.
+   - Executes multi-stage in-game countdown warnings (`say`) at T-5m, T-3m, T-1m, and T-0m, forces world save (`save-all`), restarts the systemd service (`systemctl restart`), and verifies active state.
+   - Supports `--immediate` for zero-countdown emergency restarts and `--dry-run` for non-destructive dry-run testing.
+   - Replaces legacy bash script `lampas-scheduled-restart.sh` and eliminates external `rcon-cli` dependency.
 
 ---
 

@@ -9,8 +9,8 @@
 # Scripts:
 
 - `/usr/local/bin/lampasctl start`
-- `/usr/local/bin/lampas-scheduled-restart.sh`
-- `/home/server/lampas-discord-monitor.py`
+- `/usr/local/bin/lampasctl restart`
+- `/usr/local/bin/lampasctl monitor`
 
 # Env
 
@@ -22,5 +22,5 @@
 
 # Requirements
 
-- Python3 (for lampas-discord-monitor.py)
-- rcon-cli
+- Java (OpenJDK 25)
+- `lampasctl` (standalone executable placed at `/usr/local/bin/lampasctl`)
