@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
 
 ### Added
+- `lampasctl start` command: synchronize and launch dedicated Minecraft servers directly with adaptive host JVM sizing, `.minecraft-env` loading, in-process pack sync, transactional rollback recovery, signal forwarding, and `--` extra JVM args passthrough.
 - Launcher host detection and JVM flag planning ported to TypeScript (`tools/lampasctl/src/launcher/`) ahead of `lampasctl start`.
 - `--gc zgc` / `LAMPAS_GC` to opt in to generational ZGC, and `--dry-run` to print the Java command without launching.
 - `-XX:+UseTransparentHugePages` when THP is `always` or `madvise` (ZGC also needs `shmem_enabled`), and a rotated GC log at `logs/gc.log` when `logs/` is writable.

@@ -12,6 +12,7 @@ import { checkPackUpdates } from "./checker";
 import { diffManifests } from "./diff";
 import { addMod, removeMod } from "./manager";
 import { enrichPackLock } from "./enricher";
+import { startServer } from "./launcher/start";
 
 declare const LAMPASCTL_VERSION: string | undefined;
 
@@ -81,6 +82,20 @@ Commands:
     --verify <mode>     Verification mode: fast | full (default: fast)
     --no-backup         Skip automatic world backup before applying mutations
 
+  start                 Synchronize and launch a dedicated Minecraft server
+    -t, --target <path> Target Minecraft server directory (default: current directory)
+    --no-sync           Skip automatic pack synchronization before launch
+    --allow-stale       Allow server launch even if pack synchronization fails
+    --memory <size>     JVM heap size, e.g. 4G (default: computed from detected RAM)
+    --gc <g1|zgc>       Garbage collector: g1 | zgc (default: g1)
+    --dry-run           Print computed Java command and exit without launching
+    --portal <url>      Lampas Portal URL for sync (default: https://dev.lampas.town)
+    -c, --channel <nam> Release channel pointer (e.g. dev | beta | stable)
+    -v, --version <ver> Specific release version to deploy (overrides channel)
+    --no-backup         Skip automatic world backup during deployment
+    --verify <mode>     Verification mode: fast | full (default: fast)
+    -- <extra-jvm-args> Extra JVM arguments appended to the Java command
+
   recover               Recover an interrupted deployment transaction on a Minecraft server
     -t, --target <path> Target Minecraft server directory (default: current directory)
 
@@ -110,17 +125,32 @@ Commands:
 `);
 }
 
-function parseArgs(args: string[]): { command: string; positional: string[]; flags: Record<string, string> } {
+export interface ParsedArgs {
+  command: string;
+  positional: string[];
+  flags: Record<string, string>;
+  extra: string[];
+}
+
+export function parseArgs(args: string[]): ParsedArgs {
   if (args.length === 0) {
-    return { command: "help", positional: [], flags: {} };
+    return { command: "help", positional: [], flags: {}, extra: [] };
   }
 
-  const first = args[0];
+  const dashDashIdx = args.indexOf("--");
+  const mainArgs = dashDashIdx !== -1 ? args.slice(0, dashDashIdx) : args;
+  const extra = dashDashIdx !== -1 ? args.slice(dashDashIdx + 1) : [];
+
+  if (mainArgs.length === 0) {
+    return { command: "help", positional: [], flags: {}, extra };
+  }
+
+  const first = mainArgs[0];
   if (first === "--version" || first === "-v" || first === "-V" || first === "version") {
-    return { command: "version", positional: [], flags: {} };
+    return { command: "version", positional: [], flags: {}, extra };
   }
   if (first === "--help" || first === "-h" || first === "help") {
-    return { command: "help", positional: [], flags: {} };
+    return { command: "help", positional: [], flags: {}, extra };
   }
 
   const command = first;
@@ -139,37 +169,58 @@ function parseArgs(args: string[]): { command: string; positional: string[]; fla
     h: "help",
   };
 
-  for (let i = 1; i < args.length; i++) {
-    const arg = args[i];
+  const BOOLEAN_FLAGS = new Set([
+    "no-sync",
+    "allow-stale",
+    "dry-run",
+    "no-backup",
+    "apply",
+    "force",
+    "skip-meta-check",
+  ]);
+
+  for (let i = 1; i < mainArgs.length; i++) {
+    const arg = mainArgs[i];
     if (arg.startsWith("--")) {
-      const key = arg.substring(2);
-      const next = args[i + 1];
-      if (next && !next.startsWith("-")) {
-        flags[key] = next;
-        i++;
-      } else {
+      let key = arg.substring(2);
+      if (key.includes("=")) {
+        const eqIdx = key.indexOf("=");
+        flags[key.substring(0, eqIdx)] = key.substring(eqIdx + 1);
+      } else if (BOOLEAN_FLAGS.has(key)) {
         flags[key] = "true";
+      } else {
+        const next = mainArgs[i + 1];
+        if (next && !next.startsWith("-")) {
+          flags[key] = next;
+          i++;
+        } else {
+          flags[key] = "true";
+        }
       }
     } else if (arg.startsWith("-") && arg.length === 2) {
       const shortKey = arg.substring(1);
       const key = shortMap[shortKey] || shortKey;
-      const next = args[i + 1];
-      if (next && !next.startsWith("-")) {
-        flags[key] = next;
-        i++;
-      } else {
+      if (BOOLEAN_FLAGS.has(key)) {
         flags[key] = "true";
+      } else {
+        const next = mainArgs[i + 1];
+        if (next && !next.startsWith("-")) {
+          flags[key] = next;
+          i++;
+        } else {
+          flags[key] = "true";
+        }
       }
     } else {
       positional.push(arg);
     }
   }
 
-  return { command, positional, flags };
+  return { command, positional, flags, extra };
 }
 
 async function main() {
-  const { command, positional, flags } = parseArgs(process.argv.slice(2));
+  const { command, positional, flags, extra } = parseArgs(process.argv.slice(2));
   const rootDir = process.cwd();
 
   try {
@@ -315,6 +366,46 @@ async function main() {
           verificationMode,
           backupWorld,
         });
+        break;
+      }
+
+      case "start": {
+        const targetDir = path.resolve(flags.target || positional[0] || rootDir);
+        const noSync = flags["no-sync"] === "true";
+        const allowStale = flags["allow-stale"] === "true";
+        const memory = flags.memory;
+        const gc = flags.gc as "g1" | "zgc" | undefined;
+        if (gc && gc !== "g1" && gc !== "zgc") {
+          throw new Error("--gc must be one of: g1, zgc");
+        }
+        const dryRun = flags["dry-run"] === "true";
+        const portalUrl = flags.portal || flags["portal-url"];
+        const channel = flags.channel;
+        const version = flags.version;
+        const noBackup = flags["no-backup"] === "true" || flags.backup === "false";
+        const verify = flags.verify as "fast" | "full" | undefined;
+        if (verify && verify !== "fast" && verify !== "full") {
+          throw new Error("--verify must be either 'fast' or 'full'");
+        }
+        const extraJavaArgs = extra;
+
+        const exitCode = await startServer({
+          targetDir,
+          noSync,
+          allowStale,
+          memory,
+          gc,
+          dryRun,
+          portalUrl,
+          channel,
+          version,
+          noBackup,
+          verify,
+          extraJavaArgs,
+        });
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+        }
         break;
       }
 
