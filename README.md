@@ -574,6 +574,8 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
    - `start.py` launches exclusively from the canonical Lampas-managed `.lampas/runtime/fabric-server-launch.jar` (legacy glob-first discovery of `fabric-server-*.jar` and root `server.jar` is removed).
    - Pre-launch recovery guard: Every startup path (including `--no-sync` and normal boot) checks for an interrupted transaction journal. If present, it executes `lampasctl recover` and fails closed if recovery fails or `lampasctl` is missing.
    - `--allow-stale`: If `lampasctl deploy` fails on startup, attempts transaction recovery before launching the recovered coherent runtime.
+   - Host-aware JVM sizing: detects usable CPUs and RAM (cgroup v1/v2 limits, `/proc/meminfo`, Windows `GlobalMemoryStatusEx`), computes the heap as RAM minus an OS reserve and max(1.5 GiB, 15%) non-heap reserve, and leaves GC/JIT thread counts to JDK 25 ergonomics. Overrides: `--memory`/`JAVA_MEMORY`, `--gc zgc`/`LAMPAS_GC`, `LAMPAS_RAM`, `LAMPAS_CPUS`, `LAMPAS_EXTRA_RESERVE`, `LAMPAS_COMPACT_HEADERS=0`. `--dry-run` prints the Java command.
+   - `start.py` and `start.sh` are protected from `lampasctl deploy`; copy an updated `start.py` to the server manually.
 
 ---
 

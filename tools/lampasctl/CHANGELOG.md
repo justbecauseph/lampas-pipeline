@@ -3,6 +3,20 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- `tools/scripts/start.py` sizes the JVM from the host. It detects usable CPUs and RAM, honoring cgroup v1/v2 CPU quotas and `memory.max`/`memory.high` limits, with a Windows fallback. The heap is RAM minus an OS reserve and max(1.5 GiB, 15%) for non-heap memory, capped at 16 GiB for G1, and the launcher refuses to start below 2 GiB. `--memory`/`JAVA_MEMORY` still override it.
+- GC and JIT thread counts are left to JDK 25 ergonomics: `ParallelGCThreads`, `ConcGCThreads` and `CICompilerCount` are no longer pinned.
+- G1 uses Aikar's profile with `G1ReservePercent=15` and `MaxTenuringThreshold=1`, and switches to the large-heap values above a 12 GiB heap. The restated defaults `ParallelRefProcEnabled` and `MaxGCPauseMillis=200` are dropped.
+- `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
+
+### Added
+- `--gc zgc` / `LAMPAS_GC` to opt in to generational ZGC, and `--dry-run` to print the Java command without launching.
+- `-XX:+UseTransparentHugePages` when THP is `always` or `madvise` (ZGC also needs `shmem_enabled`), and a rotated GC log at `logs/gc.log` when `logs/` is writable.
+- `LAMPAS_RAM`, `LAMPAS_CPUS` (sets `-XX:ActiveProcessorCount`), `LAMPAS_EXTRA_RESERVE` (RAM kept for co-located services such as PostgreSQL) and `LAMPAS_COMPACT_HEADERS=0`.
+- `chunky.maxWorkingCount` scales with CPU count, as on the live server.
+
 ## [1.0.8] - 2026-10-10
 
 ### Added
