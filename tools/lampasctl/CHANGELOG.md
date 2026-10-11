@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Removed
+- Removed legacy dedicated server launcher scripts `tools/scripts/start.py` and `tools/scripts/start.sh` in favor of native `lampasctl start`. Legacy launcher files remain in `SERVER_PROTECTED` so `lampasctl deploy` never deletes them on existing servers.
+- Removed Python-based launcher test suites (`start-sizing.test.ts` and `start-script.test.ts`), now fully covered natively in TypeScript by `launcher-sizing.test.ts` and `start-command.test.ts`.
+
 ### Changed
 - `tools/scripts/start.py` sizes the JVM from the host. It detects usable CPUs and RAM, honoring cgroup v1/v2 CPU quotas and `memory.max`/`memory.high` limits, with a Windows fallback. The heap is RAM minus an OS reserve and max(1.5 GiB, 15%) for non-heap memory, capped at 16 GiB for G1, and the launcher refuses to start below 2 GiB. `--memory`/`JAVA_MEMORY` still override it.
 - GC and JIT thread counts are left to JDK 25 ergonomics: `ParallelGCThreads`, `ConcGCThreads` and `CICompilerCount` are no longer pinned.

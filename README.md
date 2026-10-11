@@ -185,6 +185,7 @@ lampas-pipeline/
 │       ├── blob-publisher.ts     # Lampas blob discovery, verification, prepare + direct PUT
 │       ├── checker.ts            # Concurrent upstream update checker for Modrinth/CurseForge
 │       ├── diff.ts               # Release & manifest visual diff tool
+│       ├── launcher/             # Dedicated server launcher (host sizing, JVM flags, start command)
 │       ├── manifest.ts           # Manifest builder for client/server distribution
 │       ├── publisher.ts          # Release publication and multi-channel metadata publishing
 │       ├── release-resolver.ts   # Remote Portal channel and release resolver
@@ -194,7 +195,8 @@ lampas-pipeline/
 │       └── backup.ts             # World backup utility
 │
 ├── tools/scripts/                # Server operations & automation scripts
-    └── start.py                  # Dedicated server launcher & auto-deployer
+│   ├── lampas-discord-monitor.py # Discord server status & uptime monitor
+│   └── lampas-scheduled-restart.sh # Scheduled server maintenance restart script
 │
 └── .github/workflows/
     ├── validate-pack.yml         # PR automated smoke testing & lockfile validation
@@ -570,12 +572,12 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
    - If an interrupted transaction is detected upon startup or subsequent deploy, `recoverIfInterrupted()` validates the journal schema, strictly enforces path safety (forbidding `.` or `..` traversal segments and `.lampas` directory tampering), and executes the rollback.
    - Operators can also run `lampasctl recover --target <path>` directly.
 
-4. **Managed Server Startup (`tools/scripts/start.py`)**:
-   - `start.py` launches exclusively from the canonical Lampas-managed `.lampas/runtime/fabric-server-launch.jar` (legacy glob-first discovery of `fabric-server-*.jar` and root `server.jar` is removed).
-   - Pre-launch recovery guard: Every startup path (including `--no-sync` and normal boot) checks for an interrupted transaction journal. If present, it executes `lampasctl recover` and fails closed if recovery fails or `lampasctl` is missing.
+4. **Managed Server Startup (`lampasctl start`)**:
+   - `lampasctl start` synchronizes the server via `deploy` and launches exclusively from the canonical Lampas-managed `.lampas/runtime/fabric-server-launch.jar` (legacy glob-first discovery of `fabric-server-*.jar` and root `server.jar` is removed).
+   - Pre-launch recovery guard: Every startup path (including `--no-sync` and normal boot) checks for an interrupted transaction journal. If present, it executes transactional recovery and fails closed if recovery fails.
    - `--allow-stale`: If `lampasctl deploy` fails on startup, attempts transaction recovery before launching the recovered coherent runtime.
    - Host-aware JVM sizing: detects usable CPUs and RAM (cgroup v1/v2 limits, `/proc/meminfo`, Windows `GlobalMemoryStatusEx`), computes the heap as RAM minus an OS reserve and max(1.5 GiB, 15%) non-heap reserve, and leaves GC/JIT thread counts to JDK 25 ergonomics. Overrides: `--memory`/`JAVA_MEMORY`, `--gc zgc`/`LAMPAS_GC`, `LAMPAS_RAM`, `LAMPAS_CPUS`, `LAMPAS_EXTRA_RESERVE`, `LAMPAS_COMPACT_HEADERS=0`. `--dry-run` prints the Java command.
-   - `start.py` and `start.sh` are protected from `lampasctl deploy`; copy an updated `start.py` to the server manually.
+   - Legacy launcher scripts (`start.py` and `start.sh`) are preserved in `SERVER_PROTECTED` so `lampasctl deploy` never deletes them on existing servers.
 
 ---
 
@@ -606,7 +608,7 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
-The canonical pack tag is `lampas-pack-v<pack-version>` (currently `lampas-pack-v2.0.2`). It is a traceability marker; creating or pushing it does not publish the pack. Portal publication is performed explicitly with `lampasctl publish` and an explicitly selected channel. The canonical CLI tag is `lampasctl-v<cli-version>` (currently `lampasctl-v1.0.0`); pushing it triggers [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml). Keep the two version streams independent and do not use a generic `v<version>` tag.
+The canonical pack tag is `lampas-pack-v<pack-version>`. It is a traceability marker; creating or pushing it does not publish the pack. Portal publication is performed explicitly with `lampasctl publish` and an explicitly selected channel. The canonical CLI tag is `lampasctl-v<cli-version>`; pushing it triggers [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml). Keep the two version streams independent and do not use a generic `v<version>` tag.
 
 Commit, tag, push, Portal publication, and server deployment are separate authorization boundaries. A successful validation or build does not authorize any of the others. Publishing requires the Portal URL and `PACK_PUBLISH_SECRET`; deployment requires its own explicit `lampasctl deploy` action against a target server.
 

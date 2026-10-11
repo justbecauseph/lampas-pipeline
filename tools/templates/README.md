@@ -8,10 +8,8 @@
 
 # Scripts:
 
+- `/usr/local/bin/lampasctl start`
 - `/usr/local/bin/lampas-scheduled-restart.sh`
-- `/home/server/start.sh`
-- `/home/server/start.py`
-- `/home/server/deploy_pack.py`
 - `/home/server/lampas-discord-monitor.py`
 
 # Env
@@ -24,5 +22,5 @@
 
 # Requirements
 
-- Python3
+- Python3 (for lampas-discord-monitor.py)
 - rcon-cli
