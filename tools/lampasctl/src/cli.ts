@@ -13,6 +13,7 @@ import { diffManifests } from "./diff";
 import { addMod, removeMod } from "./manager";
 import { enrichPackLock } from "./enricher";
 import { startServer } from "./launcher/start";
+import { runMonitor } from "./monitor";
 
 declare const LAMPASCTL_VERSION: string | undefined;
 
@@ -96,6 +97,16 @@ Commands:
     --verify <mode>     Verification mode: fast | full (default: fast)
     -- <extra-jvm-args> Extra JVM arguments appended to the Java command
 
+  monitor               Monitor Minecraft server status and dispatch Discord webhooks
+    --host <host>       Server host to ping (default: MC_HOST or 127.0.0.1)
+    -p, --port <port>   Server port to ping (default: MC_PORT or 25576)
+    --public-address <addr> Public server address advertised in embeds (default: play.lampas.town:25576)
+    --webhook <url>     Discord webhook URL (default: DISCORD_WEBHOOK_URL or from .minecraft-env)
+    --state-file <path> Path to monitor state JSON file (default: ~/.lampas-monitor-state.json)
+    --interval <sec>    Polling interval in seconds (default: 10)
+    --threshold <num>   Consecutive failure count before declaring OFFLINE (default: 2)
+    --once              Perform a single ping probe and exit (exit code 0 if online, 1 if offline)
+
   recover               Recover an interrupted deployment transaction on a Minecraft server
     -t, --target <path> Target Minecraft server directory (default: current directory)
 
@@ -160,7 +171,7 @@ export function parseArgs(args: string[]): ParsedArgs {
   const shortMap: Record<string, string> = {
     v: "version",
     s: "side",
-    p: "pack",
+    p: command === "monitor" || command === "restart" ? "port" : "pack",
     l: "lock",
     m: "manifest",
     o: "out",
@@ -177,6 +188,7 @@ export function parseArgs(args: string[]): ParsedArgs {
     "apply",
     "force",
     "skip-meta-check",
+    "once",
   ]);
 
   for (let i = 1; i < mainArgs.length; i++) {
@@ -402,6 +414,34 @@ async function main() {
           noBackup,
           verify,
           extraJavaArgs,
+        });
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+        }
+        break;
+      }
+
+      case "monitor": {
+        const host = flags.host;
+        const portStr = flags.port || flags.p;
+        const port = portStr ? parseInt(portStr, 10) : undefined;
+        const publicAddress = flags["public-address"] || flags.publicAddress;
+        const webhookUrl = flags.webhook || flags["webhook-url"] || flags.webhookUrl;
+        const stateFile = flags["state-file"] || flags.stateFile;
+        const intervalSec = flags.interval ? parseInt(flags.interval, 10) : undefined;
+        const failureThreshold = flags.threshold ? parseInt(flags.threshold, 10) : undefined;
+        const once = flags.once === "true";
+
+        const exitCode = await runMonitor({
+          host,
+          port,
+          publicAddress,
+          webhookUrl,
+          stateFile,
+          intervalSec,
+          failureThreshold,
+          once,
+          targetDir: rootDir,
         });
         if (exitCode !== 0) {
           process.exit(exitCode);

@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
 
 ### Added
+- `lampasctl monitor` command: native Minecraft status monitor and Discord webhook notifier replacing `tools/scripts/lampas-discord-monitor.py`.
+  - Built-in native Minecraft Server List Ping (SLP) client (`tools/lampasctl/src/monitor/slp.ts`) with VarInt encoding/decoding and Protocol 767 (Minecraft 1.21.x / 26.2) handshake.
+  - Rich Discord embed notifications (`tools/lampasctl/src/monitor/discord.ts`) dispatching green online embeds with player count and version, and red offline embeds with dynamic relative downtime timestamps.
+  - Automatic webhook discovery checking explicit flags, `DISCORD_WEBHOOK_URL`, `<targetDir>/.minecraft-env`, and `/home/server/.minecraft-env`.
+  - Debounced failure thresholding and state persistence (`~/.lampas-monitor-state.json`) preventing false alerts during tick stalls.
+  - One-shot diagnostic probe mode (`--once`) returning exit code 0 if online and 1 if offline.
 - `lampasctl start` command: synchronize and launch dedicated Minecraft servers directly with adaptive host JVM sizing, `.minecraft-env` loading, in-process pack sync, transactional rollback recovery, signal forwarding, and `--` extra JVM args passthrough.
 - Launcher host detection and JVM flag planning ported to TypeScript (`tools/lampasctl/src/launcher/`) ahead of `lampasctl start`.
 - `--gc zgc` / `LAMPAS_GC` to opt in to generational ZGC, and `--dry-run` to print the Java command without launching.
