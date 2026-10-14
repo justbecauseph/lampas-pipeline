@@ -18,6 +18,7 @@ import { enrichPackLock } from "./enricher";
 import { startServer } from "./launcher/start";
 import { runMonitor } from "./monitor";
 import { runScheduledRestart } from "./restart";
+import { cleanupPreviousExecutables, selfUpdate } from "./self-update";
 
 declare const LAMPASCTL_VERSION: string | undefined;
 
@@ -37,6 +38,12 @@ Usage:
 
 Commands:
   version               Show lampasctl version (aliases: -v, --version)
+  self-update           Replace this lampasctl binary with a release from GitHub Releases
+    --check             Report whether a newer release exists without installing it
+    -v, --version <ver> Install this exact version (allows reinstalling or downgrading)
+    --prerelease        Include prereleases when looking for the newest release
+    --force             Reinstall the installed version (never downgrades without --version)
+                        (GITHUB_TOKEN or GH_TOKEN raises the GitHub API rate limit)
   add <slug|url|jar>    Add a mod to the pack and auto-update lockfile & manifests
                         Supports:
                           lampasctl add appleskin
@@ -207,6 +214,8 @@ export function parseArgs(args: string[]): ParsedArgs {
     "skip-meta-check",
     "once",
     "immediate",
+    "check",
+    "prerelease",
   ]);
 
   for (let i = 1; i < mainArgs.length; i++) {
@@ -252,11 +261,38 @@ export function parseArgs(args: string[]): ParsedArgs {
 async function main() {
   const { command, positional, flags, extra } = parseArgs(process.argv.slice(2));
   const rootDir = process.cwd();
+  if (process.platform === "win32") {
+    cleanupPreviousExecutables();
+  }
 
   try {
     switch (command) {
       case "version": {
         console.log(`lampasctl ${getLampasctlVersion()}`);
+        break;
+      }
+
+      case "self-update": {
+        if (flags.help === "true") {
+          printUsage();
+          break;
+        }
+        const allowed = new Set(["check", "version", "prerelease", "force"]);
+        const unknown = Object.keys(flags).filter((key) => !allowed.has(key));
+        if (positional.length > 0 || unknown.length > 0) {
+          const extraArgs = [...positional, ...unknown.map((key) => `--${key}`)].join(", ");
+          throw new Error(`self-update does not accept ${extraArgs}. Use --version <ver> to pick a version.`);
+        }
+        if (flags.version !== undefined && (flags.version === "" || flags.version === "true")) {
+          throw new Error("--version needs a value, e.g. --version 1.2.0");
+        }
+        await selfUpdate({
+          currentVersion: getLampasctlVersion(),
+          version: flags.version,
+          checkOnly: flags.check === "true",
+          includePrerelease: flags.prerelease === "true",
+          force: flags.force === "true",
+        });
         break;
       }
 

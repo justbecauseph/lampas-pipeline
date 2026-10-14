@@ -745,6 +745,33 @@ lampasctl restart --target /home/server --countdown 3
 - **Systemd Lifecycle & Active Verification**: Executes `systemctl restart <service>` and verifies active state using `systemctl is-active`.
 - **Offline Tolerance**: If the Minecraft server is unreachable via RCON (e.g. stopped or unresponsive), broadcasts are cleanly skipped and systemd restart proceeds.
 
+### 6. Updating the CLI (`lampasctl self-update`)
+
+`lampasctl self-update` replaces the running standalone binary with a `lampasctl-v*` release from this repository's [GitHub Releases](https://github.com/justbecauseph/lampas-pipeline/releases).
+
+```bash
+# Report whether a newer release exists without installing it
+lampasctl self-update --check
+
+# Install the newest stable release (root-owned installs need sudo)
+sudo /usr/local/bin/lampasctl self-update
+
+# Install an exact version (also downgrades), or reinstall the current one
+lampasctl self-update --version 1.2.0
+lampasctl self-update --version 1.2.0 --force
+
+# Consider prereleases when picking the newest release
+lampasctl self-update --prerelease
+```
+
+- The newest release is chosen by semantic-version precedence among `lampasctl-v<semver>` releases; drafts are ignored and prereleases count only with `--prerelease`. A build newer than the newest release is left alone; without `--version`, `--force` only reinstalls the installed version and never downgrades.
+- It downloads `lampasctl_<version>_<target>` for the target the running binary was built for (compiled builds embed it; builds without it detect the host, including musl Linux) and refuses to install unless the archive matches its `SHA256SUMS` entry, the asset size and GitHub's asset digest. Releases currently ship only `linux_x64` and `windows_x64`.
+- The extracted binary must print `lampasctl <version>` before it replaces the current one. On Linux and macOS it is renamed over the current file, keeping its permissions. Windows cannot overwrite a running `.exe`, so the current one is renamed to `lampasctl.old-<pid>-<time>.exe` and deleted by a later run.
+- Running services (`lampasctl start`, `monitor`) keep the old binary until they restart.
+- GitHub allows 60 unauthenticated API requests per hour per IP; set `GITHUB_TOKEN` or `GH_TOKEN` to raise that. The token is sent only to the GitHub API, not to asset downloads.
+- From a source checkout (`bun run lampasctl`) only `--check` works; update the checkout with git.
+- Versions before 1.3.0 do not have this command; install the first release that does by hand.
+
 ---
 
 ## 🔒 Custom Protocol Mod (`lampas-core`)

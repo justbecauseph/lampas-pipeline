@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- `lampasctl self-update` replaces the running standalone binary with the newest `lampasctl-v*` release from GitHub Releases (`justbecauseph/lampas-pipeline`). `--check` only reports, `--version <ver>` installs an exact version (including downgrades), `--prerelease` includes prereleases and `--force` reinstalls the current version. Versions compare by semver precedence; a build newer than the newest release is not downgraded, with or without `--force`. Other arguments are rejected and `--help` prints usage. The host archive must match its `SHA256SUMS` entry, the asset size and the GitHub asset digest, and the extracted binary must report the expected version before it replaces the current one. POSIX installs rename over the binary and keep its mode; Windows moves the running exe to `lampasctl.old-<pid>-<time>.exe`, which a later run deletes, and restores it if the swap fails. `GITHUB_TOKEN`/`GH_TOKEN` is sent to the GitHub API only. Running from source refuses to install.
+
+### Changed
+- Release target definitions moved from `scripts/build-release.ts` to `src/release-targets.ts`; `build-release.ts` re-exports them and builds the same archives. Compiled builds embed their target id (`LAMPASCTL_TARGET`), which `self-update` downloads; it detects the host only when that is missing.
+
 ## [1.2.0] - 2026-10-15
 
 ### Added

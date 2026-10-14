@@ -4,114 +4,15 @@ import * as crypto from "node:crypto";
 import * as zlib from "node:zlib";
 import * as fflate from "fflate";
 
-export interface TargetDefinition {
-  id: string;
-  bunTarget: string;
-  os: "linux" | "windows" | "darwin";
-  arch: "x64" | "arm64";
-  musl?: boolean;
-  exeName: string;
-  archiveExt: ".tar.gz" | ".zip";
-}
+import {
+  cleanVersion,
+  RELEASE_TARGETS,
+  releaseArchiveName,
+  resolveHostTarget,
+  type TargetDefinition,
+} from "../src/release-targets";
 
-export const RELEASE_TARGETS: TargetDefinition[] = [
-  {
-    id: "linux_x64",
-    bunTarget: "bun-linux-x64-baseline",
-    os: "linux",
-    arch: "x64",
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-  {
-    id: "linux_arm64",
-    bunTarget: "bun-linux-arm64",
-    os: "linux",
-    arch: "arm64",
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-  {
-    id: "linux_x64_musl",
-    bunTarget: "bun-linux-x64-baseline-musl",
-    os: "linux",
-    arch: "x64",
-    musl: true,
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-  {
-    id: "linux_arm64_musl",
-    bunTarget: "bun-linux-arm64-musl",
-    os: "linux",
-    arch: "arm64",
-    musl: true,
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-  {
-    id: "windows_x64",
-    bunTarget: "bun-windows-x64-baseline",
-    os: "windows",
-    arch: "x64",
-    exeName: "lampasctl.exe",
-    archiveExt: ".zip",
-  },
-  {
-    id: "windows_arm64",
-    bunTarget: "bun-windows-arm64",
-    os: "windows",
-    arch: "arm64",
-    exeName: "lampasctl.exe",
-    archiveExt: ".zip",
-  },
-  {
-    id: "darwin_x64",
-    bunTarget: "bun-darwin-x64",
-    os: "darwin",
-    arch: "x64",
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-  {
-    id: "darwin_arm64",
-    bunTarget: "bun-darwin-arm64",
-    os: "darwin",
-    arch: "arm64",
-    exeName: "lampasctl",
-    archiveExt: ".tar.gz",
-  },
-];
-
-export function resolveHostTarget(): TargetDefinition {
-  const platform = process.platform;
-  const arch = process.arch;
-
-  if (platform === "win32") {
-    return arch === "arm64"
-      ? RELEASE_TARGETS.find((t) => t.id === "windows_arm64")!
-      : RELEASE_TARGETS.find((t) => t.id === "windows_x64")!;
-  }
-  if (platform === "darwin") {
-    return arch === "arm64"
-      ? RELEASE_TARGETS.find((t) => t.id === "darwin_arm64")!
-      : RELEASE_TARGETS.find((t) => t.id === "darwin_x64")!;
-  }
-  return arch === "arm64"
-    ? RELEASE_TARGETS.find((t) => t.id === "linux_arm64")!
-    : RELEASE_TARGETS.find((t) => t.id === "linux_x64")!;
-}
-
-export function cleanVersion(rawVersion?: string): string {
-  if (!rawVersion || rawVersion === "dev") return "dev";
-  let v = rawVersion.trim();
-  if (v.startsWith("lampasctl-v")) {
-    v = v.substring("lampasctl-v".length);
-  } else if (v.startsWith("v")) {
-    v = v.substring(1);
-  }
-  return v;
-}
+export { cleanVersion, RELEASE_TARGETS, resolveHostTarget, type TargetDefinition };
 
 /**
  * Creates a valid POSIX ustar tar.gz archive for a single executable file with 0755 permissions.
@@ -203,6 +104,7 @@ export async function buildTarget(options: {
     minify: true,
     define: {
       LAMPASCTL_VERSION: JSON.stringify(version),
+      LAMPASCTL_TARGET: JSON.stringify(target.id),
     },
   });
 
@@ -218,7 +120,7 @@ export async function buildTarget(options: {
   let archiveSha256: string | undefined;
 
   if (packageArchive) {
-    const archiveName = `lampasctl_${version}_${target.id}${target.archiveExt}`;
+    const archiveName = releaseArchiveName(version, target);
     archivePath = path.join(outDir, archiveName);
 
     console.log(`  📦 Packaging ${archiveName}...`);
