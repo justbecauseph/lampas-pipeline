@@ -770,7 +770,7 @@ lampasctl self-update --prerelease
 - Running services (`lampasctl start`, `monitor`) keep the old binary until they restart.
 - GitHub allows 60 unauthenticated API requests per hour per IP; set `GITHUB_TOKEN` or `GH_TOKEN` to raise that. The token is sent only to the GitHub API, not to asset downloads.
 - From a source checkout (`bun run lampasctl`) only `--check` works; update the checkout with git.
-- Versions before 1.3.0 do not have this command; install the first release that does by hand.
+- Versions before 1.3.1 do not have this command; install the first release that does by hand.
 
 ---
 
