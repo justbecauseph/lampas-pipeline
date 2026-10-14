@@ -20,27 +20,57 @@ export interface DiffResult {
     newHash: string;
   }>;
   totalSizeDelta: number;
+  /** Sorted top-level manifest keys other than `files` whose values differ. */
+  changedFields: string[];
 }
 
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
   if (Math.abs(bytes) < 1024) return `${bytes} B`;
   if (Math.abs(bytes) < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
-  if (!fs.existsSync(options.fromManifestPath)) {
-    throw new Error(`Base manifest not found: ${options.fromManifestPath}`);
+/** JSON with object keys sorted at every depth, so key order does not change the output. */
+export function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item)).join(",")}]`;
   }
-  if (!fs.existsSync(options.toManifestPath)) {
-    throw new Error(`Target manifest not found: ${options.toManifestPath}`);
+  if (value !== null && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const parts = Object.keys(record)
+      .sort()
+      .filter((key) => record[key] !== undefined)
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`);
+    return `{${parts.join(",")}}`;
   }
+  return JSON.stringify(value) ?? "null";
+}
 
-  const manifestA = readJsonFile<PackManifest>(options.fromManifestPath);
-  const manifestB = readJsonFile<PackManifest>(options.toManifestPath);
+function computeChangedFields(from: PackManifest, to: PackManifest): string[] {
+  const fromRecord = from as unknown as Record<string, unknown>;
+  const toRecord = to as unknown as Record<string, unknown>;
+  const keys = new Set([...Object.keys(fromRecord), ...Object.keys(toRecord)]);
+  keys.delete("files");
 
-  const filesA = new Map<string, ManifestFile>(manifestA.files.map((f) => [f.path, f]));
-  const filesB = new Map<string, ManifestFile>(manifestB.files.map((f) => [f.path, f]));
+  const changed: string[] = [];
+  for (const key of [...keys].sort()) {
+    const a = fromRecord[key];
+    const b = toRecord[key];
+    if (a === undefined && b === undefined) continue;
+    if (a === undefined || b === undefined || canonicalJson(a) !== canonicalJson(b)) {
+      changed.push(key);
+    }
+  }
+  return changed;
+}
+
+/**
+ * Compare two pack manifests file by file (keyed by `path`, modified when `hashes.sha256` differs)
+ * and by top-level fields. Pure: no console output and no filesystem access.
+ */
+export function computeManifestDiff(from: PackManifest, to: PackManifest): DiffResult {
+  const filesA = new Map<string, ManifestFile>(from.files.map((f) => [f.path, f]));
+  const filesB = new Map<string, ManifestFile>(to.files.map((f) => [f.path, f]));
 
   const added: ManifestFile[] = [];
   const removed: ManifestFile[] = [];
@@ -73,6 +103,29 @@ export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
       totalSizeDelta -= entryA.size;
     }
   }
+
+  return {
+    added,
+    removed,
+    modified,
+    totalSizeDelta,
+    changedFields: computeChangedFields(from, to),
+  };
+}
+
+export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
+  if (!fs.existsSync(options.fromManifestPath)) {
+    throw new Error(`Base manifest not found: ${options.fromManifestPath}`);
+  }
+  if (!fs.existsSync(options.toManifestPath)) {
+    throw new Error(`Target manifest not found: ${options.toManifestPath}`);
+  }
+
+  const manifestA = readJsonFile<PackManifest>(options.fromManifestPath);
+  const manifestB = readJsonFile<PackManifest>(options.toManifestPath);
+
+  const diff = computeManifestDiff(manifestA, manifestB);
+  const { added, removed, modified, totalSizeDelta } = diff;
 
   console.log("=".repeat(60));
   console.log(` Pack Manifest Diff: ${manifestA.version} -> ${manifestB.version} (${manifestB.target})`);
@@ -145,10 +198,5 @@ export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
     console.log(`[Diff] Markdown diff written to ${options.markdownOut}`);
   }
 
-  return {
-    added,
-    removed,
-    modified,
-    totalSizeDelta,
-  };
+  return diff;
 }

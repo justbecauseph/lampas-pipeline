@@ -6,6 +6,25 @@ import {
   resolveRelease,
 } from "../src/release-resolver";
 
+/**
+ * Portal stub that answers every request with 200 headers and the start of a JSON body, then never
+ * finishes the body. Used to check that the request timeout covers reading the body.
+ */
+function startStalledBodyServer(): { baseUrl: string; stop: () => void } {
+  const server = Bun.serve({
+    port: 0,
+    fetch() {
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode('{"schemaVersion":2,"files":['));
+        },
+      });
+      return new Response(body, { status: 200, headers: { "Content-Type": "application/json" } });
+    },
+  });
+  return { baseUrl: `http://127.0.0.1:${server.port}`, stop: () => server.stop(true) };
+}
+
 describe("release-resolver", () => {
   const originalFetch = globalThis.fetch;
 
@@ -126,5 +145,53 @@ describe("release-resolver", () => {
     expect(result.channel).toBe("stable");
     expect(result.manifest.target).toBe("server");
     expect(result.release.version).toBe("2.0.0");
+  });
+
+  test("fetchManifest rejects when the body stalls after the headers", async () => {
+    const stub = startStalledBodyServer();
+    try {
+      await expect(fetchManifest(stub.baseUrl, "2.3.33", "client", { timeoutMs: 200 })).rejects.toThrow(
+        "Timed out after 200ms while fetching client manifest for v2.3.33"
+      );
+    } finally {
+      stub.stop();
+    }
+  });
+
+  test("resolveChannelVersion and fetchReleaseDescriptor reject when the body stalls", async () => {
+    const stub = startStalledBodyServer();
+    try {
+      await expect(resolveChannelVersion(stub.baseUrl, "dev", { timeoutMs: 200 })).rejects.toThrow(
+        "Timed out after 200ms while resolving channel 'dev'"
+      );
+      await expect(fetchReleaseDescriptor(stub.baseUrl, "2.3.33", { timeoutMs: 200 })).rejects.toThrow(
+        "Timed out after 200ms while fetching release descriptor for v2.3.33"
+      );
+    } finally {
+      stub.stop();
+    }
+  });
+
+  test("fetchManifest names the response in its error when the body is not JSON", async () => {
+    globalThis.fetch = (async () => {
+      return new Response("<!doctype html><html></html>", {
+        status: 200,
+        headers: { "Content-Type": "text/html" },
+      });
+    }) as any;
+
+    await expect(fetchManifest("https://portal.lampas.town", "2.3.33", "server")).rejects.toThrow(
+      "Invalid response for server manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/server-manifest: body is not valid JSON"
+    );
+  });
+
+  test("fetchManifest keeps the HTTP status in its error for non-ok responses", async () => {
+    globalThis.fetch = (async () => {
+      return new Response("Not Found", { status: 404, statusText: "Not Found" });
+    }) as any;
+
+    await expect(fetchManifest("https://portal.lampas.town", "2.3.33", "client")).rejects.toThrow(
+      "Failed to fetch client manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/client-manifest: HTTP 404 Not Found"
+    );
   });
 });

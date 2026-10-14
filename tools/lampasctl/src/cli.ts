@@ -4,7 +4,10 @@ import { importExistingMods } from "./importer";
 import { resolvePack } from "./resolver";
 import { validatePack } from "./validator";
 import { buildManifests } from "./manifest";
-import { DEFAULT_PORTAL_BASE_URL } from "./portal";
+import { DEFAULT_PORTAL_BASE_URL, resolvePortalBaseUrl } from "./portal";
+import { comparePortalRelease, isPortalChannel, printPortalComparison } from "./portal-compare";
+import type { PackConfig } from "./types";
+import { parseTomlFile } from "./utils";
 import { deployServer, syncInstance } from "./sync";
 import { DeploymentTransaction } from "./transaction";
 import { publishRelease } from "./publisher";
@@ -66,6 +69,8 @@ Commands:
     --portal <url>      Portal base URL for blob/release URLs
                         (default: PORTAL_BASE_URL, pack.toml [portal] base_url,
                         then https://portal.lampas.town)
+    -c, --channel <ch>  Portal channel to compare against: dev | beta | stable (default: stable)
+    --no-portal-diff    Skip comparing generated manifests with the Portal release
     --skip-meta-check   Skip upstream Fabric Meta compatibility verification
 
   publish               Publish release and upload blobs to Lampas Portal
@@ -196,6 +201,7 @@ export function parseArgs(args: string[]): ParsedArgs {
     "allow-stale",
     "dry-run",
     "no-backup",
+    "no-portal-diff",
     "apply",
     "force",
     "skip-meta-check",
@@ -342,15 +348,41 @@ async function main() {
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
         const lockFile = path.resolve(flags.lock || path.join(packDir, "pack.lock.json"));
         const outDir = path.resolve(flags.out || path.join(rootDir, "manifest"));
+        const portalOverride = flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL;
 
-        await buildManifests({
+        const { clientManifest, serverManifest, release } = await buildManifests({
           packDir,
           lockFile,
           outDir,
-          portalBaseUrl: flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL,
+          portalBaseUrl: portalOverride,
           defaultPortalBaseUrl: DEFAULT_PORTAL_BASE_URL,
           checkFabricMeta: flags["skip-meta-check"] !== "true",
         });
+
+        if (flags["no-portal-diff"] !== "true") {
+          const requestedChannel = flags.channel ?? "stable";
+          const channel = requestedChannel.toLowerCase();
+          if (!isPortalChannel(channel)) {
+            const got = requestedChannel === "true" ? "--channel needs a value" : `got '${requestedChannel}'`;
+            console.warn(`[Portal] Comparison skipped: --channel must be dev, beta, or stable (${got}).`);
+          } else {
+            try {
+              const packConfig = parseTomlFile<PackConfig>(path.join(packDir, "pack.toml"));
+              const portalUrl =
+                resolvePortalBaseUrl(packConfig, portalOverride, DEFAULT_PORTAL_BASE_URL) ?? DEFAULT_PORTAL_BASE_URL;
+              const comparison = await comparePortalRelease({
+                portalUrl,
+                channel,
+                client: clientManifest,
+                server: serverManifest,
+                release,
+              });
+              printPortalComparison(comparison);
+            } catch (err) {
+              console.warn(`[Portal] Comparison failed: ${err instanceof Error ? err.message : String(err)}`);
+            }
+          }
+        }
         break;
       }
 

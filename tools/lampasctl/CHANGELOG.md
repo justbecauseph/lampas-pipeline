@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.0.10] - 2026-10-14
+
+### Added
+- `lampasctl manifest` prints a Portal comparison after building the manifests: the `dev`, `beta` and `stable` channel versions, whether the local version is already published (including revoked), and per-target (client, server) file and top-level field diffs against the release the selected channel points to. When the local version is already published, it compares the generated manifests and release metadata (status, minimum launcher version, launch settings, Minecraft/loader versions, git commit, signature) with that stored release the way the Portal does, and either warns that publishing would be rejected (409), naming the differing fields, or notes that publishing only moves channel pointers. A revoked version always warns. `--channel dev|beta|stable` selects the channel (default `stable`) and `--no-portal-diff` skips the comparison. Portal failures are reported in the summary and never change the exit code.
+
+### Changed
+- Dedicated server operations documentation and operational recipes updated across `README.md` and `EXAMPLE.md` covering native commands (`lampasctl start`, `monitor`, `restart`) and gitignored local workspaces (`pack/`, `manifest/`).
+
+### Fixed
+- Portal channel, release descriptor and manifest requests (`deploy`, `manifest`) now apply their timeout to the response body as well as the headers, so a Portal that stalls mid-response no longer hangs the command. Invalid JSON responses fail with a descriptive error.
+
+## [1.0.9] - 2026-10-11
+
 ### Removed
 - Removed legacy dedicated server automation scripts `tools/scripts/lampas-discord-monitor.py` and `tools/scripts/lampas-scheduled-restart.sh` (retiring `tools/scripts/` directory) in favor of native `lampasctl monitor` and `lampasctl restart`.
 - Removed external Python 3 and `rcon-cli` requirements from dedicated server templates and deployments; dedicated servers now require only Java (OpenJDK 25) and the standalone `lampasctl` executable.
@@ -13,7 +26,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - `lampasctl start` sizes the JVM dynamically from the host environment. It detects usable CPUs and RAM, honoring cgroup v1/v2 CPU quotas and `memory.max`/`memory.high` limits, with a Windows fallback. The heap is RAM minus an OS reserve and max(1.5 GiB, 15%) for non-heap memory, capped at 16 GiB for G1, and the launcher refuses to start below 2 GiB. `--memory`/`JAVA_MEMORY` still override it.
-- Dedicated server operations documentation and operational recipes updated across `README.md` and `EXAMPLE.md` covering native commands (`lampasctl start`, `monitor`, `restart`) and gitignored local workspaces (`pack/`, `manifest/`).
 - GC and JIT thread counts are left to JDK 25 ergonomics: `ParallelGCThreads`, `ConcGCThreads` and `CICompilerCount` are no longer pinned.
 - G1 uses Aikar's profile with `G1ReservePercent=15` and `MaxTenuringThreshold=1`, and switches to the large-heap values above a 12 GiB heap. The restated defaults `ParallelRefProcEnabled` and `MaxGCPauseMillis=200` are dropped.
 - `-Djdk.graal.TuneInlinerExploration=1` replaces the deprecated `-Dgraal.` form and is only added on Oracle GraalVM, detected from the runtime `release` file. GraalVM CE rejects that option.
