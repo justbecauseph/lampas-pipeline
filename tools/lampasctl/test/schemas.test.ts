@@ -56,6 +56,16 @@ describe("schemas and IDE validation configuration", () => {
       ]);
   });
 
+  test("pack schema admits [client].preserve as an array of non-empty strings only", () => {
+    const schema = JSON.parse(fs.readFileSync(path.join(schemasDir, "pack.schema.json"), "utf-8"));
+    const client = schema.properties.client;
+
+    expect(client.type).toBe("object");
+    expect(client.additionalProperties).toBe(false);
+    expect(client.properties.preserve.type).toBe("array");
+    expect(client.properties.preserve.items).toEqual({ type: "string", minLength: 1 });
+  });
+
   test(".vscode/settings.json maps all schemas to appropriate file patterns", () => {
     expect(fs.existsSync(vscodeSettingsPath)).toBe(true);
     const settings = JSON.parse(fs.readFileSync(vscodeSettingsPath, "utf-8"));

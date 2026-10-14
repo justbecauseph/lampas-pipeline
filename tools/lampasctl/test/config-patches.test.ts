@@ -1,10 +1,30 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { buildManifests } from "../src/manifest";
 import { validatePack } from "../src/validator";
-import { validateConfigPatches } from "../src/config-patches";
+import { isProtectedClientPath, validateConfigPatches } from "../src/config-patches";
+
+// Valid options.txt keybind rebind; tests override one field at a time.
+function keybindPatch(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: "snappy-tappy-keybind",
+    revision: 1,
+    path: "options.txt",
+    adapter: "properties",
+    mode: "once",
+    missingFile: "defer",
+    operations: [
+      { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+    ],
+    ...overrides,
+  };
+}
+
+function validateSingle(patch: Record<string, unknown>) {
+  return validateConfigPatches({ schemaVersion: 1, patches: [patch] });
+}
 
 function setupFixture(options: {
   packTomlContent?: string;
@@ -337,5 +357,221 @@ describe("pipeline: config patch validation and manifest emission", () => {
         ],
       })
     ).toThrow(/Operation path must not be empty/);
+  });
+
+  test("accepts a once-mode keybind rebind in options.txt", () => {
+    const patches = validateSingle(keybindPatch());
+    expect(patches).toHaveLength(1);
+    expect(patches[0].path).toBe("options.txt");
+  });
+
+  test("rejects options.txt patches that are not keybind rebinds", () => {
+    const rejected = [
+      keybindPatch({
+        id: "non-key-option",
+        operations: [{ op: "set", path: ["guiScale"], value: "2" }],
+      }),
+      keybindPatch({
+        id: "value-not-key-name",
+        operations: [{ op: "set", path: ["key_key.snappy_tappy.toggle"], value: "2" }],
+      }),
+      keybindPatch({
+        id: "value-without-key-name",
+        operations: [{ op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard" }],
+      }),
+      keybindPatch({
+        id: "remove-operation",
+        operations: [{ op: "remove", path: ["key_key.snappy_tappy.toggle"] }],
+      }),
+      keybindPatch({ id: "missing-file-create", missingFile: "create" }),
+      keybindPatch({ id: "json-adapter", adapter: "json" }),
+      keybindPatch({ id: "enforce-mode", mode: "enforce" }),
+      keybindPatch({
+        id: "mixed-operations",
+        operations: [
+          { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+          { op: "set", path: ["guiScale"], value: "2" },
+        ],
+      }),
+    ];
+
+    for (const patch of rejected) {
+      expect(() => validateSingle(patch)).toThrow(
+        `Config patch '${patch.id}' targets launcher-protected path 'options.txt'`
+      );
+    }
+  });
+
+  test("rejects keybind-shaped patches on other protected player data and launcher state", () => {
+    const protectedPaths = [
+      "servers.dat",
+      "usercache.json",
+      "hotbar.nbt",
+      "realms_persistence.json",
+      "saves/world/level.dat",
+      "Logs/latest.log",
+      "screenshots/shot.png",
+      "crash-reports/crash.txt",
+      "saves\\world\\level.dat",
+      ".lampas-moving-x",
+    ];
+
+    for (const targetPath of protectedPaths) {
+      expect(() => validateSingle(keybindPatch({ id: "protected-target", path: targetPath }))).toThrow(
+        `Config patch 'protected-target' targets launcher-protected path '${targetPath}'`
+      );
+    }
+  });
+
+  test("still accepts ordinary config paths", () => {
+    const patches = validateSingle({
+      id: "jade-config",
+      revision: 1,
+      path: "config/jade/jade.json",
+      adapter: "json",
+      mode: "enforce",
+      missingFile: "defer",
+      operations: [{ op: "set", path: ["enabled"], value: false }],
+    });
+    expect(patches).toHaveLength(1);
+    expect(patches[0].path).toBe("config/jade/jade.json");
+  });
+
+  test("isProtectedClientPath matches top-level files and whole directory names only", () => {
+    expect(isProtectedClientPath("options.txt")).toBe(true);
+    expect(isProtectedClientPath("./options.txt")).toBe(true);
+    expect(isProtectedClientPath("saves")).toBe(true);
+    expect(isProtectedClientPath(".lampas")).toBe(true);
+    expect(isProtectedClientPath(".lampas/installation.json")).toBe(true);
+
+    expect(isProtectedClientPath("config/options.txt")).toBe(false);
+    expect(isProtectedClientPath("savesfolder/world.dat")).toBe(false);
+    expect(isProtectedClientPath("log/latest.log")).toBe(false);
+    expect(isProtectedClientPath("config/jade/jade.json")).toBe(false);
+  });
+
+  test("canonicalizes config patch paths the way the launcher does", () => {
+    // Paths the launcher rejects during canonicalization
+    const unsafe = [
+      "./options.txt",
+      "config/../options.txt",
+      "options.txt.",
+      "options.txt ",
+      "mods/../saves/world/level.dat",
+    ];
+    for (const targetPath of unsafe) {
+      expect(() => validateSingle(keybindPatch({ id: "probe", path: targetPath }))).toThrow(
+        `Unsafe target path for config patch 'probe': '${targetPath}'`
+      );
+    }
+
+    // Canonical after trailing-slash removal, but not the exact options.txt the exception requires
+    expect(() => validateSingle(keybindPatch({ id: "probe", path: "options.txt/" }))).toThrow(
+      "Config patch 'probe' targets launcher-protected path 'options.txt/'"
+    );
+    expect(() => validateSingle(keybindPatch({ id: "probe", path: "OPTIONS.TXT" }))).toThrow(
+      "Config patch 'probe' targets launcher-protected path 'OPTIONS.TXT'"
+    );
+  });
+
+  test("emits canonical config patch paths", () => {
+    const patches = validateSingle({
+      id: "jade-config",
+      revision: 1,
+      path: "config\\jade\\jade.json",
+      adapter: "json",
+      mode: "enforce",
+      missingFile: "defer",
+      operations: [{ op: "set", path: ["enabled"], value: false }],
+    });
+    expect(patches[0].path).toBe("config/jade/jade.json");
+  });
+
+  test("warns, without failing, when one keybind patch sets more than one key", () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const twoKeys = validateSingle(
+        keybindPatch({
+          id: "two-keys",
+          operations: [
+            { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+            { op: "set", path: ["key_key.mod.dash"], value: "key.keyboard.x" },
+          ],
+        })
+      );
+      expect(twoKeys).toHaveLength(1);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(String(warn.mock.calls[0][0])).toContain("'two-keys' sets 2 keys in options.txt");
+
+      warn.mockClear();
+      validateSingle(keybindPatch());
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test("whole-file entries of either policy conflict with a config patch, except a PRESERVE options.txt keybind patch", () => {
+    const preserved = (p: string) => ({ path: p, policy: "PRESERVE" }) as any;
+    const managed = (p: string) => ({ path: p, policy: "MANAGED" }) as any;
+
+    const jadePatch = {
+      id: "jade-hud",
+      revision: 1,
+      path: "config/jade/jade.json",
+      adapter: "json",
+      mode: "enforce",
+      missingFile: "defer",
+      operations: [{ op: "set", path: ["enabled"], value: false }],
+    };
+
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [preserved("config/jade/jade.json")])
+    ).toThrow("Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry");
+
+    // Case-insensitive collision, as the launcher's destination keys are case-folded on Windows
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [preserved("Config/Jade/Jade.json")])
+    ).toThrow("is both a PRESERVE whole-file entry");
+
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [managed("config/jade/jade.json")])
+    ).toThrow("is both a MANAGED artifact and a managed config-patch target.");
+
+    // A PRESERVE options.txt with a once keybind patch is the one allowed collision
+    const allowed = validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [preserved("options.txt")]);
+    expect(allowed).toHaveLength(1);
+
+    // A MANAGED options.txt is never allowed a config patch
+    expect(() => validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [managed("options.txt")])).toThrow(
+      "Config ownership conflict: 'options.txt' is both a MANAGED artifact"
+    );
+
+    // An enforce-mode keybind patch is not the exception, so it collides with the PRESERVE entry
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch({ mode: "enforce" })] }, [preserved("options.txt")])
+    ).toThrow("is both a PRESERVE whole-file entry and a config-patch target");
+
+    // servers.dat is a seed with no keybind exception: any patch on a PRESERVE servers.dat collides
+    const serversPatch = {
+      id: "servers-name",
+      revision: 1,
+      path: "servers.dat",
+      adapter: "json",
+      mode: "enforce",
+      missingFile: "defer",
+      operations: [{ op: "set", path: ["name"], value: "x" }],
+    };
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [preserved("servers.dat")])
+    ).toThrow("Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry");
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch({ path: "servers.dat" })] }, [preserved("servers.dat")])
+    ).toThrow("Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry");
+
+    // Without a whole-file entry, a patch on servers.dat is a protected-path error
+    expect(() => validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [])).toThrow(
+      "targets launcher-protected path 'servers.dat'"
+    );
   });
 });

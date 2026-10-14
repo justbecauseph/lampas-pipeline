@@ -123,6 +123,20 @@
         }
       }
     },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preserve": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Client-relative paths (as the client manifest emits them, e.g. 'options.amecs.key_modifiers.txt') shipped as seed-only defaults. The launcher places each file only when the player has no copy and never overwrites it. Each path must canonicalize under launcher rules, must exist under pack/client/ or pack/common/, and must not be a launcher-protected path other than the exact seed paths options.txt and servers.dat. The seed paths are always seeds from pack/client/ and need not be listed."
+        }
+      }
+    },
     "launcher": {
       "type": "object",
       "properties": {

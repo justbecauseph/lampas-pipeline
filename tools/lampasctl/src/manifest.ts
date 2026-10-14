@@ -2,8 +2,16 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid, isValidServerAddress, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
 import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
-import { validateConfigPatches } from "./config-patches";
+import {
+  clientStaticFilePolicy,
+  commonStaticFilePolicy,
+  validateClientFilePaths,
+  validateClientPreserveList,
+  validateConfigPatches,
+  validateProtectedClientFiles,
+} from "./config-patches";
 import { validateLoaderDefinition } from "./validator";
+import { validateManifestRules } from "./manifest-rules";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 import { resolvePortalBaseUrl } from "./portal";
 
@@ -61,11 +69,19 @@ async function scanStaticDir(baseDir: string, relDir: string): Promise<ManifestF
   return results;
 }
 
-export async function buildManifests(options: ManifestOptions): Promise<{
+/** Manifests assembled in memory. Nothing is written. */
+export interface ComputedManifests {
   clientManifest: PackManifest;
   serverManifest: PackManifest;
   release: ReleaseDescriptor;
-}> {
+  serverResourcePackConfig?: ServerResourcePackConfig;
+}
+
+/**
+ * Assembles the manifests and checks them against the Portal and launcher rules, without writing.
+ * `validate` calls this so it fails on what `manifest` would fail on.
+ */
+export async function computeManifests(options: Omit<ManifestOptions, "outDir">): Promise<ComputedManifests> {
   const packConfigPath = path.join(options.packDir, "pack.toml");
   const packConfig = parseTomlFile<PackConfig>(packConfigPath);
   const lock = readJsonFile<PackLock>(options.lockFile);
@@ -154,8 +170,23 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   }
 
   const commonFiles = await scanStaticDir(options.packDir, "common");
-  const clientStaticFiles = await scanStaticDir(options.packDir, "client");
+  const clientScannedFiles = await scanStaticDir(options.packDir, "client");
   const serverStaticFiles = await scanStaticDir(options.packDir, "server");
+
+  // [client].preserve marks files as PRESERVE in the client manifest only, whether they come from
+  // pack/client or pack/common. The server manifest keeps the scanned MANAGED policy.
+  const clientPreserve = validateClientPreserveList(packConfig.client?.preserve, [
+    ...commonFiles.map((file) => ({ path: file.path, origin: "common" as const })),
+    ...clientScannedFiles.map((file) => ({ path: file.path, origin: "client" as const })),
+  ]);
+  const clientCommonFiles: ManifestFile[] = commonFiles.map((file) => ({
+    ...file,
+    policy: commonStaticFilePolicy(file.path, clientPreserve),
+  }));
+  const clientStaticFiles: ManifestFile[] = clientScannedFiles.map((file) => ({
+    ...file,
+    policy: clientStaticFilePolicy(file.path, clientPreserve),
+  }));
 
   const clientModFiles: ManifestFile[] = [];
   const serverModFiles: ManifestFile[] = [];
@@ -220,8 +251,10 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   serverModsCatalog.sort((a, b) => a.name.localeCompare(b.name));
 
   // Scan and validate client config patches
-  const allClientFiles = [...clientModFiles, ...commonFiles, ...clientStaticFiles];
+  const allClientFiles = [...clientModFiles, ...clientCommonFiles, ...clientStaticFiles];
   const allServerFiles = [...serverModFiles, ...commonFiles, ...serverStaticFiles];
+  validateClientFilePaths(allClientFiles);
+  validateProtectedClientFiles(allClientFiles);
 
   const clientPatchesPath = path.join(options.packDir, "config-patches", "client.json");
   let clientConfigPatches: ConfigPatch[] | undefined = undefined;
@@ -343,6 +376,19 @@ export async function buildManifests(options: ManifestOptions): Promise<{
     ...(serverResourcePackConfig ? { serverResourcePack: serverResourcePackConfig } : {}),
   };
 
+  validateManifestRules(clientManifest);
+  validateManifestRules(serverManifest);
+
+  return { clientManifest, serverManifest, release, serverResourcePackConfig };
+}
+
+export async function buildManifests(options: ManifestOptions): Promise<{
+  clientManifest: PackManifest;
+  serverManifest: PackManifest;
+  release: ReleaseDescriptor;
+}> {
+  const { clientManifest, serverManifest, release, serverResourcePackConfig } = await computeManifests(options);
+
   const clientOut = path.join(options.outDir, "client-manifest.json");
   const serverOut = path.join(options.outDir, "server-manifest.json");
   const releaseOut = path.join(options.outDir, "release.json");
@@ -351,9 +397,9 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   writeJsonFile(serverOut, serverManifest, true);
   writeJsonFile(releaseOut, release, true);
 
-  console.log(`[Manifest] Built manifests for v${packConfig.pack.version}:`);
-  console.log(`  - Client manifest (${clientManifest.files.length} files, ${clientModsCatalog.length} cataloged mods) -> ${clientOut}`);
-  console.log(`  - Server manifest (${serverManifest.files.length} files, ${serverModsCatalog.length} cataloged mods) -> ${serverOut}`);
+  console.log(`[Manifest] Built manifests for v${release.version}:`);
+  console.log(`  - Client manifest (${clientManifest.files.length} files, ${(clientManifest.mods ?? []).length} cataloged mods) -> ${clientOut}`);
+  console.log(`  - Server manifest (${serverManifest.files.length} files, ${(serverManifest.mods ?? []).length} cataloged mods) -> ${serverOut}`);
   console.log(`  - Release descriptor -> ${releaseOut}`);
 
   // Optional: Generate server-side resource-pack configuration if server resource pack is present

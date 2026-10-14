@@ -1,10 +1,18 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
-import type { BlacklistTarget, PackConfig, PackLock, ProviderConfig } from "./types";
+import type { BlacklistTarget, FilePolicy, PackConfig, PackLock, ProviderConfig } from "./types";
 import { describeBlacklistRule, matchingBlacklistRules, parsePackBlacklistRules } from "./blacklist";
-import { validateConfigPatches } from "./config-patches";
+import {
+  clientStaticFilePolicy,
+  commonStaticFilePolicy,
+  validateClientFilePaths,
+  validateClientPreserveList,
+  validateConfigPatches,
+  validateProtectedClientFiles,
+} from "./config-patches";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
+import { computeManifests } from "./manifest";
 import { readPackPortalBaseUrl } from "./portal";
 
 function requireExactStringIdentity(value: unknown, label: string): string {
@@ -320,44 +328,85 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     }
   }
 
+  // Client manifest file list, built the way buildManifests builds it. Policy drives the
+  // protected-path check and the config-patch ownership check.
+  let clientManifestFiles: any[] | undefined;
+  try {
+    const staticFiles: Array<{ path: string; origin: "common" | "client" }> = [];
+    for (const origin of ["common", "client"] as const) {
+      const fullDir = path.join(options.packDir, origin);
+      if (fs.existsSync(fullDir)) {
+        const walk = (cur: string) => {
+          for (const entry of fs.readdirSync(cur, { withFileTypes: true })) {
+            const full = path.join(cur, entry.name);
+            if (entry.isDirectory()) walk(full);
+            else if (entry.isFile()) {
+              staticFiles.push({ path: path.relative(fullDir, full).replace(/\\/g, "/"), origin });
+            }
+          }
+        };
+        walk(fullDir);
+      }
+    }
+
+    // Same rules as buildManifests: [client].preserve applies to pack/client and pack/common files in
+    // the client manifest; seed files (options.txt, servers.dat) are PRESERVE only from pack/client.
+    const clientPreserve = validateClientPreserveList(packConfig.client?.preserve, staticFiles);
+    const files: any[] = staticFiles.map((file) => {
+      let policy: FilePolicy;
+      if (file.origin === "client") {
+        policy = clientStaticFilePolicy(file.path, clientPreserve);
+      } else {
+        policy = commonStaticFilePolicy(file.path, clientPreserve);
+      }
+      return { path: file.path, policy };
+    });
+
+    // Mod artifacts as buildManifests lists them: client or both sides, excluding the server resource pack.
+    const srpArtifactId = serverResourcePack?.artifact;
+    for (const [modId, art] of Object.entries(lock.artifacts)) {
+      if (srpArtifactId && modId === srpArtifactId) continue;
+      if (art.side !== "client" && art.side !== "both") continue;
+      const targetDir =
+        art.targetDir ||
+        (art.artifactType === "shader"
+          ? "shaderpacks"
+          : art.artifactType === "resourcepack"
+          ? "resourcepacks"
+          : "mods");
+      files.push({ path: `${targetDir}/${art.filename}`, policy: "MANAGED" });
+    }
+    validateClientFilePaths(files);
+    validateProtectedClientFiles(files);
+    clientManifestFiles = files;
+  } catch (err: any) {
+    console.error(`  ✗ [Invalid Client Files] ${err.message}`);
+    hasErrors = true;
+  }
+
   // Check config patches if present
   const patchesFile = path.join(options.packDir, "config-patches", "client.json");
-  if (fs.existsSync(patchesFile)) {
+  if (clientManifestFiles && fs.existsSync(patchesFile)) {
     try {
       const raw = readJsonFile<any>(patchesFile);
-      const staticDirs = ["common", "client"];
-      const manifestFiles: any[] = [];
-      for (const dir of staticDirs) {
-        const fullDir = path.join(options.packDir, dir);
-        if (fs.existsSync(fullDir)) {
-          const walk = (cur: string) => {
-            for (const entry of fs.readdirSync(cur, { withFileTypes: true })) {
-              const full = path.join(cur, entry.name);
-              if (entry.isDirectory()) walk(full);
-              else if (entry.isFile()) {
-                manifestFiles.push({
-                  path: path.relative(fullDir, full).replace(/\\/g, "/"),
-                  policy: "MANAGED",
-                });
-              }
-            }
-          };
-          walk(fullDir);
-        }
-      }
-      for (const art of Object.values(lock.artifacts)) {
-        const targetDir =
-          art.targetDir ||
-          (art.artifactType === "shader"
-            ? "shaderpacks"
-            : art.artifactType === "resourcepack"
-            ? "resourcepacks"
-            : "mods");
-        manifestFiles.push({ path: `${targetDir}/${art.filename}`, policy: "MANAGED" });
-      }
-      validateConfigPatches(raw, manifestFiles);
+      // warn: false, because computeManifests below validates the same patches and prints the warnings.
+      validateConfigPatches(raw, clientManifestFiles, { warn: false });
     } catch (err: any) {
       console.error(`  ✗ [Invalid Config Patches] ${err.message}`);
+      hasErrors = true;
+    }
+  }
+
+  // Assemble the manifests in memory so validate applies the Portal and launcher rules that manifest applies.
+  if (!hasErrors) {
+    try {
+      await computeManifests({
+        packDir: options.packDir,
+        lockFile: options.lockFile,
+        checkFabricMeta: false,
+      });
+    } catch (err: any) {
+      console.error(`  ✗ [Invalid Manifest] ${err.message}`);
       hasErrors = true;
     }
   }

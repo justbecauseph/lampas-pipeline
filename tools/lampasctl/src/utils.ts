@@ -272,6 +272,75 @@ export function normalizeRelPath(p: string): string {
   return p.replace(/\\/g, "/").replace(/^\/+/, "");
 }
 
+// Windows reserved device names, with or without an extension (lampas-launcher path-policy.ts)
+const DOS_DEVICE_REGEX = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/i;
+// Forbidden control characters: NUL through 0x1F and DEL (0x7F)
+const CONTROL_CHAR_REGEX = /[\x00-\x1f\x7f]/;
+
+/**
+ * Port of lampas-launcher canonicalizeRelativePath. Converts `\` to `/` and drops one trailing
+ * slash. Throws for leading or trailing whitespace (the Portal's `value !== value.trim()` rule),
+ * absolute or drive-rooted paths, control characters and DEL, `.` and `..` segments, empty inner
+ * segments, segments ending in a dot or space, `:` (alternate data streams), reserved device names,
+ * and prototype-sensitive keys. Returns the canonical path.
+ */
+export function canonicalizeRelativePath(relPath: string): string {
+  if (!relPath || typeof relPath !== "string") {
+    throw new Error("Relative path must be a non-empty string.");
+  }
+  if (CONTROL_CHAR_REGEX.test(relPath)) {
+    throw new Error("Relative path contains prohibited control characters.");
+  }
+  if (relPath !== relPath.trim()) {
+    throw new Error(`Relative path has leading or trailing whitespace: '${relPath}'`);
+  }
+
+  if (
+    relPath.startsWith("//") ||
+    relPath.startsWith("\\\\") ||
+    relPath.startsWith("/") ||
+    relPath.startsWith("\\") ||
+    /^[a-zA-Z]:/.test(relPath)
+  ) {
+    throw new Error(`Absolute or drive-rooted paths are not permitted: '${relPath}'`);
+  }
+
+  const segments = relPath.replace(/\\/g, "/").split("/");
+  const clean: string[] = [];
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
+
+    if (segment === "") {
+      if (i === 0 && segments.length > 1) {
+        throw new Error(`Path must not start with a slash: '${relPath}'`);
+      }
+      if (i === segments.length - 1) continue;
+      throw new Error(`Path contains consecutive slashes: '${relPath}'`);
+    }
+    if (segment === "." || segment === "..") {
+      throw new Error(`Path traversal segment '${segment}' is prohibited: '${relPath}'`);
+    }
+    if (segment === "__proto__" || segment === "constructor" || segment === "prototype") {
+      throw new Error(`Prototype-sensitive segment '${segment}' is prohibited: '${relPath}'`);
+    }
+    if (segment.includes(":")) {
+      throw new Error(`Windows Alternate Data Stream notation is prohibited: '${segment}'`);
+    }
+    if (segment.endsWith(".") || segment.endsWith(" ")) {
+      throw new Error(`Path segment with trailing space or dot is prohibited: '${segment}'`);
+    }
+    if (DOS_DEVICE_REGEX.test(segment)) {
+      throw new Error(`Reserved device name is prohibited: '${segment}'`);
+    }
+    clean.push(segment);
+  }
+
+  if (clean.length === 0) {
+    throw new Error("Path resolved to empty target.");
+  }
+  return clean.join("/");
+}
+
 export function isSafeRelativePath(relPath: string): boolean {
   if (!relPath || typeof relPath !== "string") return false;
   const normalized = path.normalize(relPath).replace(/\\/g, "/");

@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-14
+
+### Added
+- `pack/client/options.txt` and `pack/client/servers.dat` ship as seed-only defaults. `manifest` gives each `policy: "PRESERVE"`, so the launcher places a file only when the player has none. Shipping them requires a launcher release that accepts PRESERVE for both files.
+- `[client].preserve` in `pack.toml` lists client files from `pack/client/` or `pack/common/` that ship as seed-only PRESERVE defaults in the client manifest. Entries are client-relative paths, matched case-insensitively. `manifest` and `validate` reject an entry that does not canonicalize, is a launcher-protected path other than the exact seed paths `options.txt` and `servers.dat`, or matches no client file. They also reject a seed path listed from `pack/common/`. A listed file cannot be a config patch target. Without the table, client policies are unchanged. `schemas/pack.schema.json` documents the key.
+
+### Changed
+- `lampasctl validate` and `manifest` check the manifests they write against the Portal's pack manifest schema and the launcher's limits, in memory before anything is written. Added checks: DEL and leading or trailing whitespace in paths; config patch ids of 1 to 128 characters without control characters or padding; patch paths of at most 1024 characters; operation paths of 1 to 64 segments, with no prototype-sensitive keys; set values within depth 20, strings of 4096 characters, and 256 object keys; `replaceLiteral` text of at most 64 KiB; `expectedMatches` of at most 100000; `protocol` of at most 3; the version pattern and pack, Minecraft, and loader version lengths; mod catalog field limits; file paths of at most 1024 characters; file sizes of at most 2 GiB and client totals of at most 64 GiB; download URLs of at most 2048 characters without control characters; MANAGED server files on protected server paths; and enforce operations that share a path across patches. The Portal sets some of these bounds, and the launcher sets the rest.
+- `lampasctl validate` and `manifest` reject client files on launcher-protected paths, including files under `pack/common/`. The only allowed protected files are the exact seed paths `options.txt` and `servers.dat` from `pack/client/`, with `policy: "PRESERVE"`. Other spellings and policies are rejected. Server manifests are unchanged.
+- `lampasctl validate` and `manifest` apply the launcher's canonical path rules to config patch paths, `[client].preserve` entries, and client manifest paths, and emit canonical patch paths. Client manifest paths that differ only by case are errors. A config patch may not target any whole-file entry, MANAGED or PRESERVE, except a keybind rebind of exactly `options.txt` that accompanies a PRESERVE `options.txt`. No config patch may target `servers.dat`.
+- `lampasctl validate` and `manifest` warn, without failing, when one keybind patch sets more than one key. The launcher defers the whole patch while any one key line is missing from `options.txt`, so keep one keybind patch per mod.
+- `lampasctl validate` and `manifest` reject config patches that target launcher-protected paths: player data (`options.txt`, `servers.dat`, `usercache.json`, `hotbar.nbt`, `realms_persistence.json`, `saves/`, `screenshots/`, `logs/`, `crash-reports/`) and launcher state (`.lampas-moving-*`). The client launcher refuses such patches and fails the whole sync. The only exception is a `mode: "once"` keybind rebind of exactly `options.txt`: `adapter: "properties"`, `missingFile: "defer"`, and only `set` operations on a `key_*` option with a `key.keyboard.*` or `key.mouse.*` value. `enforce`-mode patches on `options.txt` are rejected. These patches require a launcher version that supports the exception.
+
 ## [1.0.10] - 2026-10-14
 
 ### Added

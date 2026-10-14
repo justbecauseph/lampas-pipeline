@@ -53,6 +53,10 @@ export interface PackConfig {
   portal?: {
     base_url?: string;
   };
+  client?: {
+    /** Client-relative paths shipped as seed-only PRESERVE files (see clientStaticFilePolicy). */
+    preserve?: string[];
+  };
   launcher?: {
     minimum_version?: string;
     protocol?: number;
