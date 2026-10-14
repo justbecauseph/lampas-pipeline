@@ -388,7 +388,8 @@ export function resolveUpdateTarget(): TargetDefinition {
  * Callers also require {@link compiledTargetId} so a renamed Bun runtime is never replaced.
  */
 export function resolveStandaloneExecutable(execPath = process.execPath): string | null {
-  const name = path.basename(execPath).toLowerCase().replace(/\.exe$/, "");
+  // Split on both separators so the result does not depend on the platform the path came from.
+  const name = (execPath.split(/[\\/]/).pop() ?? "").toLowerCase().replace(/\.exe$/, "");
   if (name === "bun" || name === "node") return null;
   try {
     return fs.realpathSync(execPath);
