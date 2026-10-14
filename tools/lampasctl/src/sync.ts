@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
+  blobCachePath,
   computeFileHashesStreaming,
   copyFileAtomic,
   copyFileVerified,
@@ -324,7 +325,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
       }
 
       // Check blob cache first
-      const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
+      const cachePath = blobCachePath(cacheDir, file.hashes.sha256);
       if (fs.existsSync(cachePath)) {
         const hashes = await computeFileHashesStreaming(cachePath);
         if (hashes.sha256 === file.hashes.sha256) {
@@ -390,7 +391,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
     if (!fs.existsSync(fullPath) && options.tx) {
       await options.tx.recordNewFile(file.path);
     }
-    const cachePath = path.join(cacheDir, file.hashes.sha256.substring(0, 2), file.hashes.sha256);
+    const cachePath = blobCachePath(cacheDir, file.hashes.sha256);
     await copyFileAtomic(cachePath, fullPath);
   }
 

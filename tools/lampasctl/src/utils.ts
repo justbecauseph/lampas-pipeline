@@ -176,6 +176,11 @@ export async function downloadFileVerified(
   throw new Error(`Failed to download ${url} after ${attempts} attempts`, { cause: lastError });
 }
 
+/** The sha256 blob cache layout `sync` uses: <cacheDir>/<first two hex digits>/<sha256>. */
+export function blobCachePath(cacheDir: string, sha256: string): string {
+  return path.join(cacheDir, sha256.substring(0, 2), sha256);
+}
+
 export async function copyFileAtomic(sourcePath: string, destination: string): Promise<void> {
   ensureDir(path.dirname(destination));
   const tempPath = temporarySibling(destination);

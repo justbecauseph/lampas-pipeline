@@ -86,6 +86,8 @@ async function validateOffline(fixture: ReturnType<typeof setupFixture>) {
     packDir: fixture.packDir,
     lockFile: fixture.lockFile,
     checkFabricMeta: false,
+    // Lock artifacts here are placeholders without jars.
+    checkModMetadata: false,
   });
 }
 
@@ -99,6 +101,7 @@ async function captureValidation(fixture: ReturnType<typeof setupFixture>, check
         packDir: fixture.packDir,
         lockFile: fixture.lockFile,
         checkFabricMeta,
+        checkModMetadata: false,
       }),
       messages,
     };

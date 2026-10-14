@@ -13,6 +13,7 @@ import {
 } from "./config-patches";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 import { computeManifests } from "./manifest";
+import { checkPackModMetadata } from "./mod-metadata";
 import { readPackPortalBaseUrl } from "./portal";
 
 function requireExactStringIdentity(value: unknown, label: string): string {
@@ -112,6 +113,8 @@ export interface ValidateOptions {
   packDir: string;
   lockFile: string;
   checkFabricMeta?: boolean;
+  /** Read fabric.mod.json from every mod jar per side. Defaults to true; tests with placeholder artifacts turn it off. */
+  checkModMetadata?: boolean;
 }
 
 export async function validatePack(options: ValidateOptions): Promise<boolean> {
@@ -409,6 +412,13 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
       console.error(`  ✗ [Invalid Manifest] ${err.message}`);
       hasErrors = true;
     }
+  }
+
+  // Fabric Loader refuses to start on unmet depends and matching breaks, and loads only one of several
+  // jars with the same mod ID, so check each side's jars (nested jar-in-jar mods included) as it would.
+  if (!hasErrors && options.checkModMetadata !== false) {
+    const issues = await checkPackModMetadata({ packDir: options.packDir, packConfig, lock });
+    if (issues > 0) hasErrors = true;
   }
 
   if (hasErrors) {

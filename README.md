@@ -319,6 +319,19 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
+`validate` reads `fabric.mod.json` from every `mods/*.jar` in the lockfile, and from the nested jar-in-jar entries each one lists under `jars`, and checks the client and server mod sets separately, as Fabric Loader would load them on that side. It fails on:
+
+- a mod ID that two top-level jars declare, through `id` or `provides` (Fabric Loader loads only one of them), or that collides with a builtin mod;
+- a top-level mod's `depends` entry that no loadable mod satisfies, or that two top-level mods constrain so that no single nested copy satisfies both;
+- a top-level mod's `breaks` entry that matches a mod that has to load (a builtin, or every top-level jar with that ID);
+- a `fabric.mod.json` that Fabric Loader's parser rejects: invalid JSON, an unsupported `schemaVersion`, an `id` or `provides` entry outside `[a-z][a-z0-9-_]{1,63}`, a missing `version`, an invalid `environment`, or a version predicate that does not parse. Other fields are not checked.
+
+The builtin mods are `minecraft` (`[pack] minecraft`), `fabricloader` (`[loader] version`) and `java` (25). Version predicates follow Fabric Loader: `*`, `>=`, `<=`, `>`, `<`, `=`, `~`, `^`, `x` wildcards, space-separated terms ANDed and array entries ORed, with prerelease identifiers compared dot-wise and numeric parts numerically (`26.2-3.6.28` is newer than `26.2-3.6.6`).
+
+The check follows Fabric Loader's resolver. Mods whose `environment` excludes a side are skipped on that side, with their nested jars; a dependency that only such a mod satisfies is not an error. Every top-level jar has to load. A nested mod loads only if its parent loads, no top-level or builtin mod has its ID, its own `depends` are satisfiable and no top-level `breaks` rule matches it; otherwise it is skipped silently, and only a mod that depends on it fails. Listed nested jars that are missing are skipped. The MixinExtras copy that Fabric Loader bundles is not modelled, so a `depends` on `mixinextras` needs a pack jar that bundles it; dependency overrides in `config/fabric_loader_dependencies.json` are not applied.
+
+Jars come from `pack/<file>` for `lampas` artifacts, the `resolve` download cache (`.lampas/cache/modrinth|curseforge/...`) or `.lampas/cache/sha256/` next to `pack/` (the sha256 blob layout `sync` uses). A jar missing from all of them is downloaded into the cache and verified against the lockfile's SHA-256 and size, so the first `validate` on a fresh checkout needs network access. A `lampas` jar that no longer matches the lockfile fails validation; run `lampasctl resolve`. This check has no skip flag.
+
 The Portal base URL baked into the release descriptor and server resource-pack URLs comes from `pack.toml`. Lampas blob URLs in the manifests stay relative (`/api/v1/blobs/<sha256>`); `deploy`, `start`, and `install` resolve them against their `--portal` value at sync time:
 
 ```toml

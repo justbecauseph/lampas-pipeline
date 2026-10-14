@@ -18,7 +18,23 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 
 const MODRINTH_API = "https://api.modrinth.com/v2";
-const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.town)";
+export const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.town)";
+
+/** Where `resolve` keeps a downloaded Modrinth or CurseForge file: <baseDir>/.lampas/cache/<provider>/<project>/<version or file>/<filename>. */
+export function providerCachePath(
+  baseDir: string,
+  provider: "modrinth" | "curseforge",
+  projectId: string | number,
+  versionOrFileId: string | number,
+  filename: string
+): string {
+  return path.resolve(baseDir, ".lampas", "cache", provider, String(projectId), String(versionOrFileId), path.basename(filename));
+}
+
+/** The local file behind a `lampas` provider descriptor (`file` is relative to the pack directory). */
+export function lampasArtifactPath(baseDir: string, file: string): string {
+  return path.resolve(baseDir, "pack", file);
+}
 const FETCH_ATTEMPTS = 2;
 
 export interface ModrinthVersionFile {
@@ -159,15 +175,12 @@ export class ArtifactResolver {
 
       // 3. If sha256 is still needed, check local disk cache or download verified
       if (!sha256) {
-        const filename = path.basename(primaryFile.filename);
-        const cachePath = path.resolve(
+        const cachePath = providerCachePath(
           baseDir,
-          ".lampas",
-          "cache",
           "modrinth",
           provider.project_id || version.project_id || "unknown",
           provider.version_id,
-          filename
+          primaryFile.filename
         );
 
         const expectedSha512 = primaryFile.hashes.sha512;
@@ -262,15 +275,7 @@ export class ArtifactResolver {
 
       const downloadUrl = await CurseForgeClient.getDownloadUrl(provider.project_id, provider.file_id, file);
       const filename = path.basename(file.fileName);
-      const cachePath = path.resolve(
-        baseDir,
-        ".lampas",
-        "cache",
-        "curseforge",
-        String(provider.project_id),
-        String(provider.file_id),
-        filename
-      );
+      const cachePath = providerCachePath(baseDir, "curseforge", provider.project_id, provider.file_id, filename);
 
       let hashes = fs.existsSync(cachePath) ? await computeFileHashesStreaming(cachePath) : undefined;
       if (!hashes || hashes.sha1 !== expectedSha1 || (file.fileLength > 0 && hashes.size !== file.fileLength)) {
@@ -308,7 +313,7 @@ export class ArtifactResolver {
     }
 
     if (provider.type === "lampas") {
-      const filePath = path.resolve(baseDir, "pack", provider.file);
+      const filePath = lampasArtifactPath(baseDir, provider.file);
       if (!fs.existsSync(filePath)) {
         throw new Error(`Mod '${modId}' (${name}): Lampas file '${provider.file}' not found at ${filePath}`);
       }

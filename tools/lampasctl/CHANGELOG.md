@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-15
+
+### Added
+- `lampasctl validate` reads `fabric.mod.json` from every mod jar in the lockfile, including nested jar-in-jar entries listed under `jars`, and checks the client and server mod sets separately, following Fabric Loader's resolver (environment filtering, optional nested mods, one copy per mod ID). It fails on top-level duplicate mod IDs (including `provides` and builtin IDs), top-level `depends` that no loadable mod satisfies, top-level `breaks` that match a mod that has to load, and `fabric.mod.json` files Fabric Loader's parser rejects (JSON, `schemaVersion`, mod ID format, `version`, `environment`, version predicates). Builtins are `minecraft` from `[pack] minecraft`, `fabricloader` from `[loader] version` and `java` 25. Version predicates follow Fabric Loader's semantics, so prerelease parts compare numerically (`26.2-3.6.28` > `26.2-3.6.6`). Pack 2.3.36 passed validation but crashed every client because WalksyLib 2.0.2 `breaks` `crossbowoptimizer <1.1.0` and an unrelated mod reused that ID; `validate` now rejects WalksyLib 2.0.2 with that mod.
+- Jars come from the `lampas` file in the pack, the `resolve` download cache or `.lampas/cache/sha256/` next to `pack/`, and are otherwise downloaded into the cache with SHA-256 and size verification. A fresh checkout needs network access for its first `validate`.
+
+### Changed
+- `resolve` and `sync` compute their cache paths through shared helpers (`providerCachePath`, `lampasArtifactPath`, `blobCachePath`); the paths are unchanged.
+
 ## [1.1.0] - 2026-10-14
 
 ### Added
