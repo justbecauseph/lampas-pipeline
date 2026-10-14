@@ -16,11 +16,11 @@ It guarantees **zero drift between clients and dedicated servers** by managing b
 
 ```mermaid
 graph TD
-    subgraph Git ["1. Authoritative Source of Truth"]
-        Pipeline["lampas-pipeline (Git)<br/>• pack.toml<br/>• mods/*.toml<br/>• client/ & server/ configs"]
+    subgraph Git ["1. Pack Source (local workspace)"]
+        Pipeline["lampas-pipeline workspace<br/>• pack/pack.toml (local, gitignored)<br/>• pack/mods/*.toml<br/>• pack/client/ & pack/server/ configs"]
     end
 
-    subgraph CI ["2. CI & Manifest Build"]
+    subgraph CI ["2. Validate & Manifest Build (local)"]
         Lampasctl["lampasctl validate + manifest<br/>• SHA-256 Checksums<br/>• Dependency/JiJ Validation<br/>• File Policy Engine"]
     end
 
@@ -80,7 +80,7 @@ graph TD
 4. **Standalone Desktop Launcher**: 100% independent of PrismLauncher, CurseForge App, or MultiMC. Bundles automatic **OpenJDK 25 (`java-runtime-epsilon`)** discovery and direct `KnotClient` JVM execution.
 5. **Web OAuth2 PKCE Authentication**: Desktop login delegates to the web portal via a browser loopback OAuth2 flow, linking Discord roles, SMP whitelist verification, and official Minecraft Java UUIDs in one click.
 6. **Zero-Downtime Rollbacks & Gated Channels**: Channels (`stable`, `beta`, `dev`) are mutable pointers to immutable releases, so promotion and rollback are atomic pointer updates.
-7. **Automated Upstream Updater**: Scheduled CI jobs monitor all pack mods and automatically open Pull Requests with changelogs when updates are released.
+7. **Upstream Update Checker**: `lampasctl check-updates` scans all pack mods, can apply updates and writes a Markdown changelog with `--markdown <path>`. It runs locally; no CI job schedules it.
 8. **Authoritative Loader Contract**: `pack.toml [loader]` defines the mod loader required by the release. Generated locks, manifests, and release descriptors derive their loader metadata from this definition and must never independently choose a loader version. Releases are verified against Fabric Meta to guarantee Minecraft/Loader compatibility before publication.
 
 ---
@@ -166,15 +166,16 @@ sequenceDiagram
 ```text
 lampas-pipeline/
 ├── pack/                         # Local modpack authoring workspace (gitignored)
-│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.3, Pack vX.X.X, [launcher.play], [launcher.resourcepacks])
+│   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.5, Pack vX.X.X, [portal], [launcher] (minimum_version, protocol), [launcher.play], [launcher.resourcepacks], [client].preserve)
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
 │   ├── mods/                     # Declarative mod TOML definitions
 │   ├── custom/                   # Lampas-owned local JAR inputs
 │   ├── resourcepacks/            # Declarative resource pack TOML definitions (e.g. lampas2.toml)
 │   ├── shaderpacks/              # Declarative shader-pack TOML definitions
 │   ├── common/                   # Shared configs, scripts, and assets (synced to both client & server)
-│   ├── client/                   # Client-only mods and configs
+│   ├── client/                   # Client-only mods and configs, plus seed files options.txt and servers.dat (PRESERVE)
 │   ├── server/                   # Server-only mods and configs
+│   ├── config-patches/           # Managed config patches (client.json)
 ├── manifest/                     # Generated release artifacts (gitignored)
 │   ├── client-manifest.json      # Client distribution manifest
 │   ├── server-manifest.json      # Dedicated server distribution manifest
@@ -184,10 +185,14 @@ lampas-pipeline/
 │   └── src/
 │       ├── blob-publisher.ts     # Lampas blob discovery, verification, prepare + direct PUT
 │       ├── checker.ts            # Concurrent upstream update checker for Modrinth/CurseForge
+│       ├── config-patches.ts     # Config patch, protected-path & client preserve validation
 │       ├── diff.ts               # Release & manifest visual diff tool
 │       ├── launcher/             # Dedicated server launcher (host sizing, JVM flags, start command)
 │       ├── manifest.ts           # Manifest builder for client/server distribution
+│       ├── manifest-rules.ts     # Manifest schema & protected-path checks run before writing
 │       ├── monitor/              # Server status monitor & Discord webhook alerts
+│       ├── portal.ts             # Portal base URL resolution from --portal, pack.toml & defaults
+│       ├── portal-compare.ts     # Generated manifests vs. the Portal channel release
 │       ├── publisher.ts          # Release publication and multi-channel metadata publishing
 │       ├── release-resolver.ts   # Remote Portal channel and release resolver
 │       ├── resolver.ts           # Upstream API dependency resolver
@@ -202,10 +207,10 @@ lampas-pipeline/
 │   ├── lampas-server-restart.timer   # Systemd restart timer
 │   └── lampas-discord-monitor.service # Discord status monitor unit (lampasctl monitor)
 │
+├── schemas/                      # JSON Schemas for pack, artifact, mod, config patch, lockfile, manifest, and release files
+│
 └── .github/workflows/
-    ├── validate-pack.yml         # PR automated smoke testing & lockfile validation
-    ├── release-lampasctl.yml     # Tagged lampasctl CLI builds, smoke tests, & GitHub release
-    └── update-check.yml          # Daily cron job for upstream mod update PRs
+    └── release-lampasctl.yml     # Tagged lampasctl CLI builds, smoke tests, & GitHub release
 ```
 
 > [!NOTE]
@@ -252,7 +257,7 @@ size, calculates the SHA-256/SHA-512 hashes required by Lampas, and keeps a veri
 `.lampas/cache/curseforge/` directory. Projects that disable third-party distribution must be downloaded manually and
 added as a local JAR instead.
 
-### 2. Daily Upstream Update Checker
+### 2. Upstream Update Checker
 Scan all pack mods concurrently against Modrinth / CurseForge APIs:
 ```bash
 # Check for newer compatible releases on Minecraft 26.2
@@ -261,7 +266,7 @@ bun run lampasctl check-updates
 # Automatically apply updates to pack/mods/*.toml
 bun run lampasctl check-updates --apply
 
-# Export Markdown changelog (used in GitHub Actions)
+# Export Markdown changelog
 bun run lampasctl check-updates --markdown update_summary.md
 
 # Ignore configured blacklist rules for this invocation only
@@ -314,14 +319,21 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
-The Portal base URL baked into manifest blob and release URLs comes from `pack.toml`:
+The Portal base URL baked into the release descriptor and server resource-pack URLs comes from `pack.toml`. Lampas blob URLs in the manifests stay relative (`/api/v1/blobs/<sha256>`); `deploy`, `start`, and `install` resolve them against their `--portal` value at sync time:
 
 ```toml
 [portal]
 base_url = "https://dev.lampas.town"
 ```
 
-Precedence for `manifest` (and `add` / `remove` / `enrich`): `--portal` → `PORTAL_BASE_URL` → `[portal] base_url` → `https://portal.lampas.town`. `publish` uses `--portal` → `PACK_PORTAL_URL` → `[portal] base_url`. `lampasctl validate` rejects a malformed `base_url`.
+Precedence per command:
+
+- `manifest`: `--portal` → `PORTAL_BASE_URL` → `[portal] base_url` → `https://portal.lampas.town`
+- `enrich`: `--portal` → `[portal] base_url`; without either, it writes relative `/api/v1/...` URLs, as `add` and `remove` do.
+- `add` / `remove`: only `[portal] base_url` (without one these write relative `/api/v1/...` URLs).
+- `publish`: `--portal` → `PACK_PORTAL_URL` → `[portal] base_url`
+
+Bun loads `.env` from the working directory, so `PACK_PORTAL_URL` or `PORTAL_BASE_URL` in `.env` overrides `[portal] base_url` like a shell variable. `publish` does not check that the manifests' URLs point at the Portal it publishes to; pass `--portal` explicitly when publishing. `lampasctl validate` rejects a malformed `base_url`. The `https://portal.lampas.town` fallback does not currently serve the Portal API (production is `https://dev.lampas.town`).
 
 After writing the manifests, `manifest` compares them with the Portal that the `manifest` precedence above resolves (not `PACK_PORTAL_URL`) and prints the result. It shows the version each channel (`dev`, `beta`, `stable`) points to and whether the local version is published (`published (revoked)` when the Portal answers 410). The per-target (client, server) diff lists files added, removed, or updated and changed top-level fields, relative to the release the selected channel points to. A target whose file hashes and top-level fields match but whose manifest differs elsewhere (download URLs or file order) is reported as identical files with other metadata differing. `--channel dev|beta|stable` selects the channel (default `stable`); any other value skips the comparison with a warning. `--no-portal-diff` skips the comparison. When the local version is already published, the publish check compares the Portal's stored copy of that version with the local build, in full: both manifests (file order and download URLs count) and the stored release metadata (status, minimum launcher version, launch settings, loader and Minecraft versions, git commit, signature). If any of these differ, the summary names the differing fields and warns that publishing will be rejected (409) and to bump `[pack] version` in `pack.toml`. A revoked version (410) gets a warning that publishing will be rejected (409), without a field list. If nothing differs, it says publishing only moves channel pointers. Portal request failures are reported in the summary and never change the exit code.
 
@@ -344,15 +356,15 @@ Supported adapters:
 - **INI** (`adapter: "ini"`): Section/key modifier preserving comments.
 - **Generic Text** (`adapter: "text"`): Literal search/replace with strict `expectedMatches` validation.
 
-Patches cannot target player data or launcher state. `lampasctl validate` and `manifest` reject a patch on `options.txt`, `servers.dat`, `usercache.json`, `hotbar.nbt`, `realms_persistence.json`, `saves/`, `screenshots/`, `logs/`, `crash-reports/`, or `.lampas-moving-*`. A config patch also cannot target any whole-file entry, whether `MANAGED` or `PRESERVE`. The only exception is a keybind rebind of exactly `options.txt` (lowercase, with no `./`, no trailing slash): `adapter: "properties"`, `mode: "once"`, `missingFile: "defer"`, and only `set` operations on a single `key_*` path with a `key.keyboard.*` or `key.mouse.*` value. Such a rebind may accompany a PRESERVE `options.txt` from `pack/client/`. The launcher defers a keybind patch until its `key_*` lines exist in `options.txt`, and one missing line defers the whole patch, so `lampasctl` warns about patches that set several keys. Keep one keybind patch per mod. Launchers older than the release that supports this exception reject the patch (see the note on `[launcher].minimum_version` below).
+Patches cannot target player data or launcher state. `lampasctl validate` and `manifest` reject a patch on `options.txt`, `servers.dat`, `usercache.json`, `hotbar.nbt`, `realms_persistence.json`, `saves/`, `screenshots/`, `logs/`, `crash-reports/`, `.lampas/`, or `.lampas-moving-*`. A config patch also cannot target any whole-file entry, whether `MANAGED` or `PRESERVE`. The only exception is a keybind rebind of exactly `options.txt` (lowercase, with no `./`, no trailing slash): `adapter: "properties"`, `mode: "once"`, `missingFile: "defer"`, and only `set` operations on a single `key_*` path with a `key.keyboard.*` or `key.mouse.*` value. Such a rebind may accompany a PRESERVE `options.txt` from `pack/client/`. The launcher defers a keybind patch until its `key_*` lines exist in `options.txt`, and one missing line defers the whole patch, so `lampasctl` warns about patches that set several keys. Keep one keybind patch per mod. Launchers before 1.6.0 reject the patch (see the note on `[launcher].minimum_version` below).
 
-Patch paths, `[client].preserve` entries, and client manifest paths follow the launcher's canonical path rules. A backslash is converted to `/`, and one trailing slash is dropped. Absolute paths, `.` and `..` segments, empty inner segments, segments ending in a dot or space, `:`, reserved device names, control characters, DEL, and leading or trailing whitespace are errors. Client manifest paths that differ only by case are duplicates and are also errors. Emitted patch paths are canonical.
+Patch paths, `[client].preserve` entries, and client manifest paths follow the launcher's canonical path rules. A backslash is converted to `/`, and one trailing slash is dropped. Absolute paths, `.` and `..` segments, empty inner segments, segments ending in a dot or space, `:`, reserved device names, `__proto__`, `constructor` or `prototype` segments, control characters, DEL, and leading or trailing whitespace are errors. Client manifest paths that differ only by case are duplicates and are also errors. Emitted patch paths are canonical.
 
-`pack/client/options.txt` and `pack/client/servers.dat` are seed-only defaults. `options.txt` carries keybind defaults and a `version:` line. `manifest` ships each file as `policy: "PRESERVE"`, so the launcher places it only when the player has no copy and never overwrites an existing one. These are the only launcher-protected files a client manifest may contain. Each must be the exact lowercase name under `pack/client/`. A different spelling, a non-PRESERVE policy, or a copy under `pack/common/` is rejected, even when listed in `[client].preserve`. A keybind patch may target `options.txt`, but no config patch may target `servers.dat`. Shipping these seeds requires a launcher release that accepts PRESERVE for both files (see the note on `[launcher].minimum_version` below).
+`pack/client/options.txt` and `pack/client/servers.dat` are seed-only defaults. `options.txt` carries keybind defaults and a `version:` line. `manifest` ships each file as `policy: "PRESERVE"`, so the launcher places it only when the player has no copy and never overwrites an existing one. These are the only launcher-protected files a client manifest may contain. Each must be the exact lowercase name under `pack/client/`. A different spelling, a non-PRESERVE policy, or a copy under `pack/common/` is rejected, even when listed in `[client].preserve`. A keybind patch may target `options.txt`, but no config patch may target `servers.dat`. Shipping these seeds requires launcher 1.6.0 or later (see the note on `[launcher].minimum_version` below).
 
 `[client].preserve` in `pack.toml` lists other client files that ship as seed-only defaults, using the client-relative paths the client manifest emits, for example `preserve = ["options.amecs.key_modifiers.txt"]`. A listed file is PRESERVE, the same as the seed files: the launcher places it when the player has no copy and does not overwrite it. An entry may name a file under `pack/client/` or `pack/common/`, and matching is case-insensitive. Each entry must canonicalize, must match an existing client file, and must not be a launcher-protected path. The only protected paths that may appear are the exact seed paths `options.txt` and `servers.dat` from `pack/client/`, which are PRESERVE without an entry. A config patch cannot target a listed file, because a PRESERVE whole-file entry conflicts with a config patch the same way a MANAGED entry does. The launcher already applies PRESERVE to unprotected paths, so these entries do not need a newer launcher release.
 
-`[launcher].minimum_version` does not protect older launchers. Launchers before 1.6.0 check the manifest schema before they check the version, so a pack that uses these rules shows those launchers a schema error, not an "update required" message, until the player updates the launcher. Only launchers 1.6.0 and later read `[launcher].minimum_version` in time to show the update message. Set it to the release that supports these rules, and expect the schema error on older launchers either way.
+Seed files and `options.txt` keybind patches need launcher 1.6.0 or later; the current pack sets `minimum_version = "1.6.0"`. `lampasctl` does not check this value against the features a pack uses, and writes `1.0.0` when the key is missing. `[launcher].minimum_version` does not protect older launchers. Launchers before 1.6.0 check the manifest schema before they check the version, so a pack that uses these rules shows those launchers a schema error, not an "update required" message, until the player updates the launcher. Launchers 1.6.0 and later check the version first and show the update message.
 
 ### 5. Release Diff Tool
 Compare two manifests to inspect added, removed, or updated mods along with size deltas:
@@ -360,13 +372,13 @@ Compare two manifests to inspect added, removed, or updated mods along with size
 bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server-manifest.json
 ```
 
-### 5. Portal Release Publishing
+### 6. Portal Release Publishing
 Publish Lampas-owned artifacts to content-addressed object storage and atomically publish release metadata to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
 
 ```bash
 # Supply the token through the shell or CI secret store; never commit it.
 # PACK_PORTAL_URL is optional when pack.toml defines [portal] base_url.
-export PACK_PORTAL_URL=https://portal.lampas.town
+# PACK_PORTAL_URL (shell or .env) overrides pack.toml [portal] base_url; leave it unset to publish to base_url.
 export PACK_PUBLISH_SECRET="<PUBLISH_TOKEN>"
 
 # Publish release and simultaneously update all channels (dev, beta, stable):
@@ -432,7 +444,7 @@ Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publi
 - **`lampasctl`**: Requires `PACK_PUBLISH_SECRET`; receives short-lived presigned PUT URLs for missing hashes from `/api/v1/blobs/prepare`.
 - **Launcher / Server Deployments**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
 
-### 6. Headless Client / Server Sync
+### 7. Headless Client / Server Sync
 ```bash
 bun run lampasctl install --manifest manifest/client-manifest.json --target ./my-instance
 
@@ -496,7 +508,7 @@ artifact = "lampas2"
 required = true
 prompt = '{"text":"The Lampas 2 resource pack"}'
 ```
-- **Server-only CAS descriptor**: The generated `server-manifest.json` is the authoritative desired server state and carries the resource pack descriptor; it is deliberately absent from `files[]` and from the client manifest. For a Lampas resource pack, the descriptor must include `provider = "lampas"`, a safe `path` under `resourcepacks/`, `size` in bytes, a 40-character `sha1`, a 64-character `sha256`, and a URL whose path is exactly `/api/v1/blobs/<sha256>`. See [`manifest/server-resource-pack.json`](manifest/server-resource-pack.json) for the generated descriptor and current values.
+- **Server-only CAS descriptor**: The generated `server-manifest.json` is the authoritative desired server state and carries the resource pack descriptor; it is deliberately absent from `files[]` and from the client manifest. For a Lampas resource pack, the descriptor must include `provider = "lampas"`, a safe `path` under `resourcepacks/`, `size` in bytes, a 40-character `sha1`, a 64-character `sha256`, and a URL whose path is exactly `/api/v1/blobs/<sha256>`. `lampasctl manifest` writes the descriptor to `manifest/server-resource-pack.json` (local, gitignored).
 - **CAS Blob Address**: Published to the Portal under stable, content-addressed URL `/api/v1/blobs/<sha256>`; the redirect target is short-lived. The Portal release descriptor links consumers to the published server manifest rather than maintaining a separate resource-pack definition. The pipeline's generated `release.json` may mirror build metadata, including the resource-pack descriptor, for publication and artifact inspection.
 - **`server.properties` Reconciliation**: During server deployment (`lampasctl deploy` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
   - `resource-pack=<url>`
@@ -555,13 +567,13 @@ It consumes manifest URLs directly, without needing to know whether bytes origin
 
 ```bash
 # Full deployment with an automatic timestamped world backup (latest two retained)
-lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev
+lampasctl deploy --target /srv/minecraft --portal https://dev.lampas.town --channel dev
 
 # Skip backup (for automated CI/CD runs or space-constrained hosts)
-lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --channel dev --no-backup
+lampasctl deploy --target /srv/minecraft --portal https://dev.lampas.town --channel dev --no-backup
 
 # Deploy specific release version
-lampasctl deploy --target /srv/minecraft --portal https://portal.lampas.town --version 2.0.2
+lampasctl deploy --target /srv/minecraft --portal https://dev.lampas.town --version 2.0.2
 ```
 
 When `--version` is omitted, `deploy` resolves the selected channel (default: `dev`) through the Portal, then fetches that exact release descriptor and server manifest. Resolution is fail-closed: an invalid channel, non-success response, missing channel pointer/version, missing release, or missing manifest aborts deployment. There is no fallback to a latest release. Supplying `--version` bypasses the channel pointer but still fetches and validates the immutable release from the Portal.
@@ -601,7 +613,7 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
 
 ```bash
 # Standard server launch (in-process pack sync + adaptive JVM sizing)
-lampasctl start --target /home/server --portal https://portal.lampas.town --channel dev
+lampasctl start --target /home/server --portal https://dev.lampas.town --channel dev
 
 # Fast launch skipping deployment synchronization
 lampasctl start --target /home/server --no-sync
@@ -677,7 +689,7 @@ lampasctl monitor --interval 15 --threshold 3 --public-address "play.lampas.town
 | `--once` | — | `false` | Single-shot check; exits `0` if online, `1` if offline |
 
 #### Key Features:
-- **Zero-Dependency Native SLP**: Native Minecraft Server List Ping implementation using `node:net` and VarInt framing. Compatible with Protocol 767 (Minecraft 1.21.x / 26.2).
+- **Zero-Dependency Native SLP**: Native Minecraft Server List Ping implementation using `node:net` and VarInt framing. Sends protocol 767 in the status handshake; servers answer status requests regardless of the client protocol.
 - **Rich Embed Notifications**: Dispatches formatted Discord webhook embeds:
   - **Online**: Green embed (`#2ecc71`) displaying server version, live player count (`X / Y`), and public address.
   - **Offline**: Red embed (`#e74c3c`) with dynamic relative downtime timestamp (`<t:...:R>`).
@@ -733,9 +745,9 @@ Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verific
 
 ## 🤖 CI/CD Automation
 
-- **[`validate-pack.yml`](.github/workflows/validate-pack.yml)**: On selected branch pushes and pull requests, typechecks the codebase, validates the pack and lockfile, regenerates manifests, and performs a headless client installation.
 - **[`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml)**: Builds and publishes the standalone `lampasctl` CLI for Linux and Windows, with typecheck, full Bun tests, CLI sanity checks, artifact smoke tests, and SHA-256 checksums.
-- **[`update-check.yml`](.github/workflows/update-check.yml)**: Daily cron job checking upstream mod repositories for Minecraft 26.2 updates and opening automated PRs. Configure the repository secret `CURSEFORGE_API_KEY` before adding CurseForge-backed descriptors.
+
+Pack validation and update checks have no CI workflow; run `lampasctl validate` and `check-updates` locally.
 
 ### Release gates and version tags
 
@@ -749,7 +761,7 @@ bun run lampasctl validate
 bun run lampasctl manifest
 ```
 
-The canonical pack tag is `lampas-pack-v<pack-version>`. It is a traceability marker; creating or pushing it does not publish the pack. Portal publication is performed explicitly with `lampasctl publish` and an explicitly selected channel. The canonical CLI tag is `lampasctl-v<cli-version>`; pushing it triggers [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml). Keep the two version streams independent and do not use a generic `v<version>` tag.
+The canonical pack tag is `lampas-pack-v<pack-version>`. It is a traceability marker; creating or pushing it does not publish the pack. Portal publication is performed explicitly with `lampasctl publish`; omitting `--channel` moves `dev`, `beta` and `stable` together. The canonical CLI tag is `lampasctl-v<cli-version>`; pushing it triggers [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml). Keep the two version streams independent and do not use a generic `v<version>` tag.
 
 Commit, tag, push, Portal publication, and server deployment are separate authorization boundaries. A successful validation or build does not authorize any of the others. Publishing requires the Portal URL and `PACK_PUBLISH_SECRET`; deployment requires its own explicit `lampasctl deploy` action against a target server.
 
