@@ -413,6 +413,10 @@ describe("RconClient network exchange", () => {
       const reason = client.lastError;
       client.close();
       expect(client.lastError).toBe(reason);
+
+      // A new connect() forgets the old drop, even when it fails.
+      await expect(client.connect("127.0.0.1", 1, "pwd", 500)).rejects.toThrow();
+      expect(client.lastError).toBeNull();
     } finally {
       for (const s of sockets) s.destroy();
       await new Promise<void>((res) => server.close(() => res()));
@@ -890,15 +894,18 @@ describe("CLI argument parsing for restart command", () => {
   });
 
   test("cli refuses a dash-led argument with exit 2 before the restart runs, without echoing it", () => {
-    const res = spawnSync(
-      "bun",
-      ["run", cliPath, "restart", "--rcon-password", "-Xq9secretPw", "--immediate", "--dry-run"],
-      { encoding: "utf-8" }
-    );
+    // The second form puts a server directory first, so the dash-led value is not positional[0].
+    for (const lead of [[], ["/srv/minecraft"]]) {
+      const res = spawnSync(
+        "bun",
+        ["run", cliPath, "restart", ...lead, "--rcon-password", "-Xq9secretPw", "--immediate", "--dry-run"],
+        { encoding: "utf-8" }
+      );
 
-    expect(res.status).toBe(2);
-    expect(res.stderr).toContain('unexpected argument beginning with "-"');
-    expect(res.stdout).not.toContain("ScheduledRestart");
-    expect(res.stdout + res.stderr).not.toContain("Xq9secretPw");
+      expect(res.status).toBe(2);
+      expect(res.stderr).toContain('unexpected argument beginning with "-"');
+      expect(res.stdout).not.toContain("ScheduledRestart");
+      expect(res.stdout + res.stderr).not.toContain("Xq9secretPw");
+    }
   });
 });

@@ -532,7 +532,7 @@ async function main() {
       case "restart": {
         // parseArgs reads "--rcon-password -secret" as a flag with no value plus a positional, so a
         // dash-led positional is an option value. Refuse it without echoing it, since it may be a password.
-        if (positional[0]?.startsWith("-")) {
+        if (positional.some((arg) => arg.startsWith("-"))) {
           console.error(
             'restart: unexpected argument beginning with "-". If it is a value for an option such as --rcon-password, ' +
               "write it as --option=<value>. Pass the server directory with --target."

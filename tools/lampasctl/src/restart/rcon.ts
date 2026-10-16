@@ -187,13 +187,14 @@ export class RconClient {
     return this.socket !== null && !this.socket.destroyed && this.authenticated;
   }
 
-  /** Why the socket dropped after connect() succeeded, or null. A successful connect() clears it. */
+  /** Why the socket dropped after connect() succeeded, or null. Each connect() clears it. */
   get lastError(): string | null {
     return this.lastErrorReason;
   }
 
   async connect(host: string, port: number, password: string, timeoutMs = 5000): Promise<void> {
     this.close();
+    this.lastErrorReason = null;
 
     return new Promise<void>((resolve, reject) => {
       let settled = false;
