@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { RconClient, resolveRconConfig, type RconPasswordSource } from "./rcon";
+import { describeRconError, RconClient, resolveRconConfig, type RconPasswordSource } from "./rcon";
 
 export type ExecCommandFn = (
   cmd: string,
@@ -65,14 +65,6 @@ const RCON_PASSWORD_SOURCE_LABELS: Record<RconPasswordSource, string> = {
   default: "no password configured",
 };
 
-/** Formats an RCON or socket error as its message plus the error code when the message lacks it. */
-export function describeRconError(err: unknown): string {
-  if (!(err instanceof Error)) return String(err);
-  const code = (err as NodeJS.ErrnoException).code;
-  const message = err.message || code || err.name;
-  return code && !message.includes(code) ? `${message} (${code})` : message;
-}
-
 /**
  * Runs the scheduled or immediate Minecraft server restart sequence.
  * Connects to RCON to broadcast countdown warnings and trigger `save-all`,
@@ -133,7 +125,11 @@ export async function runScheduledRestart(
 
   const broadcast = async (msg: string) => {
     log(`Broadcasting: ${msg}`);
-    if (!rcon || !rcon.isConnected) {
+    if (rcon && !rcon.isConnected) {
+      log(`Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping broadcast.`);
+      return;
+    }
+    if (!rcon) {
       log(`Notice: RCON unavailable (${rconError}). Skipping broadcast.`);
       return;
     }
@@ -148,7 +144,11 @@ export async function runScheduledRestart(
 
   const sendCommand = async (cmd: string) => {
     log(`Executing RCON command: ${cmd}`);
-    if (!rcon || !rcon.isConnected) {
+    if (rcon && !rcon.isConnected) {
+      log(`Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping ${cmd}.`);
+      return;
+    }
+    if (!rcon) {
       log(`Notice: RCON unavailable (${rconError}). Skipping ${cmd}.`);
       return;
     }

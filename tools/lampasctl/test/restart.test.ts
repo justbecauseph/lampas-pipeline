@@ -1,4 +1,5 @@
 import { describe, expect, spyOn, test } from "bun:test";
+import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as net from "node:net";
 import * as os from "node:os";
@@ -15,6 +16,8 @@ import {
   formatRestartTimestamp,
   type ExecCommandFn,
 } from "../src/restart/restart";
+
+const cliPath = path.resolve(__dirname, "../src/cli.ts");
 
 interface MockRconServer {
   server: net.Server;
@@ -115,6 +118,36 @@ class FakeRconClient extends RconClient {
 
   override async send(): Promise<string> {
     if (this.failures.send) throw this.failures.send;
+    return "";
+  }
+
+  override close(): void {
+    this.connected = false;
+  }
+}
+
+// Connects, accepts the first command, then reports the socket as dropped with the given lastError.
+class DroppedRconClient extends RconClient {
+  private connected = false;
+
+  constructor(private readonly reason: string) {
+    super();
+  }
+
+  override get isConnected(): boolean {
+    return this.connected;
+  }
+
+  override get lastError(): string | null {
+    return this.reason;
+  }
+
+  override async connect(): Promise<void> {
+    this.connected = true;
+  }
+
+  override async send(): Promise<string> {
+    this.connected = false;
     return "";
   }
 
@@ -335,6 +368,51 @@ describe("RconClient network exchange", () => {
       }
       expect(sendFailed).toBe(true);
       client.close();
+    } finally {
+      for (const s of sockets) s.destroy();
+      await new Promise<void>((res) => server.close(() => res()));
+    }
+  });
+
+  test("keeps why the socket dropped after authenticating, and does not record its own close()", async () => {
+    const sockets = new Set<net.Socket>();
+    const server = net.createServer((socket) => {
+      sockets.add(socket);
+      let rxBuf = Buffer.alloc(0);
+      socket.on("data", (chunk) => {
+        rxBuf = Buffer.concat([rxBuf, chunk]);
+        while (rxBuf.length >= 4) {
+          const len = rxBuf.readInt32LE(0);
+          if (rxBuf.length < len + 4) break;
+          const packet = parseRconPacket(rxBuf.subarray(0, len + 4));
+          rxBuf = rxBuf.subarray(len + 4);
+          if (packet?.type === 3) {
+            // Destroy once the auth response is flushed, so the client authenticates and then loses the socket.
+            socket.write(createRconPacket(packet.reqId, 2, ""), () => socket.destroy());
+          }
+        }
+      });
+    });
+
+    await new Promise<void>((res) => server.listen(0, "127.0.0.1", () => res()));
+    const port = (server.address() as net.AddressInfo).port;
+
+    try {
+      const client = new RconClient();
+      await client.connect("127.0.0.1", port, "pwd");
+      expect(client.lastError).toBeNull();
+
+      const deadline = Date.now() + 2000;
+      while (client.isConnected && Date.now() < deadline) {
+        await new Promise((res) => setTimeout(res, 10));
+      }
+      expect(client.isConnected).toBe(false);
+      // A clean FIN gives the close reason; a reset gives the socket error.
+      expect(client.lastError).toMatch(/RCON socket closed by remote server|ECONNRESET|ECONNABORTED/);
+
+      const reason = client.lastError;
+      client.close();
+      expect(client.lastError).toBe(reason);
     } finally {
       for (const s of sockets) s.destroy();
       await new Promise<void>((res) => server.close(() => res()));
@@ -728,6 +806,55 @@ describe("runScheduledRestart sequencer", () => {
     }
   });
 
+  test("skip lines after a dropped connection give the socket reason, not 'not connected'", async () => {
+    const { exitCode, lines } = await captureRestartLog(() =>
+      runScheduledRestart({
+        countdownMinutes: 5,
+        rconPassword: "pass",
+        sleepFn: async () => {},
+        rconClientFactory: () => new DroppedRconClient("RCON socket closed by remote server"),
+        execCommandFn: activeServiceExec,
+      })
+    );
+
+    expect(exitCode).toBe(0);
+    // The first 5-minute broadcast is accepted; the 3-minute and 1-minute broadcasts, the restart broadcast and save-all are skipped.
+    const skips = lines.filter((l) => l.includes("Skipping"));
+    expect(skips).toHaveLength(4);
+    for (const line of skips) {
+      expect(line).toContain("RCON connection lost (RCON socket closed by remote server)");
+      expect(line).not.toContain("(not connected)");
+    }
+    expect(skips[skips.length - 1]).toContain("Skipping save-all.");
+  });
+
+  test("skip lines fall back to 'connection closed after connecting' when the client has no lastError", async () => {
+    const { exitCode, lines } = await captureRestartLog(() =>
+      runScheduledRestart({
+        immediate: true,
+        rconPassword: "pass",
+        sleepFn: async () => {},
+        // A mock from rconClientFactory without the lastError getter, so the property is undefined.
+        rconClientFactory: () =>
+          ({
+            isConnected: false,
+            connect: async () => {},
+            send: async () => "",
+            close: () => {},
+          }) as unknown as RconClient,
+        execCommandFn: activeServiceExec,
+      })
+    );
+
+    expect(exitCode).toBe(0);
+    const skips = lines.filter((l) => l.includes("Skipping"));
+    expect(skips).toHaveLength(2);
+    for (const line of skips) {
+      expect(line).toContain("RCON connection lost (connection closed after connecting)");
+      expect(line).not.toContain("(not connected)");
+    }
+  });
+
   test("formatRestartTimestamp produces valid UTC ISO-like timestamp string", () => {
     const ts = formatRestartTimestamp(new Date("2026-10-11T10:00:00Z"));
     expect(ts).toBe("[2026-10-11 10:00:00 UTC]");
@@ -760,5 +887,18 @@ describe("CLI argument parsing for restart command", () => {
     expect(parsed.flags["dry-run"]).toBe("true");
     expect(parsed.flags["rcon-password"]).toBe("supersecret");
     expect(parsed.flags.target).toBe("/srv/minecraft");
+  });
+
+  test("cli refuses a dash-led argument with exit 2 before the restart runs, without echoing it", () => {
+    const res = spawnSync(
+      "bun",
+      ["run", cliPath, "restart", "--rcon-password", "-Xq9secretPw", "--immediate", "--dry-run"],
+      { encoding: "utf-8" }
+    );
+
+    expect(res.status).toBe(2);
+    expect(res.stderr).toContain('unexpected argument beginning with "-"');
+    expect(res.stdout).not.toContain("ScheduledRestart");
+    expect(res.stdout + res.stderr).not.toContain("Xq9secretPw");
   });
 });

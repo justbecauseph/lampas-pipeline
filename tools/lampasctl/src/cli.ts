@@ -530,6 +530,15 @@ async function main() {
       }
 
       case "restart": {
+        // parseArgs reads "--rcon-password -secret" as a flag with no value plus a positional, so a
+        // dash-led positional is an option value. Refuse it without echoing it, since it may be a password.
+        if (positional[0]?.startsWith("-")) {
+          console.error(
+            'restart: unexpected argument beginning with "-". If it is a value for an option such as --rcon-password, ' +
+              "write it as --option=<value>. Pass the server directory with --target."
+          );
+          process.exit(2);
+        }
         const targetDir = flags.target || positional[0] || rootDir;
         const serviceName = flags.service || "lampas-server.service";
         const countdownMinutes = flags.countdown ? parseInt(flags.countdown, 10) : 5;

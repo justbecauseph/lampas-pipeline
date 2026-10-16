@@ -155,6 +155,14 @@ export function resolveRconConfig(options: ResolveRconConfigOptions = {}): RconC
   return { host, port, password, passwordSource, serverPropertiesFound };
 }
 
+/** Formats an RCON or socket error as its message plus the error code when the message lacks it. */
+export function describeRconError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const code = (err as NodeJS.ErrnoException).code;
+  const message = err.message || code || err.name;
+  return code && !message.includes(code) ? `${message} (${code})` : message;
+}
+
 /**
  * Native Minecraft RCON client over TCP.
  */
@@ -163,6 +171,7 @@ export class RconClient {
   private rxBuffer = Buffer.alloc(0);
   private nextReqId = 1;
   private authenticated = false;
+  private lastErrorReason: string | null = null;
   private pendingRequests = new Map<
     number,
     { resolve: (payload: string) => void; reject: (err: Error) => void; timer: NodeJS.Timeout }
@@ -176,6 +185,11 @@ export class RconClient {
 
   get isConnected(): boolean {
     return this.socket !== null && !this.socket.destroyed && this.authenticated;
+  }
+
+  /** Why the socket dropped after connect() succeeded, or null. A successful connect() clears it. */
+  get lastError(): string | null {
+    return this.lastErrorReason;
   }
 
   async connect(host: string, port: number, password: string, timeoutMs = 5000): Promise<void> {
@@ -233,6 +247,7 @@ export class RconClient {
             }
             if (packet.type === 2 && packet.reqId === this.authPending.reqId) {
               this.authenticated = true;
+              this.lastErrorReason = null;
               this.authPending = null;
               settled = true;
               cleanup();
@@ -333,9 +348,14 @@ export class RconClient {
 
   private handleSocketClose(): void {
     this.authenticated = false;
+    const reason = "RCON socket closed by remote server";
+    // An error that arrived first on this connection is the more specific reason.
+    if (this.lastErrorReason === null) {
+      this.lastErrorReason = reason;
+    }
     for (const [, pending] of this.pendingRequests.entries()) {
       clearTimeout(pending.timer);
-      pending.reject(new Error("RCON socket closed by remote server"));
+      pending.reject(new Error(reason));
     }
     this.pendingRequests.clear();
     this.socket = null;
@@ -343,6 +363,7 @@ export class RconClient {
 
   private handleSocketError(err: Error): void {
     this.authenticated = false;
+    this.lastErrorReason = describeRconError(err);
     for (const [, pending] of this.pendingRequests.entries()) {
       clearTimeout(pending.timer);
       pending.reject(err);
