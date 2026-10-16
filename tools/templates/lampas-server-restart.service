@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/lampasctl restart
+ExecStart=/usr/local/bin/lampasctl restart --target /home/server --service lampas-server.service
 TimeoutStartSec=600
 StandardOutput=journal
 StandardError=journal
