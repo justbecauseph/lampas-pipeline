@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+- `lampasctl restart` logs why RCON failed instead of "RCON unreachable or server offline": the connection error (for example `RCON authentication failed: invalid password` or `connect ECONNREFUSED 127.0.0.1:25575`) when connecting, and the error with each skipped or failed broadcast and `save-all`. It also logs the server directory, the RCON address and where the password came from, never the password itself. On 16 Oct 2026 the countdown restart unit ran without `--target`, read no `server.properties` from `/`, sent an empty password and skipped every broadcast and `save-all` behind the generic notice.
+- `lampasctl restart` warns, naming the directory, when the target directory has no `server.properties` and no password came from `--rcon-password`, `RCON_PASSWORD` or `.minecraft-env`. Pass `--target <server directory>` when it runs from elsewhere, such as a systemd unit.
+
 ## [1.3.1] - 2026-10-15
 
 The `lampasctl-v1.3.0` tag has no release: its workflow failed in the test gate. 1.3.1 is the first release with `self-update`.

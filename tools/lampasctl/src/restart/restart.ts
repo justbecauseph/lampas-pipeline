@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { RconClient, resolveRconConfig } from "./rcon";
+import { RconClient, resolveRconConfig, type RconPasswordSource } from "./rcon";
 
 export type ExecCommandFn = (
   cmd: string,
@@ -57,6 +57,22 @@ export function formatRestartTimestamp(date = new Date()): string {
   return `[${year}-${month}-${day} ${hours}:${minutes}:${seconds} UTC]`;
 }
 
+const RCON_PASSWORD_SOURCE_LABELS: Record<RconPasswordSource, string> = {
+  option: "password from --rcon-password",
+  env: "password from RCON_PASSWORD",
+  "minecraft-env": "password from .minecraft-env",
+  "server.properties": "password from server.properties",
+  default: "no password configured",
+};
+
+/** Formats an RCON or socket error as its message plus the error code when the message lacks it. */
+export function describeRconError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  const code = (err as NodeJS.ErrnoException).code;
+  const message = err.message || code || err.name;
+  return code && !message.includes(code) ? `${message} (${code})` : message;
+}
+
 /**
  * Runs the scheduled or immediate Minecraft server restart sequence.
  * Connects to RCON to broadcast countdown warnings and trigger `save-all`,
@@ -91,41 +107,57 @@ export async function runScheduledRestart(
     port: options.rconPort,
     password: options.rconPassword,
   });
+  const rconAddress = `${rconConfig.host}:${rconConfig.port}`;
 
+  log(`Server directory: ${targetDir}`);
+  log(`RCON ${rconAddress}, ${RCON_PASSWORD_SOURCE_LABELS[rconConfig.passwordSource]}`);
+  if (!rconConfig.serverPropertiesFound && rconConfig.passwordSource === "default") {
+    log(
+      `Warning: No server.properties in ${targetDir} and no RCON password from --rcon-password, ` +
+        "RCON_PASSWORD or .minecraft-env; using an empty password. " +
+        "Pass --target <server directory> if this is not the server directory."
+    );
+  }
+
+  // Last RCON error, logged with each skipped broadcast or command. Never includes the password.
+  let rconError = "not connected";
   let rcon: RconClient | null = null;
   try {
     const client = options.rconClientFactory ? options.rconClientFactory() : new RconClient();
     await client.connect(rconConfig.host, rconConfig.port, rconConfig.password || "", 5000);
     rcon = client;
-  } catch {
-    log("Notice: RCON unreachable or server offline. Skipping broadcast.");
+  } catch (err) {
+    rconError = describeRconError(err);
+    log(`Notice: RCON connection to ${rconAddress} failed: ${rconError}`);
   }
 
   const broadcast = async (msg: string) => {
     log(`Broadcasting: ${msg}`);
     if (!rcon || !rcon.isConnected) {
-      log("Notice: RCON unreachable or server offline. Skipping broadcast.");
+      log(`Notice: RCON unavailable (${rconError}). Skipping broadcast.`);
       return;
     }
     try {
       await rcon.send(`say ${msg}`);
       log("Broadcast sent successfully.");
-    } catch {
-      log("Notice: RCON unreachable or server offline. Skipping broadcast.");
+    } catch (err) {
+      rconError = describeRconError(err);
+      log(`Notice: RCON broadcast failed: ${rconError}`);
     }
   };
 
   const sendCommand = async (cmd: string) => {
     log(`Executing RCON command: ${cmd}`);
     if (!rcon || !rcon.isConnected) {
-      log("Notice: RCON command failed (server may be offline).");
+      log(`Notice: RCON unavailable (${rconError}). Skipping ${cmd}.`);
       return;
     }
     try {
       await rcon.send(cmd);
       log("RCON command executed successfully.");
-    } catch {
-      log("Notice: RCON command failed (server may be offline).");
+    } catch (err) {
+      rconError = describeRconError(err);
+      log(`Notice: RCON command ${cmd} failed: ${rconError}`);
     }
   };
 

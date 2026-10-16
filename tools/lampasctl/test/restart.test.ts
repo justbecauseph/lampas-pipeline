@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs";
 import * as net from "node:net";
 import * as os from "node:os";
@@ -95,6 +95,44 @@ function startMockRconServer(options: {
 
     server.on("error", reject);
   });
+}
+
+class FakeRconClient extends RconClient {
+  private connected = false;
+
+  constructor(private readonly failures: { connect?: Error; send?: Error } = {}) {
+    super();
+  }
+
+  override get isConnected(): boolean {
+    return this.connected;
+  }
+
+  override async connect(): Promise<void> {
+    if (this.failures.connect) throw this.failures.connect;
+    this.connected = true;
+  }
+
+  override async send(): Promise<string> {
+    if (this.failures.send) throw this.failures.send;
+    return "";
+  }
+
+  override close(): void {
+    this.connected = false;
+  }
+}
+
+const activeServiceExec: ExecCommandFn = async () => ({ code: 0, stdout: "active\n", stderr: "" });
+
+async function captureRestartLog(run: () => Promise<number>): Promise<{ exitCode: number; lines: string[] }> {
+  const logSpy = spyOn(console, "log").mockImplementation(() => {});
+  try {
+    const exitCode = await run();
+    return { exitCode, lines: logSpy.mock.calls.map((args) => args.join(" ")) };
+  } finally {
+    logSpy.mockRestore();
+  }
 }
 
 describe("RCON packet protocol (rcon.ts)", () => {
@@ -316,6 +354,7 @@ describe("resolveRconConfig", () => {
     expect(config.host).toBe("custom.host");
     expect(config.port).toBe(25580);
     expect(config.password).toBe("custom-pass");
+    expect(config.passwordSource).toBe("option");
   });
 
   test("falls back to process.env variables", () => {
@@ -327,6 +366,7 @@ describe("resolveRconConfig", () => {
       expect(config.host).toBe("env.host");
       expect(config.port).toBe(25585);
       expect(config.password).toBe("env-pass");
+      expect(config.passwordSource).toBe("env");
     } finally {
       process.env = { ...origEnv };
     }
@@ -347,6 +387,8 @@ describe("resolveRconConfig", () => {
       expect(config.host).toBe("target-host");
       expect(config.port).toBe(25590);
       expect(config.password).toBe("target-pwd");
+      expect(config.passwordSource).toBe("minecraft-env");
+      expect(config.serverPropertiesFound).toBe(false);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
       process.env = { ...origEnv };
@@ -368,6 +410,8 @@ describe("resolveRconConfig", () => {
       expect(config.host).toBe("127.0.0.1");
       expect(config.port).toBe(25599);
       expect(config.password).toBe("props-secret");
+      expect(config.passwordSource).toBe("server.properties");
+      expect(config.serverPropertiesFound).toBe(true);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
       process.env = { ...origEnv };
@@ -385,6 +429,8 @@ describe("resolveRconConfig", () => {
       expect(config.host).toBe("127.0.0.1");
       expect(config.port).toBe(25575);
       expect(config.password).toBe("");
+      expect(config.passwordSource).toBe("default");
+      expect(config.serverPropertiesFound).toBe(false);
     } finally {
       fs.rmSync(emptyDir, { recursive: true, force: true });
       process.env = { ...origEnv };
@@ -567,6 +613,119 @@ describe("runScheduledRestart sequencer", () => {
     });
 
     expect(exitCode).toBe(1);
+  });
+
+  test("logs the RCON authentication error without logging the password", async () => {
+    const { exitCode, lines } = await captureRestartLog(() =>
+      runScheduledRestart({
+        immediate: true,
+        rconHost: "127.0.0.1",
+        rconPort: 25575,
+        rconPassword: "hunter2-secret",
+        sleepFn: async () => {},
+        rconClientFactory: () =>
+          new FakeRconClient({ connect: new Error("RCON authentication failed: invalid password") }),
+        execCommandFn: activeServiceExec,
+      })
+    );
+
+    expect(exitCode).toBe(0);
+    expect(lines.some((l) => l.includes("127.0.0.1:25575") && l.includes("RCON authentication failed: invalid password"))).toBe(true);
+    expect(lines.filter((l) => l.includes("Skipping broadcast") && l.includes("invalid password"))).toHaveLength(1);
+    expect(lines.filter((l) => l.includes("save-all") && l.includes("invalid password"))).toHaveLength(1);
+    expect(lines.some((l) => l.includes("hunter2-secret"))).toBe(false);
+  });
+
+  test("logs the socket error code when the RCON connection is refused", async () => {
+    const refused = Object.assign(new Error("Failed to connect"), { code: "ECONNREFUSED" });
+    const { lines } = await captureRestartLog(() =>
+      runScheduledRestart({
+        immediate: true,
+        rconPassword: "pass",
+        sleepFn: async () => {},
+        rconClientFactory: () => new FakeRconClient({ connect: refused }),
+        execCommandFn: activeServiceExec,
+      })
+    );
+
+    expect(lines.some((l) => l.includes("Failed to connect (ECONNREFUSED)"))).toBe(true);
+  });
+
+  test("logs the RCON error when a broadcast or command fails after connecting", async () => {
+    const { exitCode, lines } = await captureRestartLog(() =>
+      runScheduledRestart({
+        immediate: true,
+        rconPassword: "pass",
+        sleepFn: async () => {},
+        rconClientFactory: () =>
+          new FakeRconClient({ send: new Error("RCON socket closed by remote server") }),
+        execCommandFn: activeServiceExec,
+      })
+    );
+
+    expect(exitCode).toBe(0);
+    expect(lines.filter((l) => l.includes("RCON socket closed by remote server"))).toHaveLength(2);
+  });
+
+  test("warns with the directory when it has no server.properties and no password was given", async () => {
+    const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-test-restart-nodir-"));
+    const savedPassword = process.env.RCON_PASSWORD;
+    delete process.env.RCON_PASSWORD;
+    try {
+      const { exitCode, lines } = await captureRestartLog(() =>
+        runScheduledRestart({
+          targetDir: emptyDir,
+          immediate: true,
+          sleepFn: async () => {},
+          rconClientFactory: () =>
+            new FakeRconClient({ connect: new Error("RCON authentication failed: invalid password") }),
+          execCommandFn: activeServiceExec,
+        })
+      );
+
+      expect(exitCode).toBe(0);
+      const warnings = lines.filter((l) => l.includes("Warning:"));
+      expect(warnings).toHaveLength(1);
+      expect(warnings[0]).toContain(`No server.properties in ${emptyDir}`);
+      expect(warnings[0]).toContain("--target");
+    } finally {
+      fs.rmSync(emptyDir, { recursive: true, force: true });
+      if (savedPassword === undefined) delete process.env.RCON_PASSWORD;
+      else process.env.RCON_PASSWORD = savedPassword;
+    }
+  });
+
+  test("does not warn about the directory when the password comes from a flag, RCON_PASSWORD or server.properties", async () => {
+    const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-test-restart-nowarn-"));
+    const serverDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-test-restart-server-"));
+    fs.writeFileSync(path.join(serverDir, "server.properties"), "enable-rcon=true\nrcon.password=props-secret\n");
+    const savedPassword = process.env.RCON_PASSWORD;
+    const run = (options: { targetDir: string; rconPassword?: string }) =>
+      captureRestartLog(() =>
+        runScheduledRestart({
+          ...options,
+          immediate: true,
+          sleepFn: async () => {},
+          rconClientFactory: () => new FakeRconClient(),
+          execCommandFn: activeServiceExec,
+        })
+      );
+    try {
+      delete process.env.RCON_PASSWORD;
+      const fromFlag = await run({ targetDir: emptyDir, rconPassword: "flag-secret" });
+      const fromProperties = await run({ targetDir: serverDir });
+      process.env.RCON_PASSWORD = "env-secret";
+      const fromEnv = await run({ targetDir: emptyDir });
+
+      for (const { lines } of [fromFlag, fromProperties, fromEnv]) {
+        expect(lines.some((l) => l.includes("Warning:"))).toBe(false);
+      }
+    } finally {
+      fs.rmSync(emptyDir, { recursive: true, force: true });
+      fs.rmSync(serverDir, { recursive: true, force: true });
+      if (savedPassword === undefined) delete process.env.RCON_PASSWORD;
+      else process.env.RCON_PASSWORD = savedPassword;
+    }
   });
 
   test("formatRestartTimestamp produces valid UTC ISO-like timestamp string", () => {

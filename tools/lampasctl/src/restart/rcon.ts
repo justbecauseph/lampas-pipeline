@@ -24,10 +24,14 @@ export interface ResolveRconConfigOptions {
   targetDir?: string;
 }
 
+export type RconPasswordSource = "option" | "env" | "minecraft-env" | "server.properties" | "default";
+
 export interface RconConfig {
   host: string;
   port: number;
   password?: string;
+  passwordSource: RconPasswordSource;
+  serverPropertiesFound: boolean;
 }
 
 /**
@@ -130,14 +134,25 @@ export function resolveRconConfig(options: ResolveRconConfigOptions = {}): RconC
   }
 
   // 3. Password resolution: options -> env -> .minecraft-env -> server.properties -> default ""
-  const password =
-    options.password ??
-    process.env.RCON_PASSWORD ??
-    envVars.RCON_PASSWORD ??
-    props["rcon.password"] ??
-    "";
+  let password = "";
+  let passwordSource: RconPasswordSource = "default";
+  if (options.password !== undefined) {
+    password = options.password;
+    passwordSource = "option";
+  } else if (process.env.RCON_PASSWORD !== undefined) {
+    password = process.env.RCON_PASSWORD;
+    passwordSource = "env";
+  } else if (envVars.RCON_PASSWORD !== undefined) {
+    password = envVars.RCON_PASSWORD;
+    passwordSource = "minecraft-env";
+  } else if (props["rcon.password"] !== undefined) {
+    password = props["rcon.password"];
+    passwordSource = "server.properties";
+  }
 
-  return { host, port, password };
+  const serverPropertiesFound = fs.existsSync(path.join(targetDir, "server.properties"));
+
+  return { host, port, password, passwordSource, serverPropertiesFound };
 }
 
 /**
