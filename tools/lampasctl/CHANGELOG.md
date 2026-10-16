@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-10-16
+
 ### Fixed
 - `lampasctl restart` logs why RCON failed instead of "RCON unreachable or server offline": the connection error (for example `RCON authentication failed: invalid password` or `connect ECONNREFUSED 127.0.0.1:25575`) when connecting, and the error with each skipped or failed broadcast and `save-all`. It also logs the server directory, the RCON address and where the password came from, never the password itself. On 16 Oct 2026 the countdown restart unit ran without `--target`, read no `server.properties` from `/`, sent an empty password and skipped every broadcast and `save-all` behind the generic notice. When the connection drops after RCON authenticates, each skipped broadcast or command names the socket error, or `RCON socket closed by remote server`, instead of saying the client is not connected.
-- `lampasctl restart` warns, naming the directory, when the target directory has no `server.properties` and no password came from `--rcon-password`, `RCON_PASSWORD` or `.minecraft-env`. Pass `--target <server directory>` when it runs from elsewhere, such as a systemd unit. A first argument that starts with `-`, such as a password after `--rcon-password` that starts with a dash, exits with code 2 without printing it, and the message says to write the value as `--option=<value>` and pass the directory with `--target`.
+- `lampasctl restart` warns, naming the directory, when the target directory has no `server.properties` and no password came from `--rcon-password`, `RCON_PASSWORD` or `.minecraft-env`. Pass `--target <server directory>` when it runs from elsewhere, such as a systemd unit. An argument that starts with `-`, such as a password after `--rcon-password` that starts with a dash, exits with code 2 without printing it, and the message says to write the value as `--option=<value>` and pass the directory with `--target`.
 
 ## [1.3.1] - 2026-10-15
 
