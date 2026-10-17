@@ -14,7 +14,6 @@ import {
 import { findJavaBinary, isOracleGraalvm } from "../src/launcher/java";
 import {
   buildJvmFlags,
-  chunkyWorkingCount,
   MIN_HEAP,
   planHeap,
 } from "../src/launcher/jvm-flags";
@@ -178,7 +177,7 @@ describe("launcher sizing and JVM flag planning", () => {
     expect(joined).not.toContain("ZGenerational");
   });
 
-  test("cpuOverride with 4 cpus -> ActiveProcessorCount=4 and chunky 1536, compactHeaders false omits it", () => {
+  test("cpuOverride with 4 cpus -> ActiveProcessorCount=4, compactHeaders false omits it, no pregenerator working-count flag", () => {
     const flags = buildJvmFlags({
       heap: "8G",
       gc: "g1",
@@ -190,7 +189,7 @@ describe("launcher sizing and JVM flag planning", () => {
     });
 
     expect(flags).toContain("-XX:ActiveProcessorCount=4");
-    expect(flags).toContain("-Dchunky.maxWorkingCount=1536");
+    expect(flags.some((f) => f.includes("maxWorkingCount"))).toBe(false);
     expect(flags).not.toContain("-XX:+UseCompactObjectHeaders");
   });
 

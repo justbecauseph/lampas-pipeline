@@ -39,19 +39,6 @@ export function planHeap(
   return Math.max(0, Math.floor(heap / HEAP_ALIGN) * HEAP_ALIGN);
 }
 
-/**
- * Chunk generation working count scaled with CPU count.
- */
-export function chunkyWorkingCount(cpus: number): number {
-  if (cpus <= 2) {
-    return 1024;
-  }
-  if (cpus <= 4) {
-    return 1536;
-  }
-  return 2048;
-}
-
 export interface BuildJvmFlagsOptions {
   heap: string | number;
   gc: GcKind;
@@ -126,7 +113,6 @@ export function buildJvmFlags(options: BuildJvmFlagsOptions): string[] {
   }
 
   flags.push(
-    `-Dchunky.maxWorkingCount=${chunkyWorkingCount(cpus)}`,
     "-Dfile.encoding=UTF-8",
     "-Dlog4j2.formatMsgNoLookups=true"
   );

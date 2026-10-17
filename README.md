@@ -669,7 +669,7 @@ lampasctl start --target /home/server -- -Dfabric.development=false -XX:+AlwaysP
   - **Oracle GraalVM Inlining**: Automatically detects Oracle GraalVM via the runtime `release` file and sets `-Djdk.graal.TuneInlinerExploration=1`.
 - **Environment Overrides**:
   - `LAMPAS_RAM`: Override detected RAM (e.g. `8G`).
-  - `LAMPAS_CPUS`: Override CPU count (sets `-XX:ActiveProcessorCount` and Chunky tiers).
+  - `LAMPAS_CPUS`: Override CPU count (sets `-XX:ActiveProcessorCount`).
   - `LAMPAS_EXTRA_RESERVE`: Reserve RAM for co-located processes (e.g. `1G` for PostgreSQL).
   - `.minecraft-env`: Automatically loaded from target directory (existing process environment keys take precedence).
 - **Process Management**: Spawns Java in target directory with signal forwarding (SIGINT/SIGTERM) ensuring clean server shutdown, and preserves legacy launcher scripts in `SERVER_PROTECTED`.

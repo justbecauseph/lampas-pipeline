@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Removed
+- `lampasctl start` no longer passes `-Dchunky.maxWorkingCount`. The pack replaced Chunky with Chunksmith, which ignores that property and sizes its chunk dispatch (`dispatchMaxConcurrent`) from the CPU count.
+
 ## [1.3.2] - 2026-10-16
 
 ### Fixed
