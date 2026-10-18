@@ -4,6 +4,7 @@ import { matchingBlacklistRules, parsePackBlacklistRules, describeBlacklistRule 
 import type { ArtifactType, BlacklistRule, BlacklistTarget, ModDefinition, PackConfig } from "./types";
 import { CURSEFORGE_FABRIC_LOADER_TYPE, CurseForgeClient, type CurseForgeFile } from "./curseforge";
 import { parseTomlFile, writeTomlFile } from "./utils";
+import { MODRINTH_API, modrinthFetch } from "./modrinth-http";
 
 interface ModUpdateInfo {
   modId: string;
@@ -347,13 +348,8 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
         }
 
         try {
-          const url = `https://api.modrinth.com/v2/project/${encodeURIComponent(projectId)}/version?game_versions=[%22${encodeURIComponent(targetMc)}%22]&loaders=[%22${encodeURIComponent(modrinthLoaderFor(artifactType, targetLoader))}%22]`;
-          const res = await fetch(url, {
-            headers: {
-              "User-Agent": "Lampas-Pipeline/2.0 (update-checker)",
-              Accept: "application/json",
-            },
-          });
+          const url = `${MODRINTH_API}/project/${encodeURIComponent(projectId)}/version?game_versions=[%22${encodeURIComponent(targetMc)}%22]&loaders=[%22${encodeURIComponent(modrinthLoaderFor(artifactType, targetLoader))}%22]`;
+          const res = await modrinthFetch(url);
           if (!res.ok) {
             recordSkip(modId, def.name, `Modrinth returned HTTP ${res.status}.`);
             continue;
@@ -375,12 +371,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           let currentVersionMetadata = rawVersions.find((version) => version.id === currentVersionId);
           if (!currentVersionMetadata || publishedTime(currentVersionMetadata) === undefined) {
             try {
-              const currentRes = await fetch(`https://api.modrinth.com/v2/version/${encodeURIComponent(currentVersionId)}`, {
-                headers: {
-                  "User-Agent": "Lampas-Pipeline/2.0 (update-checker)",
-                  Accept: "application/json",
-                },
-              });
+              const currentRes = await modrinthFetch(`${MODRINTH_API}/version/${encodeURIComponent(currentVersionId)}`);
               if (currentRes.ok) {
                 const metadata = await currentRes.json();
                 if (isPlainObject(metadata) && metadata.id === currentVersionId) currentVersionMetadata = metadata as UpstreamRelease;

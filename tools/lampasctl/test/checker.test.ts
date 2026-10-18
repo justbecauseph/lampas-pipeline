@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { checkPackUpdates } from "../src/checker";
+import { resetModrinthRateLimit, setModrinthRateLimitClock } from "../src/modrinth-http";
 
 const originalFetch = globalThis.fetch;
 const originalLog = console.log;
@@ -13,6 +14,7 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
   console.log = originalLog;
   console.warn = originalWarn;
+  resetModrinthRateLimit();
   if (originalApiKey === undefined) delete process.env.CURSEFORGE_API_KEY;
   else process.env.CURSEFORGE_API_KEY = originalApiKey;
 });
@@ -355,6 +357,42 @@ describe("update checker output and blacklist handling", () => {
       await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
       expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(fixture.packConfig);
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("waits out a 429 on the Modrinth versions list and still applies the update", async () => {
+    const fixture = createFixture();
+    let now = 0;
+    const slept: number[] = [];
+    setModrinthRateLimitClock({
+      now: () => now,
+      sleep: async (ms) => {
+        slept.push(ms);
+        now += ms;
+      },
+    });
+    console.warn = () => {};
+    let versionRequests = 0;
+    globalThis.fetch = (async (input: string | URL | Request) => {
+      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      if (url.pathname === "/v2/project/example-project/version") {
+        versionRequests++;
+        if (versionRequests === 1) return new Response("slow down", { status: 429, headers: { "Retry-After": "1" } });
+        return Response.json([
+          modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+          modrinthRelease("old-version-id", "1.0.0"),
+        ]);
+      }
+      return new Response("not found", { status: 404 });
+    }) as typeof fetch;
+    try {
+      const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
+      expect(versionRequests).toBe(2);
+      expect(slept).toEqual([1000]);
+      expect(updates.map((update) => update.latestVersionId)).toEqual(["new-version-id"]);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }

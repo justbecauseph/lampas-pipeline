@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseTomlFile, writeTomlFile, writeJsonFile, readJsonFile } from "./utils";
+import { MODRINTH_API, modrinthFetch } from "./modrinth-http";
 import { resolvePack } from "./resolver";
 import { buildManifests } from "./manifest";
 import {
@@ -119,9 +120,7 @@ export async function addMod(options: AddModOptions) {
       // Direct version URL: https://modrinth.com/version/{version_id}
       const versionIdFromUrl = query.split("modrinth.com/version/")[1].split("?")[0].split("/")[0];
       explicitVersion = versionIdFromUrl;
-      const vRes = await fetch(`https://api.modrinth.com/v2/version/${versionIdFromUrl}`, {
-        headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-      });
+      const vRes = await modrinthFetch(`${MODRINTH_API}/version/${versionIdFromUrl}`);
       if (vRes.ok) {
         const vData = await vRes.json();
         query = vData.project_id;
@@ -180,24 +179,18 @@ export async function addMod(options: AddModOptions) {
       console.log(`${indent}[Artifact Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
 
       // 1. Query project metadata (or direct version lookup if query is a version ID)
-      let projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
-        headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-      });
+      let projRes = await modrinthFetch(`${MODRINTH_API}/project/${query}`);
 
       let directVersionData: any = null;
 
       // If project was not found by query, check if query is a direct version ID
       if (!projRes.ok) {
-        const vRes = await fetch(`https://api.modrinth.com/v2/version/${query}`, {
-          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-        });
+        const vRes = await modrinthFetch(`${MODRINTH_API}/version/${query}`);
         if (vRes.ok) {
           directVersionData = await vRes.json();
           explicitVersion = directVersionData.id;
           query = directVersionData.project_id;
-          projRes = await fetch(`https://api.modrinth.com/v2/project/${query}`, {
-            headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-          });
+          projRes = await modrinthFetch(`${MODRINTH_API}/project/${query}`);
         }
       }
 
@@ -228,9 +221,7 @@ export async function addMod(options: AddModOptions) {
 
       if (!selectedVersion) {
         // Fetch all project versions
-        const allVersRes = await fetch(`https://api.modrinth.com/v2/project/${projectId}/version`, {
-          headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-        });
+        const allVersRes = await modrinthFetch(`${MODRINTH_API}/project/${projectId}/version`);
 
         if (!allVersRes.ok) {
           throw new Error(`Failed to query versions for '${slug}' (${allVersRes.status})`);
@@ -281,9 +272,7 @@ export async function addMod(options: AddModOptions) {
           // 2c. Direct version lookup by ID if still not found
           if (!selectedVersion) {
             try {
-              const directVerRes = await fetch(`https://api.modrinth.com/v2/version/${explicitVersion}`, {
-                headers: { "User-Agent": "Lampas-Pipeline/2.0", Accept: "application/json" },
-              });
+              const directVerRes = await modrinthFetch(`${MODRINTH_API}/version/${explicitVersion}`);
               if (directVerRes.ok) {
                 selectedVersion = await directVerRes.json();
               }

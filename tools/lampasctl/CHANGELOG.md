@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+- Every Modrinth API request goes through one client. On HTTP 429 it waits and retries up to five times, using `Retry-After`, then `X-Ratelimit-Reset`, capped at 60 seconds. When `X-Ratelimit-Remaining` is 15 or lower, it holds the next requests until the reset (at most 60 seconds). Concurrent calls share the wait. Each attempt times out after 30 seconds, which now also applies to `check` and `add`. Requests send `User-Agent: Lampas-Pipeline/2.0 (contact@lampas.town)`, which also replaces the `Lampas-Pipeline/1.0` header on artifact downloads.
+
 ## [1.3.3] - 2026-10-17
 
 ### Removed

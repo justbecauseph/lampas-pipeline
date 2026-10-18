@@ -14,11 +14,11 @@ import {
   type CurseForgeFile,
 } from "./curseforge";
 import type { ModDefinition, ResolvedArtifact, Side } from "./types";
+import { MODRINTH_API, MODRINTH_USER_AGENT, modrinthFetch } from "./modrinth-http";
 import * as path from "node:path";
 import * as fs from "node:fs";
 
-const MODRINTH_API = "https://api.modrinth.com/v2";
-export const USER_AGENT = "Lampas-Pipeline/1.0 (contact@lampas.town)";
+export const USER_AGENT = MODRINTH_USER_AGENT;
 
 /** Where `resolve` keeps a downloaded Modrinth or CurseForge file: <baseDir>/.lampas/cache/<provider>/<project>/<version or file>/<filename>. */
 export function providerCachePath(
@@ -71,27 +71,17 @@ export class ModrinthClient {
   private static async fetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
     for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
       try {
-        return await withAbortTimeout(`fetching Modrinth metadata from ${url}`, async (signal) => {
-          const res = await fetch(url, {
-            ...init,
-            signal,
-            headers: {
-              "User-Agent": USER_AGENT,
-              Accept: "application/json",
-              ...(init?.headers || {}),
-            },
-          });
+        const res = await modrinthFetch(url, init);
 
-          if (res.status === 404) {
-            return null;
-          }
+        if (res.status === 404) {
+          return null;
+        }
 
-          if (!res.ok) {
-            throw new Error(`Modrinth API error ${res.status}: ${res.statusText} at ${url}`);
-          }
+        if (!res.ok) {
+          throw new Error(`Modrinth API error ${res.status}: ${res.statusText} at ${url}`);
+        }
 
-          return (await res.json()) as T;
-        });
+        return (await res.json()) as T;
       } catch (err: any) {
         console.warn(`[Modrinth] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${err.message}`);
       }
