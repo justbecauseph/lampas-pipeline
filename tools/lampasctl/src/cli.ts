@@ -19,6 +19,7 @@ import { startServer } from "./launcher/start";
 import { runMonitor } from "./monitor";
 import { runScheduledRestart } from "./restart";
 import { cleanupPreviousExecutables, selfUpdate } from "./self-update";
+import { setVerbose } from "./log";
 
 declare const LAMPASCTL_VERSION: string | undefined;
 
@@ -35,6 +36,9 @@ Lampas Modpack Distribution CLI (lampasctl v${getLampasctlVersion()})
 
 Usage:
   lampasctl <command> [options]
+
+Global options:
+  --verbose             Print per-item progress (each resolved artifact, cache hit, download start)
 
 Commands:
   version               Show lampasctl version (aliases: -v, --version)
@@ -172,7 +176,10 @@ export function parseArgs(args: string[]): ParsedArgs {
   }
 
   const dashDashIdx = args.indexOf("--");
-  const mainArgs = dashDashIdx !== -1 ? args.slice(0, dashDashIdx) : args;
+  // --verbose is global, so it may come before the command.
+  const beforeDashDash = dashDashIdx !== -1 ? args.slice(0, dashDashIdx) : args;
+  const verbose = beforeDashDash.includes("--verbose");
+  const mainArgs = beforeDashDash.filter((arg) => arg !== "--verbose");
   const extra = dashDashIdx !== -1 ? args.slice(dashDashIdx + 1) : [];
 
   if (mainArgs.length === 0) {
@@ -216,6 +223,7 @@ export function parseArgs(args: string[]): ParsedArgs {
     "immediate",
     "check",
     "prerelease",
+    "verbose",
   ]);
 
   for (let i = 1; i < mainArgs.length; i++) {
@@ -254,12 +262,16 @@ export function parseArgs(args: string[]): ParsedArgs {
       positional.push(arg);
     }
   }
+  if (verbose) flags.verbose = "true";
 
   return { command, positional, flags, extra };
 }
 
 async function main() {
   const { command, positional, flags, extra } = parseArgs(process.argv.slice(2));
+  // Global flag: strip it so per-command flag checks do not reject it.
+  setVerbose(flags.verbose === "true");
+  delete flags.verbose;
   const rootDir = process.cwd();
   if (process.platform === "win32") {
     cleanupPreviousExecutables();

@@ -27,28 +27,34 @@ export interface RemoveModOptions {
   modId: string;
 }
 
-/**
- * Returns a set of all project IDs and slugs currently defined in pack/mods/
- */
-function getExistingModIdentifiers(modsDir: string): Set<string> {
-  const ids = new Set<string>();
+/** Maps each installed mod's slug and provider project ID (lowercased) to its display name. */
+export function getExistingModIdentifiers(modsDir: string): Map<string, string> {
+  const ids = new Map<string, string>();
   if (!fs.existsSync(modsDir)) return ids;
 
   const files = fs.readdirSync(modsDir).filter((f) => f.endsWith(".toml"));
   for (const file of files) {
     const slug = path.basename(file, ".toml");
-    ids.add(slug.toLowerCase());
+    ids.set(slug.toLowerCase(), slug);
 
     try {
       const def = parseTomlFile<ModDefinition>(path.join(modsDir, file));
+      const name = def.name || slug;
+      ids.set(slug.toLowerCase(), name);
       if (def.provider?.type === "modrinth") {
-        if (def.provider.project_id) ids.add(def.provider.project_id.toLowerCase());
+        if (def.provider.project_id) ids.set(def.provider.project_id.toLowerCase(), name);
       } else if (def.provider?.type === "curseforge") {
-        ids.add(String(def.provider.project_id));
+        ids.set(String(def.provider.project_id), name);
       }
     } catch {}
   }
   return ids;
+}
+
+/** Re-reads pack/mods/ after installing a dependency so later lines show its name. */
+function refreshExistingModIdentifiers(ids: Map<string, string>, modsDir: string, installedId: string): void {
+  for (const [id, name] of getExistingModIdentifiers(modsDir)) ids.set(id, name);
+  if (!ids.has(installedId)) ids.set(installedId, installedId);
 }
 
 function detectModSide(
@@ -366,7 +372,8 @@ export async function addMod(options: AddModOptions) {
 
           // Check if already in pack
           if (existingIds.has(depTarget.toLowerCase())) {
-            console.log(`${indent}   ✓ [Satisfied] Required dependency '${depTarget}' is already installed.`);
+            const depName = existingIds.get(depTarget.toLowerCase());
+            console.log(`${indent}   ✓ [Satisfied] ${depName} (${depTarget}) is already installed.`);
             continue;
           }
 
@@ -379,7 +386,7 @@ export async function addMod(options: AddModOptions) {
               versionId: dep.version_id || undefined,
               depth: depth + 1,
             });
-            existingIds.add(depTarget.toLowerCase());
+            refreshExistingModIdentifiers(existingIds, modsDir, depTarget.toLowerCase());
           } catch (depErr: any) {
             console.warn(`${indent}   ⚠️ Could not automatically install dependency '${depTarget}': ${depErr.message}`);
           }
@@ -486,7 +493,8 @@ export async function addMod(options: AddModOptions) {
         for (const dependency of requiredDependencies) {
           const dependencyId = String(dependency.modId);
           if (existingIds.has(dependencyId)) {
-            console.log(`${indent}   ✓ [Satisfied] CurseForge project '${dependencyId}' is already installed.`);
+            const depName = existingIds.get(dependencyId);
+            console.log(`${indent}   ✓ [Satisfied] ${depName} (CurseForge ${dependencyId}) is already installed.`);
             continue;
           }
 
@@ -505,7 +513,7 @@ export async function addMod(options: AddModOptions) {
               { cause: error }
             );
           }
-          existingIds.add(dependencyId);
+          refreshExistingModIdentifiers(existingIds, modsDir, dependencyId);
         }
       }
     } else {

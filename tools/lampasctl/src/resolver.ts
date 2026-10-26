@@ -6,6 +6,7 @@ import { CurseForgeClient } from "./curseforge";
 import { enrichPackLock } from "./enricher";
 import type { ModDefinition, PackConfig, PackLock, ResolvedArtifact } from "./types";
 import { validateLoaderDefinition } from "./validator";
+import { logVerbose } from "./log";
 
 export interface ResolveOptions {
   packDir: string;
@@ -148,7 +149,7 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
           cachedArtifact
         );
         artifacts[item.id] = artifact;
-        console.log(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);
+        logVerbose(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);
       } catch (err: any) {
         console.error(`  ✗ [Failed] ${item.id}: ${err.message}`);
         throw err;

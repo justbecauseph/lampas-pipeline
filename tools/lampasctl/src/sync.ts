@@ -16,6 +16,7 @@ import { backupDirectory } from "./backup";
 import { resolveRelease } from "./release-resolver";
 import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
 import { DeploymentTransaction } from "./transaction";
+import { logVerbose } from "./log";
 import type { InstallationState, ManifestFile, PackManifest, ServerRuntimeState } from "./types";
 
 export interface SyncOptions {
@@ -330,7 +331,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
         const hashes = await computeFileHashesStreaming(cachePath);
         if (hashes.sha256 === file.hashes.sha256) {
           verifiedAt.set(file.path, new Date().toISOString());
-          console.log(`  ⚡ [Cache Hit] ${file.path}`);
+          logVerbose(`  ⚡ [Cache Hit] ${file.path}`);
           continue;
         }
         await fs.promises.rm(cachePath, { force: true });
@@ -339,7 +340,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
       if (downloadUrl.startsWith("/")) {
         if (options.portalBaseUrl) {
           downloadUrl = `${options.portalBaseUrl}${downloadUrl}`;
-          console.log(`  ↓ [Downloading Blob] ${file.path}...`);
+          logVerbose(`  ↓ [Downloading Blob] ${file.path}...`);
           await downloadFileVerified(downloadUrl, cachePath, {
             expectedHash: file.hashes.sha256,
             expectedSize: file.size,
@@ -364,7 +365,7 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
           });
         }
       } else {
-        console.log(`  ↓ [Downloading] ${file.path}...`);
+        logVerbose(`  ↓ [Downloading] ${file.path}...`);
         await downloadFileVerified(downloadUrl, cachePath, {
           expectedHash: file.hashes.sha256,
           expectedSize: file.size,

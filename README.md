@@ -222,6 +222,8 @@ lampas-pipeline/
 
 `lampasctl` is the single CLI driving pack maintenance, validation, and deployment.
 
+Output lists counts and summaries. Add `--verbose` to any command to also print per-item progress: each resolved artifact, and each sync cache hit and download start.
+
 ### 1. 1-Click Mod Management (`add` & `remove`)
 Add or remove mods directly from the command line. Automatically detects project metadata, fetches latest compatible releases for Minecraft 26.2, updates `pack/mods/*.toml`, updates `pack.lock.json`, and rebuilds manifests in one step:
 

@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- Global `--verbose` flag. Without it, the resolver no longer prints a `[Resolved]` line per artifact (317 for the current pack, on every `add`, `remove` and `resolve`), and sync no longer prints `[Cache Hit]`, `[Downloading]` or `[Downloading Blob]` per file. Counts, summaries, `[Downloaded]`, `[Deleted Obsolete]`, warnings and errors still print.
+
+### Changed
+- `add` names dependencies that are already installed, for example `✓ [Satisfied] Fabric API (P7dR8mSH) is already installed.`, using the `name` from the mod's descriptor in `pack/mods/`.
+
 ## [1.3.4] - 2026-10-18
 
 ### Fixed
