@@ -33,6 +33,14 @@ interface BlacklistDiagnostic {
   reason: "descriptor" | "current_pin" | "candidate" | "selected_update";
 }
 
+interface OtherMinecraftBuild {
+  descriptorId: string;
+  modName: string;
+  releaseId: string;
+  releaseName: string;
+  namedMinecraft: string;
+}
+
 interface PreparedDescriptor {
   file: string;
   filePath: string;
@@ -124,6 +132,32 @@ function describeRelease(release: UpstreamRelease): string {
   return release.version_number || release.displayName || release.name || release.fileName || String(release.id);
 }
 
+/**
+ * The Minecraft version a release names with an `mc` tag in its version number or file name, such as `1.1.0+mc26.1.2` or
+ * `example-mc1.21.1.jar`. Authors who publish one build per Minecraft release tag them this way, and some also list Minecraft
+ * versions on the release that the build does not run on.
+ */
+export function taggedMinecraftVersion(release: UpstreamRelease): string | undefined {
+  const primaryFile = release.files?.find((file) => file.primary) || release.files?.[0];
+  for (const label of [release.version_number, release.displayName, release.fileName, primaryFile?.filename]) {
+    const match = label?.match(/(?:^|[^a-z0-9])mc[-_]?(\d+\.\d+(?:\.\d+)?)(?!\.?\d)/i);
+    if (match) return match[1];
+  }
+  return undefined;
+}
+
+/**
+ * The Minecraft version a release's `mc` tag names when that is another release than the pack's, otherwise undefined.
+ * Versions on the same release line (the same first two components, so `26.2.1` for a `26.2` pack) count as the pack's; an
+ * untagged release is never treated as another version's build.
+ */
+export function otherTaggedMinecraftVersion(release: UpstreamRelease, targetMc: string): string | undefined {
+  const tagged = taggedMinecraftVersion(release);
+  if (!tagged) return undefined;
+  const line = (version: string) => version.split(".").slice(0, 2).join(".");
+  return line(tagged) === line(targetMc) ? undefined : tagged;
+}
+
 function escapeMarkdownCell(value: string): string {
   return value.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
@@ -203,7 +237,8 @@ function writeMarkdownReport(
   packConfig: PackConfig,
   updates: ModUpdateInfo[],
   diagnostics: BlacklistDiagnostic[],
-  skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }>
+  skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }>,
+  otherMinecraftBuilds: OtherMinecraftBuild[]
 ): void {
   let md = `## 📦 Upstream Mod Updates Available (${updates.length})\n\n`;
   md += `Target: **Minecraft ${packConfig.pack.minecraft}** • **Fabric ${packConfig.loader.version}**\n\n`;
@@ -240,6 +275,18 @@ function writeMarkdownReport(
     for (const item of overrides) {
       const label = item.releaseName ? `${item.releaseName}${item.reason === "current_pin" ? " (current pin)" : ""}` : "All compatible releases checked";
       md += `| \`${item.descriptorId}.toml\` | ${escapeMarkdownCell(item.modName)} | ${escapeMarkdownCell(describeRule(item.rule))} | \`${escapeMarkdownCell(item.projectId)}\` | ${escapeMarkdownCell(label)} | ${item.releaseId ? `\`${item.releaseId}\`` : "—"} | ${item.reason.replace(/_/g, " ")} |\n`;
+    }
+  }
+
+  md += `\n## Builds for Another Minecraft Version (${otherMinecraftBuilds.length})\n\n`;
+  if (otherMinecraftBuilds.length === 0) {
+    md += `No newer release was passed over for naming another Minecraft version.\n`;
+  } else {
+    md += `Upstream lists these releases for Minecraft ${packConfig.pack.minecraft}, but their version names another Minecraft release, so they were not offered.\n\n`;
+    md += `| Descriptor | Mod | Release | Release ID | Named Minecraft |\n`;
+    md += `| :--- | :--- | :--- | :--- | :--- |\n`;
+    for (const item of otherMinecraftBuilds) {
+      md += `| \`${item.descriptorId}.toml\` | ${escapeMarkdownCell(item.modName)} | ${escapeMarkdownCell(item.releaseName)} | \`${item.releaseId}\` | ${item.namedMinecraft} |\n`;
     }
   }
 
@@ -287,12 +334,24 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   const updatesAvailable: ModUpdateInfo[] = [];
   const blacklistDiagnostics: BlacklistDiagnostic[] = [];
   const skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }> = [];
+  const otherMinecraftBuilds: OtherMinecraftBuild[] = [];
   let upToDateCount = 0;
   let skippedCount = 0;
   const recordSkip = (descriptorId: string, modName: string, reason: string) => {
     skippedCount++;
     skippedChecks.push({ descriptorId, modName, reason });
     console.warn(`  ⚠ [Skipped] ${modName} (${descriptorId}): ${reason}`);
+  };
+  // Upstream lists the release for the pack's Minecraft version, but its version tag names another one.
+  const passOverOtherMinecraftBuild = (descriptorId: string, modName: string, release: UpstreamRelease): boolean => {
+    const namedMinecraft = otherTaggedMinecraftVersion(release, targetMc);
+    if (!namedMinecraft) return false;
+    const releaseName = describeRelease(release);
+    otherMinecraftBuilds.push({ descriptorId, modName, releaseId: String(release.id), releaseName, namedMinecraft });
+    console.warn(
+      `  ⚠ [Other Minecraft Build] ${modName} (${descriptorId}): ${releaseName} names Minecraft ${namedMinecraft}, not ${targetMc}; not offered.`
+    );
+    return true;
   };
   const queue = [...descriptors];
   const concurrency = options.concurrency || 12;
@@ -393,6 +452,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
 
           let latest: UpstreamRelease | undefined;
           for (const release of newerVersions) {
+            if (passOverOtherMinecraftBuild(modId, def.name, release)) continue;
             const matches = releaseBlacklistRules(blacklistRules, baseTarget, release.id);
             if (matches.length > 0 && !force) {
               recordBlacklistMatches(
@@ -548,6 +608,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
 
           let latest: CurseForgeFile | undefined;
           for (const release of newerFiles) {
+            if (passOverOtherMinecraftBuild(modId, def.name, release)) continue;
             const matches = releaseBlacklistRules(blacklistRules, baseTarget, release.id);
             if (matches.length > 0 && !force) {
               recordBlacklistMatches(
@@ -662,7 +723,8 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   console.log("=".repeat(60) + "\n");
 
   if (options.markdownOut) {
-    writeMarkdownReport(options.markdownOut, packConfig, updatesAvailable, blacklistDiagnostics, skippedChecks);
+    otherMinecraftBuilds.sort((a, b) => a.descriptorId.localeCompare(b.descriptorId) || a.releaseId.localeCompare(b.releaseId));
+    writeMarkdownReport(options.markdownOut, packConfig, updatesAvailable, blacklistDiagnostics, skippedChecks, otherMinecraftBuilds);
     console.log(`[Update Checker] Markdown report written to ${options.markdownOut}`);
   }
 

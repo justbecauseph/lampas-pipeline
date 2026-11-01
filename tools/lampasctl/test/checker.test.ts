@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { checkPackUpdates } from "../src/checker";
+import { checkPackUpdates, otherTaggedMinecraftVersion, taggedMinecraftVersion } from "../src/checker";
 import { resetModrinthRateLimit, setModrinthRateLimitClock } from "../src/modrinth-http";
 
 const originalFetch = globalThis.fetch;
@@ -662,6 +662,96 @@ describe("update checker artifact coverage", () => {
       expect(filesRequest?.searchParams.has("modLoaderType")).toBe(false);
       expect(fs.readFileSync(shader, "utf-8")).toContain("file_id = 201");
       expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("https://www.curseforge.com/minecraft/shaders/example-cf/files/201");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("update checker builds for another Minecraft version", () => {
+  test("does not offer a release tagged for another Minecraft version that upstream also lists for the pack's", async () => {
+    // Kitchen Projectiles 1.1.0+mc26.1.2 lists 26.2 on Modrinth, but its mixins target 26.1 and crash a 26.2 client.
+    const fixture = createFixture();
+    useModrinth([
+      modrinthRelease("c7NJIaAM", "1.1.0+mc26.1.2", "2026-11-01T00:00:00Z"),
+      modrinthRelease("old-version-id", "1.0.13+mc26.2"),
+    ]);
+    const before = fs.readFileSync(fixture.descriptor, "utf-8");
+    const logs: string[] = [];
+    console.log = (...args: unknown[]) => logs.push(args.join(" "));
+    console.warn = (...args: unknown[]) => logs.push(args.join(" "));
+    try {
+      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
+      expect(updates).toHaveLength(0);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
+      expect(logs.some((line) => line.includes("[Other Minecraft Build]") && line.includes("1.1.0+mc26.1.2") && line.includes("26.1.2"))).toBe(true);
+      expect(markdown).toContain("Builds for Another Minecraft Version (1)");
+      expect(markdown).toContain("`c7NJIaAM`");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("falls back to the newest release tagged for the pack's Minecraft version", async () => {
+    const fixture = createFixture();
+    useModrinth([
+      modrinthRelease("other-mc", "1.1.0+mc26.1.2", "2026-11-01T00:00:00Z"),
+      modrinthRelease("same-mc", "1.0.14+mc26.2", "2026-10-01T00:00:00Z"),
+      modrinthRelease("old-version-id", "1.0.13+mc26.2"),
+    ]);
+    console.log = () => {};
+    console.warn = () => {};
+    try {
+      const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
+      expect(updates.map((update) => update.latestVersionId)).toEqual(["same-mc"]);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "same-mc"');
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("still offers untagged releases and tags on the pack's release line", async () => {
+    for (const version of ["2.0.0", "2.0.0+mc26.2.1", "2.0.0-mc26.2", "2.0.0+fabric"]) {
+      const fixture = createFixture();
+      useModrinth([
+        modrinthRelease("newer", version, "2026-09-01T00:00:00Z"),
+        modrinthRelease("old-version-id", "1.0.0"),
+      ]);
+      console.log = () => {};
+      console.warn = () => {};
+      try {
+        const updates = await checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 });
+        expect(updates.map((update) => update.latestVersionId)).toEqual(["newer"]);
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("reads the mc tag from the version number, the display name or the file name", () => {
+    expect(taggedMinecraftVersion({ id: "a", version_number: "1.1.0+mc26.1.2" })).toBe("26.1.2");
+    expect(taggedMinecraftVersion({ id: "b", displayName: "Mod MC1.21.1 build" })).toBe("1.21.1");
+    expect(taggedMinecraftVersion({ id: "c", fileName: "example-mc1.21.1.jar" })).toBe("1.21.1");
+    expect(taggedMinecraftVersion({ id: "d", version_number: "3.0.0", files: [{ primary: true, filename: "x-mc_26.3.jar" }] })).toBe("26.3");
+    expect(taggedMinecraftVersion({ id: "e", version_number: "3.0.0", files: [{ filename: "emcee-2.jar" }] })).toBeUndefined();
+    expect(otherTaggedMinecraftVersion({ id: "f", version_number: "1.0+mc26.2.1" }, "26.2")).toBeUndefined();
+    expect(otherTaggedMinecraftVersion({ id: "g", version_number: "1.0+mc26.3" }, "26.2")).toBe("26.3");
+  });
+
+  test("does not offer a CurseForge file tagged for another Minecraft version", async () => {
+    const fixture = createFixture({ provider: "curseforge" });
+    useCurseForge({
+      files: [
+        curseForgeFile(300, "2.0.0+mc26.1.2", "2026-09-01T00:00:00Z"),
+        curseForgeFile(200, "1.0.0+mc26.2", "2026-08-01T00:00:00Z"),
+      ],
+    });
+    console.log = () => {};
+    console.warn = () => {};
+    try {
+      const updates = await checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 });
+      expect(updates).toHaveLength(0);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
