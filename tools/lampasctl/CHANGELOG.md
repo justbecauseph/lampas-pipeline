@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-01
+
 ### Fixed
 - `check-updates` no longer offers a release whose version number or file name carries an `mc` tag for another Minecraft release, even when Modrinth or CurseForge also lists it for the pack's version. Kitchen Projectiles `1.1.0+mc26.1.2` lists 26.2 on Modrinth, but its mixins target 26.1 and crash a 26.2 client; `check-updates --apply` had applied it. Such releases print `[Other Minecraft Build]`, appear under "Builds for Another Minecraft Version" in the `--markdown` report, and the newest release that fits is offered instead. Tags on the pack's release line (`mc26.2.1` for 26.2) and untagged releases are offered as before.
 
