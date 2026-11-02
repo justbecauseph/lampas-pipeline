@@ -500,7 +500,7 @@ Minecraft native server-resource-pack protocol downloads on join
 
 | Resource Pack | Delivery Owner | Target Location | Configuration |
 |---|---|---|---|
-| `fa-player-extension` | **Launcher-Managed** | `<gameDir>/resourcepacks/` | `[launcher.resourcepacks] required = ["fa-player-extension"]` |
+| Every `required` entry (for example `fluid-foolish`) | **Launcher-Managed** | `<gameDir>/resourcepacks/` | `[launcher.resourcepacks] required = [...]` |
 | `lampas2` | **Server-Enforced** | `server.properties` | `[server.resourcepack] artifact = "lampas2"` |
 
 ### 1. Launcher-Managed Resource Packs (`[launcher.resourcepacks]`)
@@ -508,7 +508,7 @@ Minecraft native server-resource-pack protocol downloads on join
 Configured in `pack/pack.toml`:
 ```toml
 [launcher.resourcepacks]
-required = ["fa-player-extension"]
+required = ["fresh-animations-extensions", "fresh-animations", "fluid-foolish", "recolourful-containers-gui", "hud-reignited", "flintl0cks", "modded-swords-x-punchy"]
 ```
 - **Sync & Verification**: The launcher synchronizes required packs into `<gameDir>/resourcepacks/` and validates their SHA-256 checksums. If a local file has modified content with the same filename, the launcher detects the hash mismatch, downloads the updated revision, and replaces it atomically.
 - **Activation in `options.txt`**: Prior to bootstrapping the game, the launcher reconciles `options.txt`, deterministically placing managed packs into the active resource pack array while strictly preserving user-installed packs, ordering, comments, and game settings.
