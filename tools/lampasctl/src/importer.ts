@@ -83,7 +83,9 @@ export async function importExistingMods(options: ImportOptions): Promise<void> 
 
   for (let i = 0; i < sha512List.length; i += batchSize) {
     const batch = sha512List.slice(i, i + batchSize);
-    console.log(`[Import] Querying Modrinth for batch ${i / batchSize + 1}/${Math.ceil(sha512List.length / batchSize)}...`);
+    console.log(
+      `[Import] Querying Modrinth for batch ${i / batchSize + 1}/${Math.ceil(sha512List.length / batchSize)}...`,
+    );
     const results = await ModrinthClient.getVersionsByHashes(batch, "sha512");
     Object.assign(modrinthMap, results);
   }
@@ -116,7 +118,12 @@ export async function importExistingMods(options: ImportOptions): Promise<void> 
 
     if (version) {
       modrinthCount++;
-      const modSlug = jar.modId || path.basename(jar.filename, ".jar").toLowerCase().replace(/[^a-z0-9_-]/g, "-");
+      const modSlug =
+        jar.modId ||
+        path
+          .basename(jar.filename, ".jar")
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, "-");
       const outPath = path.join(options.outDir, `${modSlug}.toml`);
 
       const def: ModDefinition = {
@@ -133,7 +140,12 @@ export async function importExistingMods(options: ImportOptions): Promise<void> 
       console.log(`  ✓ [Modrinth] ${jar.filename} -> ${modSlug}.toml (${jar.side})`);
     } else {
       customCount++;
-      const modSlug = jar.modId || path.basename(jar.filename, ".jar").toLowerCase().replace(/[^a-z0-9_-]/g, "-");
+      const modSlug =
+        jar.modId ||
+        path
+          .basename(jar.filename, ".jar")
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, "-");
       const samplePath = jar.clientPath || jar.serverPath!;
       const destPath = path.join(options.customModsDir, jar.filename);
 
@@ -150,7 +162,9 @@ export async function importExistingMods(options: ImportOptions): Promise<void> 
       };
 
       writeTomlFile(outPath, def as unknown as Record<string, unknown>);
-      console.log(`  ★ [Lampas Custom] ${jar.filename} -> custom/${jar.filename} & ${modSlug}.toml (${jar.side})`);
+      console.log(
+        `  ★ [Lampas Custom] ${jar.filename} -> custom/${jar.filename} & ${modSlug}.toml (${jar.side})`,
+      );
     }
   }
 

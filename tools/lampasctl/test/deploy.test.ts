@@ -14,16 +14,14 @@ describe("lampasctl deploy server deployment workflow", () => {
 
   function createMockJar(mc: string, loader: string): Buffer {
     const manifest = Buffer.from(
-      "Manifest-Version: 1.0\r\nImplementation-Title: FabricInstaller\r\nImplementation-Version: 1.1.2\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n\r\n"
+      "Manifest-Version: 1.0\r\nImplementation-Title: FabricInstaller\r\nImplementation-Version: 1.1.2\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n\r\n",
     );
-    const installProps = Buffer.from(
-      `fabric-loader-version=${loader}\r\ngame-version=${mc}\r\n`
-    );
+    const installProps = Buffer.from(`fabric-loader-version=${loader}\r\ngame-version=${mc}\r\n`);
     return Buffer.from(
       zipSync({
         "META-INF/MANIFEST.MF": new Uint8Array(manifest),
         "install.properties": new Uint8Array(installProps),
-      })
+      }),
     );
   }
 
@@ -177,7 +175,7 @@ describe("lampasctl deploy server deployment workflow", () => {
     // Pre-create server.properties and existing world
     fs.writeFileSync(
       path.join(serverDir, "server.properties"),
-      "motd=Lampas Dedicated Server\nserver-port=25565\ndifficulty=hard\nresource-pack=\n"
+      "motd=Lampas Dedicated Server\nserver-port=25565\ndifficulty=hard\nresource-pack=\n",
     );
     const worldDir = path.join(serverDir, "world");
     fs.mkdirSync(worldDir, { recursive: true });
@@ -206,7 +204,9 @@ describe("lampasctl deploy server deployment workflow", () => {
       // Verify server.properties has all 5 keys reconciled
       const props = fs.readFileSync(path.join(serverDir, "server.properties"), "utf-8");
       expect(props).toContain("motd=Lampas Dedicated Server");
-      expect(props).toContain(`resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`);
+      expect(props).toContain(
+        `resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`,
+      );
       expect(props).toContain(`resource-pack-sha1=${srpSha1}`);
       expect(props).toContain("resource-pack-id=11111111-2222-3333-4444-555555555555");
       expect(props).toContain('resource-pack-prompt={"text":"Server Textures"}');
@@ -349,7 +349,7 @@ describe("lampasctl deploy server deployment workflow", () => {
           targetDir: serverDir,
           portalUrl: `http://127.0.0.1:${evilServer.port}`,
           channel: "dev",
-        })
+        }),
       ).rejects.toThrow("Server manifest attempts to manage protected path 'server.properties'");
     } finally {
       evilServer.stop(true);
@@ -400,7 +400,7 @@ describe("lampasctl deploy server deployment workflow", () => {
           targetDir: serverDir,
           portalUrl: `http://127.0.0.1:${wrongTargetServer.port}`,
           channel: "dev",
-        })
+        }),
       ).rejects.toThrow("Manifest target mismatch: expected 'server', got 'client'");
     } finally {
       wrongTargetServer.stop(true);
@@ -494,8 +494,10 @@ describe("lampasctl deploy server deployment workflow", () => {
           targetDir: serverDir,
           portalUrl: `http://127.0.0.1:${missingSha1Server.port}`,
           channel: "dev",
-        })
-      ).rejects.toThrow("Invalid server resourcePack: SHA-1 is required and must be 40 hex characters");
+        }),
+      ).rejects.toThrow(
+        "Invalid server resourcePack: SHA-1 is required and must be 40 hex characters",
+      );
     } finally {
       missingSha1Server.stop(true);
       fs.rmSync(dir, { recursive: true, force: true });
@@ -545,8 +547,10 @@ describe("lampasctl deploy server deployment workflow", () => {
           targetDir: serverDir,
           portalUrl: `http://127.0.0.1:${mismatchServer.port}`,
           channel: "dev",
-        })
-      ).rejects.toThrow("Invalid Lampas release: release descriptor requires Fabric 0.19.3, server manifest requires Fabric 0.19.4.");
+        }),
+      ).rejects.toThrow(
+        "Invalid Lampas release: release descriptor requires Fabric 0.19.3, server manifest requires Fabric 0.19.4.",
+      );
     } finally {
       mismatchServer.stop(true);
       fs.rmSync(dir, { recursive: true, force: true });
@@ -565,7 +569,10 @@ describe("lampasctl deploy server deployment workflow", () => {
 
     const runtimeDir = path.join(serverDir, ".lampas", "runtime");
     fs.mkdirSync(runtimeDir, { recursive: true });
-    fs.writeFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "previous-coherent-launcher");
+    fs.writeFileSync(
+      path.join(runtimeDir, "fabric-server-launch.jar"),
+      "previous-coherent-launcher",
+    );
     fs.writeFileSync(
       path.join(runtimeDir, "runtime.json"),
       JSON.stringify({
@@ -573,7 +580,7 @@ describe("lampasctl deploy server deployment workflow", () => {
         loader: { type: "fabric", version: "0.19.3" },
         launcherJar: "fabric-server-launch.jar",
         launcherSha256: "prevhash",
-      })
+      }),
     );
 
     // Mock server returning release that requires a loader which fails to download
@@ -628,13 +635,15 @@ describe("lampasctl deploy server deployment workflow", () => {
           portalUrl: `http://127.0.0.1:${failingRuntimeServer.port}`,
           fabricMetaUrl: `http://127.0.0.1:${failingRuntimeServer.port}`,
           channel: "dev",
-        })
+        }),
       ).rejects.toThrow("Failed to download Fabric server launcher");
 
       // Verify that existing mod was NOT deleted, new mod was NOT added, and runtime remained previous coherent version
       expect(fs.existsSync(path.join(modsDir, "existing-mod.jar"))).toBe(true);
       expect(fs.existsSync(path.join(modsDir, "new-mod.jar"))).toBe(false);
-      expect(fs.readFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "utf-8")).toBe("previous-coherent-launcher");
+      expect(fs.readFileSync(path.join(runtimeDir, "fabric-server-launch.jar"), "utf-8")).toBe(
+        "previous-coherent-launcher",
+      );
     } finally {
       failingRuntimeServer.stop(true);
       fs.rmSync(dir, { recursive: true, force: true });
@@ -649,7 +658,7 @@ describe("lampasctl deploy server deployment workflow", () => {
     // Initial server.properties
     fs.writeFileSync(
       path.join(serverDir, "server.properties"),
-      "motd=Lampas Dedicated Server\nserver-port=25565\ndifficulty=hard\nresource-pack=\n"
+      "motd=Lampas Dedicated Server\nserver-port=25565\ndifficulty=hard\nresource-pack=\n",
     );
 
     try {
@@ -674,7 +683,9 @@ describe("lampasctl deploy server deployment workflow", () => {
       const v1InstallState = JSON.parse(fs.readFileSync(installationJson, "utf-8"));
       expect(v1InstallState.version).toBe("2.0.0");
       const v1Props = fs.readFileSync(serverProps, "utf-8");
-      expect(v1Props).toContain(`resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`);
+      expect(v1Props).toContain(
+        `resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`,
+      );
       expect(v1Props).toContain("require-resource-pack=true");
 
       const v1JarBytes = fs.readFileSync(runtimeJar);
@@ -689,7 +700,7 @@ describe("lampasctl deploy server deployment workflow", () => {
           _testHooks: {
             forceActivationFailure: true,
           },
-        })
+        }),
       ).rejects.toThrow("Forced runtime activation failure for test verification");
 
       // 3. Verify complete rollback to Release 1 state:
@@ -710,7 +721,9 @@ describe("lampasctl deploy server deployment workflow", () => {
 
       // - server.properties restored to 2.0.0 values (resource pack still configured)
       const rolledBackProps = fs.readFileSync(serverProps, "utf-8");
-      expect(rolledBackProps).toContain(`resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`);
+      expect(rolledBackProps).toContain(
+        `resource-pack=http://127.0.0.1:${server.port}/api/v1/blobs/${srpSha256}`,
+      );
       expect(rolledBackProps).toContain("require-resource-pack=true");
 
       // - Rollback journal and staging directories cleaned up
@@ -739,7 +752,7 @@ describe("lampasctl deploy server deployment workflow", () => {
           _testHooks: {
             forceActivationFailure: true,
           },
-        })
+        }),
       ).rejects.toThrow("Forced runtime activation failure for test verification");
 
       // Mod files added by the failed release should be removed
@@ -749,10 +762,14 @@ describe("lampasctl deploy server deployment workflow", () => {
       expect(fs.existsSync(path.join(serverDir, ".lampas", "installation.json"))).toBe(false);
 
       // Runtime should not be activated
-      expect(fs.existsSync(path.join(serverDir, ".lampas", "runtime", "fabric-server-launch.jar"))).toBe(false);
+      expect(
+        fs.existsSync(path.join(serverDir, ".lampas", "runtime", "fabric-server-launch.jar")),
+      ).toBe(false);
 
       // server.properties should be restored to its initial state
-      expect(fs.readFileSync(path.join(serverDir, "server.properties"), "utf-8")).toBe(initialProps);
+      expect(fs.readFileSync(path.join(serverDir, "server.properties"), "utf-8")).toBe(
+        initialProps,
+      );
 
       // Rollback journal and staging directories cleaned up
       expect(fs.existsSync(path.join(serverDir, ".lampas", ".tx-rollback"))).toBe(false);
@@ -778,7 +795,7 @@ describe("lampasctl deploy server deployment workflow", () => {
           targetDir: serverDir,
           portalUrl,
           channel: "dev",
-        })
+        }),
       ).rejects.toThrow("Cannot recover interrupted deployment transaction:");
 
       // Verify that no mods were deployed on top of corrupted state
@@ -883,7 +900,9 @@ describe("lampasctl deploy server deployment workflow", () => {
       });
 
       expect(res.status).toBe(0);
-      expect(res.stderr).toContain("[Deployment Recovery] Detected incomplete deployment transaction");
+      expect(res.stderr).toContain(
+        "[Deployment Recovery] Detected incomplete deployment transaction",
+      );
       expect(res.stdout).toContain("[Recover] Successfully recovered interrupted transaction");
 
       expect(fs.existsSync(newModPath)).toBe(false);
@@ -926,26 +945,50 @@ describe("lampasctl deploy server deployment workflow", () => {
     expect(() => validateJournalData([], targetDir)).toThrow("root must be an object");
 
     // Missing or invalid string props
-    expect(() => validateJournalData({ ...validJournal, txId: "" }, targetDir)).toThrow("'txId' must be a non-empty string");
-    expect(() => validateJournalData({ ...validJournal, startedAt: "" }, targetDir)).toThrow("'startedAt' must be a non-empty string");
-    expect(() => validateJournalData({ ...validJournal, targetDir: "" }, targetDir)).toThrow("'targetDir' must be a non-empty string");
+    expect(() => validateJournalData({ ...validJournal, txId: "" }, targetDir)).toThrow(
+      "'txId' must be a non-empty string",
+    );
+    expect(() => validateJournalData({ ...validJournal, startedAt: "" }, targetDir)).toThrow(
+      "'startedAt' must be a non-empty string",
+    );
+    expect(() => validateJournalData({ ...validJournal, targetDir: "" }, targetDir)).toThrow(
+      "'targetDir' must be a non-empty string",
+    );
 
     // TargetDir mismatch
-    expect(() => validateJournalData(validJournal, path.resolve(os.tmpdir(), "other-dir"))).toThrow("targetDir mismatch");
+    expect(() => validateJournalData(validJournal, path.resolve(os.tmpdir(), "other-dir"))).toThrow(
+      "targetDir mismatch",
+    );
 
     // Invalid boolean flags
-    expect(() => validateJournalData({ ...validJournal, hadServerProperties: "yes" }, targetDir)).toThrow("'hadServerProperties' must be a boolean");
-    expect(() => validateJournalData({ ...validJournal, hadRuntimeJar: 1 }, targetDir)).toThrow("'hadRuntimeJar' must be a boolean");
+    expect(() =>
+      validateJournalData({ ...validJournal, hadServerProperties: "yes" }, targetDir),
+    ).toThrow("'hadServerProperties' must be a boolean");
+    expect(() => validateJournalData({ ...validJournal, hadRuntimeJar: 1 }, targetDir)).toThrow(
+      "'hadRuntimeJar' must be a boolean",
+    );
 
     // Unsafe relative path or path traversal
-    expect(() => validateJournalData({ ...validJournal, newFiles: ["../outside.jar"] }, targetDir)).toThrow("unsafe relative path");
-    expect(() => validateJournalData({ ...validJournal, overwrittenFiles: ["/absolute/path.jar"] }, targetDir)).toThrow("unsafe relative path");
-    expect(() => validateJournalData({ ...validJournal, newFiles: ["config/foo/../bar.json"] }, targetDir)).toThrow("traversal segment");
-    expect(() => validateJournalData({ ...validJournal, deletedFiles: ["mods/./foo.jar"] }, targetDir)).toThrow("traversal segment");
+    expect(() =>
+      validateJournalData({ ...validJournal, newFiles: ["../outside.jar"] }, targetDir),
+    ).toThrow("unsafe relative path");
+    expect(() =>
+      validateJournalData({ ...validJournal, overwrittenFiles: ["/absolute/path.jar"] }, targetDir),
+    ).toThrow("unsafe relative path");
+    expect(() =>
+      validateJournalData({ ...validJournal, newFiles: ["config/foo/../bar.json"] }, targetDir),
+    ).toThrow("traversal segment");
+    expect(() =>
+      validateJournalData({ ...validJournal, deletedFiles: ["mods/./foo.jar"] }, targetDir),
+    ).toThrow("traversal segment");
 
     // Path entering internal .lampas
-    expect(() => validateJournalData({ ...validJournal, newFiles: [".lampas/hacked.jar"] }, targetDir)).toThrow("path enters internal .lampas directory");
-    expect(() => validateJournalData({ ...validJournal, deletedFiles: [".lampas"] }, targetDir)).toThrow("path enters internal .lampas directory");
+    expect(() =>
+      validateJournalData({ ...validJournal, newFiles: [".lampas/hacked.jar"] }, targetDir),
+    ).toThrow("path enters internal .lampas directory");
+    expect(() =>
+      validateJournalData({ ...validJournal, deletedFiles: [".lampas"] }, targetDir),
+    ).toThrow("path enters internal .lampas directory");
   });
 
   test("DeploymentTransaction.commit unlinks journal.json as explicit commit point", async () => {
@@ -994,7 +1037,7 @@ describe("lampasctl deploy server deployment workflow", () => {
 
     try {
       await expect(DeploymentTransaction.recoverIfInterrupted(serverDir)).rejects.toThrow(
-        "Cannot recover deployment: backup for overwritten file 'mods/fabric-api.jar' is missing or unreadable"
+        "Cannot recover deployment: backup for overwritten file 'mods/fabric-api.jar' is missing or unreadable",
       );
 
       // Invariant: journal.json must still be present on disk
@@ -1031,7 +1074,7 @@ describe("lampasctl deploy server deployment workflow", () => {
 
     try {
       await expect(DeploymentTransaction.recoverIfInterrupted(serverDir)).rejects.toThrow(
-        "Cannot recover interrupted deployment transaction:"
+        "Cannot recover interrupted deployment transaction:",
       );
 
       // Invariant: journal.json must still be present on disk

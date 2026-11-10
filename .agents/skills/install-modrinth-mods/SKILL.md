@@ -38,6 +38,7 @@ bun run .agents/skills/install-modrinth-mods/scripts/install-modrinth.ts <slug_o
 ### Step 1: Identify Mod Identifier or URL
 
 Modrinth mods can be targeted using any of the following formats:
+
 - **Slug**: e.g., `sodium`, `lithium`, `cloth-config`, `ferrite-core`
 - **Project ID**: e.g., `AANobbMI`, `9s6osm5g`
 - **Web URL**: e.g., `https://modrinth.com/mod/appleskin`
@@ -47,11 +48,11 @@ Modrinth mods can be targeted using any of the following formats:
 
 Always choose the appropriate side constraint to prevent server crashes and optimize client downloads:
 
-| Target Side | Flag | When to Use | Manifest Targets |
-| :--- | :--- | :--- | :---: |
+| Target Side     | Flag            | When to Use                                                                             |      Manifest Targets       |
+| :-------------- | :-------------- | :-------------------------------------------------------------------------------------- | :-------------------------: |
 | **Client Only** | `--side client` | HUDs, GUI tweaks, mini-maps, visual shaders, audio mods, client rendering optimizations | `client-manifest.json` only |
-| **Server Only** | `--side server` | Chunk pre-generators, admin/audit tools, dedicated server performance, server logging | `server-manifest.json` only |
-| **Both Sides** | `--side both` | Content mods, entities, blocks, worldgen biomes, synced networking mods, voicechat | Both manifests |
+| **Server Only** | `--side server` | Chunk pre-generators, admin/audit tools, dedicated server performance, server logging   | `server-manifest.json` only |
+| **Both Sides**  | `--side both`   | Content mods, entities, blocks, worldgen biomes, synced networking mods, voicechat      |       Both manifests        |
 
 > [!NOTE]
 > If `--side` is omitted, `lampasctl` queries the Modrinth API and automatically sets `client`, `server`, or `both` based on the project's upstream metadata.
@@ -72,6 +73,7 @@ bun run lampasctl add chunky --side server
 ```
 
 #### What `lampasctl add` performs automatically:
+
 1. Queries the Modrinth v2 API for compatible versions matching Minecraft 26.2 and Fabric.
 2. Writes the TOML definition to `pack/mods/<slug>.toml` (or `pack/shaderpacks/` / `pack/resourcepacks/`).
 3. Recursively resolves and installs all required upstream transitive dependencies.

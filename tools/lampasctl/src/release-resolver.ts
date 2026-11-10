@@ -32,7 +32,7 @@ export interface PortalTextResponse {
 export async function fetchPortalText(
   url: string,
   description: string,
-  options?: { token?: string; timeoutMs?: number }
+  options?: { token?: string; timeoutMs?: number },
 ): Promise<PortalTextResponse> {
   const headers: Record<string, string> = { Accept: "application/json" };
   if (options?.token) {
@@ -50,7 +50,7 @@ export async function fetchPortalText(
         text: res.ok ? await res.text() : "",
       };
     },
-    options?.timeoutMs || 15000
+    options?.timeoutMs || 15000,
   );
 }
 
@@ -67,21 +67,25 @@ export function parsePortalJson<T = unknown>(text: string, context: string): T {
 export async function resolveChannelVersion(
   portalUrl: string,
   channel: string,
-  options?: { token?: string; timeoutMs?: number }
+  options?: { token?: string; timeoutMs?: number },
 ): Promise<string> {
   const base = portalUrl.replace(/\/+$/, "");
   const url = `${base}/api/v1/channels/${encodeURIComponent(channel)}`;
 
   const res = await fetchPortalText(url, `resolving channel '${channel}'`, options);
   if (!res.ok) {
-    throw new Error(`Failed to resolve release channel '${channel}' from ${url}: HTTP ${res.status} ${res.statusText}`);
+    throw new Error(
+      `Failed to resolve release channel '${channel}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+    );
   }
   const data = parsePortalJson<{ channel?: string; version?: string } | null>(
     res.text,
-    `Invalid response for channel '${channel}' from ${url}`
+    `Invalid response for channel '${channel}' from ${url}`,
   );
   if (!data?.version) {
-    throw new Error(`Invalid response for channel '${channel}' from ${url}: missing 'version' property`);
+    throw new Error(
+      `Invalid response for channel '${channel}' from ${url}: missing 'version' property`,
+    );
   }
   return data.version;
 }
@@ -89,18 +93,20 @@ export async function resolveChannelVersion(
 export async function fetchReleaseDescriptor(
   portalUrl: string,
   version: string,
-  options?: { token?: string; timeoutMs?: number }
+  options?: { token?: string; timeoutMs?: number },
 ): Promise<ReleaseDescriptor> {
   const base = portalUrl.replace(/\/+$/, "");
   const url = `${base}/api/v1/releases/${encodeURIComponent(version)}`;
 
   const res = await fetchPortalText(url, `fetching release descriptor for v${version}`, options);
   if (!res.ok) {
-    throw new Error(`Failed to fetch release descriptor for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`);
+    throw new Error(
+      `Failed to fetch release descriptor for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+    );
   }
   return parsePortalJson<ReleaseDescriptor>(
     res.text,
-    `Invalid response for release descriptor for version '${version}' from ${url}`
+    `Invalid response for release descriptor for version '${version}' from ${url}`,
   );
 }
 
@@ -108,7 +114,7 @@ export async function fetchManifest(
   portalUrl: string,
   version: string,
   target: "client" | "server",
-  options?: { token?: string; timeoutMs?: number }
+  options?: { token?: string; timeoutMs?: number },
 ): Promise<PackManifest> {
   const base = portalUrl.replace(/\/+$/, "");
   const endpoint = target === "server" ? "server-manifest" : "client-manifest";
@@ -116,11 +122,13 @@ export async function fetchManifest(
 
   const res = await fetchPortalText(url, `fetching ${target} manifest for v${version}`, options);
   if (!res.ok) {
-    throw new Error(`Failed to fetch ${target} manifest for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`);
+    throw new Error(
+      `Failed to fetch ${target} manifest for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+    );
   }
   return parsePortalJson<PackManifest>(
     res.text,
-    `Invalid response for ${target} manifest for version '${version}' from ${url}`
+    `Invalid response for ${target} manifest for version '${version}' from ${url}`,
   );
 }
 
@@ -132,7 +140,9 @@ export async function resolveRelease(options: ResolveReleaseOptions): Promise<Re
     if (!channel) {
       throw new Error("Either --version or --channel must be specified to resolve a release.");
     }
-    console.log(`[Resolver] Resolving release for channel '${channel}' from Portal: ${portalUrl}...`);
+    console.log(
+      `[Resolver] Resolving release for channel '${channel}' from Portal: ${portalUrl}...`,
+    );
     version = await resolveChannelVersion(portalUrl, channel, { token, timeoutMs });
     console.log(`[Resolver] Channel '${channel}' pointer is at version v${version}`);
   }

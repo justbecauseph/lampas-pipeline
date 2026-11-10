@@ -12,7 +12,7 @@ export const DEFAULT_DOWNLOAD_TIMEOUT_MS = 180_000;
 export async function withAbortTimeout<T>(
   description: string,
   operation: (signal: AbortSignal) => Promise<T>,
-  timeoutMs = DEFAULT_OPERATION_TIMEOUT_MS
+  timeoutMs = DEFAULT_OPERATION_TIMEOUT_MS,
 ): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -87,7 +87,8 @@ export async function replaceFile(tempPath: string, destination: string): Promis
   try {
     await fs.promises.rename(tempPath, destination);
   } catch (error: any) {
-    if (!fs.existsSync(destination) || (error?.code !== "EEXIST" && error?.code !== "EPERM")) throw error;
+    if (!fs.existsSync(destination) || (error?.code !== "EEXIST" && error?.code !== "EPERM"))
+      throw error;
     const backupPath = temporarySibling(`${destination}.previous`);
     await fs.promises.rename(destination, backupPath);
     try {
@@ -103,7 +104,7 @@ export async function replaceFile(tempPath: string, destination: string): Promis
 async function verifyAndPromote(
   source: NodeJS.ReadableStream,
   destination: string,
-  options: VerifiedTransferOptions
+  options: VerifiedTransferOptions,
 ): Promise<number> {
   ensureDir(path.dirname(destination));
   const tempPath = temporarySibling(destination);
@@ -122,9 +123,15 @@ async function verifyAndPromote(
     await pipeline(source, hashingStream, fs.createWriteStream(tempPath, { flags: "wx" }));
     const actualHash = hash.digest("hex");
     if (actualHash !== options.expectedHash) {
-      throw new Error(`${algorithm.toUpperCase()} mismatch: expected ${options.expectedHash}, got ${actualHash}`);
+      throw new Error(
+        `${algorithm.toUpperCase()} mismatch: expected ${options.expectedHash}, got ${actualHash}`,
+      );
     }
-    if (options.expectedSize !== undefined && options.expectedSize > 0 && size !== options.expectedSize) {
+    if (
+      options.expectedSize !== undefined &&
+      options.expectedSize > 0 &&
+      size !== options.expectedSize
+    ) {
       throw new Error(`Size mismatch: expected ${options.expectedSize} bytes, got ${size}`);
     }
     await replaceFile(tempPath, destination);
@@ -138,7 +145,7 @@ async function verifyAndPromote(
 export async function copyFileVerified(
   sourcePath: string,
   destination: string,
-  options: VerifiedTransferOptions
+  options: VerifiedTransferOptions,
 ): Promise<number> {
   return verifyAndPromote(fs.createReadStream(sourcePath), destination, options);
 }
@@ -146,7 +153,7 @@ export async function copyFileVerified(
 export async function downloadFileVerified(
   url: string,
   destination: string,
-  options: VerifiedTransferOptions
+  options: VerifiedTransferOptions,
 ): Promise<number> {
   const attempts = options.attempts || 3;
   const timeoutMs = options.timeoutMs || DEFAULT_DOWNLOAD_TIMEOUT_MS;
@@ -163,7 +170,7 @@ export async function downloadFileVerified(
           }
           return verifyAndPromote(Readable.fromWeb(response.body as any), destination, options);
         },
-        timeoutMs
+        timeoutMs,
       );
     } catch (error) {
       lastError = error;
@@ -465,7 +472,8 @@ export function isValidServerAddress(server: string): boolean {
   }
 
   // Hostname check (RFC 1123 / standard domains / localhost)
-  const hostnameRegex = /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*$/;
+  const hostnameRegex =
+    /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))*$/;
   if (hostnameRegex.test(host)) {
     return true;
   }
@@ -497,4 +505,3 @@ export function generateDeterministicUuid(seed: string): string {
   const p5 = hash.substring(20, 32);
   return `${p1}-${p2}-${p3}-${p4}-${p5}`;
 }
-

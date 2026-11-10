@@ -26,9 +26,17 @@ export function providerCachePath(
   provider: "modrinth" | "curseforge",
   projectId: string | number,
   versionOrFileId: string | number,
-  filename: string
+  filename: string,
 ): string {
-  return path.resolve(baseDir, ".lampas", "cache", provider, String(projectId), String(versionOrFileId), path.basename(filename));
+  return path.resolve(
+    baseDir,
+    ".lampas",
+    "cache",
+    provider,
+    String(projectId),
+    String(versionOrFileId),
+    path.basename(filename),
+  );
 }
 
 /** The local file behind a `lampas` provider descriptor (`file` is relative to the pack directory). */
@@ -83,21 +91,26 @@ export class ModrinthClient {
 
         return (await res.json()) as T;
       } catch (err: any) {
-        console.warn(`[Modrinth] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${err.message}`);
+        console.warn(
+          `[Modrinth] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${err.message}`,
+        );
       }
     }
 
     return null;
   }
 
-  static async getVersionByHash(hash: string, algorithm: "sha1" | "sha512" = "sha512"): Promise<ModrinthVersion | null> {
+  static async getVersionByHash(
+    hash: string,
+    algorithm: "sha1" | "sha512" = "sha512",
+  ): Promise<ModrinthVersion | null> {
     const url = `${MODRINTH_API}/version_file/${hash}?algorithm=${algorithm}`;
     return this.fetchJson<ModrinthVersion>(url);
   }
 
   static async getVersionsByHashes(
     hashes: string[],
-    algorithm: "sha1" | "sha512" = "sha512"
+    algorithm: "sha1" | "sha512" = "sha512",
   ): Promise<Record<string, ModrinthVersion>> {
     if (hashes.length === 0) return {};
     const url = `${MODRINTH_API}/version_files`;
@@ -133,20 +146,23 @@ export class ArtifactResolver {
     baseDir: string,
     prefetchedVersion?: ModrinthVersion,
     prefetchedCurseForgeFile?: CurseForgeFile,
-    cachedArtifact?: ResolvedArtifact
+    cachedArtifact?: ResolvedArtifact,
   ): Promise<ResolvedArtifact> {
     const { provider, side, name } = def;
 
     if (provider.type === "modrinth") {
-      const version = prefetchedVersion || await ModrinthClient.getVersion(provider.version_id);
+      const version = prefetchedVersion || (await ModrinthClient.getVersion(provider.version_id));
       if (!version) {
-        throw new Error(`Mod '${modId}' (${name}): Modrinth version '${provider.version_id}' not found.`);
+        throw new Error(
+          `Mod '${modId}' (${name}): Modrinth version '${provider.version_id}' not found.`,
+        );
       }
 
-      const primaryFile =
-        version.files.find((f) => f.primary) || version.files[0];
+      const primaryFile = version.files.find((f) => f.primary) || version.files[0];
       if (!primaryFile) {
-        throw new Error(`Mod '${modId}' (${name}): No files found in Modrinth version '${provider.version_id}'.`);
+        throw new Error(
+          `Mod '${modId}' (${name}): No files found in Modrinth version '${provider.version_id}'.`,
+        );
       }
 
       // 1. Check if sha256 is already in the primaryFile metadata
@@ -170,19 +186,21 @@ export class ArtifactResolver {
           "modrinth",
           provider.project_id || version.project_id || "unknown",
           provider.version_id,
-          primaryFile.filename
+          primaryFile.filename,
         );
 
         const expectedSha512 = primaryFile.hashes.sha512;
         const expectedSha1 = primaryFile.hashes.sha1;
         const expectedSize = primaryFile.size;
 
-        let hashes = fs.existsSync(cachePath) ? await computeFileHashesStreaming(cachePath) : undefined;
-        const isCacheValid = hashes && (
+        let hashes = fs.existsSync(cachePath)
+          ? await computeFileHashesStreaming(cachePath)
+          : undefined;
+        const isCacheValid =
+          hashes &&
           (!expectedSha512 || hashes.sha512 === expectedSha512) &&
           (!expectedSha1 || hashes.sha1 === expectedSha1) &&
-          (!expectedSize || hashes.size === expectedSize)
-        );
+          (!expectedSize || hashes.size === expectedSize);
 
         if (!isCacheValid) {
           const verifyHash = expectedSha512 || expectedSha1;
@@ -213,7 +231,7 @@ export class ArtifactResolver {
                 await pipeline(Readable.fromWeb(resp.body as any), fs.createWriteStream(tempPath));
                 await fs.promises.rename(tempPath, cachePath);
               },
-              180_000
+              180_000,
             );
           }
           hashes = await computeFileHashesStreaming(cachePath);
@@ -223,7 +241,12 @@ export class ArtifactResolver {
       }
 
       const artifactType = def.type || "mod";
-      const targetDir = def.type === "shader" ? "shaderpacks" : def.type === "resourcepack" ? "resourcepacks" : "mods";
+      const targetDir =
+        def.type === "shader"
+          ? "shaderpacks"
+          : def.type === "resourcepack"
+            ? "resourcepacks"
+            : "mods";
 
       return {
         id: modId,
@@ -246,29 +269,49 @@ export class ArtifactResolver {
     }
 
     if (provider.type === "curseforge") {
-      const file = prefetchedCurseForgeFile || await CurseForgeClient.getFile(provider.project_id, provider.file_id);
+      const file =
+        prefetchedCurseForgeFile ||
+        (await CurseForgeClient.getFile(provider.project_id, provider.file_id));
       if (file.modId !== provider.project_id) {
         throw new Error(
-          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' belongs to project '${file.modId}'.`
+          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' belongs to project '${file.modId}'.`,
         );
       }
       if (file.isAvailable === false) {
-        throw new Error(`Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' is not available.`);
+        throw new Error(
+          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' is not available.`,
+        );
       }
 
       const expectedSha1 = curseForgeSha1(file);
       if (!expectedSha1) {
         throw new Error(
-          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' has no SHA-1 hash and cannot be verified safely.`
+          `Mod '${modId}' (${name}): CurseForge file '${provider.file_id}' has no SHA-1 hash and cannot be verified safely.`,
         );
       }
 
-      const downloadUrl = await CurseForgeClient.getDownloadUrl(provider.project_id, provider.file_id, file);
+      const downloadUrl = await CurseForgeClient.getDownloadUrl(
+        provider.project_id,
+        provider.file_id,
+        file,
+      );
       const filename = path.basename(file.fileName);
-      const cachePath = providerCachePath(baseDir, "curseforge", provider.project_id, provider.file_id, filename);
+      const cachePath = providerCachePath(
+        baseDir,
+        "curseforge",
+        provider.project_id,
+        provider.file_id,
+        filename,
+      );
 
-      let hashes = fs.existsSync(cachePath) ? await computeFileHashesStreaming(cachePath) : undefined;
-      if (!hashes || hashes.sha1 !== expectedSha1 || (file.fileLength > 0 && hashes.size !== file.fileLength)) {
+      let hashes = fs.existsSync(cachePath)
+        ? await computeFileHashesStreaming(cachePath)
+        : undefined;
+      if (
+        !hashes ||
+        hashes.sha1 !== expectedSha1 ||
+        (file.fileLength > 0 && hashes.size !== file.fileLength)
+      ) {
         await downloadFileVerified(downloadUrl, cachePath, {
           expectedHash: expectedSha1,
           algorithm: "sha1",
@@ -280,7 +323,12 @@ export class ArtifactResolver {
       }
 
       const artifactType = def.type || "mod";
-      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
+      const targetDir =
+        artifactType === "shader"
+          ? "shaderpacks"
+          : artifactType === "resourcepack"
+            ? "resourcepacks"
+            : "mods";
 
       return {
         id: modId,
@@ -305,13 +353,26 @@ export class ArtifactResolver {
     if (provider.type === "lampas") {
       const filePath = lampasArtifactPath(baseDir, provider.file);
       if (!fs.existsSync(filePath)) {
-        throw new Error(`Mod '${modId}' (${name}): Lampas file '${provider.file}' not found at ${filePath}`);
+        throw new Error(
+          `Mod '${modId}' (${name}): Lampas file '${provider.file}' not found at ${filePath}`,
+        );
       }
 
       const hashes = await computeFileHashesStreaming(filePath);
       const filename = path.basename(filePath);
-      const artifactType = def.type || (provider.file.includes("shader") ? "shader" : provider.file.includes("resource") ? "resourcepack" : "mod");
-      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
+      const artifactType =
+        def.type ||
+        (provider.file.includes("shader")
+          ? "shader"
+          : provider.file.includes("resource")
+            ? "resourcepack"
+            : "mod");
+      const targetDir =
+        artifactType === "shader"
+          ? "shaderpacks"
+          : artifactType === "resourcepack"
+            ? "resourcepacks"
+            : "mods";
 
       return {
         id: modId,
@@ -334,7 +395,12 @@ export class ArtifactResolver {
 
     if (provider.type === "direct") {
       const artifactType = def.type || "mod";
-      const targetDir = artifactType === "shader" ? "shaderpacks" : artifactType === "resourcepack" ? "resourcepacks" : "mods";
+      const targetDir =
+        artifactType === "shader"
+          ? "shaderpacks"
+          : artifactType === "resourcepack"
+            ? "resourcepacks"
+            : "mods";
 
       return {
         id: modId,
@@ -353,6 +419,8 @@ export class ArtifactResolver {
       };
     }
 
-    throw new Error(`Mod '${modId}' (${name}): Provider type '${(provider as any).type}' is not yet supported.`);
+    throw new Error(
+      `Mod '${modId}' (${name}): Provider type '${(provider as any).type}' is not yet supported.`,
+    );
   }
 }

@@ -19,15 +19,9 @@ function setupServerDir(): {
   const isWin = process.platform === "win32";
   const javaBin = path.join(serverDir, isWin ? "mock_java.bat" : "mock_java.sh");
   if (isWin) {
-    fs.writeFileSync(
-      javaBin,
-      "@echo off\r\necho MOCK JAVA LAUNCHED: %*\r\nexit /b 0\r\n"
-    );
+    fs.writeFileSync(javaBin, "@echo off\r\necho MOCK JAVA LAUNCHED: %*\r\nexit /b 0\r\n");
   } else {
-    fs.writeFileSync(
-      javaBin,
-      "#!/usr/bin/env bash\necho MOCK JAVA LAUNCHED: \"$@\"\nexit 0\n"
-    );
+    fs.writeFileSync(javaBin, '#!/usr/bin/env bash\necho MOCK JAVA LAUNCHED: "$@"\nexit 0\n');
     fs.chmodSync(javaBin, 0o755);
   }
 
@@ -42,7 +36,7 @@ function setupServerDir(): {
         minecraft: "26.2",
         loader: { type: "fabric", version: "0.19.3" },
         launcherJar: "fabric-server-launch.jar",
-      })
+      }),
     );
     return jarPath;
   };
@@ -51,10 +45,7 @@ function setupServerDir(): {
     const txDir = path.join(serverDir, ".lampas", ".tx-rollback");
     const runtimeBackupDir = path.join(txDir, "runtime");
     fs.mkdirSync(runtimeBackupDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(runtimeBackupDir, "fabric-server-launch.jar"),
-      "backup-jar-content"
-    );
+    fs.writeFileSync(path.join(runtimeBackupDir, "fabric-server-launch.jar"), "backup-jar-content");
     const journalData = {
       txId: "tx-test-01",
       startedAt: new Date().toISOString(),
@@ -89,7 +80,7 @@ function runLampasctl(
   options: {
     cwd?: string;
     env?: Record<string, string>;
-  } = {}
+  } = {},
 ): { status: number; stdout: string; stderr: string } {
   const proc = spawnSync("bun", ["run", cliPath, ...args], {
     cwd: options.cwd,
@@ -113,10 +104,9 @@ describe("lampasctl start CLI command", () => {
     try {
       ctx.createManagedRuntime();
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(0);
       expect(res.stdout).toContain("[Starter] Host:");
@@ -124,7 +114,7 @@ describe("lampasctl start CLI command", () => {
       expect(res.stdout).toContain("RAM");
       expect(res.stdout).toContain(`[Starter] Using Java: ${ctx.javaBin}`);
       expect(res.stdout).toContain(
-        "[Starter] Starting Minecraft Fabric Server (fabric-server-launch.jar)"
+        "[Starter] Starting Minecraft Fabric Server (fabric-server-launch.jar)",
       );
       expect(res.stdout).toContain("[Starter] Dry run:");
       expect(res.stdout).toContain("-Xms");
@@ -156,15 +146,13 @@ describe("lampasctl start CLI command", () => {
           "-Dcustom.prop=value",
           "-XX:+CustomFlag",
         ],
-        { env: { JAVA_BIN: ctx.javaBin } }
+        { env: { JAVA_BIN: ctx.javaBin } },
       );
 
       expect(res.status).toBe(0);
       expect(res.stdout).toContain("[Starter] Dry run:");
 
-      const dryRunLine = res.stdout
-        .split("\n")
-        .find((l) => l.startsWith("[Starter] Dry run:"))!;
+      const dryRunLine = res.stdout.split("\n").find((l) => l.startsWith("[Starter] Dry run:"))!;
       expect(dryRunLine).toBeDefined();
 
       const customPropIdx = dryRunLine.indexOf("-Dcustom.prop=value");
@@ -187,10 +175,9 @@ describe("lampasctl start CLI command", () => {
     try {
       ctx.createManagedRuntime();
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(0);
       expect(res.stdout).toContain("MOCK JAVA LAUNCHED:");
@@ -205,14 +192,13 @@ describe("lampasctl start CLI command", () => {
     const ctx = setupServerDir();
     try {
       // Do not create managed runtime
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(1);
       expect(res.stderr).toContain(
-        "[Starter Error] No managed Fabric runtime is installed. Run lampasctl start without --no-sync first."
+        "[Starter Error] No managed Fabric runtime is installed. Run lampasctl start without --no-sync first.",
       );
       expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
     } finally {
@@ -227,22 +213,14 @@ describe("lampasctl start CLI command", () => {
 
       // Point to an unreachable portal to trigger deploy failure
       const res = runLampasctl(
-        [
-          "start",
-          "--target",
-          ctx.serverDir,
-          "--portal",
-          "http://127.0.0.1:9",
-          "--channel",
-          "dev",
-        ],
-        { env: { JAVA_BIN: ctx.javaBin } }
+        ["start", "--target", ctx.serverDir, "--portal", "http://127.0.0.1:9", "--channel", "dev"],
+        { env: { JAVA_BIN: ctx.javaBin } },
       );
 
       expect(res.status).toBe(1);
       expect(res.stderr).toContain("[Starter Error] Pack deployment failed:");
       expect(res.stderr).toContain(
-        "[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)"
+        "[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)",
       );
       expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
     } finally {
@@ -267,16 +245,16 @@ describe("lampasctl start CLI command", () => {
           "dev",
           "--allow-stale",
         ],
-        { env: { JAVA_BIN: ctx.javaBin } }
+        { env: { JAVA_BIN: ctx.javaBin } },
       );
 
       expect(res.status).toBe(0);
       expect(res.stderr).toContain("[Starter Error] Pack deployment failed:");
       expect(res.stdout).toContain(
-        "[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)..."
+        "[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)...",
       );
       expect(res.stdout).toContain(
-        "[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled)."
+        "[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled).",
       );
       expect(res.stdout).toContain("MOCK JAVA LAUNCHED:");
       expect(res.stdout).toContain("fabric-server-launch.jar");
@@ -293,18 +271,15 @@ describe("lampasctl start CLI command", () => {
 
       expect(fs.existsSync(journalPath)).toBe(true);
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(0);
       expect(res.stdout).toContain(
-        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch...",
       );
-      expect(res.stdout).toContain(
-        "[Starter] Transaction recovery completed successfully."
-      );
+      expect(res.stdout).toContain("[Starter] Transaction recovery completed successfully.");
       expect(res.stdout).toContain("MOCK JAVA LAUNCHED:");
       // Journal must have been unlinked/cleaned up by rollback
       expect(fs.existsSync(journalPath)).toBe(false);
@@ -320,18 +295,15 @@ describe("lampasctl start CLI command", () => {
       // Target dir mismatch in journal triggers recovery error
       ctx.createTxJournal({ targetDir: "C:/non/existent/mismatched/target" });
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(1);
       expect(res.stdout).toContain(
-        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+        "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch...",
       );
-      expect(res.stderr).toContain(
-        "[Starter Error] Transaction recovery failed:"
-      );
+      expect(res.stderr).toContain("[Starter Error] Transaction recovery failed:");
       expect(res.stderr).toContain("Aborting server launch.");
       expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
     } finally {
@@ -352,18 +324,15 @@ describe("lampasctl start CLI command", () => {
           "LAMPAS_GC=zgc",
           'PRESET_KEY="preset_from_file"',
           "DO_NOT_OVERWRITE=from_file",
-        ].join("\n")
+        ].join("\n"),
       );
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"],
-        {
-          env: {
-            JAVA_BIN: ctx.javaBin,
-            DO_NOT_OVERWRITE: "from_process_env",
-          },
-        }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"], {
+        env: {
+          JAVA_BIN: ctx.javaBin,
+          DO_NOT_OVERWRITE: "from_process_env",
+        },
+      });
 
       expect(res.status).toBe(0);
       // JAVA_MEMORY=3G and LAMPAS_GC=zgc loaded from .minecraft-env
@@ -390,7 +359,7 @@ describe("lampasctl start CLI command", () => {
           'NEW_DOUBLE_QUOTED="quoted value with spaces"',
           "NEW_SINGLE_QUOTED='single quoted value'",
           "export EXPORTED_KEY=exported_value",
-        ].join("\n")
+        ].join("\n"),
       );
 
       const loaded = loadMinecraftEnv(tempDir);
@@ -426,10 +395,9 @@ describe("lampasctl start CLI command", () => {
       const log4jPath = path.join(ctx.serverDir, "log4j2.xml");
       fs.writeFileSync(log4jPath, "<Configuration></Configuration>");
 
-      const res = runLampasctl(
-        ["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"],
-        { env: { JAVA_BIN: ctx.javaBin } }
-      );
+      const res = runLampasctl(["start", "--target", ctx.serverDir, "--no-sync", "--dry-run"], {
+        env: { JAVA_BIN: ctx.javaBin },
+      });
 
       expect(res.status).toBe(0);
       expect(res.stdout).toContain(`-Dlog4j2.configurationFile=${log4jPath}`);
@@ -442,7 +410,7 @@ describe("lampasctl start CLI command", () => {
             JAVA_BIN: ctx.javaBin,
             LAMPAS_RAM: "2G",
           },
-        }
+        },
       );
 
       expect(smallHostRes.status).toBe(1);

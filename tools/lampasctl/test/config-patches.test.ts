@@ -82,7 +82,7 @@ protocol = 3
     fs.writeFileSync(
       path.join(patchesDir, "client.json"),
       JSON.stringify(options.configPatchesContent, null, 2),
-      "utf-8"
+      "utf-8",
     );
   }
 
@@ -170,7 +170,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
               operations: [{ op: "set", path: ["key"], value: 1 }],
             },
           ],
-        })
+        }),
       ).toThrow(/Unsafe target path/);
     }
   });
@@ -199,7 +199,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             operations: [{ op: "set", path: ["b"], value: 2 }],
           },
         ],
-      })
+      }),
     ).toThrow(/Duplicate config patch id: 'same-id'/);
   });
 
@@ -228,7 +228,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
     });
 
     await expect(buildManifests(fixture)).rejects.toThrow(
-      "Config ownership conflict: 'config/chatting.json' is both a MANAGED artifact and a managed config-patch target."
+      "Config ownership conflict: 'config/chatting.json' is both a MANAGED artifact and a managed config-patch target.",
     );
 
     const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile });
@@ -250,7 +250,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             operations: [{ op: "set", path: ["foo"], value: "bar" }],
           },
         ],
-      })
+      }),
     ).toThrow(/Adapter 'json5'.*currently unsupported/);
 
     expect(() =>
@@ -267,7 +267,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             operations: [{ op: "set", path: ["foo"], value: "bar" }],
           },
         ],
-      })
+      }),
     ).toThrow(/Unsupported adapter 'random-unknown'/);
   });
 
@@ -294,7 +294,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             ],
           },
         ],
-      })
+      }),
     ).toThrow(/cannot have missingFile='create'/);
 
     // text adapter does not support 'set'
@@ -312,7 +312,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             operations: [{ op: "set", path: ["foo"], value: "bar" }],
           },
         ],
-      })
+      }),
     ).toThrow(/only supports 'replaceLiteral'/);
 
     // json adapter does not support 'replaceLiteral'
@@ -337,7 +337,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             ],
           },
         ],
-      })
+      }),
     ).toThrow(/only supports 'set' and 'remove'/);
 
     // empty operations path
@@ -355,7 +355,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             operations: [{ op: "set", path: [], value: 1 }],
           },
         ],
-      })
+      }),
     ).toThrow(/Operation path must not be empty/);
   });
 
@@ -397,7 +397,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
 
     for (const patch of rejected) {
       expect(() => validateSingle(patch)).toThrow(
-        `Config patch '${patch.id}' targets launcher-protected path 'options.txt'`
+        `Config patch '${patch.id}' targets launcher-protected path 'options.txt'`,
       );
     }
   });
@@ -417,9 +417,9 @@ describe("pipeline: config patch validation and manifest emission", () => {
     ];
 
     for (const targetPath of protectedPaths) {
-      expect(() => validateSingle(keybindPatch({ id: "protected-target", path: targetPath }))).toThrow(
-        `Config patch 'protected-target' targets launcher-protected path '${targetPath}'`
-      );
+      expect(() =>
+        validateSingle(keybindPatch({ id: "protected-target", path: targetPath })),
+      ).toThrow(`Config patch 'protected-target' targets launcher-protected path '${targetPath}'`);
     }
   });
 
@@ -461,16 +461,16 @@ describe("pipeline: config patch validation and manifest emission", () => {
     ];
     for (const targetPath of unsafe) {
       expect(() => validateSingle(keybindPatch({ id: "probe", path: targetPath }))).toThrow(
-        `Unsafe target path for config patch 'probe': '${targetPath}'`
+        `Unsafe target path for config patch 'probe': '${targetPath}'`,
       );
     }
 
     // Canonical after trailing-slash removal, but not the exact options.txt the exception requires
     expect(() => validateSingle(keybindPatch({ id: "probe", path: "options.txt/" }))).toThrow(
-      "Config patch 'probe' targets launcher-protected path 'options.txt/'"
+      "Config patch 'probe' targets launcher-protected path 'options.txt/'",
     );
     expect(() => validateSingle(keybindPatch({ id: "probe", path: "OPTIONS.TXT" }))).toThrow(
-      "Config patch 'probe' targets launcher-protected path 'OPTIONS.TXT'"
+      "Config patch 'probe' targets launcher-protected path 'OPTIONS.TXT'",
     );
   });
 
@@ -497,7 +497,7 @@ describe("pipeline: config patch validation and manifest emission", () => {
             { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
             { op: "set", path: ["key_key.mod.dash"], value: "key.keyboard.x" },
           ],
-        })
+        }),
       );
       expect(twoKeys).toHaveLength(1);
       expect(warn).toHaveBeenCalledTimes(1);
@@ -526,30 +526,44 @@ describe("pipeline: config patch validation and manifest emission", () => {
     };
 
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [preserved("config/jade/jade.json")])
-    ).toThrow("Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry");
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
+        preserved("config/jade/jade.json"),
+      ]),
+    ).toThrow(
+      "Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry",
+    );
 
     // Case-insensitive collision, as the launcher's destination keys are case-folded on Windows
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [preserved("Config/Jade/Jade.json")])
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
+        preserved("Config/Jade/Jade.json"),
+      ]),
     ).toThrow("is both a PRESERVE whole-file entry");
 
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [managed("config/jade/jade.json")])
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
+        managed("config/jade/jade.json"),
+      ]),
     ).toThrow("is both a MANAGED artifact and a managed config-patch target.");
 
     // A PRESERVE options.txt with a once keybind patch is the one allowed collision
-    const allowed = validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [preserved("options.txt")]);
+    const allowed = validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [
+      preserved("options.txt"),
+    ]);
     expect(allowed).toHaveLength(1);
 
     // A MANAGED options.txt is never allowed a config patch
-    expect(() => validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [managed("options.txt")])).toThrow(
-      "Config ownership conflict: 'options.txt' is both a MANAGED artifact"
-    );
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [
+        managed("options.txt"),
+      ]),
+    ).toThrow("Config ownership conflict: 'options.txt' is both a MANAGED artifact");
 
     // An enforce-mode keybind patch is not the exception, so it collides with the PRESERVE entry
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch({ mode: "enforce" })] }, [preserved("options.txt")])
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch({ mode: "enforce" })] }, [
+        preserved("options.txt"),
+      ]),
     ).toThrow("is both a PRESERVE whole-file entry and a config-patch target");
 
     // servers.dat is a seed with no keybind exception: any patch on a PRESERVE servers.dat collides
@@ -563,15 +577,20 @@ describe("pipeline: config patch validation and manifest emission", () => {
       operations: [{ op: "set", path: ["name"], value: "x" }],
     };
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [preserved("servers.dat")])
+      validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [
+        preserved("servers.dat"),
+      ]),
     ).toThrow("Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry");
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch({ path: "servers.dat" })] }, [preserved("servers.dat")])
+      validateConfigPatches(
+        { schemaVersion: 1, patches: [keybindPatch({ path: "servers.dat" })] },
+        [preserved("servers.dat")],
+      ),
     ).toThrow("Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry");
 
     // Without a whole-file entry, a patch on servers.dat is a protected-path error
     expect(() => validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [])).toThrow(
-      "targets launcher-protected path 'servers.dat'"
+      "targets launcher-protected path 'servers.dat'",
     );
   });
 });

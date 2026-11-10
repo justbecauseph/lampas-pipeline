@@ -10,11 +10,13 @@ interface DescriptorFixture {
   content: string;
 }
 
-function setupFixture(options: {
-  blacklist?: string;
-  descriptors?: DescriptorFixture[];
-  lockArtifacts?: Record<string, unknown>;
-} = {}) {
+function setupFixture(
+  options: {
+    blacklist?: string;
+    descriptors?: DescriptorFixture[];
+    lockArtifacts?: Record<string, unknown>;
+  } = {},
+) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-blacklist-test-"));
   const packDir = path.join(dir, "pack");
   fs.mkdirSync(packDir, { recursive: true });
@@ -37,20 +39,28 @@ version = "0.19.3"`;
     fs.writeFileSync(
       path.join(packDir, descriptor.directory, descriptor.filename),
       descriptor.content,
-      "utf-8"
+      "utf-8",
     );
   }
 
   const lockFile = path.join(packDir, "pack.lock.json");
-  fs.writeFileSync(lockFile, JSON.stringify({
-    schema: 1,
-    packName: "Blacklist Test",
-    packVersion: "2.0.0",
-    minecraft: "26.2",
-    loader: { type: "fabric", version: "0.19.3" },
-    updated: "2026-10-06T00:00:00.000Z",
-    artifacts: options.lockArtifacts ?? {},
-  }, null, 2), "utf-8");
+  fs.writeFileSync(
+    lockFile,
+    JSON.stringify(
+      {
+        schema: 1,
+        packName: "Blacklist Test",
+        packVersion: "2.0.0",
+        minecraft: "26.2",
+        loader: { type: "fabric", version: "0.19.3" },
+        updated: "2026-10-06T00:00:00.000Z",
+        artifacts: options.lockArtifacts ?? {},
+      },
+      null,
+      2,
+    ),
+    "utf-8",
+  );
 
   return {
     packDir,
@@ -91,7 +101,10 @@ async function validateOffline(fixture: ReturnType<typeof setupFixture>) {
   });
 }
 
-async function captureValidation(fixture: ReturnType<typeof setupFixture>, checkFabricMeta = false) {
+async function captureValidation(
+  fixture: ReturnType<typeof setupFixture>,
+  checkFabricMeta = false,
+) {
   const messages: string[] = [];
   const originalError = console.error;
   console.error = (...args: unknown[]) => messages.push(args.map(String).join(" "));
@@ -115,8 +128,12 @@ describe("blacklist validation", () => {
     for (const blacklist of [undefined, "blacklist = []\n"]) {
       const fixture = setupFixture({
         ...(blacklist === undefined ? {} : { blacklist }),
-        descriptors: [{ directory: "mods", filename: "existing.toml", content: "not valid TOML =" }],
-        lockArtifacts: { existing: resolvedArtifact({ type: "modrinth", projectId: "p", versionId: "v" }) },
+        descriptors: [
+          { directory: "mods", filename: "existing.toml", content: "not valid TOML =" },
+        ],
+        lockArtifacts: {
+          existing: resolvedArtifact({ type: "modrinth", projectId: "p", versionId: "v" }),
+        },
       });
       try {
         expect(await validateOffline(fixture)).toBe(true);
@@ -137,7 +154,7 @@ id = "missing-provider"`,
     let fetchCalls = 0;
     globalThis.fetch = (async (
       _input: Parameters<typeof fetch>[0],
-      _init?: Parameters<typeof fetch>[1]
+      _init?: Parameters<typeof fetch>[1],
     ): Promise<Response> => {
       fetchCalls += 1;
       throw new Error("unexpected network request");
@@ -174,13 +191,22 @@ scope = "project_id"
 provider = "modrinth"
 id = "blocked-project"
 reason = "review pending"`,
-      descriptors: [{
-        directory: "mods",
-        filename: "project-mod.toml",
-        content: descriptorProvider("modrinth", `project_id = "blocked-project"\nversion_id = "allowed-version"`),
-      }],
+      descriptors: [
+        {
+          directory: "mods",
+          filename: "project-mod.toml",
+          content: descriptorProvider(
+            "modrinth",
+            `project_id = "blocked-project"\nversion_id = "allowed-version"`,
+          ),
+        },
+      ],
       lockArtifacts: {
-        "project-mod": resolvedArtifact({ type: "modrinth", projectId: "blocked-project", versionId: "allowed-version" }),
+        "project-mod": resolvedArtifact({
+          type: "modrinth",
+          projectId: "blocked-project",
+          versionId: "allowed-version",
+        }),
       },
     });
     try {
@@ -201,13 +227,22 @@ reason = "review pending"`,
 scope = "version_id"
 provider = "modrinth"
 id = "blocked-version"`,
-      descriptors: [{
-        directory: "mods",
-        filename: "stale-mod.toml",
-        content: descriptorProvider("modrinth", `project_id = "project"\nversion_id = "allowed-version"`),
-      }],
+      descriptors: [
+        {
+          directory: "mods",
+          filename: "stale-mod.toml",
+          content: descriptorProvider(
+            "modrinth",
+            `project_id = "project"\nversion_id = "allowed-version"`,
+          ),
+        },
+      ],
       lockArtifacts: {
-        "stale-mod": resolvedArtifact({ type: "modrinth", projectId: "project", versionId: "blocked-version" }),
+        "stale-mod": resolvedArtifact({
+          type: "modrinth",
+          projectId: "project",
+          versionId: "blocked-version",
+        }),
       },
     });
     try {
@@ -248,7 +283,12 @@ scope = "version_id"
 provider = "curseforge"
 id = 201`,
       lockArtifacts: {
-        "curseforge-mod": resolvedArtifact({ type: "curseforge", projectId: 100, versionId: 999, fileId: 201 }),
+        "curseforge-mod": resolvedArtifact({
+          type: "curseforge",
+          projectId: 100,
+          versionId: 999,
+          fileId: 201,
+        }),
       },
     });
     try {
@@ -268,11 +308,13 @@ id = 201`,
 scope = "version_id"
 provider = "curseforge"
 id = 201`,
-      descriptors: [{
-        directory: "mods",
-        filename: "malformed-cf.toml",
-        content: descriptorProvider("curseforge", `project_id = 100\nfile_id = "201"`),
-      }],
+      descriptors: [
+        {
+          directory: "mods",
+          filename: "malformed-cf.toml",
+          content: descriptorProvider("curseforge", `project_id = 100\nfile_id = "201"`),
+        },
+      ],
       lockArtifacts: {
         "malformed-cf": resolvedArtifact({ type: "curseforge", projectId: 100, fileId: 200 }),
       },
@@ -281,7 +323,9 @@ id = 201`,
       const result = await captureValidation(fixture);
       expect(result.passed).toBe(false);
       expect(result.messages.join("\n")).toContain("[Invalid Provider Identity]");
-      expect(result.messages.join("\n")).toContain("CurseForge file_id must be a positive safe integer");
+      expect(result.messages.join("\n")).toContain(
+        "CurseForge file_id must be a positive safe integer",
+      );
     } finally {
       fixture.cleanup();
     }
@@ -307,7 +351,10 @@ id = "local-component"`,
         {
           directory: "resourcepacks",
           filename: "blocked-resource.toml",
-          content: descriptorProvider("modrinth", `project_id = "blocked-resource-project"\nversion_id = "resource-version"`),
+          content: descriptorProvider(
+            "modrinth",
+            `project_id = "blocked-resource-project"\nversion_id = "resource-version"`,
+          ),
         },
         {
           directory: "shaderpacks",
@@ -321,7 +368,11 @@ id = "local-component"`,
         },
       ],
       lockArtifacts: {
-        "lock-only-shader": resolvedArtifact({ type: "modrinth", projectId: "blocked-resource-project", versionId: "lock-only-version" }),
+        "lock-only-shader": resolvedArtifact({
+          type: "modrinth",
+          projectId: "blocked-resource-project",
+          versionId: "lock-only-version",
+        }),
       },
     });
     try {

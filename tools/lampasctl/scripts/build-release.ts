@@ -69,9 +69,12 @@ export function createTarGzArchive(filename: string, fileData: Uint8Array): Uint
 }
 
 export function createZipArchive(filename: string, fileData: Uint8Array): Uint8Array {
-  return fflate.zipSync({
-    [filename]: fileData,
-  }, { level: 9 });
+  return fflate.zipSync(
+    {
+      [filename]: fileData,
+    },
+    { level: 9 },
+  );
 }
 
 export async function buildTarget(options: {
@@ -93,7 +96,9 @@ export async function buildTarget(options: {
   const rawExePath = path.join(tempExeDir, target.exeName);
 
   const cliEntry = path.resolve(__dirname, "../src/cli.ts");
-  console.log(`[Build] Compiling lampasctl v${version} for target '${target.id}' (${target.bunTarget})...`);
+  console.log(
+    `[Build] Compiling lampasctl v${version} for target '${target.id}' (${target.bunTarget})...`,
+  );
 
   const buildResult = await Bun.build({
     entrypoints: [cliEntry],
@@ -114,7 +119,9 @@ export async function buildTarget(options: {
   }
 
   const rawBytes = fs.readFileSync(rawExePath);
-  console.log(`  ✓ Built executable: ${rawExePath} (${(rawBytes.length / 1024 / 1024).toFixed(2)} MB)`);
+  console.log(
+    `  ✓ Built executable: ${rawExePath} (${(rawBytes.length / 1024 / 1024).toFixed(2)} MB)`,
+  );
 
   let archivePath: string | undefined;
   let archiveSha256: string | undefined;
@@ -133,7 +140,9 @@ export async function buildTarget(options: {
 
     fs.writeFileSync(archivePath, archiveData);
     archiveSha256 = crypto.createHash("sha256").update(archiveData).digest("hex");
-    console.log(`  ✓ Created package: ${archivePath} (SHA256: ${archiveSha256.substring(0, 12)}...)`);
+    console.log(
+      `  ✓ Created package: ${archivePath} (SHA256: ${archiveSha256.substring(0, 12)}...)`,
+    );
   }
 
   // If not packaging or for local host build, also output standalone binary to outDir
@@ -159,7 +168,9 @@ export async function buildTarget(options: {
 }
 
 export function generateChecksums(outDir: string): string {
-  const files = fs.readdirSync(outDir).filter((f) => f.startsWith("lampasctl_") && (f.endsWith(".tar.gz") || f.endsWith(".zip")));
+  const files = fs
+    .readdirSync(outDir)
+    .filter((f) => f.startsWith("lampasctl_") && (f.endsWith(".tar.gz") || f.endsWith(".zip")));
   files.sort();
 
   const lines: string[] = [];
@@ -238,7 +249,9 @@ export function parseCliArgs(args: string[]): {
 }
 
 async function main() {
-  const { targets, version, outDir, packageArchive, generateSums } = parseCliArgs(process.argv.slice(2));
+  const { targets, version, outDir, packageArchive, generateSums } = parseCliArgs(
+    process.argv.slice(2),
+  );
 
   console.log("=================================================");
   console.log(`⚡ lampasctl Release Builder`);

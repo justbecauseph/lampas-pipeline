@@ -19,14 +19,10 @@ import {
   notifyServerOffline,
   type FetchFn,
 } from "../src/monitor/discord";
-import {
-  loadMonitorState,
-  saveMonitorState,
-  runMonitor,
-} from "../src/monitor/monitor";
+import { loadMonitorState, saveMonitorState, runMonitor } from "../src/monitor/monitor";
 
 function startMockSlpServer(
-  handler: (socket: net.Socket) => void
+  handler: (socket: net.Socket) => void,
 ): Promise<{ server: net.Server; port: number; sockets: Set<net.Socket> }> {
   return new Promise((resolve, reject) => {
     const sockets = new Set<net.Socket>();
@@ -66,8 +62,7 @@ function createStandardSlpHandler(statusObj: object | string) {
         if (buf.length > reqOffset) {
           const req = decodeVarInt(buf, reqOffset);
           if (buf.length >= reqOffset + req.bytesRead + req.value) {
-            const jsonStr =
-              typeof statusObj === "string" ? statusObj : JSON.stringify(statusObj);
+            const jsonStr = typeof statusObj === "string" ? statusObj : JSON.stringify(statusObj);
             const jsonBytes = Buffer.from(jsonStr, "utf-8");
             const packetId = encodeVarInt(0);
             const jsonLen = encodeVarInt(jsonBytes.length);
@@ -145,7 +140,9 @@ describe("Minecraft SLP client (pingMinecraft)", () => {
       description: "Lampas 2 Dedicated Server",
     };
 
-    const { server, port, sockets } = await startMockSlpServer(createStandardSlpHandler(mockStatus));
+    const { server, port, sockets } = await startMockSlpServer(
+      createStandardSlpHandler(mockStatus),
+    );
 
     try {
       const result = await pingMinecraft("127.0.0.1", port, 2000);
@@ -197,7 +194,9 @@ describe("Minecraft SLP client (pingMinecraft)", () => {
   });
 
   test("rejects when server returns invalid JSON", async () => {
-    const { server, port, sockets } = await startMockSlpServer(createStandardSlpHandler("{ malformed json ..."));
+    const { server, port, sockets } = await startMockSlpServer(
+      createStandardSlpHandler("{ malformed json ..."),
+    );
 
     try {
       await expect(pingMinecraft("127.0.0.1", port, 2000)).rejects.toThrow();
@@ -211,23 +210,30 @@ describe("Discord webhook integration", () => {
   test("resolves webhook URL with appropriate precedence", () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-webhook-test-"));
     const envFile = path.join(tempDir, ".minecraft-env");
-    fs.writeFileSync(envFile, 'DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/from-env-file"\n');
+    fs.writeFileSync(
+      envFile,
+      'DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/from-env-file"\n',
+    );
 
     try {
       // 1. Explicit override wins
       expect(
-        resolveWebhookUrl("https://override.url", { DISCORD_WEBHOOK_URL: "https://from.env" }, tempDir)
+        resolveWebhookUrl(
+          "https://override.url",
+          { DISCORD_WEBHOOK_URL: "https://from.env" },
+          tempDir,
+        ),
       ).toBe("https://override.url");
 
       // 2. Environment variable wins over targetDir
       expect(
-        resolveWebhookUrl(undefined, { DISCORD_WEBHOOK_URL: "https://from.env" }, tempDir)
+        resolveWebhookUrl(undefined, { DISCORD_WEBHOOK_URL: "https://from.env" }, tempDir),
       ).toBe("https://from.env");
 
       // 3. targetDir/.minecraft-env wins when no env variable
-      expect(
-        resolveWebhookUrl(undefined, {}, tempDir)
-      ).toBe("https://discord.com/api/webhooks/from-env-file");
+      expect(resolveWebhookUrl(undefined, {}, tempDir)).toBe(
+        "https://discord.com/api/webhooks/from-env-file",
+      );
 
       // 4. Returns empty string if nothing configured
       expect(resolveWebhookUrl(undefined, {}, "/nonexistent/path")).toBe("");
@@ -251,7 +257,11 @@ describe("Discord webhook integration", () => {
     };
 
     const payload = { content: "test message" };
-    const success = await sendDiscordWebhook("https://discord.com/api/webhooks/123", payload, mockFetch);
+    const success = await sendDiscordWebhook(
+      "https://discord.com/api/webhooks/123",
+      payload,
+      mockFetch,
+    );
 
     expect(success).toBe(true);
     expect(capturedUrl).toBe("https://discord.com/api/webhooks/123");
@@ -266,7 +276,11 @@ describe("Discord webhook integration", () => {
 
     // Error status returns false
     const errorFetch: FetchFn = async () => new Response("Error", { status: 500 });
-    const failSuccess = await sendDiscordWebhook("https://discord.com/api/webhooks/123", payload, errorFetch);
+    const failSuccess = await sendDiscordWebhook(
+      "https://discord.com/api/webhooks/123",
+      payload,
+      errorFetch,
+    );
     expect(failSuccess).toBe(false);
   });
 

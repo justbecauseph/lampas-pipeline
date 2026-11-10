@@ -27,15 +27,29 @@ export type FabricVersion = SemanticVersion | StringVersion;
 
 export class VersionParsingError extends Error {}
 
-function friendlyName(components: number[], prerelease: string | null, build: string | null): string {
+function friendlyName(
+  components: number[],
+  prerelease: string | null,
+  build: string | null,
+): string {
   let name = components.map((c) => (c === COMPONENT_WILDCARD ? "x" : String(c))).join(".");
   if (prerelease !== null) name += `-${prerelease}`;
   if (build !== null) name += `+${build}`;
   return name;
 }
 
-function semantic(components: number[], prerelease: string | null, build: string | null): SemanticVersion {
-  return { kind: "semantic", components, prerelease, build, friendly: friendlyName(components, prerelease, build) };
+function semantic(
+  components: number[],
+  prerelease: string | null,
+  build: string | null,
+): SemanticVersion {
+  return {
+    kind: "semantic",
+    components,
+    prerelease,
+    build,
+    friendly: friendlyName(components, prerelease, build),
+  };
 }
 
 /** Java Integer.parseInt for the component strings SemanticVersionImpl can reach. */
@@ -240,7 +254,7 @@ export function parseVersionPredicate(predicate: string): VersionPredicate {
       if (hasWildcard(version)) {
         if (op !== "=") {
           throw new VersionParsingError(
-            `Invalid predicate: ${predicate}, version ranges with wildcards (.X) require using the equality operator or no operator at all!`
+            `Invalid predicate: ${predicate}, version ranges with wildcards (.X) require using the equality operator or no operator at all!`,
           );
         }
         const compCount = version.components.length;
@@ -253,7 +267,9 @@ export function parseVersionPredicate(predicate: string): VersionPredicate {
         version = semantic(newComponents, "", build);
 
         if (compCount <= 1) {
-          throw new VersionParsingError(`invalid component count ${compCount} for version ${version.friendly}`);
+          throw new VersionParsingError(
+            `invalid component count ${compCount} for version ${version.friendly}`,
+          );
         } else if (compCount <= 3) {
           // 2, 3 -> represent a.x as ^a-, a.b.x as ~a.b-
           op = compCount === 2 ? "^" : "~";
@@ -268,7 +284,7 @@ export function parseVersionPredicate(predicate: string): VersionPredicate {
       }
     } else if (!operator.minInclusive && !operator.maxInclusive) {
       throw new VersionParsingError(
-        `Invalid predicate: ${predicate}, version ranges need to be semantic version compatible to use operators that exclude the bound!`
+        `Invalid predicate: ${predicate}, version ranges need to be semantic version compatible to use operators that exclude the bound!`,
       );
     } else {
       op = "=";
@@ -317,12 +333,17 @@ export function parseDependencyPredicates(value: unknown): VersionPredicate[] {
   const list = Array.isArray(value) ? value : [value];
   return list.map((entry) => {
     if (typeof entry !== "string") {
-      throw new VersionParsingError(`Dependency version must be a string or an array of strings, got ${JSON.stringify(entry)}`);
+      throw new VersionParsingError(
+        `Dependency version must be a string or an array of strings, got ${JSON.stringify(entry)}`,
+      );
     }
     return parseVersionPredicate(entry);
   });
 }
 
-export function matchesAnyPredicate(predicates: VersionPredicate[], version: FabricVersion): boolean {
+export function matchesAnyPredicate(
+  predicates: VersionPredicate[],
+  version: FabricVersion,
+): boolean {
   return predicates.some((predicate) => testVersionPredicate(predicate, version));
 }

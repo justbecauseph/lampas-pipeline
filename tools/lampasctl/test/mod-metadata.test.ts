@@ -27,7 +27,11 @@ function jarBytes(fabricModJson: string, nested: Record<string, Uint8Array> = {}
   return fflate.zipSync({ "fabric.mod.json": fflate.strToU8(fabricModJson), ...nested });
 }
 
-function jar(name: string, nested: Record<string, Uint8Array> = {}, filename = `${name}.jar`): ModJarNode {
+function jar(
+  name: string,
+  nested: Record<string, Uint8Array> = {},
+  filename = `${name}.jar`,
+): ModJarNode {
   return readModJar(jarBytes(fixture(name), nested), `mods/${filename}`);
 }
 
@@ -35,7 +39,11 @@ function modJson(fields: Record<string, unknown>): string {
   return JSON.stringify({ schemaVersion: 1, ...fields });
 }
 
-function inlineJar(source: string, fields: Record<string, unknown>, nested: Record<string, Uint8Array> = {}): ModJarNode {
+function inlineJar(
+  source: string,
+  fields: Record<string, unknown>,
+  nested: Record<string, Uint8Array> = {},
+): ModJarNode {
   return readModJar(jarBytes(modJson(fields), nested), `mods/${source}`);
 }
 
@@ -45,9 +53,13 @@ function satisfies(version: string, predicate: string): boolean {
 
 describe("Fabric version comparison", () => {
   test("compares prerelease identifiers dot-wise, numeric parts numerically", () => {
-    expect(compareVersions(parseVersion("26.2-3.6.28+refabricated"), parseVersion("26.2-3.6.6"))).toBe(1);
+    expect(
+      compareVersions(parseVersion("26.2-3.6.28+refabricated"), parseVersion("26.2-3.6.6")),
+    ).toBe(1);
     expect(compareVersions(parseVersion("26.2-3.6.6"), parseVersion("26.2-3.6.28"))).toBe(-1);
-    expect(compareVersions(parseVersion("1.0.0-alpha.1"), parseVersion("1.0.0-alpha.beta"))).toBe(-1);
+    expect(compareVersions(parseVersion("1.0.0-alpha.1"), parseVersion("1.0.0-alpha.beta"))).toBe(
+      -1,
+    );
     expect(compareVersions(parseVersion("1.0.0-rc.1"), parseVersion("1.0.0-rc.1.1"))).toBe(-1);
   });
 
@@ -142,7 +154,7 @@ describe("mod metadata analysis", () => {
     const report = analyzeModSet(
       "client",
       [jar("fabric-api"), jar("walksylib-2.0.2"), jar("crossbow-bow-optimizer-1.0.5.1")],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toHaveLength(1);
     expect(report.issues[0].kind).toBe("breaks");
@@ -155,7 +167,7 @@ describe("mod metadata analysis", () => {
     const report = analyzeModSet(
       "client",
       [jar("fabric-api"), jar("walksylib-2.0.2"), jar("crossbowoptimizer-1.1.0")],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
     expect(report.modCount).toBe(3);
@@ -164,8 +176,13 @@ describe("mod metadata analysis", () => {
   test("two top-level jars with one mod ID are duplicates, keyed by jar path", () => {
     const report = analyzeModSet(
       "client",
-      [jar("fabric-api"), jar("walksylib-2.0.2"), jar("crossbowoptimizer-1.1.0"), jar("crossbow-bow-optimizer-1.0.5.1")],
-      BUILTINS
+      [
+        jar("fabric-api"),
+        jar("walksylib-2.0.2"),
+        jar("crossbowoptimizer-1.1.0"),
+        jar("crossbow-bow-optimizer-1.0.5.1"),
+      ],
+      BUILTINS,
     );
     // Fabric Loader loads one copy per ID; it can pick 1.1.0, which walksylib does not break.
     expect(report.issues.map((i) => i.kind)).toEqual(["duplicate"]);
@@ -182,7 +199,7 @@ describe("mod metadata analysis", () => {
         inlineJar("a.jar", { id: "alpha", version: "1.0.0", provides: ["alpha"] }),
         inlineJar("b.jar", { id: "beta", version: "1.0.0", provides: ["alpha"] }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toHaveLength(1);
     expect(report.issues[0].kind).toBe("duplicate");
@@ -190,7 +207,11 @@ describe("mod metadata analysis", () => {
   });
 
   test("a mod sharing a builtin ID is reported", () => {
-    const report = analyzeModSet("client", [inlineJar("fake.jar", { id: "fakejava", version: "1.0.0", provides: ["java"] })], BUILTINS);
+    const report = analyzeModSet(
+      "client",
+      [inlineJar("fake.jar", { id: "fakejava", version: "1.0.0", provides: ["java"] })],
+      BUILTINS,
+    );
     expect(report.issues.map((i) => i.kind)).toEqual(["duplicate"]);
   });
 
@@ -201,55 +222,84 @@ describe("mod metadata analysis", () => {
       [
         jar("fabric-api"),
         jar("farmersdelight-26.2-3.6.28"),
-        jar("ubesdelight-0.4.15", { "META-INF/jars/midnightlib-1.9.3+26.2-fabric.jar": midnightlib }),
+        jar("ubesdelight-0.4.15", {
+          "META-INF/jars/midnightlib-1.9.3+26.2-fabric.jar": midnightlib,
+        }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
     expect(report.modCount).toBe(4);
   });
 
   test("an unmet version predicate and a missing dependency are reported", () => {
-    const olderDelight = fixture("farmersdelight-26.2-3.6.28").replace("26.2-3.6.28+refabricated", "26.2-3.6.5+refabricated");
+    const olderDelight = fixture("farmersdelight-26.2-3.6.28").replace(
+      "26.2-3.6.28+refabricated",
+      "26.2-3.6.5+refabricated",
+    );
     const report = analyzeModSet(
       "client",
       [
         readModJar(jarBytes(olderDelight), "mods/farmersdelight.jar"),
-        jar("ubesdelight-0.4.15", { "META-INF/jars/midnightlib-1.9.3+26.2-fabric.jar": jarBytes(fixture("midnightlib-1.9.3")) }),
+        jar("ubesdelight-0.4.15", {
+          "META-INF/jars/midnightlib-1.9.3+26.2-fabric.jar": jarBytes(fixture("midnightlib-1.9.3")),
+        }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     const kinds = report.issues.map((i) => i.kind).sort();
     // fabric-api is absent for both mods; farmersdelight is too old for ubesdelight.
     expect(kinds).toEqual(["missing-dependency", "missing-dependency", "unsatisfied-dependency"]);
-    expect(report.issues.find((i) => i.kind === "unsatisfied-dependency")!.message).toContain("farmersdelight 26.2-3.6.5+refabricated");
+    expect(report.issues.find((i) => i.kind === "unsatisfied-dependency")!.message).toContain(
+      "farmersdelight 26.2-3.6.5+refabricated",
+    );
   });
 
   test("a nested mod whose rules cannot be met is skipped unless a top-level mod needs it", () => {
-    const inner = jarBytes(modJson({ id: "inner", version: "1.0.0", depends: { "missing-lib": "*" } }));
+    const inner = jarBytes(
+      modJson({ id: "inner", version: "1.0.0", depends: { "missing-lib": "*" } }),
+    );
     const outer = () =>
-      inlineJar("outer.jar", { id: "outer", version: "1.0.0", jars: [{ file: "META-INF/jars/inner.jar" }] }, { "META-INF/jars/inner.jar": inner });
+      inlineJar(
+        "outer.jar",
+        { id: "outer", version: "1.0.0", jars: [{ file: "META-INF/jars/inner.jar" }] },
+        { "META-INF/jars/inner.jar": inner },
+      );
     expect(analyzeModSet("client", [outer()], BUILTINS).issues).toEqual([]);
 
-    const report = analyzeModSet("client", [outer(), inlineJar("user.jar", { id: "user", version: "1.0.0", depends: { inner: "*" } })], BUILTINS);
+    const report = analyzeModSet(
+      "client",
+      [outer(), inlineJar("user.jar", { id: "user", version: "1.0.0", depends: { inner: "*" } })],
+      BUILTINS,
+    );
     expect(report.issues).toHaveLength(1);
     expect(report.issues[0].kind).toBe("unsatisfied-dependency");
     expect(report.issues[0].message).toContain(
-      "inner 1.0.0 (mods/outer.jar!/META-INF/jars/inner.jar), which cannot load because it depends on missing-lib *"
+      "inner 1.0.0 (mods/outer.jar!/META-INF/jars/inner.jar), which cannot load because it depends on missing-lib *",
     );
   });
 
   test("an older nested copy loads when the newest one cannot", () => {
-    const newLib = jarBytes(modJson({ id: "lib", version: "2.0.0", depends: { fabricloader: ">=0.20.0" } }));
+    const newLib = jarBytes(
+      modJson({ id: "lib", version: "2.0.0", depends: { fabricloader: ">=0.20.0" } }),
+    );
     const oldLib = jarBytes(modJson({ id: "lib", version: "1.0.0" }));
     const report = analyzeModSet(
       "client",
       [
-        inlineJar("x.jar", { id: "xmod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": newLib }),
-        inlineJar("y.jar", { id: "ymod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": oldLib }),
+        inlineJar(
+          "x.jar",
+          { id: "xmod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] },
+          { "META-INF/jars/lib.jar": newLib },
+        ),
+        inlineJar(
+          "y.jar",
+          { id: "ymod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] },
+          { "META-INF/jars/lib.jar": oldLib },
+        ),
         inlineJar("z.jar", { id: "zmod", version: "1.0.0", depends: { lib: "*" } }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
   });
@@ -260,10 +310,28 @@ describe("mod metadata analysis", () => {
     const report = analyzeModSet(
       "client",
       [
-        inlineJar("x.jar", { id: "xmod", version: "1.0.0", depends: { lib: "<2.0.0" }, jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": lib1 }),
-        inlineJar("y.jar", { id: "ymod", version: "1.0.0", depends: { lib: ">=2.0.0" }, jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": lib2 }),
+        inlineJar(
+          "x.jar",
+          {
+            id: "xmod",
+            version: "1.0.0",
+            depends: { lib: "<2.0.0" },
+            jars: [{ file: "META-INF/jars/lib.jar" }],
+          },
+          { "META-INF/jars/lib.jar": lib1 },
+        ),
+        inlineJar(
+          "y.jar",
+          {
+            id: "ymod",
+            version: "1.0.0",
+            depends: { lib: ">=2.0.0" },
+            jars: [{ file: "META-INF/jars/lib.jar" }],
+          },
+          { "META-INF/jars/lib.jar": lib2 },
+        ),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toHaveLength(1);
     expect(report.issues[0].kind).toBe("unsatisfied-dependency");
@@ -275,10 +343,14 @@ describe("mod metadata analysis", () => {
     const report = analyzeModSet(
       "client",
       [
-        inlineJar("x.jar", { id: "xmod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": lib }),
+        inlineJar(
+          "x.jar",
+          { id: "xmod", version: "1.0.0", jars: [{ file: "META-INF/jars/lib.jar" }] },
+          { "META-INF/jars/lib.jar": lib },
+        ),
         inlineJar("guard.jar", { id: "guard", version: "1.0.0", breaks: { lib: "<2.0.0" } }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
   });
@@ -286,8 +358,15 @@ describe("mod metadata analysis", () => {
   test("a mod that breaks its own ID fails", () => {
     const report = analyzeModSet(
       "client",
-      [inlineJar("self.jar", { id: "self", version: "1.0.0", provides: ["alias"], breaks: { alias: "*" } })],
-      BUILTINS
+      [
+        inlineJar("self.jar", {
+          id: "self",
+          version: "1.0.0",
+          provides: ["alias"],
+          breaks: { alias: "*" },
+        }),
+      ],
+      BUILTINS,
     );
     expect(report.issues.map((i) => i.kind)).toEqual(["breaks"]);
   });
@@ -299,11 +378,16 @@ describe("mod metadata analysis", () => {
       [
         inlineJar(
           "bundler.jar",
-          { id: "bundler", version: "1.0.0", depends: { fabricloader: ">=0.19.5" }, jars: [{ file: "META-INF/jars/loader.jar" }] },
-          { "META-INF/jars/loader.jar": loaderCopy }
+          {
+            id: "bundler",
+            version: "1.0.0",
+            depends: { fabricloader: ">=0.19.5" },
+            jars: [{ file: "META-INF/jars/loader.jar" }],
+          },
+          { "META-INF/jars/loader.jar": loaderCopy },
         ),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
   });
@@ -312,10 +396,25 @@ describe("mod metadata analysis", () => {
     const report = analyzeModSet(
       "server",
       [
-        readModJar(jarBytes(JSON.stringify({ id: "legacy", version: "1.0.0", side: "client", requires: { absent: "*" } })), "mods/legacy-client.jar"),
-        readModJar(jarBytes(JSON.stringify({ id: "legacy-common", version: "1.0.0", requires: { absent: "*" } })), "mods/legacy.jar"),
+        readModJar(
+          jarBytes(
+            JSON.stringify({
+              id: "legacy",
+              version: "1.0.0",
+              side: "client",
+              requires: { absent: "*" },
+            }),
+          ),
+          "mods/legacy-client.jar",
+        ),
+        readModJar(
+          jarBytes(
+            JSON.stringify({ id: "legacy-common", version: "1.0.0", requires: { absent: "*" } }),
+          ),
+          "mods/legacy.jar",
+        ),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues.map((i) => i.message)).toEqual([
       "legacy-common 1.0.0 (mods/legacy.jar) depends on absent *, which is not present",
@@ -328,9 +427,18 @@ describe("mod metadata analysis", () => {
       "client",
       [
         inlineJar("lib.jar", { id: "lib", version: "2.0.0" }),
-        inlineJar("user.jar", { id: "user", version: "1.0.0", depends: { lib: ">=2.0.0" }, jars: [{ file: "META-INF/jars/lib.jar" }] }, { "META-INF/jars/lib.jar": nestedOld }),
+        inlineJar(
+          "user.jar",
+          {
+            id: "user",
+            version: "1.0.0",
+            depends: { lib: ">=2.0.0" },
+            jars: [{ file: "META-INF/jars/lib.jar" }],
+          },
+          { "META-INF/jars/lib.jar": nestedOld },
+        ),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
   });
@@ -338,8 +446,17 @@ describe("mod metadata analysis", () => {
   test("mods are filtered by environment, and a dependency on an environment-disabled mod is softened", () => {
     const jars = [
       inlineJar("menu.jar", { id: "modmenu", version: "20.0.3", environment: "client" }),
-      inlineJar("village.jar", { id: "underground_village", version: "2.1.1", depends: { modmenu: "*" } }),
-      inlineJar("hud.jar", { id: "hud", version: "1.0.0", environment: "client", depends: { "client-only-lib": "*" } }),
+      inlineJar("village.jar", {
+        id: "underground_village",
+        version: "2.1.1",
+        depends: { modmenu: "*" },
+      }),
+      inlineJar("hud.jar", {
+        id: "hud",
+        version: "1.0.0",
+        environment: "client",
+        depends: { "client-only-lib": "*" },
+      }),
     ];
     const server = analyzeModSet("server", jars, BUILTINS);
     expect(server.issues).toEqual([]);
@@ -354,12 +471,22 @@ describe("mod metadata analysis", () => {
   test("builtin mods satisfy minecraft, fabricloader and java dependencies", () => {
     const report = analyzeModSet(
       "client",
-      [inlineJar("needs.jar", { id: "needs", version: "1.0.0", depends: { minecraft: "26.2.x", fabricloader: ">=0.19.5", java: ">=21" } })],
-      BUILTINS
+      [
+        inlineJar("needs.jar", {
+          id: "needs",
+          version: "1.0.0",
+          depends: { minecraft: "26.2.x", fabricloader: ">=0.19.5", java: ">=21" },
+        }),
+      ],
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
 
-    const tooNew = analyzeModSet("client", [inlineJar("needs.jar", { id: "needs", version: "1.0.0", depends: { java: ">=26" } })], BUILTINS);
+    const tooNew = analyzeModSet(
+      "client",
+      [inlineJar("needs.jar", { id: "needs", version: "1.0.0", depends: { java: ">=26" } })],
+      BUILTINS,
+    );
     expect(tooNew.issues.map((i) => i.kind)).toEqual(["unsatisfied-dependency"]);
   });
 
@@ -375,12 +502,16 @@ describe("mod metadata analysis", () => {
       "client",
       [
         readModJar(jarBytes("{ not json"), "mods/broken.jar"),
-        inlineJar("bad-predicate.jar", { id: "bad", version: "1.0.0", depends: { other: ">=1.x" } }),
+        inlineJar("bad-predicate.jar", {
+          id: "bad",
+          version: "1.0.0",
+          depends: { other: ">=1.x" },
+        }),
         inlineJar("bad-id.jar", { id: "MyMod", version: "1.0.0" }),
         inlineJar("bad-provides.jar", { id: "fine", version: "1.0.0", provides: ["x"] }),
         inlineJar("schema-2.jar", { schemaVersion: 2, id: "future", version: "1.0.0" }),
       ],
-      BUILTINS
+      BUILTINS,
     );
     expect(report.issues.map((i) => i.kind)).toEqual(Array(5).fill("invalid-metadata"));
   });
@@ -388,22 +519,38 @@ describe("mod metadata analysis", () => {
   test("listed nested jars that are missing are skipped, as Fabric Loader skips them", () => {
     const report = analyzeModSet(
       "client",
-      [inlineJar("outer.jar", { id: "outer", version: "1.0.0", jars: [{ file: "META-INF/jars/gone.jar" }] })],
-      BUILTINS
+      [
+        inlineJar("outer.jar", {
+          id: "outer",
+          version: "1.0.0",
+          jars: [{ file: "META-INF/jars/gone.jar" }],
+        }),
+      ],
+      BUILTINS,
     );
     expect(report.issues).toEqual([]);
     expect(report.modCount).toBe(1);
   });
 
   test("jars without fabric.mod.json are skipped", () => {
-    const node = readModJar(fflate.zipSync({ "META-INF/MANIFEST.MF": fflate.strToU8("Manifest-Version: 1.0\n") }), "mods/plain.jar");
+    const node = readModJar(
+      fflate.zipSync({ "META-INF/MANIFEST.MF": fflate.strToU8("Manifest-Version: 1.0\n") }),
+      "mods/plain.jar",
+    );
     expect(node.mod).toBeUndefined();
-    expect(analyzeModSet("client", [node], BUILTINS)).toEqual({ side: "client", modCount: 0, jarCount: 1, issues: [] });
+    expect(analyzeModSet("client", [node], BUILTINS)).toEqual({
+      side: "client",
+      modCount: 0,
+      jarCount: 1,
+      issues: [],
+    });
   });
 });
 
 describe("validate reads fabric.mod.json from lockfile artifacts", () => {
-  function setupPack(jars: Array<{ id: string; fixture: string; side: "client" | "server" | "both" }>) {
+  function setupPack(
+    jars: Array<{ id: string; fixture: string; side: "client" | "server" | "both" }>,
+  ) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-mod-metadata-test-"));
     const packDir = path.join(dir, "pack");
     fs.mkdirSync(path.join(packDir, "mods"), { recursive: true });
@@ -411,7 +558,7 @@ describe("validate reads fabric.mod.json from lockfile artifacts", () => {
     fs.writeFileSync(
       path.join(packDir, "pack.toml"),
       `[pack]\nname = "Metadata Test"\nversion = "2.0.0"\nminecraft = "26.2"\n\n[loader]\ntype = "fabric"\nversion = "0.19.5"\n`,
-      "utf-8"
+      "utf-8",
     );
 
     const artifacts: Record<string, unknown> = {};
@@ -435,15 +582,23 @@ describe("validate reads fabric.mod.json from lockfile artifacts", () => {
     }
 
     const lockFile = path.join(packDir, "pack.lock.json");
-    fs.writeFileSync(lockFile, JSON.stringify({
-      schema: 1,
-      packName: "Metadata Test",
-      packVersion: "2.0.0",
-      minecraft: "26.2",
-      loader: { type: "fabric", version: "0.19.5" },
-      updated: "2026-10-14T00:00:00.000Z",
-      artifacts,
-    }, null, 2), "utf-8");
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify(
+        {
+          schema: 1,
+          packName: "Metadata Test",
+          packVersion: "2.0.0",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.5" },
+          updated: "2026-10-14T00:00:00.000Z",
+          artifacts,
+        },
+        null,
+        2,
+      ),
+      "utf-8",
+    );
 
     return { packDir, lockFile, cleanup: () => fs.rmSync(dir, { recursive: true, force: true }) };
   }
@@ -455,7 +610,10 @@ describe("validate reads fabric.mod.json from lockfile artifacts", () => {
     console.error = (...args: unknown[]) => messages.push(args.map(String).join(" "));
     console.log = (...args: unknown[]) => messages.push(args.map(String).join(" "));
     try {
-      return { passed: await validatePack({ packDir, lockFile, checkFabricMeta: false }), messages };
+      return {
+        passed: await validatePack({ packDir, lockFile, checkFabricMeta: false }),
+        messages,
+      };
     } finally {
       console.error = originalError;
       console.log = originalLog;
@@ -471,8 +629,14 @@ describe("validate reads fabric.mod.json from lockfile artifacts", () => {
     try {
       const { passed, messages } = await capture(pack.packDir, pack.lockFile);
       expect(passed).toBe(false);
-      expect(messages.some((m) => m.includes("[Breaking Mod] client: walksylib 2.0.2+26.2"))).toBe(true);
-      expect(messages.some((m) => m.includes("[Mod Metadata] server: 1 mods from 1 jars (nested included), 0 issues"))).toBe(true);
+      expect(messages.some((m) => m.includes("[Breaking Mod] client: walksylib 2.0.2+26.2"))).toBe(
+        true,
+      );
+      expect(
+        messages.some((m) =>
+          m.includes("[Mod Metadata] server: 1 mods from 1 jars (nested included), 0 issues"),
+        ),
+      ).toBe(true);
     } finally {
       pack.cleanup();
     }
@@ -487,7 +651,11 @@ describe("validate reads fabric.mod.json from lockfile artifacts", () => {
     try {
       const { passed, messages } = await capture(pack.packDir, pack.lockFile);
       expect(passed).toBe(true);
-      expect(messages.some((m) => m.includes("[Mod Metadata] client: 3 mods from 3 jars (nested included), 0 issues"))).toBe(true);
+      expect(
+        messages.some((m) =>
+          m.includes("[Mod Metadata] client: 3 mods from 3 jars (nested included), 0 issues"),
+        ),
+      ).toBe(true);
     } finally {
       pack.cleanup();
     }

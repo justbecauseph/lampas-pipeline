@@ -86,13 +86,15 @@ export function validateManifestForSync(
   options?: {
     expectedTarget?: "client" | "server";
     expectedVersion?: string;
-  }
+  },
 ): void {
   if (!manifest || typeof manifest !== "object") {
     throw new Error("Invalid manifest: expected a JSON object");
   }
   if (manifest.schemaVersion !== 1 && manifest.schemaVersion !== 2) {
-    throw new Error(`Invalid manifest: unsupported schemaVersion ${manifest.schemaVersion} (expected 1 or 2)`);
+    throw new Error(
+      `Invalid manifest: unsupported schemaVersion ${manifest.schemaVersion} (expected 1 or 2)`,
+    );
   }
   if (!manifest.pack || typeof manifest.pack !== "string" || manifest.pack.trim() === "") {
     throw new Error("Invalid manifest: 'pack' must be a non-empty string");
@@ -101,18 +103,27 @@ export function validateManifestForSync(
     throw new Error("Invalid manifest: 'version' must be a non-empty string");
   }
   if (options?.expectedVersion && manifest.version !== options.expectedVersion) {
-    throw new Error(`Manifest version mismatch: expected '${options.expectedVersion}', got '${manifest.version}'`);
+    throw new Error(
+      `Manifest version mismatch: expected '${options.expectedVersion}', got '${manifest.version}'`,
+    );
   }
   if (manifest.target !== "client" && manifest.target !== "server") {
     throw new Error(`Invalid manifest target '${manifest.target}': must be 'client' or 'server'`);
   }
   if (options?.expectedTarget && manifest.target !== options.expectedTarget) {
-    throw new Error(`Manifest target mismatch: expected '${options.expectedTarget}', got '${manifest.target}'`);
+    throw new Error(
+      `Manifest target mismatch: expected '${options.expectedTarget}', got '${manifest.target}'`,
+    );
   }
   if (!manifest.minecraft || typeof manifest.minecraft !== "string") {
     throw new Error("Invalid manifest: 'minecraft' version is required");
   }
-  if (!manifest.loader || typeof manifest.loader !== "object" || manifest.loader.type !== "fabric" || !manifest.loader.version) {
+  if (
+    !manifest.loader ||
+    typeof manifest.loader !== "object" ||
+    manifest.loader.type !== "fabric" ||
+    !manifest.loader.version
+  ) {
     throw new Error("Invalid manifest: 'loader' must be a valid Fabric configuration");
   }
   if (!Array.isArray(manifest.files)) {
@@ -137,11 +148,15 @@ export function validateManifestForSync(
 
     const validPolicies = new Set(["MANAGED", "PRESERVE", "OPTIONAL", "GENERATED"]);
     if (!validPolicies.has(file.policy)) {
-      throw new Error(`Invalid file policy '${file.policy}' for '${file.path}' (must be MANAGED, PRESERVE, OPTIONAL, or GENERATED)`);
+      throw new Error(
+        `Invalid file policy '${file.policy}' for '${file.path}' (must be MANAGED, PRESERVE, OPTIONAL, or GENERATED)`,
+      );
     }
 
     if (isPathProtected(manifest.target, file.path) && file.policy === "MANAGED") {
-      throw new Error(`${manifest.target === "server" ? "Server" : "Client"} manifest attempts to manage protected path '${file.path}'`);
+      throw new Error(
+        `${manifest.target === "server" ? "Server" : "Client"} manifest attempts to manage protected path '${file.path}'`,
+      );
     }
 
     if (typeof file.size !== "number" || file.size < 0) {
@@ -153,7 +168,11 @@ export function validateManifestForSync(
       throw new Error(`Invalid or missing SHA-256 hash for file '${file.path}'`);
     }
 
-    if (!file.download || typeof file.download.url !== "string" || file.download.url.trim() === "") {
+    if (
+      !file.download ||
+      typeof file.download.url !== "string" ||
+      file.download.url.trim() === ""
+    ) {
       throw new Error(`Missing or empty download URL for file '${file.path}'`);
     }
   }
@@ -176,7 +195,9 @@ export function validateManifestForSync(
       throw new Error("Invalid server resourcePack: invalid or missing SHA-256 hash");
     }
     if (!srp.sha1 || !/^[0-9a-f]{40}$/i.test(srp.sha1)) {
-      throw new Error("Invalid server resourcePack: SHA-1 is required and must be 40 hex characters");
+      throw new Error(
+        "Invalid server resourcePack: SHA-1 is required and must be 40 hex characters",
+      );
     }
     const packId = srp.id || srp.uuid;
     if (packId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packId)) {
@@ -222,7 +243,9 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
     }
   }
 
-  console.log(`[Sync] Synchronizing ${manifest.pack} (${manifest.target}) v${manifest.version} to: ${targetDir}`);
+  console.log(
+    `[Sync] Synchronizing ${manifest.pack} (${manifest.target}) v${manifest.version} to: ${targetDir}`,
+  );
 
   const desiredFilesMap = new Map<string, ManifestFile>();
   for (const f of manifest.files) {
@@ -272,7 +295,11 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
   // Identify obsolete managed files from previous installation AND unmanifested mods on disk
   const toDeleteSet = new Set<string>();
   for (const [prevPath, info] of Object.entries(prevState.files)) {
-    if (info.policy === "MANAGED" && !desiredFilesMap.has(prevPath) && !isPathProtected(manifest.target, prevPath)) {
+    if (
+      info.policy === "MANAGED" &&
+      !desiredFilesMap.has(prevPath) &&
+      !isPathProtected(manifest.target, prevPath)
+    ) {
       toDeleteSet.add(prevPath);
     }
   }
@@ -297,11 +324,14 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
 
   const toDelete = Array.from(toDeleteSet);
 
-  console.log(`[Sync] Plan: ${toDownload.length} to download, ${toKeep.length} already up-to-date, ${toDelete.length} obsolete to remove.`);
+  console.log(
+    `[Sync] Plan: ${toDownload.length} to download, ${toKeep.length} already up-to-date, ${toDelete.length} obsolete to remove.`,
+  );
 
   // Perform world backup if requested and mutations are planned
   if (options.backupWorld) {
-    const hasMutations = toDownload.length > 0 || toDelete.length > 0 || manifest.version !== prevState.version;
+    const hasMutations =
+      toDownload.length > 0 || toDelete.length > 0 || manifest.version !== prevState.version;
     if (hasMutations) {
       await backupDirectory({
         source: path.join(targetDir, "world"),
@@ -357,7 +387,9 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
 
           const foundPath = candidatePaths.find((p) => fs.existsSync(p));
           if (!foundPath) {
-            throw new Error(`Local blob source for ${file.path} not found in pack/ directories. Provide --portal URL.`);
+            throw new Error(
+              `Local blob source for ${file.path} not found in pack/ directories. Provide --portal URL.`,
+            );
           }
           await copyFileVerified(foundPath, cachePath, {
             expectedHash: file.hashes.sha256,
@@ -420,17 +452,23 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
     if (file.policy === "MANAGED") {
       const localPath = path.join(targetDir, file.path);
       if (!fs.existsSync(localPath)) {
-        throw new Error(`Final verification failed: managed file '${file.path}' is missing on disk.`);
+        throw new Error(
+          `Final verification failed: managed file '${file.path}' is missing on disk.`,
+        );
       }
       const stat = fs.statSync(localPath);
       if (typeof file.size === "number" && stat.size !== file.size) {
-        throw new Error(`Final verification failed: size mismatch for '${file.path}' (expected ${file.size}, got ${stat.size})`);
+        throw new Error(
+          `Final verification failed: size mismatch for '${file.path}' (expected ${file.size}, got ${stat.size})`,
+        );
       }
       const wasDownloaded = toDownload.some((f) => f.path === file.path);
       if (options.verificationMode === "full" || wasDownloaded) {
         const hashes = await computeFileHashesStreaming(localPath);
         if (hashes.sha256.toLowerCase() !== file.hashes.sha256.toLowerCase()) {
-          throw new Error(`Final verification failed: SHA-256 mismatch for '${file.path}' (expected ${file.hashes.sha256}, got ${hashes.sha256})`);
+          throw new Error(
+            `Final verification failed: SHA-256 mismatch for '${file.path}' (expected ${file.hashes.sha256}, got ${hashes.sha256})`,
+          );
         }
       }
     }
@@ -441,38 +479,61 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
     if (manifest.resourcePack) {
       const srp = manifest.resourcePack;
       if (props["resource-pack"] !== srp.url) {
-        throw new Error(`Final verification failed: server.properties 'resource-pack' mismatch (expected '${srp.url}', got '${props["resource-pack"]}')`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack' mismatch (expected '${srp.url}', got '${props["resource-pack"]}')`,
+        );
       }
       if (props["resource-pack-sha1"] !== (srp.sha1 || "")) {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' mismatch (expected '${srp.sha1 || ""}', got '${props["resource-pack-sha1"]}')`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-sha1' mismatch (expected '${srp.sha1 || ""}', got '${props["resource-pack-sha1"]}')`,
+        );
       }
       const expectedId = srp.id || srp.uuid || "";
       if (props["resource-pack-id"] !== expectedId) {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-id' mismatch (expected '${expectedId}', got '${props["resource-pack-id"]}')`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-id' mismatch (expected '${expectedId}', got '${props["resource-pack-id"]}')`,
+        );
       }
       const expectedPrompt = srp.prompt ? formatPromptJson(srp.prompt) : "";
       if (props["resource-pack-prompt"] !== expectedPrompt) {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' mismatch (expected '${expectedPrompt}', got '${props["resource-pack-prompt"]}')`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-prompt' mismatch (expected '${expectedPrompt}', got '${props["resource-pack-prompt"]}')`,
+        );
       }
       const expectedReq = String(srp.required ?? true).toLowerCase();
       if (props["require-resource-pack"] !== expectedReq) {
-        throw new Error(`Final verification failed: server.properties 'require-resource-pack' mismatch (expected '${expectedReq}', got '${props["require-resource-pack"]}')`);
+        throw new Error(
+          `Final verification failed: server.properties 'require-resource-pack' mismatch (expected '${expectedReq}', got '${props["require-resource-pack"]}')`,
+        );
       }
     } else if (prevState.serverResourcePack?.managed) {
       if (props["resource-pack"] && props["resource-pack"] !== "") {
-        throw new Error(`Final verification failed: server.properties 'resource-pack' was not cleared on pack removal`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack' was not cleared on pack removal`,
+        );
       }
       if (props["resource-pack-sha1"] && props["resource-pack-sha1"] !== "") {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-sha1' was not cleared on pack removal`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-sha1' was not cleared on pack removal`,
+        );
       }
       if (props["resource-pack-id"] && props["resource-pack-id"] !== "") {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-id' was not cleared on pack removal`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-id' was not cleared on pack removal`,
+        );
       }
       if (props["resource-pack-prompt"] && props["resource-pack-prompt"] !== "") {
-        throw new Error(`Final verification failed: server.properties 'resource-pack-prompt' was not cleared on pack removal`);
+        throw new Error(
+          `Final verification failed: server.properties 'resource-pack-prompt' was not cleared on pack removal`,
+        );
       }
-      if (props["require-resource-pack"] && props["require-resource-pack"].toLowerCase() !== "false") {
-        throw new Error(`Final verification failed: server.properties 'require-resource-pack' was not reset to false on pack removal`);
+      if (
+        props["require-resource-pack"] &&
+        props["require-resource-pack"].toLowerCase() !== "false"
+      ) {
+        throw new Error(
+          `Final verification failed: server.properties 'require-resource-pack' was not reset to false on pack removal`,
+        );
       }
     }
   }
@@ -544,7 +605,14 @@ export function readServerPropertiesMap(targetDir: string): Record<string, strin
 
 export function applyServerResourcePackProperties(
   targetDir: string,
-  srp: { url: string; sha1?: string; required: boolean; prompt?: string; id?: string; uuid?: string }
+  srp: {
+    url: string;
+    sha1?: string;
+    required: boolean;
+    prompt?: string;
+    id?: string;
+    uuid?: string;
+  },
 ): void {
   const propsPath = path.join(targetDir, "server.properties");
   let content = "";
@@ -674,7 +742,7 @@ export async function deployServer(options: DeployOptions): Promise<void> {
   if (release) {
     if (release.minecraft !== manifest.minecraft) {
       throw new Error(
-        `Release Minecraft version mismatch: release requires '${release.minecraft}', server manifest requires '${manifest.minecraft}'`
+        `Release Minecraft version mismatch: release requires '${release.minecraft}', server manifest requires '${manifest.minecraft}'`,
       );
     }
     if (
@@ -682,7 +750,7 @@ export async function deployServer(options: DeployOptions): Promise<void> {
       release.loader?.version !== manifest.loader?.version
     ) {
       throw new Error(
-        `Invalid Lampas release: release descriptor requires Fabric ${release.loader?.version}, server manifest requires Fabric ${manifest.loader?.version}.`
+        `Invalid Lampas release: release descriptor requires Fabric ${release.loader?.version}, server manifest requires Fabric ${manifest.loader?.version}.`,
       );
     }
   }
@@ -739,5 +807,7 @@ export async function deployServer(options: DeployOptions): Promise<void> {
     throw err;
   }
 
-  console.log(`\n[Deploy Complete] Successfully deployed ${manifest.pack} v${manifest.version} to ${targetDir}`);
+  console.log(
+    `\n[Deploy Complete] Successfully deployed ${manifest.pack} v${manifest.version} to ${targetDir}`,
+  );
 }

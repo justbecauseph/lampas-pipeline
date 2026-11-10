@@ -39,10 +39,7 @@
     },
     "loader": {
       "type": "object",
-      "required": [
-        "type",
-        "version"
-      ],
+      "required": ["type", "version"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -99,12 +96,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "filename",
-              "path",
-              "sha256"
-            ],
+            "required": ["id", "filename", "path", "sha256"],
             "additionalProperties": false,
             "properties": {
               "id": {
@@ -133,10 +125,7 @@
       "type": "object"
     },
     "signature": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     }
   }
 }

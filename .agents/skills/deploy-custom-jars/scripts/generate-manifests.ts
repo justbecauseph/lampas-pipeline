@@ -34,7 +34,9 @@ async function main() {
   console.log(`Lockfile:       ${lockFile}\n`);
 
   if (!fs.existsSync(lockFile)) {
-    throw new Error(`Lockfile not found at ${lockFile}. Please run 'bun run lampasctl resolve' first.`);
+    throw new Error(
+      `Lockfile not found at ${lockFile}. Please run 'bun run lampasctl resolve' first.`,
+    );
   }
 
   for (const env of TARGET_ENVIRONMENTS) {
@@ -57,7 +59,9 @@ async function main() {
   }
 
   // Also update root manifest/ with default dev portal URL for repo consistency
-  console.log(`\n📦 Updating root manifest directory (default dev portal: https://dev.lampas.town)...`);
+  console.log(
+    `\n📦 Updating root manifest directory (default dev portal: https://dev.lampas.town)...`,
+  );
   await buildManifests({
     packDir,
     lockFile,
@@ -66,7 +70,9 @@ async function main() {
   });
   console.log(`  ✓ Written to: ${defaultManifestDir}`);
 
-  console.log("\n✨ Dual manifest generation complete for localhost:3000 and https://dev.lampas.town!");
+  console.log(
+    "\n✨ Dual manifest generation complete for localhost:3000 and https://dev.lampas.town!",
+  );
 }
 
 main().catch((err) => {

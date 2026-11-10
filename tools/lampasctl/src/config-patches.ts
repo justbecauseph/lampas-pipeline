@@ -1,5 +1,11 @@
 import { z } from "zod";
-import type { ConfigOperation, ConfigPatch, ConfigPatchesFile, FilePolicy, ManifestFile } from "./types";
+import type {
+  ConfigOperation,
+  ConfigPatch,
+  ConfigPatchesFile,
+  FilePolicy,
+  ManifestFile,
+} from "./types";
 import { canonicalizeRelativePath } from "./utils";
 
 export const SUPPORTED_CONFIG_ADAPTERS = [
@@ -74,8 +80,8 @@ const PROTECTED_CLIENT_FILES = [
 
 const PROTECTED_CLIENT_DIRS = ["saves/", "screenshots/", "logs/", "crash-reports/"];
 
-const OPTIONS_KEYBIND_KEY_PATTERN = /^key_[A-Za-z0-9_.\-]+$/;
-const OPTIONS_KEYBIND_VALUE_PATTERN = /^key\.(keyboard|mouse)\.[A-Za-z0-9_.\-]+$/;
+const OPTIONS_KEYBIND_KEY_PATTERN = /^key_[A-Za-z0-9_.-]+$/;
+const OPTIONS_KEYBIND_VALUE_PATTERN = /^key\.(keyboard|mouse)\.[A-Za-z0-9_.-]+$/;
 
 // Limits mirror lampas-launcher src/metadata-policy.ts. The Portal's pack-manifest-schema.ts sets
 // none of these, so the launcher is the binding limit.
@@ -171,7 +177,10 @@ export function isPreserveListed(relPath: string, preserve: readonly string[]): 
  * names) are always PRESERVE: the launcher places them only when the player has none. Other files
  * are PRESERVE only when listed in [client].preserve, and MANAGED otherwise.
  */
-export function clientStaticFilePolicy(relPath: string, preserve: readonly string[] = []): FilePolicy {
+export function clientStaticFilePolicy(
+  relPath: string,
+  preserve: readonly string[] = [],
+): FilePolicy {
   if (isSeedClientFile(relPath)) return "PRESERVE";
   return isPreserveListed(relPath, preserve) ? "PRESERVE" : "MANAGED";
 }
@@ -180,7 +189,10 @@ export function clientStaticFilePolicy(relPath: string, preserve: readonly strin
  * Policy for a file shipped from pack/common/ in the client manifest. Seed names are never PRESERVE
  * from pack/common/, so a seed name there stays MANAGED and is rejected as a protected path.
  */
-export function commonStaticFilePolicy(relPath: string, preserve: readonly string[] = []): FilePolicy {
+export function commonStaticFilePolicy(
+  relPath: string,
+  preserve: readonly string[] = [],
+): FilePolicy {
   if (isSeedClientFile(relPath)) return "MANAGED";
   return isPreserveListed(relPath, preserve) ? "PRESERVE" : "MANAGED";
 }
@@ -192,7 +204,7 @@ export function commonStaticFilePolicy(relPath: string, preserve: readonly strin
  */
 export function validateClientPreserveList(
   raw: unknown,
-  staticFiles: ReadonlyArray<{ path: string; origin: ClientStaticOrigin }>
+  staticFiles: ReadonlyArray<{ path: string; origin: ClientStaticOrigin }>,
 ): string[] {
   if (raw === undefined) return [];
   if (!Array.isArray(raw) || raw.some((entry) => typeof entry !== "string" || entry.length === 0)) {
@@ -209,18 +221,20 @@ export function validateClientPreserveList(
 
     if (isProtectedClientPath(canonical) && !isSeedClientFile(entry)) {
       throw new Error(
-        `[client].preserve path '${entry}' is a launcher-protected path and cannot be shipped. Only the exact seed paths options.txt and servers.dat may be listed, and they are always seeds from pack/client/.`
+        `[client].preserve path '${entry}' is a launcher-protected path and cannot be shipped. Only the exact seed paths options.txt and servers.dat may be listed, and they are always seeds from pack/client/.`,
       );
     }
 
     const key = pathKey(canonical);
     const matches = staticFiles.filter((file) => pathKey(file.path) === key);
     if (matches.length === 0) {
-      throw new Error(`[client].preserve path '${entry}' does not match a file in pack/client/ or pack/common/.`);
+      throw new Error(
+        `[client].preserve path '${entry}' does not match a file in pack/client/ or pack/common/.`,
+      );
     }
     if (isSeedClientFile(entry) && !matches.some((file) => file.origin === "client")) {
       throw new Error(
-        `[client].preserve path '${entry}' must come from pack/client/. ${entry} is only allowed from pack/client/.`
+        `[client].preserve path '${entry}' must come from pack/client/. ${entry} is only allowed from pack/client/.`,
       );
     }
 
@@ -246,7 +260,7 @@ export function validateClientFilePaths(files: ReadonlyArray<{ path: string }>):
     const previous = seen.get(key);
     if (previous !== undefined) {
       throw new Error(
-        `Duplicate client manifest path '${canonical}': '${previous}' and '${file.path}' resolve to the same file.`
+        `Duplicate client manifest path '${canonical}': '${previous}' and '${file.path}' resolve to the same file.`,
       );
     }
     seen.set(key, file.path);
@@ -259,7 +273,7 @@ export function validateClientFilePaths(files: ReadonlyArray<{ path: string }>):
  * and only with policy PRESERVE. Their origin (pack/client/ or pack/common/) is enforced upstream.
  */
 export function validateProtectedClientFiles(
-  files: ReadonlyArray<{ path: string; policy?: FilePolicy }>
+  files: ReadonlyArray<{ path: string; policy?: FilePolicy }>,
 ): void {
   for (const file of files) {
     if (!isProtectedClientPath(file.path)) continue;
@@ -267,7 +281,7 @@ export function validateProtectedClientFiles(
     const isSeed = isSeedClientFile(file.path) && file.policy === "PRESERVE";
     if (!isSeed) {
       throw new Error(
-        `Client file '${file.path}' targets a launcher-protected path and cannot be shipped. Only the seed files options.txt and servers.dat may ship from a protected path, and only from pack/client/ with policy PRESERVE.`
+        `Client file '${file.path}' targets a launcher-protected path and cannot be shipped. Only the seed files options.txt and servers.dat may ship from a protected path, and only from pack/client/ with policy PRESERVE.`,
       );
     }
   }
@@ -341,7 +355,7 @@ function assertOperationLimits(op: ConfigOperation, patchId: string): void {
   if (op.op === "set" || op.op === "remove") {
     if (op.path.length < 1 || op.path.length > MAX_OPERATION_PATH_SEGMENTS) {
       throw new Error(
-        `Config patch '${patchId}' operation path must have 1 to ${MAX_OPERATION_PATH_SEGMENTS} segments.`
+        `Config patch '${patchId}' operation path must have 1 to ${MAX_OPERATION_PATH_SEGMENTS} segments.`,
       );
     }
     for (const segment of op.path) {
@@ -352,16 +366,18 @@ function assertOperationLimits(op: ConfigOperation, patchId: string): void {
           CONTROL_OR_DEL_PATTERN.test(segment)
         ) {
           throw new Error(
-            `Config patch '${patchId}' operation path segments must be non-empty strings of at most ${MAX_OPERATION_PATH_SEGMENT_LENGTH} characters without control characters.`
+            `Config patch '${patchId}' operation path segments must be non-empty strings of at most ${MAX_OPERATION_PATH_SEGMENT_LENGTH} characters without control characters.`,
           );
         }
         if (PROTOTYPE_SENSITIVE_KEYS.includes(segment)) {
           throw new Error(
-            `Config patch '${patchId}' operation path contains the prohibited key '${segment}'.`
+            `Config patch '${patchId}' operation path contains the prohibited key '${segment}'.`,
           );
         }
       } else if (!Number.isSafeInteger(segment) || segment < 0) {
-        throw new Error(`Config patch '${patchId}' operation path index ${segment} must be a non-negative integer.`);
+        throw new Error(
+          `Config patch '${patchId}' operation path index ${segment} must be a non-negative integer.`,
+        );
       }
     }
   }
@@ -378,7 +394,7 @@ function assertOperationLimits(op: ConfigOperation, patchId: string): void {
     assertTextLimits(op.replacement, `Config patch '${patchId}' replacement text`);
     if (op.expectedMatches > MAX_EXPECTED_MATCHES) {
       throw new Error(
-        `Config patch '${patchId}' expectedMatches must be at most ${MAX_EXPECTED_MATCHES}.`
+        `Config patch '${patchId}' expectedMatches must be at most ${MAX_EXPECTED_MATCHES}.`,
       );
     }
   }
@@ -387,7 +403,7 @@ function assertOperationLimits(op: ConfigOperation, patchId: string): void {
 export function validateConfigPatches(
   patchesFileContent: unknown,
   existingFiles: ManifestFile[] = [],
-  options: { warn?: boolean } = {}
+  options: { warn?: boolean } = {},
 ): ConfigPatch[] {
   const warn = options.warn !== false;
   const parseResult = ConfigPatchesFileSchema.safeParse(patchesFileContent);
@@ -420,7 +436,9 @@ export function validateConfigPatches(
     seenIds.add(patch.id);
 
     if (patch.path.length > MAX_PATCH_PATH_LENGTH) {
-      throw new Error(`Config patch '${patch.id}' target path is longer than ${MAX_PATCH_PATH_LENGTH} characters.`);
+      throw new Error(
+        `Config patch '${patch.id}' target path is longer than ${MAX_PATCH_PATH_LENGTH} characters.`,
+      );
     }
 
     // Canonical relative path (launcher rules) that is not the .lampas namespace
@@ -440,11 +458,11 @@ export function validateConfigPatches(
       if (!isOptionsSeedException) {
         if (policy === "MANAGED") {
           throw new Error(
-            `Config ownership conflict: '${canonicalPath}' is both a MANAGED artifact and a managed config-patch target.`
+            `Config ownership conflict: '${canonicalPath}' is both a MANAGED artifact and a managed config-patch target.`,
           );
         }
         throw new Error(
-          `Config ownership conflict: '${canonicalPath}' is both a ${policy} whole-file entry and a config-patch target. The only exception is a PRESERVE options.txt with once-mode keybind rebinds.`
+          `Config ownership conflict: '${canonicalPath}' is both a ${policy} whole-file entry and a config-patch target. The only exception is a PRESERVE options.txt with once-mode keybind rebinds.`,
         );
       }
     }
@@ -452,7 +470,7 @@ export function validateConfigPatches(
     // Launcher-protected player data and launcher state. options.txt keybind rebinds are the only exception.
     if (isProtectedClientPath(canonicalPath) && !isOptionsKeybindPatch(patch)) {
       throw new Error(
-        `Config patch '${patch.id}' targets launcher-protected path '${patch.path}'. Only once-mode keybind 'set' operations (key_* to key.keyboard.* or key.mouse.*) with adapter 'properties' and missingFile 'defer' may target options.txt. Other player data (servers.dat, usercache.json, hotbar.nbt, realms_persistence.json, saves/, screenshots/, logs/, crash-reports/) and launcher state (.lampas, .lampas-moving-*) cannot be patched.`
+        `Config patch '${patch.id}' targets launcher-protected path '${patch.path}'. Only once-mode keybind 'set' operations (key_* to key.keyboard.* or key.mouse.*) with adapter 'properties' and missingFile 'defer' may target options.txt. Other player data (servers.dat, usercache.json, hotbar.nbt, realms_persistence.json, saves/, screenshots/, logs/, crash-reports/) and launcher state (.lampas, .lampas-moving-*) cannot be patched.`,
       );
     }
 
@@ -460,11 +478,11 @@ export function validateConfigPatches(
     if (!SUPPORTED_CONFIG_ADAPTERS.includes(patch.adapter as SupportedConfigAdapter)) {
       if (patch.adapter === "json5") {
         throw new Error(
-          `Adapter 'json5' for patch '${patch.id}' is currently unsupported: safe comment/formatting preservation cannot be guaranteed.`
+          `Adapter 'json5' for patch '${patch.id}' is currently unsupported: safe comment/formatting preservation cannot be guaranteed.`,
         );
       }
       throw new Error(
-        `Unsupported adapter '${patch.adapter}' for patch '${patch.id}'. Known adapters: ${SUPPORTED_CONFIG_ADAPTERS.join(", ")}`
+        `Unsupported adapter '${patch.adapter}' for patch '${patch.id}'. Known adapters: ${SUPPORTED_CONFIG_ADAPTERS.join(", ")}`,
       );
     }
 
@@ -476,13 +494,13 @@ export function validateConfigPatches(
     if (patch.adapter === "text") {
       if (patch.missingFile === "create") {
         throw new Error(
-          `Adapter 'text' for patch '${patch.id}' cannot have missingFile='create'. Generic text creation is not permitted.`
+          `Adapter 'text' for patch '${patch.id}' cannot have missingFile='create'. Generic text creation is not permitted.`,
         );
       }
       for (const op of patch.operations) {
         if (op.op !== "replaceLiteral") {
           throw new Error(
-            `Adapter 'text' for patch '${patch.id}' only supports 'replaceLiteral' operations, got '${(op as any).op}'.`
+            `Adapter 'text' for patch '${patch.id}' only supports 'replaceLiteral' operations, got '${(op as any).op}'.`,
           );
         }
       }
@@ -491,7 +509,7 @@ export function validateConfigPatches(
       for (const op of patch.operations) {
         if (op.op !== "set" && op.op !== "remove") {
           throw new Error(
-            `Adapter '${patch.adapter}' for patch '${patch.id}' only supports 'set' and 'remove' operations, got '${(op as any).op}'.`
+            `Adapter '${patch.adapter}' for patch '${patch.id}' only supports 'set' and 'remove' operations, got '${(op as any).op}'.`,
           );
         }
       }
@@ -499,7 +517,7 @@ export function validateConfigPatches(
 
     if (warn && isOptionsKeybindPatch(patch) && patch.operations.length > 1) {
       console.warn(
-        `[Config Patch Warning] '${patch.id}' sets ${patch.operations.length} keys in options.txt. The launcher defers the whole patch while any one key line is missing from options.txt, so keep one keybind patch per mod.`
+        `[Config Patch Warning] '${patch.id}' sets ${patch.operations.length} keys in options.txt. The launcher defers the whole patch while any one key line is missing from options.txt, so keep one keybind patch per mod.`,
       );
     }
 

@@ -95,7 +95,9 @@ describe("release assets", () => {
   test("parses sha256sum output in text and binary mode", () => {
     const a = "a".repeat(64);
     const b = "B".repeat(64);
-    const sums = parseChecksums(`${a}  lampasctl_1.2.0_linux_x64.tar.gz\r\n${b} *lampasctl_1.2.0_windows_x64.zip\nnot a line\n`);
+    const sums = parseChecksums(
+      `${a}  lampasctl_1.2.0_linux_x64.tar.gz\r\n${b} *lampasctl_1.2.0_windows_x64.zip\nnot a line\n`,
+    );
     expect(sums.get("lampasctl_1.2.0_linux_x64.tar.gz")).toBe(a);
     expect(sums.get("lampasctl_1.2.0_windows_x64.zip")).toBe("b".repeat(64));
     expect(sums.size).toBe(2);
@@ -103,16 +105,24 @@ describe("release assets", () => {
 
   test("extracts the executable from release tar.gz and zip archives", () => {
     const payload = new Uint8Array(1500).map((_, i) => i % 251);
-    expect(extractFromTarGz(createTarGzArchive("lampasctl", payload), "lampasctl")).toEqual(payload);
+    expect(extractFromTarGz(createTarGzArchive("lampasctl", payload), "lampasctl")).toEqual(
+      payload,
+    );
     expect(extractFromTarGz(createTarGzArchive("other", payload), "lampasctl")).toBeNull();
-    expect(extractFromZip(createZipArchive("lampasctl.exe", payload), "lampasctl.exe")).toEqual(payload);
+    expect(extractFromZip(createZipArchive("lampasctl.exe", payload), "lampasctl.exe")).toEqual(
+      payload,
+    );
     expect(extractFromZip(createZipArchive("other.exe", payload), "lampasctl.exe")).toBeNull();
   });
 
   test("resolves host targets, including musl Linux", () => {
     expect(resolveHostTarget({ platform: "linux", arch: "x64" }).id).toBe("linux_x64");
-    expect(resolveHostTarget({ platform: "linux", arch: "x64", musl: true }).id).toBe("linux_x64_musl");
-    expect(resolveHostTarget({ platform: "linux", arch: "arm64", musl: true }).id).toBe("linux_arm64_musl");
+    expect(resolveHostTarget({ platform: "linux", arch: "x64", musl: true }).id).toBe(
+      "linux_x64_musl",
+    );
+    expect(resolveHostTarget({ platform: "linux", arch: "arm64", musl: true }).id).toBe(
+      "linux_arm64_musl",
+    );
     expect(resolveHostTarget({ platform: "win32", arch: "x64" }).id).toBe("windows_x64");
     expect(resolveHostTarget({ platform: "darwin", arch: "arm64" }).id).toBe("darwin_arm64");
   });
@@ -174,7 +184,7 @@ describe("installExecutable", () => {
         verify: () => {
           throw new Error("did not report lampasctl 1.2.0");
         },
-      })
+      }),
     ).toThrow("did not report lampasctl 1.2.0");
 
     expect(fs.readFileSync(exePath, "utf-8")).toBe("old");
@@ -188,10 +198,20 @@ describe("installExecutable", () => {
     fs.writeFileSync(path.join(dir, "lampasctl.old-123-abc.exe"), "older");
     fs.writeFileSync(path.join(dir, "notes.txt"), "keep");
 
-    installExecutable({ exePath, executable: Buffer.from("new"), version: "1.2.0", platform: "win32", verify: () => {} });
+    installExecutable({
+      exePath,
+      executable: Buffer.from("new"),
+      version: "1.2.0",
+      platform: "win32",
+      verify: () => {},
+    });
 
     expect(fs.readFileSync(exePath, "utf-8")).toBe("new");
-    const moved = fs.readdirSync(dir).filter((name) => /^lampasctl\.old-.+\.exe$/.test(name) && name !== "lampasctl.old-123-abc.exe");
+    const moved = fs
+      .readdirSync(dir)
+      .filter(
+        (name) => /^lampasctl\.old-.+\.exe$/.test(name) && name !== "lampasctl.old-123-abc.exe",
+      );
     expect(moved.length).toBe(1);
     expect(fs.readFileSync(path.join(dir, moved[0]), "utf-8")).toBe("old");
 
@@ -211,7 +231,7 @@ describe("installExecutable", () => {
         platform: "win32",
         // Removing the staged file makes the final rename fail after the current exe was moved aside.
         verify: (stagedPath) => fs.rmSync(stagedPath),
-      })
+      }),
     ).toThrow();
 
     expect(fs.readFileSync(exePath, "utf-8")).toBe("old");
@@ -240,7 +260,7 @@ describe("selfUpdate", () => {
   function publish(
     version: string,
     content: string,
-    options: { prerelease?: boolean; sums?: string | null; digest?: string; size?: number } = {}
+    options: { prerelease?: boolean; sums?: string | null; digest?: string; size?: number } = {},
   ): GithubRelease {
     const archive = createTarGzArchive("lampasctl", Buffer.from(content));
     const archiveName = `lampasctl_${version}_linux_x64.tar.gz`;
@@ -257,7 +277,11 @@ describe("selfUpdate", () => {
     if (options.sums !== null) {
       const sums = options.sums ?? `${sha256(archive)}  ${archiveName}\n`;
       routes.set(`${downloads}/${tag}/SHA256SUMS`, bytes(sums));
-      assets.push({ name: "SHA256SUMS", browser_download_url: `${downloads}/${tag}/SHA256SUMS`, size: sums.length });
+      assets.push({
+        name: "SHA256SUMS",
+        browser_download_url: `${downloads}/${tag}/SHA256SUMS`,
+        size: sums.length,
+      });
     }
     const rel = release(tag, { prerelease: options.prerelease ?? false, assets });
     routes.set(`${api}/repos/test/repo/releases/tags/${tag}`, json(rel));
@@ -305,12 +329,21 @@ describe("selfUpdate", () => {
   });
 
   test("installs the newest stable release after verifying its checksum", async () => {
-    listReleases([publish("1.2.0", "v1.2.0"), publish("1.1.0", "v1.1.0"), publish("1.3.0-rc.1", "rc", { prerelease: true })]);
+    listReleases([
+      publish("1.2.0", "v1.2.0"),
+      publish("1.1.0", "v1.1.0"),
+      publish("1.3.0-rc.1", "rc", { prerelease: true }),
+    ]);
 
     const { promise } = run();
     const outcome = await promise;
 
-    expect(outcome).toEqual({ status: "updated", previousVersion: "1.1.0", version: "1.2.0", exePath });
+    expect(outcome).toEqual({
+      status: "updated",
+      previousVersion: "1.1.0",
+      version: "1.2.0",
+      exePath,
+    });
     expect(fs.readFileSync(exePath, "utf-8")).toBe("v1.2.0");
   });
 
@@ -328,7 +361,11 @@ describe("selfUpdate", () => {
 
     const { promise, logs } = run({ checkOnly: true });
 
-    expect(await promise).toEqual({ status: "update-available", currentVersion: "1.1.0", latestVersion: "1.2.0" });
+    expect(await promise).toEqual({
+      status: "update-available",
+      currentVersion: "1.1.0",
+      latestVersion: "1.2.0",
+    });
     expect(logs.join("\n")).toContain("lampasctl 1.2.0 is available (current: 1.1.0)");
     expect(requests.some((r) => r.url.startsWith(downloads))).toBe(false);
     expect(fs.readFileSync(exePath, "utf-8")).toBe("current");
@@ -365,7 +402,12 @@ describe("selfUpdate", () => {
 
     const outcome = await run({ version: "lampasctl-v1.0.10" }).promise;
 
-    expect(outcome).toEqual({ status: "updated", previousVersion: "1.1.0", version: "1.0.10", exePath });
+    expect(outcome).toEqual({
+      status: "updated",
+      previousVersion: "1.1.0",
+      version: "1.0.10",
+      exePath,
+    });
     expect(fs.readFileSync(exePath, "utf-8")).toBe("v1.0.10");
   });
 
@@ -380,14 +422,25 @@ describe("selfUpdate", () => {
   });
 
   test("fails for an unpublished version or an invalid version string", async () => {
-    await expect(run({ version: "9.9.9" }).promise).rejects.toThrow("No published release lampasctl-v9.9.9");
-    await expect(run({ version: "latest" }).promise).rejects.toThrow("--version must be a semantic version");
+    await expect(run({ version: "9.9.9" }).promise).rejects.toThrow(
+      "No published release lampasctl-v9.9.9",
+    );
+    await expect(run({ version: "latest" }).promise).rejects.toThrow(
+      "--version must be a semantic version",
+    );
   });
 
   test("rejects an archive whose SHA-256 does not match SHA256SUMS", async () => {
-    listReleases([publish("1.2.0", "v1.2.0", { sums: `${"0".repeat(64)}  lampasctl_1.2.0_linux_x64.tar.gz\n`, digest: "" })]);
+    listReleases([
+      publish("1.2.0", "v1.2.0", {
+        sums: `${"0".repeat(64)}  lampasctl_1.2.0_linux_x64.tar.gz\n`,
+        digest: "",
+      }),
+    ]);
 
-    await expect(run().promise).rejects.toThrow("SHA-256 mismatch for lampasctl_1.2.0_linux_x64.tar.gz");
+    await expect(run().promise).rejects.toThrow(
+      "SHA-256 mismatch for lampasctl_1.2.0_linux_x64.tar.gz",
+    );
     expect(fs.readFileSync(exePath, "utf-8")).toBe("current");
     expect(fs.readdirSync(dir)).toEqual(["lampasctl"]);
   });
@@ -410,14 +463,16 @@ describe("selfUpdate", () => {
     await expect(run().promise).rejects.toThrow("has no SHA256SUMS asset");
 
     listReleases([publish("1.2.0", "v1.2.0", { sums: `${"0".repeat(64)}  something-else.zip\n` })]);
-    await expect(run().promise).rejects.toThrow("has no entry for lampasctl_1.2.0_linux_x64.tar.gz");
+    await expect(run().promise).rejects.toThrow(
+      "has no entry for lampasctl_1.2.0_linux_x64.tar.gz",
+    );
   });
 
   test("names the available builds when the host target has none", async () => {
     listReleases([publish("1.2.0", "v1.2.0")]);
 
     await expect(run({ target: windowsTarget }).promise).rejects.toThrow(
-      "lampasctl-v1.2.0 has no build for windows_x64 (expected lampasctl_1.2.0_windows_x64.zip; available: lampasctl_1.2.0_linux_x64.tar.gz)"
+      "lampasctl-v1.2.0 has no build for windows_x64 (expected lampasctl_1.2.0_windows_x64.zip; available: lampasctl_1.2.0_linux_x64.tar.gz)",
     );
   });
 
@@ -431,16 +486,26 @@ describe("selfUpdate", () => {
   test("reports the GitHub rate limit and suggests a token", async () => {
     routes.set(
       `${api}/repos/test/repo/releases?per_page=100&page=1`,
-      json({ message: "API rate limit exceeded" }, 403, { "x-ratelimit-remaining": "0", "x-ratelimit-reset": "1760000000" })
+      json({ message: "API rate limit exceeded" }, 403, {
+        "x-ratelimit-remaining": "0",
+        "x-ratelimit-reset": "1760000000",
+      }),
     );
 
-    await expect(run().promise).rejects.toThrow("GitHub API rate limit reached until 2025-10-09T08:53:20.000Z. Set GITHUB_TOKEN");
+    await expect(run().promise).rejects.toThrow(
+      "GitHub API rate limit reached until 2025-10-09T08:53:20.000Z. Set GITHUB_TOKEN",
+    );
   });
 
   test("names the token variables when GitHub rejects the token", async () => {
-    routes.set(`${api}/repos/test/repo/releases?per_page=100&page=1`, json({ message: "Bad credentials" }, 401));
+    routes.set(
+      `${api}/repos/test/repo/releases?per_page=100&page=1`,
+      json({ message: "Bad credentials" }, 401),
+    );
 
-    await expect(run({ token: "expired" }).promise).rejects.toThrow("Check or unset GITHUB_TOKEN / GH_TOKEN");
+    await expect(run({ token: "expired" }).promise).rejects.toThrow(
+      "Check or unset GITHUB_TOKEN / GH_TOKEN",
+    );
   });
 
   test("sends the token to the GitHub API but not to asset downloads", async () => {
@@ -451,7 +516,9 @@ describe("selfUpdate", () => {
     const apiRequests = requests.filter((r) => r.url.startsWith(api));
     const downloadRequests = requests.filter((r) => r.url.startsWith(downloads));
     expect(apiRequests.length).toBeGreaterThan(0);
-    expect(apiRequests.every((r) => r.headers.get("authorization") === "Bearer secret-token")).toBe(true);
+    expect(apiRequests.every((r) => r.headers.get("authorization") === "Bearer secret-token")).toBe(
+      true,
+    );
     expect(downloadRequests.length).toBe(2);
     expect(downloadRequests.every((r) => r.headers.get("authorization") === null)).toBe(true);
   });
@@ -459,11 +526,18 @@ describe("selfUpdate", () => {
   test("follows release list pages", async () => {
     const filler = Array.from({ length: 100 }, (_, i) => release(`other-v${i}`));
     routes.set(`${api}/repos/test/repo/releases?per_page=100&page=1`, json(filler));
-    routes.set(`${api}/repos/test/repo/releases?per_page=100&page=2`, json([publish("1.2.0", "v1.2.0")]));
+    routes.set(
+      `${api}/repos/test/repo/releases?per_page=100&page=2`,
+      json([publish("1.2.0", "v1.2.0")]),
+    );
 
     const outcome = await run({ checkOnly: true }).promise;
 
-    expect(outcome).toEqual({ status: "update-available", currentVersion: "1.1.0", latestVersion: "1.2.0" });
+    expect(outcome).toEqual({
+      status: "update-available",
+      currentVersion: "1.1.0",
+      latestVersion: "1.2.0",
+    });
   });
 });
 

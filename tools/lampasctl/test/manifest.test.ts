@@ -57,7 +57,7 @@ function setupFixture(options: {
     fs.writeFileSync(
       path.join(patchesDir, "client.json"),
       JSON.stringify(options.configPatchesContent, null, 2),
-      "utf-8"
+      "utf-8",
     );
   }
 
@@ -154,7 +154,7 @@ required = ["lampas-resources"]
 
       // Client manifest check
       const clientResourcePackFile = result.clientManifest.files.find(
-        (f) => f.path === "resourcepacks/Lampas-Resources-2.0.0.zip"
+        (f) => f.path === "resourcepacks/Lampas-Resources-2.0.0.zip",
       );
       expect(clientResourcePackFile).toBeDefined();
       expect(clientResourcePackFile?.policy).toBe("MANAGED");
@@ -190,8 +190,10 @@ required = ["nonexistent-pack"]
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
-      ).rejects.toThrow("Required resource pack 'nonexistent-pack' was not found in pack.lock.json.");
+        }),
+      ).rejects.toThrow(
+        "Required resource pack 'nonexistent-pack' was not found in pack.lock.json.",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -223,7 +225,11 @@ required = ["fabric-api"]
         downloadUrl: "https://example.com/fabric-api.jar",
         artifactType: "mod",
         targetDir: "mods",
-        provider: { type: "direct", url: "https://example.com/fabric-api.jar", sha256: "c".repeat(64) },
+        provider: {
+          type: "direct",
+          url: "https://example.com/fabric-api.jar",
+          sha256: "c".repeat(64),
+        },
       },
     };
 
@@ -235,8 +241,10 @@ required = ["fabric-api"]
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
-      ).rejects.toThrow("Artifact 'fabric-api' is configured as a required resource pack but has type 'mod'.");
+        }),
+      ).rejects.toThrow(
+        "Artifact 'fabric-api' is configured as a required resource pack but has type 'mod'.",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -266,7 +274,7 @@ server = "https://play.lampas.town"
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
+        }),
       ).rejects.toThrow("Invalid server address in pack.toml");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -296,8 +304,10 @@ auto_connect = true
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
-      ).rejects.toThrow("Auto-connect is enabled in pack.toml ([launcher.play] auto_connect = true) but no valid server address was specified.");
+        }),
+      ).rejects.toThrow(
+        "Auto-connect is enabled in pack.toml ([launcher.play] auto_connect = true) but no valid server address was specified.",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -325,7 +335,9 @@ version = "0.19.3"
       });
 
       expect(result.release.launch).toBeUndefined();
-      expect(fs.existsSync(path.join(fixture.outDir, "server-resource-pack.properties"))).toBe(false);
+      expect(fs.existsSync(path.join(fixture.outDir, "server-resource-pack.properties"))).toBe(
+        false,
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -392,7 +404,11 @@ prompt = "Lampas requires its custom textures."
         downloadUrl: "https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip",
         artifactType: "resourcepack",
         targetDir: "resourcepacks",
-        provider: { type: "direct", url: "https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip", sha256: "d".repeat(64) },
+        provider: {
+          type: "direct",
+          url: "https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip",
+          sha256: "d".repeat(64),
+        },
       },
     };
 
@@ -409,17 +425,25 @@ prompt = "Lampas requires its custom textures."
       expect(result.serverManifest.resourcePack?.artifact).toBe("lampas-server-pack");
       expect(result.serverManifest.resourcePack?.required).toBe(true);
       expect(result.serverManifest.resourcePack?.size).toBe(2097152);
-      expect(result.serverManifest.resourcePack?.prompt).toBe('{"text":"Lampas requires its custom textures."}');
+      expect(result.serverManifest.resourcePack?.prompt).toBe(
+        '{"text":"Lampas requires its custom textures."}',
+      );
       expect(result.release.serverResourcePack).toBeDefined();
       expect(result.release.serverResourcePack?.size).toBe(2097152);
-      expect(result.release.serverResourcePack?.url).toBe("https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip");
+      expect(result.release.serverResourcePack?.url).toBe(
+        "https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip",
+      );
 
       const serverPropsPath = path.join(fixture.outDir, "server-resource-pack.properties");
       const props = fs.readFileSync(serverPropsPath, "utf-8");
-      expect(props).toContain("resource-pack=https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip");
+      expect(props).toContain(
+        "resource-pack=https://cdn.lampas.gg/resources/Lampas-Server-2.0.0.zip",
+      );
       expect(props).toContain(`resource-pack-sha1=${"e".repeat(40)}`);
       expect(props).toContain("require-resource-pack=true");
-      expect(props).toContain('resource-pack-prompt={"text":"Lampas requires its custom textures."}');
+      expect(props).toContain(
+        'resource-pack-prompt={"text":"Lampas requires its custom textures."}',
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -452,7 +476,12 @@ artifact = "client-pack"
         downloadUrl: "https://example.com/client.zip",
         artifactType: "resourcepack",
         targetDir: "resourcepacks",
-        provider: { type: "direct", url: "https://example.com/client.zip", sha256: "f".repeat(64), sha1: "1".repeat(40) },
+        provider: {
+          type: "direct",
+          url: "https://example.com/client.zip",
+          sha256: "f".repeat(64),
+          sha1: "1".repeat(40),
+        },
       },
     };
 
@@ -470,7 +499,9 @@ artifact = "client-pack"
       expect(result.serverManifest.resourcePack?.sha1).toBe("1".repeat(40));
 
       // Client-only artifact must not be in server manifest files[]
-      const serverFile = result.serverManifest.files.find((f) => f.path === "resourcepacks/Client-Pack.zip");
+      const serverFile = result.serverManifest.files.find(
+        (f) => f.path === "resourcepacks/Client-Pack.zip",
+      );
       expect(serverFile).toBeUndefined();
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -503,7 +534,11 @@ artifact = "missing-sha1-pack"
         downloadUrl: "https://example.com/missing-sha1.zip",
         artifactType: "resourcepack",
         targetDir: "resourcepacks",
-        provider: { type: "direct", url: "https://example.com/missing-sha1.zip", sha256: "f".repeat(64) },
+        provider: {
+          type: "direct",
+          url: "https://example.com/missing-sha1.zip",
+          sha256: "f".repeat(64),
+        },
       },
     };
 
@@ -515,7 +550,7 @@ artifact = "missing-sha1-pack"
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
+        }),
       ).rejects.toThrow(/requires a valid 40-character SHA-1 hash/);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -565,8 +600,10 @@ required = true
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
-      ).rejects.toThrow("Resource pack 'lampas2' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.");
+        }),
+      ).rejects.toThrow(
+        "Resource pack 'lampas2' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -610,8 +647,10 @@ artifact = "some-mod"
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
-      ).rejects.toThrow("Artifact 'some-mod' is configured as server resource pack but has type 'mod'.");
+        }),
+      ).rejects.toThrow(
+        "Artifact 'some-mod' is configured as server resource pack but has type 'mod'.",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -666,9 +705,13 @@ required = true
       expect(result.release.serverResourcePack?.size).toBe(1024);
 
       // But strictly ABSENT from clientManifest.files and serverManifest.files
-      const clientFile = result.clientManifest.files.find((f) => f.path === "resourcepacks/lampas2-resource-pack.zip");
+      const clientFile = result.clientManifest.files.find(
+        (f) => f.path === "resourcepacks/lampas2-resource-pack.zip",
+      );
       expect(clientFile).toBeUndefined();
-      const serverFile = result.serverManifest.files.find((f) => f.path === "resourcepacks/lampas2-resource-pack.zip");
+      const serverFile = result.serverManifest.files.find(
+        (f) => f.path === "resourcepacks/lampas2-resource-pack.zip",
+      );
       expect(serverFile).toBeUndefined();
 
       // And absent from mod catalogs
@@ -707,7 +750,12 @@ required = true
         downloadUrl: "https://example.com/no-prompt.zip",
         artifactType: "resourcepack",
         targetDir: "resourcepacks",
-        provider: { type: "direct", url: "https://example.com/no-prompt.zip", sha256: "f".repeat(64), sha1: "1".repeat(40) },
+        provider: {
+          type: "direct",
+          url: "https://example.com/no-prompt.zip",
+          sha256: "f".repeat(64),
+          sha1: "1".repeat(40),
+        },
       },
     };
 
@@ -795,9 +843,15 @@ version = "${nonDefaultLoaderVersion}"
       expect(release.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
 
       // Also verify written JSON files on disk
-      const clientDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "client-manifest.json"), "utf-8"));
-      const serverDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "server-manifest.json"), "utf-8"));
-      const releaseDisk = JSON.parse(fs.readFileSync(path.join(fixture.outDir, "release.json"), "utf-8"));
+      const clientDisk = JSON.parse(
+        fs.readFileSync(path.join(fixture.outDir, "client-manifest.json"), "utf-8"),
+      );
+      const serverDisk = JSON.parse(
+        fs.readFileSync(path.join(fixture.outDir, "server-manifest.json"), "utf-8"),
+      );
+      const releaseDisk = JSON.parse(
+        fs.readFileSync(path.join(fixture.outDir, "release.json"), "utf-8"),
+      );
 
       expect(clientDisk.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
       expect(serverDisk.loader).toEqual({ type: "fabric", version: "0.99.123-test" });
@@ -827,9 +881,9 @@ version = "0.19.4"
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
+        }),
       ).rejects.toThrow(
-        /pack\.lock\.json was generated for Fabric Loader 0\.19\.3, but pack\.toml requires 0\.19\.4/
+        /pack\.lock\.json was generated for Fabric Loader 0\.19\.3, but pack\.toml requires 0\.19\.4/,
       );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -856,9 +910,9 @@ version = "0.19.3"
           packDir: fixture.packDir,
           lockFile: fixture.lockFile,
           outDir: fixture.outDir,
-        })
+        }),
       ).rejects.toThrow(
-        /pack\.lock\.json was generated for Minecraft 26\.2, but pack\.toml requires 26\.3/
+        /pack\.lock\.json was generated for Minecraft 26\.2, but pack\.toml requires 26\.3/,
       );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -883,7 +937,7 @@ version = ""
           packDir: fixture1.packDir,
           lockFile: fixture1.lockFile,
           outDir: fixture1.outDir,
-        })
+        }),
       ).rejects.toThrow(/Invalid loader version: 'loader\.version' must be a non-empty string/);
     } finally {
       fs.rmSync(fixture1.dir, { recursive: true, force: true });
@@ -906,7 +960,7 @@ version = "20.4.80"
           packDir: fixture2.packDir,
           lockFile: fixture2.lockFile,
           outDir: fixture2.outDir,
-        })
+        }),
       ).rejects.toThrow(/Unsupported mod loader 'neoforge'/);
     } finally {
       fs.rmSync(fixture2.dir, { recursive: true, force: true });
@@ -963,7 +1017,9 @@ const KEYBIND_PATCHES = {
       adapter: "properties",
       mode: "once",
       missingFile: "defer",
-      operations: [{ op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" }],
+      operations: [
+        { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+      ],
     },
   ],
 };
@@ -985,10 +1041,18 @@ describe("client static files and launcher-protected paths", () => {
       const { clientManifest } = await buildManifests(fixture);
 
       expect(clientManifest.files.find((f) => f.path === "options.txt")?.policy).toBe("PRESERVE");
-      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe("MANAGED");
-      expect(clientManifest.files.find((f) => f.path === "config/common.json")?.policy).toBe("MANAGED");
+      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe(
+        "MANAGED",
+      );
+      expect(clientManifest.files.find((f) => f.path === "config/common.json")?.policy).toBe(
+        "MANAGED",
+      );
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1039,10 +1103,14 @@ describe("client static files and launcher-protected paths", () => {
 
       try {
         await expect(buildManifests(fixture)).rejects.toThrow(
-          `Client file '${testCase.path}' targets a launcher-protected path`
+          `Client file '${testCase.path}' targets a launcher-protected path`,
         );
 
-        const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
         expect(valid).toBe(false);
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1054,7 +1122,12 @@ describe("client static files and launcher-protected paths", () => {
     const fixture = setupFixture({
       packTomlContent: STATIC_PACK_TOML,
       staticFiles: {
-        client: [{ path: "options.txt", content: "version:4000\nkey_key.snappy_tappy.toggle:key.keyboard.x\n" }],
+        client: [
+          {
+            path: "options.txt",
+            content: "version:4000\nkey_key.snappy_tappy.toggle:key.keyboard.x\n",
+          },
+        ],
       },
       configPatchesContent: KEYBIND_PATCHES,
     });
@@ -1066,7 +1139,11 @@ describe("client static files and launcher-protected paths", () => {
       expect(clientManifest.configPatches).toHaveLength(1);
       expect(clientManifest.configPatches![0].path).toBe("options.txt");
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1078,17 +1155,21 @@ describe("client static files and launcher-protected paths", () => {
     expect(clientStaticFilePolicy("Options.TXT")).toBe("MANAGED");
     expect(clientStaticFilePolicy("config/options.txt")).toBe("MANAGED");
 
-    expect(() => validateProtectedClientFiles([{ path: "options.txt", policy: "PRESERVE" }])).not.toThrow();
-    expect(() => validateProtectedClientFiles([{ path: "options.txt", policy: "MANAGED" }])).toThrow(
-      "Client file 'options.txt' targets a launcher-protected path"
-    );
-    expect(() => validateProtectedClientFiles([{ path: "servers.dat", policy: "PRESERVE" }])).not.toThrow();
-    expect(() => validateProtectedClientFiles([{ path: "servers.dat", policy: "MANAGED" }])).toThrow(
-      "Client file 'servers.dat' targets a launcher-protected path"
-    );
-    expect(() => validateProtectedClientFiles([{ path: "usercache.json", policy: "PRESERVE" }])).toThrow(
-      "Client file 'usercache.json' targets a launcher-protected path"
-    );
+    expect(() =>
+      validateProtectedClientFiles([{ path: "options.txt", policy: "PRESERVE" }]),
+    ).not.toThrow();
+    expect(() =>
+      validateProtectedClientFiles([{ path: "options.txt", policy: "MANAGED" }]),
+    ).toThrow("Client file 'options.txt' targets a launcher-protected path");
+    expect(() =>
+      validateProtectedClientFiles([{ path: "servers.dat", policy: "PRESERVE" }]),
+    ).not.toThrow();
+    expect(() =>
+      validateProtectedClientFiles([{ path: "servers.dat", policy: "MANAGED" }]),
+    ).toThrow("Client file 'servers.dat' targets a launcher-protected path");
+    expect(() =>
+      validateProtectedClientFiles([{ path: "usercache.json", policy: "PRESERVE" }]),
+    ).toThrow("Client file 'usercache.json' targets a launcher-protected path");
   });
 });
 
@@ -1132,10 +1213,18 @@ describe("[client].preserve seed files", () => {
 
       expect(clientManifest.files.find((f) => f.path === AMECS)?.policy).toBe("PRESERVE");
       expect(clientManifest.files.find((f) => f.path === "options.txt")?.policy).toBe("PRESERVE");
-      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe("MANAGED");
-      expect(clientManifest.files.find((f) => f.path === "config/common.json")?.policy).toBe("MANAGED");
+      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe(
+        "MANAGED",
+      );
+      expect(clientManifest.files.find((f) => f.path === "config/common.json")?.policy).toBe(
+        "MANAGED",
+      );
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1164,10 +1253,18 @@ describe("[client].preserve seed files", () => {
 
     try {
       const { clientManifest, serverManifest } = await buildManifests(fixture);
-      expect(clientManifest.files.find((f) => f.path === "config/shared.json")?.policy).toBe("PRESERVE");
-      expect(serverManifest.files.find((f) => f.path === "config/shared.json")?.policy).toBe("MANAGED");
+      expect(clientManifest.files.find((f) => f.path === "config/shared.json")?.policy).toBe(
+        "PRESERVE",
+      );
+      expect(serverManifest.files.find((f) => f.path === "config/shared.json")?.policy).toBe(
+        "MANAGED",
+      );
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1182,9 +1279,13 @@ describe("[client].preserve seed files", () => {
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        `[client].preserve path '${AMECS}' does not match a file in pack/client/ or pack/common/.`
+        `[client].preserve path '${AMECS}' does not match a file in pack/client/ or pack/common/.`,
       );
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1200,9 +1301,13 @@ describe("[client].preserve seed files", () => {
 
       try {
         await expect(buildManifests(fixture)).rejects.toThrow(
-          `[client].preserve path '${protectedPath}' is a launcher-protected path`
+          `[client].preserve path '${protectedPath}' is a launcher-protected path`,
         );
-        const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
         expect(valid).toBe(false);
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1211,15 +1316,24 @@ describe("[client].preserve seed files", () => {
   });
 
   test("an unsafe listed path fails", async () => {
-    for (const unsafePath of ["../options.amecs.key_modifiers.txt", "/abs/options.amecs.key_modifiers.txt"]) {
+    for (const unsafePath of [
+      "../options.amecs.key_modifiers.txt",
+      "/abs/options.amecs.key_modifiers.txt",
+    ]) {
       const fixture = setupFixture({
         packTomlContent: clientPackToml([unsafePath]),
         staticFiles: { client: [{ path: AMECS, content: "x" }] },
       });
 
       try {
-        await expect(buildManifests(fixture)).rejects.toThrow(`Unsafe [client].preserve path '${unsafePath}'`);
-        const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+        await expect(buildManifests(fixture)).rejects.toThrow(
+          `Unsafe [client].preserve path '${unsafePath}'`,
+        );
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
         expect(valid).toBe(false);
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1236,7 +1350,7 @@ describe("[client].preserve seed files", () => {
 
       try {
         await expect(buildManifests(fixture)).rejects.toThrow(
-          "[client].preserve in pack.toml must be an array of non-empty path strings."
+          "[client].preserve in pack.toml must be an array of non-empty path strings.",
         );
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1261,7 +1375,9 @@ describe("[client].preserve seed files", () => {
         const { clientManifest } = await buildManifests(fixture);
         expect(clientManifest.files.find((f) => f.path === AMECS)?.policy).toBe("MANAGED");
         expect(clientManifest.files.find((f) => f.path === "options.txt")?.policy).toBe("PRESERVE");
-        expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe("MANAGED");
+        expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe(
+          "MANAGED",
+        );
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
       }
@@ -1277,10 +1393,14 @@ describe("[client].preserve seed files", () => {
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry"
+        "Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry",
       );
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1305,7 +1425,9 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
         adapter: "properties",
         mode: "enforce",
         missingFile: "defer",
-        operations: [{ op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" }],
+        operations: [
+          { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+        ],
       },
     ],
   };
@@ -1318,9 +1440,13 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "[client].preserve path 'options.txt' must come from pack/client/. options.txt is only allowed from pack/client/."
+        "[client].preserve path 'options.txt' must come from pack/client/. options.txt is only allowed from pack/client/.",
       );
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1343,7 +1469,11 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
 
       try {
         await expect(buildManifests(fixture)).rejects.toThrow(message);
-        const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
         expect(valid).toBe(false);
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1359,7 +1489,9 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
 
     try {
       const { clientManifest } = await buildManifests(fixture);
-      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe("PRESERVE");
+      expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe(
+        "PRESERVE",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -1387,7 +1519,7 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "Config ownership conflict: 'config/jade/jade.json' is both a MANAGED artifact"
+        "Config ownership conflict: 'config/jade/jade.json' is both a MANAGED artifact",
       );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1403,9 +1535,13 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "is both a PRESERVE whole-file entry and a config-patch target"
+        "is both a PRESERVE whole-file entry and a config-patch target",
       );
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1429,14 +1565,26 @@ describe("launcher parity: canonical paths, options.txt origin, and duplicates",
   });
 
   test("validateClientFilePaths rejects paths the launcher rejects and case-insensitive duplicates", () => {
-    for (const bad of ["a/./b", "a/../b", "file.txt.", "x/ ", "con.txt", "stream.txt:ads", "/rooted.txt"]) {
-      expect(() => validateClientFilePaths([{ path: bad }])).toThrow(`Client file '${bad}' has a path the launcher rejects`);
+    for (const bad of [
+      "a/./b",
+      "a/../b",
+      "file.txt.",
+      "x/ ",
+      "con.txt",
+      "stream.txt:ads",
+      "/rooted.txt",
+    ]) {
+      expect(() => validateClientFilePaths([{ path: bad }])).toThrow(
+        `Client file '${bad}' has a path the launcher rejects`,
+      );
     }
 
-    expect(() => validateClientFilePaths([{ path: "config/a.json" }, { path: "Config/A.json" }])).toThrow(
-      "Duplicate client manifest path 'Config/A.json'"
-    );
-    expect(() => validateClientFilePaths([{ path: "config/a.json" }, { path: "config/b.json" }])).not.toThrow();
+    expect(() =>
+      validateClientFilePaths([{ path: "config/a.json" }, { path: "Config/A.json" }]),
+    ).toThrow("Duplicate client manifest path 'Config/A.json'");
+    expect(() =>
+      validateClientFilePaths([{ path: "config/a.json" }, { path: "config/b.json" }]),
+    ).not.toThrow();
   });
 });
 
@@ -1472,10 +1620,16 @@ describe("servers.dat seed files", () => {
     try {
       const { clientManifest, serverManifest } = await buildManifests(fixture);
       expect(clientManifest.files.find((f) => f.path === "servers.dat")?.policy).toBe("PRESERVE");
-      expect(serverManifest.files.find((f) => f.path === "config/server.json")?.policy).toBe("MANAGED");
+      expect(serverManifest.files.find((f) => f.path === "config/server.json")?.policy).toBe(
+        "MANAGED",
+      );
       expect(serverManifest.files.some((f) => f.path === "servers.dat")).toBe(false);
 
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1504,7 +1658,7 @@ describe("servers.dat seed files", () => {
     });
     try {
       await expect(buildManifests(unlisted)).rejects.toThrow(
-        "Client file 'servers.dat' targets a launcher-protected path"
+        "Client file 'servers.dat' targets a launcher-protected path",
       );
     } finally {
       fs.rmSync(unlisted.dir, { recursive: true, force: true });
@@ -1517,7 +1671,7 @@ describe("servers.dat seed files", () => {
     });
     try {
       await expect(buildManifests(listedCommonOnly)).rejects.toThrow(
-        "[client].preserve path 'servers.dat' must come from pack/client/. servers.dat is only allowed from pack/client/."
+        "[client].preserve path 'servers.dat' must come from pack/client/. servers.dat is only allowed from pack/client/.",
       );
     } finally {
       fs.rmSync(listedCommonOnly.dir, { recursive: true, force: true });
@@ -1545,7 +1699,9 @@ describe("servers.dat seed files", () => {
       staticFiles: { client: [{ path: "Servers.dat", content: "x" }] },
     });
     try {
-      await expect(buildManifests(spelled)).rejects.toThrow("Client file 'Servers.dat' targets a launcher-protected path");
+      await expect(buildManifests(spelled)).rejects.toThrow(
+        "Client file 'Servers.dat' targets a launcher-protected path",
+      );
     } finally {
       fs.rmSync(spelled.dir, { recursive: true, force: true });
     }
@@ -1563,7 +1719,11 @@ describe("servers.dat seed files", () => {
       });
       try {
         await expect(buildManifests(fixture)).rejects.toThrow(message);
-        const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
         expect(valid).toBe(false);
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1580,9 +1740,13 @@ describe("servers.dat seed files", () => {
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry and a config-patch target."
+        "Config ownership conflict: 'servers.dat' is both a PRESERVE whole-file entry and a config-patch target.",
       );
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1599,15 +1763,17 @@ describe("servers.dat seed files", () => {
     expect(commonStaticFilePolicy("servers.dat", ["servers.dat"])).toBe("MANAGED");
     expect(commonStaticFilePolicy("config/x.json", ["config/x.json"])).toBe("PRESERVE");
 
-    expect(() => validateProtectedClientFiles([{ path: "servers.dat", policy: "PRESERVE" }])).not.toThrow();
+    expect(() =>
+      validateProtectedClientFiles([{ path: "servers.dat", policy: "PRESERVE" }]),
+    ).not.toThrow();
     for (const policy of ["MANAGED", "OPTIONAL", "GENERATED"] as const) {
       expect(() => validateProtectedClientFiles([{ path: "servers.dat", policy }])).toThrow(
-        "Client file 'servers.dat' targets a launcher-protected path"
+        "Client file 'servers.dat' targets a launcher-protected path",
       );
     }
-    expect(() => validateProtectedClientFiles([{ path: "Servers.dat", policy: "PRESERVE" }])).toThrow(
-      "Client file 'Servers.dat' targets a launcher-protected path"
-    );
+    expect(() =>
+      validateProtectedClientFiles([{ path: "Servers.dat", policy: "PRESERVE" }]),
+    ).toThrow("Client file 'Servers.dat' targets a launcher-protected path");
   });
 });
 
@@ -1619,8 +1785,14 @@ describe("validate applies the manifest rules", () => {
     });
 
     try {
-      await expect(buildManifests(fixture)).rejects.toThrow("protocol must be an integer from 0 to 3");
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      await expect(buildManifests(fixture)).rejects.toThrow(
+        "protocol must be an integer from 0 to 3",
+      );
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -1654,9 +1826,15 @@ describe("keybind multi-key warning", () => {
     });
 
     try {
-      const valid = await validatePack({ packDir: fixture.packDir, lockFile: fixture.lockFile, checkFabricMeta: false });
+      const valid = await validatePack({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        checkFabricMeta: false,
+      });
       expect(valid).toBe(true);
-      const multiKeyWarnings = warn.mock.calls.filter((call) => String(call[0]).includes("keys in options.txt"));
+      const multiKeyWarnings = warn.mock.calls.filter((call) =>
+        String(call[0]).includes("keys in options.txt"),
+      );
       expect(multiKeyWarnings).toHaveLength(1);
     } finally {
       warn.mockRestore();

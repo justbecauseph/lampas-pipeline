@@ -92,7 +92,7 @@ function apiKey(): string {
   const key = process.env.CURSEFORGE_API_KEY?.trim();
   if (!key) {
     throw new Error(
-      "CurseForge access requires CURSEFORGE_API_KEY. Set it in your environment or a local .env file; do not commit the key."
+      "CurseForge access requires CURSEFORGE_API_KEY. Set it in your environment or a local .env file; do not commit the key.",
     );
   }
   return key;
@@ -120,33 +120,38 @@ export class CurseForgeClient {
 
     for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
       try {
-        return await withAbortTimeout(`fetching CurseForge metadata from ${url}`, async (signal) => {
-          const response = await fetch(url, {
-            ...init,
-            signal,
-            headers: {
-              Accept: "application/json",
-              "User-Agent": CURSEFORGE_USER_AGENT,
-              "x-api-key": apiKey(),
-              ...(init?.headers || {}),
-            },
-          });
+        return await withAbortTimeout(
+          `fetching CurseForge metadata from ${url}`,
+          async (signal) => {
+            const response = await fetch(url, {
+              ...init,
+              signal,
+              headers: {
+                Accept: "application/json",
+                "User-Agent": CURSEFORGE_USER_AGENT,
+                "x-api-key": apiKey(),
+                ...init?.headers,
+              },
+            });
 
-          if (response.status === 401 || response.status === 403) {
-            throw new Error(
-              `CurseForge API rejected CURSEFORGE_API_KEY (${response.status} ${response.statusText}). Check that the key is current and authorized.`
-            );
-          }
-          if (response.status === 404) {
-            throw new Error(`CurseForge resource not found at ${url}`);
-          }
-          if (!response.ok) {
-            throw new Error(`CurseForge API error ${response.status}: ${response.statusText} at ${url}`);
-          }
+            if (response.status === 401 || response.status === 403) {
+              throw new Error(
+                `CurseForge API rejected CURSEFORGE_API_KEY (${response.status} ${response.statusText}). Check that the key is current and authorized.`,
+              );
+            }
+            if (response.status === 404) {
+              throw new Error(`CurseForge resource not found at ${url}`);
+            }
+            if (!response.ok) {
+              throw new Error(
+                `CurseForge API error ${response.status}: ${response.statusText} at ${url}`,
+              );
+            }
 
-          const body = (await response.json()) as CurseForgeResponse<T>;
-          return body.data;
-        });
+            const body = (await response.json()) as CurseForgeResponse<T>;
+            return body.data;
+          },
+        );
       } catch (error: any) {
         lastError = error;
         if (
@@ -157,13 +162,17 @@ export class CurseForgeClient {
           break;
         }
         if (attempt < FETCH_ATTEMPTS) {
-          console.warn(`[CurseForge] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${error.message}`);
+          console.warn(
+            `[CurseForge] fetch attempt ${attempt}/${FETCH_ATTEMPTS} failed for ${url}: ${error.message}`,
+          );
           await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
         }
       }
     }
 
-    throw lastError instanceof Error ? lastError : new Error(`Failed to fetch CurseForge metadata from ${url}`);
+    throw lastError instanceof Error
+      ? lastError
+      : new Error(`Failed to fetch CurseForge metadata from ${url}`);
   }
 
   static async getMod(projectId: number): Promise<CurseForgeMod> {
@@ -190,7 +199,7 @@ export class CurseForgeClient {
         classId: CURSEFORGE_MODS_CLASS_ID,
         slug: projectIdOrSlug,
         pageSize: 50,
-      })
+      }),
     );
     const exact = mods.find((mod) => mod.slug.toLowerCase() === projectIdOrSlug.toLowerCase());
     if (!exact) {
@@ -202,7 +211,9 @@ export class CurseForgeClient {
   static async getFile(projectId: number, fileId: number): Promise<CurseForgeFile> {
     const file = await this.fetchData<CurseForgeFile>(apiUrl(`/mods/${projectId}/files/${fileId}`));
     if (file.modId !== projectId) {
-      throw new Error(`CurseForge file '${fileId}' belongs to project '${file.modId}', not '${projectId}'.`);
+      throw new Error(
+        `CurseForge file '${fileId}' belongs to project '${file.modId}', not '${projectId}'.`,
+      );
     }
     return file;
   }
@@ -216,37 +227,44 @@ export class CurseForgeClient {
     });
   }
 
-  static async getModFiles(projectId: number, query: CurseForgeFileQuery = {}): Promise<CurseForgeFile[]> {
+  static async getModFiles(
+    projectId: number,
+    query: CurseForgeFileQuery = {},
+  ): Promise<CurseForgeFile[]> {
     const files = await this.fetchData<CurseForgeFile[]>(
       apiUrl(`/mods/${projectId}/files`, {
         gameVersion: query.gameVersion,
         modLoaderType: query.modLoaderType,
         pageSize: query.pageSize || 50,
-      })
+      }),
     );
     return sortCurseForgeFilesNewest(files.filter((file) => file.isAvailable !== false));
   }
 
-  static async getDownloadUrl(projectId: number, fileId: number, file?: CurseForgeFile): Promise<string> {
+  static async getDownloadUrl(
+    projectId: number,
+    fileId: number,
+    file?: CurseForgeFile,
+  ): Promise<string> {
     if (file?.downloadUrl) return file.downloadUrl;
 
     let downloadUrl: string | null;
     try {
       downloadUrl = await this.fetchData<string | null>(
-        apiUrl(`/mods/${projectId}/files/${fileId}/download-url`)
+        apiUrl(`/mods/${projectId}/files/${fileId}/download-url`),
       );
     } catch (error: any) {
       if (error?.message?.includes("CurseForge resource not found")) {
         throw new Error(
           `CurseForge file '${fileId}' for project '${projectId}' does not permit third-party downloads. Download it manually and add the local .jar instead.`,
-          { cause: error }
+          { cause: error },
         );
       }
       throw error;
     }
     if (!downloadUrl) {
       throw new Error(
-        `CurseForge file '${fileId}' for project '${projectId}' does not permit third-party downloads. Download it manually and add the local .jar instead.`
+        `CurseForge file '${fileId}' for project '${projectId}' does not permit third-party downloads. Download it manually and add the local .jar instead.`,
       );
     }
     return downloadUrl;

@@ -24,7 +24,7 @@ export interface TransactionJournalData {
 
 export function validateJournalData(
   data: unknown,
-  expectedTargetDir: string
+  expectedTargetDir: string,
 ): TransactionJournalData {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     throw new Error("Invalid transaction journal: root must be an object");
@@ -52,7 +52,7 @@ export function validateJournalData(
       : expectedNorm === journalNorm;
   if (!targetMatch) {
     throw new Error(
-      `Invalid transaction journal: targetDir mismatch (expected '${expectedNorm}', found '${journalNorm}')`
+      `Invalid transaction journal: targetDir mismatch (expected '${expectedNorm}', found '${journalNorm}')`,
     );
   }
 
@@ -79,18 +79,20 @@ export function validateJournalData(
         throw new Error(`Invalid transaction journal: '${prop}' contains a non-string entry`);
       }
       if (!isSafeRelativePath(item)) {
-        throw new Error(`Invalid transaction journal: unsafe relative path in '${prop}': '${item}'`);
+        throw new Error(
+          `Invalid transaction journal: unsafe relative path in '${prop}': '${item}'`,
+        );
       }
       const segments = item.replace(/\\/g, "/").split("/");
       if (segments.some((seg) => seg === ".." || seg === ".")) {
         throw new Error(
-          `Invalid transaction journal: relative path contains traversal segment in '${prop}': '${item}'`
+          `Invalid transaction journal: relative path contains traversal segment in '${prop}': '${item}'`,
         );
       }
       const normalized = path.normalize(item).replace(/\\/g, "/");
       if (normalized.startsWith(".lampas/") || normalized === ".lampas") {
         throw new Error(
-          `Invalid transaction journal: path enters internal .lampas directory in '${prop}': '${item}'`
+          `Invalid transaction journal: path enters internal .lampas directory in '${prop}': '${item}'`,
         );
       }
     }
@@ -188,7 +190,12 @@ export class DeploymentTransaction {
     }
 
     // 5. Snapshot .lampas/runtime/ if present
-    const runtimeJarPath = path.join(this.targetDir, ".lampas", "runtime", "fabric-server-launch.jar");
+    const runtimeJarPath = path.join(
+      this.targetDir,
+      ".lampas",
+      "runtime",
+      "fabric-server-launch.jar",
+    );
     if (fs.existsSync(runtimeJarPath)) {
       const dest = path.join(this.txDir, "runtime", "fabric-server-launch.jar");
       ensureDir(path.dirname(dest));
@@ -209,7 +216,10 @@ export class DeploymentTransaction {
   }
 
   public async recordNewFile(relPath: string): Promise<void> {
-    if (!this.journal.overwrittenFiles.includes(relPath) && !this.journal.newFiles.includes(relPath)) {
+    if (
+      !this.journal.overwrittenFiles.includes(relPath) &&
+      !this.journal.newFiles.includes(relPath)
+    ) {
       this.journal.newFiles.push(relPath);
       await this.persistJournal();
     }
@@ -240,7 +250,9 @@ export class DeploymentTransaction {
     const txDir = path.join(targetDir, ".lampas", ".tx-rollback");
     const journalPath = path.join(txDir, "journal.json");
     if (fs.existsSync(journalPath)) {
-      console.warn(`  ⚠ [Deployment Recovery] Detected incomplete deployment transaction. Rolling back...`);
+      console.warn(
+        `  ⚠ [Deployment Recovery] Detected incomplete deployment transaction. Rolling back...`,
+      );
       try {
         const raw = readJsonFile<unknown>(journalPath);
         const journal = validateJournalData(raw, targetDir);
@@ -248,10 +260,9 @@ export class DeploymentTransaction {
         return true;
       } catch (err: any) {
         console.error(`  ✗ [Recovery Error] Failed to recover from journal: ${err.message}`);
-        throw new Error(
-          `Cannot recover interrupted deployment transaction: ${err.message}`,
-          { cause: err }
-        );
+        throw new Error(`Cannot recover interrupted deployment transaction: ${err.message}`, {
+          cause: err,
+        });
       }
     }
     return false;
@@ -260,7 +271,7 @@ export class DeploymentTransaction {
   private static async rollbackFromDir(
     targetDir: string,
     txDir: string,
-    journal: TransactionJournalData
+    journal: TransactionJournalData,
   ): Promise<void> {
     // 0. Preflight checks: verify all backups exist and are regular files before making any mutations
     const overwrittenDir = path.join(txDir, "overwritten");
@@ -268,7 +279,7 @@ export class DeploymentTransaction {
       const backupPath = path.join(overwrittenDir, relPath);
       if (!isRegularFile(backupPath)) {
         throw new Error(
-          `Cannot recover deployment: backup for overwritten file '${relPath}' is missing or unreadable at '${backupPath}'`
+          `Cannot recover deployment: backup for overwritten file '${relPath}' is missing or unreadable at '${backupPath}'`,
         );
       }
     }
@@ -278,7 +289,7 @@ export class DeploymentTransaction {
       const backupPath = path.join(deletedDir, relPath);
       if (!isRegularFile(backupPath)) {
         throw new Error(
-          `Cannot recover deployment: backup for deleted file '${relPath}' is missing or unreadable at '${backupPath}'`
+          `Cannot recover deployment: backup for deleted file '${relPath}' is missing or unreadable at '${backupPath}'`,
         );
       }
     }
@@ -286,28 +297,28 @@ export class DeploymentTransaction {
     const propsBackup = path.join(txDir, "server.properties");
     if (journal.hadServerProperties && !isRegularFile(propsBackup)) {
       throw new Error(
-        `Cannot recover deployment: server.properties backup is missing or unreadable at '${propsBackup}'`
+        `Cannot recover deployment: server.properties backup is missing or unreadable at '${propsBackup}'`,
       );
     }
 
     const runtimeJarBackup = path.join(txDir, "runtime", "fabric-server-launch.jar");
     if (journal.hadRuntimeJar && !isRegularFile(runtimeJarBackup)) {
       throw new Error(
-        `Cannot recover deployment: Fabric server launcher JAR backup is missing or unreadable at '${runtimeJarBackup}'`
+        `Cannot recover deployment: Fabric server launcher JAR backup is missing or unreadable at '${runtimeJarBackup}'`,
       );
     }
 
     const runtimeJsonBackup = path.join(txDir, "runtime", "runtime.json");
     if (journal.hadRuntimeJson && !isRegularFile(runtimeJsonBackup)) {
       throw new Error(
-        `Cannot recover deployment: Fabric runtime metadata backup is missing or unreadable at '${runtimeJsonBackup}'`
+        `Cannot recover deployment: Fabric runtime metadata backup is missing or unreadable at '${runtimeJsonBackup}'`,
       );
     }
 
     const stateBackup = path.join(txDir, "installation.json");
     if (journal.hadInstallationJson && !isRegularFile(stateBackup)) {
       throw new Error(
-        `Cannot recover deployment: installation.json backup is missing or unreadable at '${stateBackup}'`
+        `Cannot recover deployment: installation.json backup is missing or unreadable at '${stateBackup}'`,
       );
     }
 
@@ -383,6 +394,8 @@ export class DeploymentTransaction {
 
     // 9. Clean up txDir
     await fs.promises.rm(txDir, { recursive: true, force: true }).catch(() => {});
-    console.log(`  ✓ [Deployment Rollback Complete] Successfully restored previous installation state`);
+    console.log(
+      `  ✓ [Deployment Rollback Complete] Successfully restored previous installation state`,
+    );
   }
 }

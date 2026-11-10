@@ -1,7 +1,12 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { notifyServerOffline, notifyServerOnline, resolveWebhookUrl, type FetchFn } from "./discord";
+import {
+  notifyServerOffline,
+  notifyServerOnline,
+  resolveWebhookUrl,
+  type FetchFn,
+} from "./discord";
 import { pingMinecraft, type MinecraftStatus } from "./slp";
 
 export interface MonitorState {
@@ -80,7 +85,8 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 export async function runMonitor(options: MonitorOptions = {}): Promise<number> {
   const host = options.host || process.env.MC_HOST || "127.0.0.1";
   const port = options.port ?? (process.env.MC_PORT ? parseInt(process.env.MC_PORT, 10) : 25576);
-  const publicAddress = options.publicAddress || process.env.MC_PUBLIC_ADDRESS || "play.lampas.town:25576";
+  const publicAddress =
+    options.publicAddress || process.env.MC_PUBLIC_ADDRESS || "play.lampas.town:25576";
   const webhookUrl = resolveWebhookUrl(options.webhookUrl, process.env, options.targetDir);
   const stateFile =
     options.stateFile ||
@@ -99,7 +105,9 @@ export async function runMonitor(options: MonitorOptions = {}): Promise<number> 
       const ver = status.version?.name || "unknown";
       const online = status.players?.online ?? 0;
       const max = status.players?.max ?? 0;
-      console.log(`[Monitor] Server at ${host}:${port} is ONLINE (${ver}, ${online}/${max} players)`);
+      console.log(
+        `[Monitor] Server at ${host}:${port} is ONLINE (${ver}, ${online}/${max} players)`,
+      );
       return 0;
     } catch (err: any) {
       console.error(`[Monitor] Server at ${host}:${port} is OFFLINE: ${err.message}`);
@@ -108,7 +116,9 @@ export async function runMonitor(options: MonitorOptions = {}): Promise<number> 
   }
 
   console.log(`[Monitor] Starting Lampas Minecraft Server Discord Monitor...`);
-  console.log(`[Monitor] Polling target: ${host}:${port} every ${intervalSec}s (Threshold: ${failureThreshold})`);
+  console.log(
+    `[Monitor] Polling target: ${host}:${port} every ${intervalSec}s (Threshold: ${failureThreshold})`,
+  );
   console.log(`[Monitor] Public address advertised: ${publicAddress}`);
 
   const state = loadMonitorState(stateFile);
@@ -140,7 +150,9 @@ export async function runMonitor(options: MonitorOptions = {}): Promise<number> 
         consecutiveFailures = 0;
 
         if (currentStatus !== "ONLINE") {
-          console.log(`[${formatLogTimestamp()}] Server transitioned from ${currentStatus} -> ONLINE`);
+          console.log(
+            `[${formatLogTimestamp()}] Server transitioned from ${currentStatus} -> ONLINE`,
+          );
           await notifyServerOnline({ webhookUrl, info: statusInfo, publicAddress, fetchFn });
           currentStatus = "ONLINE";
           state.status = "ONLINE";
@@ -151,12 +163,14 @@ export async function runMonitor(options: MonitorOptions = {}): Promise<number> 
         consecutiveFailures++;
         if (currentStatus === "ONLINE") {
           console.log(
-            `[${formatLogTimestamp()}] Server ping failed (${consecutiveFailures}/${failureThreshold}): ${err.message}`
+            `[${formatLogTimestamp()}] Server ping failed (${consecutiveFailures}/${failureThreshold}): ${err.message}`,
           );
         }
 
         if (consecutiveFailures >= failureThreshold && currentStatus !== "OFFLINE") {
-          console.log(`[${formatLogTimestamp()}] Failure threshold reached. Transitioning -> OFFLINE`);
+          console.log(
+            `[${formatLogTimestamp()}] Failure threshold reached. Transitioning -> OFFLINE`,
+          );
           await notifyServerOffline({
             webhookUrl,
             publicAddress,

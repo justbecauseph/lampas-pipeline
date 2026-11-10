@@ -52,14 +52,18 @@ export function getExistingModIdentifiers(modsDir: string): Map<string, string> 
 }
 
 /** Re-reads pack/mods/ after installing a dependency so later lines show its name. */
-function refreshExistingModIdentifiers(ids: Map<string, string>, modsDir: string, installedId: string): void {
+function refreshExistingModIdentifiers(
+  ids: Map<string, string>,
+  modsDir: string,
+  installedId: string,
+): void {
   for (const [id, name] of getExistingModIdentifiers(modsDir)) ids.set(id, name);
   if (!ids.has(installedId)) ids.set(installedId, installedId);
 }
 
 function detectModSide(
   projData: { client_side?: string; server_side?: string },
-  explicitSide?: "client" | "server" | "both"
+  explicitSide?: "client" | "server" | "both",
 ): "client" | "server" | "both" {
   if (explicitSide) return explicitSide;
 
@@ -102,7 +106,10 @@ export async function addMod(options: AddModOptions) {
     const dest = path.join(customDir, filename);
     fs.copyFileSync(rawQuery, dest);
 
-    const modId = filename.replace(/\.jar$/i, "").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+    const modId = filename
+      .replace(/\.jar$/i, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, "_");
     const tomlPath = path.join(modsDir, `${modId}.toml`);
 
     const def: ModDefinition = {
@@ -142,7 +149,7 @@ export async function addMod(options: AddModOptions) {
     ) {
       detectedProvider = "modrinth";
       const match = query.match(
-        /modrinth\.com\/(?:mod|plugin|datapack|shader|resourcepack|project)\/([^/?#]+)(?:\/version\/([^/?#]+))?/
+        /modrinth\.com\/(?:mod|plugin|datapack|shader|resourcepack|project)\/([^/?#]+)(?:\/version\/([^/?#]+))?/,
       );
       if (match) {
         query = match[1];
@@ -170,7 +177,11 @@ export async function addMod(options: AddModOptions) {
         const parts = query.split("==");
         query = parts[0];
         explicitVersion = parts[1];
-      } else if (query.includes(":") && !query.startsWith("http://") && !query.startsWith("https://")) {
+      } else if (
+        query.includes(":") &&
+        !query.startsWith("http://") &&
+        !query.startsWith("https://")
+      ) {
         const parts = query.split(":");
         query = parts[0];
         explicitVersion = parts[1];
@@ -182,7 +193,9 @@ export async function addMod(options: AddModOptions) {
     if (providerType === "modrinth") {
       const indent = "  ".repeat(depth);
       const verDisplay = explicitVersion ? ` (Version: ${explicitVersion})` : "";
-      console.log(`${indent}[Artifact Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`);
+      console.log(
+        `${indent}[Artifact Manager] Querying Modrinth for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`,
+      );
 
       // 1. Query project metadata (or direct version lookup if query is a version ID)
       let projRes = await modrinthFetch(`${MODRINTH_API}/project/${query}`);
@@ -247,7 +260,7 @@ export async function addMod(options: AddModOptions) {
               (v) =>
                 v.version_number?.toLowerCase() === needle ||
                 v.name?.toLowerCase() === needle ||
-                v.files?.some((f: any) => f.filename?.toLowerCase() === needle)
+                v.files?.some((f: any) => f.filename?.toLowerCase() === needle),
             );
 
             const fuzzyCandidates =
@@ -257,7 +270,7 @@ export async function addMod(options: AddModOptions) {
                     (v) =>
                       v.version_number?.toLowerCase().startsWith(needle) ||
                       v.name?.toLowerCase().includes(needle) ||
-                      needle.startsWith(v.version_number?.toLowerCase() || "")
+                      needle.startsWith(v.version_number?.toLowerCase() || ""),
                   );
 
             if (fuzzyCandidates.length > 0) {
@@ -265,10 +278,10 @@ export async function addMod(options: AddModOptions) {
                 fuzzyCandidates.find(
                   (v) =>
                     v.game_versions?.includes(targetMc) &&
-                    v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase())
+                    v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase()),
                 ) ||
                 fuzzyCandidates.find((v) =>
-                  v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase())
+                  v.loaders?.some((l: string) => l.toLowerCase() === targetLoader.toLowerCase()),
                 ) ||
                 fuzzyCandidates.find((v) => v.game_versions?.includes(targetMc)) ||
                 fuzzyCandidates[0];
@@ -278,7 +291,9 @@ export async function addMod(options: AddModOptions) {
           // 2c. Direct version lookup by ID if still not found
           if (!selectedVersion) {
             try {
-              const directVerRes = await modrinthFetch(`${MODRINTH_API}/version/${explicitVersion}`);
+              const directVerRes = await modrinthFetch(
+                `${MODRINTH_API}/version/${explicitVersion}`,
+              );
               if (directVerRes.ok) {
                 selectedVersion = await directVerRes.json();
               }
@@ -288,17 +303,21 @@ export async function addMod(options: AddModOptions) {
           if (!selectedVersion) {
             const availableList = allVersions
               .slice(0, 6)
-              .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}) [ID: ${v.id}]`)
+              .map(
+                (v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}) [ID: ${v.id}]`,
+              )
               .join("\n");
             throw new Error(
-              `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`
+              `Specified version '${explicitVersion}' not found for '${modName}' (${slug}).\nAvailable versions on Modrinth:\n${availableList}`,
             );
           }
         } else {
           if (projectType === "shader") {
             // Shaders are largely version-agnostic / Iris compatible
             const irisCompatible = allVersions.filter((v) =>
-              v.loaders?.some((l: string) => ["iris", "canvas", "optifine"].includes(l.toLowerCase()))
+              v.loaders?.some((l: string) =>
+                ["iris", "canvas", "optifine"].includes(l.toLowerCase()),
+              ),
             );
             selectedVersion = irisCompatible[0] || allVersions[0];
           } else if (projectType === "resourcepack") {
@@ -307,19 +326,22 @@ export async function addMod(options: AddModOptions) {
           } else {
             // Find latest compatible with target MC and Loader
             const compatibleVersions = allVersions.filter(
-              (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader)
+              (v) => v.game_versions?.includes(targetMc) && v.loaders?.includes(targetLoader),
             );
 
             if (compatibleVersions.length === 0) {
               const availableList = allVersions
                 .slice(0, 6)
-                .map((v) => `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`)
+                .map(
+                  (v) =>
+                    `  - ${v.version_number} (MC: ${v.game_versions?.join(", ")}, Loaders: ${v.loaders?.join(", ")}) [ID: ${v.id}]`,
+                )
                 .join("\n");
               throw new Error(
                 `No compatible version found for '${modName}' on Minecraft ${targetMc} (${targetLoader}).\n` +
                   `You can explicitly install a specific version with:\n` +
                   `  lampasctl add ${slug} --version <version_id_or_number>\n\n` +
-                  `Available upstream versions:\n${availableList}`
+                  `Available upstream versions:\n${availableList}`,
               );
             }
 
@@ -329,12 +351,17 @@ export async function addMod(options: AddModOptions) {
       }
 
       const versionId: string = selectedVersion.id;
-      const versionName: string = selectedVersion.name || selectedVersion.version_number || versionId;
+      const versionName: string =
+        selectedVersion.name || selectedVersion.version_number || versionId;
       const versionNumber: string = selectedVersion.version_number || "";
-      const primaryFile = selectedVersion.files?.find((f: any) => f.primary) || selectedVersion.files?.[0];
+      const primaryFile =
+        selectedVersion.files?.find((f: any) => f.primary) || selectedVersion.files?.[0];
       const filename: string = primaryFile?.filename || versionName;
-      const dependencies: Array<{ project_id: string | null; version_id: string | null; dependency_type: string }> =
-        selectedVersion.dependencies || [];
+      const dependencies: Array<{
+        project_id: string | null;
+        version_id: string | null;
+        dependency_type: string;
+      }> = selectedVersion.dependencies || [];
 
       const tomlPath = path.join(targetDir, `${slug}.toml`);
       const def: ModDefinition = {
@@ -352,7 +379,9 @@ export async function addMod(options: AddModOptions) {
       console.log(`\n${indent}✓ [Added ${projectType.toUpperCase()}] ${modName} (${slug})`);
       console.log(`${indent}   Provider: Modrinth (${projectId})`);
       console.log(`${indent}   Version:  ${versionNumber} [ID: ${versionId}] (${versionName})`);
-      console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(auto-detected)"}`);
+      console.log(
+        `${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(auto-detected)"}`,
+      );
       console.log(`${indent}   File:     ${filename}`);
       console.log(`${indent}   Saved to: ${tomlPath}\n`);
 
@@ -360,11 +389,13 @@ export async function addMod(options: AddModOptions) {
       const existingIds = getExistingModIdentifiers(modsDir);
 
       const requiredDeps = dependencies.filter(
-        (d) => d.dependency_type === "required" && (d.project_id || d.version_id)
+        (d) => d.dependency_type === "required" && (d.project_id || d.version_id),
       );
 
       if (requiredDeps.length > 0) {
-        console.log(`${indent}🔍 [Dependency Checker] Inspecting ${requiredDeps.length} required dependencies for ${modName}...`);
+        console.log(
+          `${indent}🔍 [Dependency Checker] Inspecting ${requiredDeps.length} required dependencies for ${modName}...`,
+        );
 
         for (const dep of requiredDeps) {
           const depTarget = dep.project_id || dep.version_id;
@@ -373,11 +404,15 @@ export async function addMod(options: AddModOptions) {
           // Check if already in pack
           if (existingIds.has(depTarget.toLowerCase())) {
             const depName = existingIds.get(depTarget.toLowerCase());
-            console.log(`${indent}   ✓ [Satisfied] ${depName} (${depTarget}) is already installed.`);
+            console.log(
+              `${indent}   ✓ [Satisfied] ${depName} (${depTarget}) is already installed.`,
+            );
             continue;
           }
 
-          console.log(`\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${depTarget}...`);
+          console.log(
+            `\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${depTarget}...`,
+          );
           try {
             await addMod({
               packDir: options.packDir,
@@ -388,7 +423,9 @@ export async function addMod(options: AddModOptions) {
             });
             refreshExistingModIdentifiers(existingIds, modsDir, depTarget.toLowerCase());
           } catch (depErr: any) {
-            console.warn(`${indent}   ⚠️ Could not automatically install dependency '${depTarget}': ${depErr.message}`);
+            console.warn(
+              `${indent}   ⚠️ Could not automatically install dependency '${depTarget}': ${depErr.message}`,
+            );
           }
         }
       }
@@ -396,7 +433,7 @@ export async function addMod(options: AddModOptions) {
       const indent = "  ".repeat(depth);
       const verDisplay = explicitVersion ? ` (File: ${explicitVersion})` : "";
       console.log(
-        `${indent}[Artifact Manager] Querying CurseForge for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`
+        `${indent}[Artifact Manager] Querying CurseForge for '${query}'${verDisplay} (Target: MC ${targetMc}, ${targetLoader})...`,
       );
 
       const project = await CurseForgeClient.findMod(query);
@@ -411,7 +448,7 @@ export async function addMod(options: AddModOptions) {
       }
       if (project.allowModDistribution === false) {
         throw new Error(
-          `CurseForge project '${project.name}' does not permit third-party downloads. Download the .jar manually and add the local file instead.`
+          `CurseForge project '${project.name}' does not permit third-party downloads. Download the .jar manually and add the local file instead.`,
         );
       }
 
@@ -419,17 +456,19 @@ export async function addMod(options: AddModOptions) {
       if (explicitVersion) {
         if (!/^\d+$/.test(explicitVersion)) {
           throw new Error(
-            `CurseForge versions must be pinned by numeric file ID; received '${explicitVersion}'.`
+            `CurseForge versions must be pinned by numeric file ID; received '${explicitVersion}'.`,
           );
         }
         selectedFile = await CurseForgeClient.getFile(project.id, Number(explicitVersion));
 
         const versionNames = selectedFile.gameVersions.map((version) => version.toLowerCase());
         const matchesMinecraft = selectedFile.gameVersions.includes(targetMc);
-        const matchesFabric = versionNames.some((version) => version === "fabric" || version.includes("fabric"));
+        const matchesFabric = versionNames.some(
+          (version) => version === "fabric" || version.includes("fabric"),
+        );
         if (!matchesMinecraft || !matchesFabric) {
           console.warn(
-            `${indent}⚠ [Compatibility Override] File ${selectedFile.id} is not explicitly tagged for Minecraft ${targetMc} + Fabric.`
+            `${indent}⚠ [Compatibility Override] File ${selectedFile.id} is not explicitly tagged for Minecraft ${targetMc} + Fabric.`,
           );
         }
       } else {
@@ -441,7 +480,7 @@ export async function addMod(options: AddModOptions) {
         if (!selectedFile) {
           throw new Error(
             `No compatible CurseForge file found for '${project.name}' on Minecraft ${targetMc} (Fabric). ` +
-              `Use --version <file_id> only if you intentionally want to override compatibility filtering.`
+              `Use --version <file_id> only if you intentionally want to override compatibility filtering.`,
           );
         }
       }
@@ -457,7 +496,7 @@ export async function addMod(options: AddModOptions) {
           existing.provider.type === "curseforge" && existing.provider.project_id === project.id;
         if (!sameProject) {
           throw new Error(
-            `Cannot add CurseForge project '${project.name}': descriptor '${slug}.toml' already belongs to another project or provider.`
+            `Cannot add CurseForge project '${project.name}': descriptor '${slug}.toml' already belongs to another project or provider.`,
           );
         }
       }
@@ -477,28 +516,34 @@ export async function addMod(options: AddModOptions) {
       console.log(`\n${indent}✓ [Added MOD] ${project.name} (${slug})`);
       console.log(`${indent}   Provider: CurseForge (${project.id})`);
       console.log(`${indent}   File:     ${selectedFile.displayName} [ID: ${selectedFile.id}]`);
-      console.log(`${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(default)"}`);
+      console.log(
+        `${indent}   Side:     ${targetSide} ${options.side ? "(explicit)" : "(default)"}`,
+      );
       console.log(`${indent}   JAR:      ${selectedFile.fileName}`);
       console.log(`${indent}   Saved to: ${tomlPath}\n`);
 
       const requiredDependencies = (selectedFile.dependencies || []).filter(
-        (dependency) => dependency.relationType === 3
+        (dependency) => dependency.relationType === 3,
       );
       if (requiredDependencies.length > 0) {
         const existingIds = getExistingModIdentifiers(modsDir);
         console.log(
-          `${indent}🔍 [Dependency Checker] Inspecting ${requiredDependencies.length} required dependencies for ${project.name}...`
+          `${indent}🔍 [Dependency Checker] Inspecting ${requiredDependencies.length} required dependencies for ${project.name}...`,
         );
 
         for (const dependency of requiredDependencies) {
           const dependencyId = String(dependency.modId);
           if (existingIds.has(dependencyId)) {
             const depName = existingIds.get(dependencyId);
-            console.log(`${indent}   ✓ [Satisfied] ${depName} (CurseForge ${dependencyId}) is already installed.`);
+            console.log(
+              `${indent}   ✓ [Satisfied] ${depName} (CurseForge ${dependencyId}) is already installed.`,
+            );
             continue;
           }
 
-          console.log(`\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${dependencyId}...`);
+          console.log(
+            `\n${indent}   ⚡ [Auto-Resolving Missing Dependency] Installing: ${dependencyId}...`,
+          );
           try {
             await addMod({
               packDir: options.packDir,
@@ -510,7 +555,7 @@ export async function addMod(options: AddModOptions) {
           } catch (error: any) {
             throw new Error(
               `Required CurseForge dependency '${dependencyId}' for '${project.name}' could not be installed: ${error.message}`,
-              { cause: error }
+              { cause: error },
             );
           }
           refreshExistingModIdentifiers(existingIds, modsDir, dependencyId);

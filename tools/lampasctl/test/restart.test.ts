@@ -27,11 +27,13 @@ interface MockRconServer {
   close: () => Promise<void>;
 }
 
-function startMockRconServer(options: {
-  password?: string;
-  multiPacketAuth?: boolean;
-  onCommand?: (cmd: string) => string;
-} = {}): Promise<MockRconServer> {
+function startMockRconServer(
+  options: {
+    password?: string;
+    multiPacketAuth?: boolean;
+    onCommand?: (cmd: string) => string;
+  } = {},
+): Promise<MockRconServer> {
   const expectedPassword = options.password ?? "correct-password";
   const commands: string[] = [];
   const sockets = new Set<net.Socket>();
@@ -55,7 +57,8 @@ function startMockRconServer(options: {
           const packet = parseRconPacket(packetData);
           if (!packet) continue;
 
-          if (packet.type === 3) { // SERVERDATA_AUTH
+          if (packet.type === 3) {
+            // SERVERDATA_AUTH
             if (packet.payload === expectedPassword) {
               authed = true;
               if (options.multiPacketAuth) {
@@ -67,7 +70,8 @@ function startMockRconServer(options: {
               // Auth failed: server sends reqId = -1
               socket.write(createRconPacket(-1, 2, ""));
             }
-          } else if (packet.type === 2) { // SERVERDATA_EXECCOMMAND
+          } else if (packet.type === 2) {
+            // SERVERDATA_EXECCOMMAND
             if (!authed) {
               socket.destroy();
               return;
@@ -158,7 +162,9 @@ class DroppedRconClient extends RconClient {
 
 const activeServiceExec: ExecCommandFn = async () => ({ code: 0, stdout: "active\n", stderr: "" });
 
-async function captureRestartLog(run: () => Promise<number>): Promise<{ exitCode: number; lines: string[] }> {
+async function captureRestartLog(
+  run: () => Promise<number>,
+): Promise<{ exitCode: number; lines: string[] }> {
   const logSpy = spyOn(console, "log").mockImplementation(() => {});
   try {
     const exitCode = await run();
@@ -189,10 +195,10 @@ describe("RCON packet protocol (rcon.ts)", () => {
     const encoded = createRconPacket(1, 0, "");
     expect(encoded.length).toBe(14);
     expect(encoded.readInt32LE(0)).toBe(10); // length field = 10
-    expect(encoded.readInt32LE(4)).toBe(1);  // reqId
-    expect(encoded.readInt32LE(8)).toBe(0);  // type
-    expect(encoded[12]).toBe(0);             // null terminator
-    expect(encoded[13]).toBe(0);             // null pad
+    expect(encoded.readInt32LE(4)).toBe(1); // reqId
+    expect(encoded.readInt32LE(8)).toBe(0); // type
+    expect(encoded[12]).toBe(0); // null terminator
+    expect(encoded[13]).toBe(0); // null pad
 
     const parsed = parseRconPacket(encoded);
     expect(parsed).not.toBeNull();
@@ -408,7 +414,9 @@ describe("RconClient network exchange", () => {
       }
       expect(client.isConnected).toBe(false);
       // A clean FIN gives the close reason; a reset gives the socket error.
-      expect(client.lastError).toMatch(/RCON socket closed by remote server|ECONNRESET|ECONNABORTED/);
+      expect(client.lastError).toMatch(
+        /RCON socket closed by remote server|ECONNRESET|ECONNABORTED/,
+      );
 
       const reason = client.lastError;
       client.close();
@@ -459,7 +467,7 @@ describe("resolveRconConfig", () => {
     try {
       fs.writeFileSync(
         path.join(tmpDir, ".minecraft-env"),
-        "export RCON_HOST=target-host\nRCON_PORT=25590\nRCON_PASSWORD=target-pwd\n"
+        "export RCON_HOST=target-host\nRCON_PORT=25590\nRCON_PASSWORD=target-pwd\n",
       );
       delete process.env.RCON_HOST;
       delete process.env.RCON_PORT;
@@ -482,7 +490,7 @@ describe("resolveRconConfig", () => {
     try {
       fs.writeFileSync(
         path.join(tmpDir, "server.properties"),
-        "rcon.port=25599\nrcon.password=props-secret\nenable-rcon=true\n"
+        "rcon.port=25599\nrcon.password=props-secret\nenable-rcon=true\n",
       );
       delete process.env.RCON_HOST;
       delete process.env.RCON_PORT;
@@ -706,15 +714,27 @@ describe("runScheduledRestart sequencer", () => {
         rconPassword: "hunter2-secret",
         sleepFn: async () => {},
         rconClientFactory: () =>
-          new FakeRconClient({ connect: new Error("RCON authentication failed: invalid password") }),
+          new FakeRconClient({
+            connect: new Error("RCON authentication failed: invalid password"),
+          }),
         execCommandFn: activeServiceExec,
-      })
+      }),
     );
 
     expect(exitCode).toBe(0);
-    expect(lines.some((l) => l.includes("127.0.0.1:25575") && l.includes("RCON authentication failed: invalid password"))).toBe(true);
-    expect(lines.filter((l) => l.includes("Skipping broadcast") && l.includes("invalid password"))).toHaveLength(1);
-    expect(lines.filter((l) => l.includes("save-all") && l.includes("invalid password"))).toHaveLength(1);
+    expect(
+      lines.some(
+        (l) =>
+          l.includes("127.0.0.1:25575") &&
+          l.includes("RCON authentication failed: invalid password"),
+      ),
+    ).toBe(true);
+    expect(
+      lines.filter((l) => l.includes("Skipping broadcast") && l.includes("invalid password")),
+    ).toHaveLength(1);
+    expect(
+      lines.filter((l) => l.includes("save-all") && l.includes("invalid password")),
+    ).toHaveLength(1);
     expect(lines.some((l) => l.includes("hunter2-secret"))).toBe(false);
   });
 
@@ -727,7 +747,7 @@ describe("runScheduledRestart sequencer", () => {
         sleepFn: async () => {},
         rconClientFactory: () => new FakeRconClient({ connect: refused }),
         execCommandFn: activeServiceExec,
-      })
+      }),
     );
 
     expect(lines.some((l) => l.includes("Failed to connect (ECONNREFUSED)"))).toBe(true);
@@ -742,7 +762,7 @@ describe("runScheduledRestart sequencer", () => {
         rconClientFactory: () =>
           new FakeRconClient({ send: new Error("RCON socket closed by remote server") }),
         execCommandFn: activeServiceExec,
-      })
+      }),
     );
 
     expect(exitCode).toBe(0);
@@ -760,9 +780,11 @@ describe("runScheduledRestart sequencer", () => {
           immediate: true,
           sleepFn: async () => {},
           rconClientFactory: () =>
-            new FakeRconClient({ connect: new Error("RCON authentication failed: invalid password") }),
+            new FakeRconClient({
+              connect: new Error("RCON authentication failed: invalid password"),
+            }),
           execCommandFn: activeServiceExec,
-        })
+        }),
       );
 
       expect(exitCode).toBe(0);
@@ -780,7 +802,10 @@ describe("runScheduledRestart sequencer", () => {
   test("does not warn about the directory when the password comes from a flag, RCON_PASSWORD or server.properties", async () => {
     const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-test-restart-nowarn-"));
     const serverDir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-test-restart-server-"));
-    fs.writeFileSync(path.join(serverDir, "server.properties"), "enable-rcon=true\nrcon.password=props-secret\n");
+    fs.writeFileSync(
+      path.join(serverDir, "server.properties"),
+      "enable-rcon=true\nrcon.password=props-secret\n",
+    );
     const savedPassword = process.env.RCON_PASSWORD;
     const run = (options: { targetDir: string; rconPassword?: string }) =>
       captureRestartLog(() =>
@@ -790,7 +815,7 @@ describe("runScheduledRestart sequencer", () => {
           sleepFn: async () => {},
           rconClientFactory: () => new FakeRconClient(),
           execCommandFn: activeServiceExec,
-        })
+        }),
       );
     try {
       delete process.env.RCON_PASSWORD;
@@ -818,7 +843,7 @@ describe("runScheduledRestart sequencer", () => {
         sleepFn: async () => {},
         rconClientFactory: () => new DroppedRconClient("RCON socket closed by remote server"),
         execCommandFn: activeServiceExec,
-      })
+      }),
     );
 
     expect(exitCode).toBe(0);
@@ -847,7 +872,7 @@ describe("runScheduledRestart sequencer", () => {
             close: () => {},
           }) as unknown as RconClient,
         execCommandFn: activeServiceExec,
-      })
+      }),
     );
 
     expect(exitCode).toBe(0);
@@ -898,8 +923,17 @@ describe("CLI argument parsing for restart command", () => {
     for (const lead of [[], ["/srv/minecraft"]]) {
       const res = spawnSync(
         "bun",
-        ["run", cliPath, "restart", ...lead, "--rcon-password", "-Xq9secretPw", "--immediate", "--dry-run"],
-        { encoding: "utf-8" }
+        [
+          "run",
+          cliPath,
+          "restart",
+          ...lead,
+          "--rcon-password",
+          "-Xq9secretPw",
+          "--immediate",
+          "--dry-run",
+        ],
+        { encoding: "utf-8" },
       );
 
       expect(res.status).toBe(2);

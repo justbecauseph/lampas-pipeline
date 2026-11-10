@@ -61,10 +61,7 @@ export function loadMinecraftEnv(targetDir: string): Record<string, string> {
       continue;
     }
     let val = line.slice(eqIdx + 1).trim();
-    if (
-      (val.startsWith('"') && val.endsWith('"')) ||
-      (val.startsWith("'") && val.endsWith("'"))
-    ) {
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
       val = val.slice(1, -1);
     }
     loaded[key] = val;
@@ -109,25 +106,25 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
       console.error(`[Starter Error] Pack deployment failed: ${err.message}`);
       if (!options.allowStale) {
         console.error(
-          "[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)"
+          "[Starter Error] Aborting server launch to prevent inconsistent state. (Use --allow-stale or --no-sync to bypass)",
         );
         if (options.exitOnError !== false) process.exit(1);
         return 1;
       } else {
         console.log(
-          "[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)..."
+          "[Starter Warning] Deployment failed. Attempting transaction recovery before stale launch (--allow-stale enabled)...",
         );
         try {
           await DeploymentTransaction.recoverIfInterrupted(targetDir);
         } catch (recErr: any) {
           console.error(
-            `[Starter Error] Failed to recover deployment transaction: ${recErr.message}. Aborting launch to prevent running corrupted server.`
+            `[Starter Error] Failed to recover deployment transaction: ${recErr.message}. Aborting launch to prevent running corrupted server.`,
           );
           if (options.exitOnError !== false) process.exit(1);
           return 1;
         }
         console.log(
-          "[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled)."
+          "[Starter Warning] Continuing server launch with recovered installation state (--allow-stale enabled).",
         );
       }
     }
@@ -137,14 +134,14 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
   const journalPath = path.join(targetDir, ".lampas", ".tx-rollback", "journal.json");
   if (fs.existsSync(journalPath)) {
     console.log(
-      "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch..."
+      "[Starter Warning] Detected interrupted deployment transaction journal. Running recovery before launch...",
     );
     try {
       await DeploymentTransaction.recoverIfInterrupted(targetDir);
       console.log("[Starter] Transaction recovery completed successfully.");
     } catch (err: any) {
       console.error(
-        `[Starter Error] Transaction recovery failed: ${err.message}. Aborting server launch.`
+        `[Starter Error] Transaction recovery failed: ${err.message}. Aborting server launch.`,
       );
       if (options.exitOnError !== false) process.exit(1);
       return 1;
@@ -155,7 +152,7 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
   const serverJar = path.join(targetDir, ".lampas", "runtime", "fabric-server-launch.jar");
   if (!fs.existsSync(serverJar)) {
     console.error(
-      "[Starter Error] No managed Fabric runtime is installed. Run lampasctl start without --no-sync first."
+      "[Starter Error] No managed Fabric runtime is installed. Run lampasctl start without --no-sync first.",
     );
     if (options.exitOnError !== false) process.exit(1);
     return 1;
@@ -164,7 +161,9 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
   // e. Host detection & JVM sizing
   const host = detectHost();
   const ramText = host.ram ? formatSize(host.ram) : "unknown";
-  console.log(`\n[Starter] Host: ${host.cpus} CPUs (${host.cpuSource}), ${ramText} RAM (${host.ramSource})`);
+  console.log(
+    `\n[Starter] Host: ${host.cpus} CPUs (${host.cpuSource}), ${ramText} RAM (${host.ramSource})`,
+  );
 
   const gc: GcKind = (options.gc || process.env.LAMPAS_GC || "g1") as GcKind;
   if (gc !== "g1" && gc !== "zgc") {
@@ -199,7 +198,7 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
     const heapBytes = planHeap(host.ram, host.container, extraReserve, gc);
     if (heapBytes < MIN_HEAP) {
       console.error(
-        `[Starter Error] Computed heap ${formatSize(heapBytes)} is below the ${formatSize(MIN_HEAP)} minimum for this modpack. Add RAM or set --memory explicitly.`
+        `[Starter Error] Computed heap ${formatSize(heapBytes)} is below the ${formatSize(MIN_HEAP)} minimum for this modpack. Add RAM or set --memory explicitly.`,
       );
       if (options.exitOnError !== false) process.exit(1);
       return 1;
@@ -217,7 +216,7 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
   const jarName = path.basename(serverJar);
   console.log(`[Starter] Using Java: ${javaBin}${oracleGraal ? " (Oracle GraalVM)" : ""}`);
   console.log(
-    `[Starter] Starting Minecraft Fabric Server (${jarName}) with ${heap} heap (${heapSource}), GC ${gc}...`
+    `[Starter] Starting Minecraft Fabric Server (${jarName}) with ${heap} heap (${heapSource}), GC ${gc}...`,
   );
 
   // f. JVM Flags & config
@@ -255,8 +254,7 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
 
   const isWin = process.platform === "win32";
   const isBatch =
-    isWin &&
-    (javaBin.toLowerCase().endsWith(".bat") || javaBin.toLowerCase().endsWith(".cmd"));
+    isWin && (javaBin.toLowerCase().endsWith(".bat") || javaBin.toLowerCase().endsWith(".cmd"));
   const baseCmd = isBatch ? ["cmd.exe", "/c", javaBin] : [javaBin];
   const jvmCmd = [
     ...baseCmd,

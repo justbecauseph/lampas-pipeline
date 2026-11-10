@@ -10,53 +10,78 @@ describe("bulk Modrinth resolution", () => {
     const packDir = path.join(dir, "pack");
     const modsDir = path.join(packDir, "mods");
     fs.mkdirSync(modsDir, { recursive: true });
-    fs.writeFileSync(path.join(packDir, "pack.toml"), [
-      "[pack]", 'name = "Batch Test"', 'version = "1.0.0"', 'minecraft = "26.2"',
-      "[loader]", 'type = "fabric"', 'version = "0.19.3"', "",
-    ].join("\n"));
+    fs.writeFileSync(
+      path.join(packDir, "pack.toml"),
+      [
+        "[pack]",
+        'name = "Batch Test"',
+        'version = "1.0.0"',
+        'minecraft = "26.2"',
+        "[loader]",
+        'type = "fabric"',
+        'version = "0.19.3"',
+        "",
+      ].join("\n"),
+    );
     for (let i = 0; i < 125; i++) {
-      fs.writeFileSync(path.join(modsDir, `mod-${i}.toml`), [
-        `name = "Mod ${i}"`, 'side = "both"', "[provider]", 'type = "modrinth"',
-        `project_id = "p${i}"`, `version_id = "v${i}"`, "",
-      ].join("\n"));
+      fs.writeFileSync(
+        path.join(modsDir, `mod-${i}.toml`),
+        [
+          `name = "Mod ${i}"`,
+          'side = "both"',
+          "[provider]",
+          'type = "modrinth"',
+          `project_id = "p${i}"`,
+          `version_id = "v${i}"`,
+          "",
+        ].join("\n"),
+      );
     }
 
     const originalFetch = globalThis.fetch;
     const versionBatchSizes: number[] = [];
     let projectBatchCount = 0;
     globalThis.fetch = (async (input: string | URL | Request) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       const ids = JSON.parse(url.searchParams.get("ids") || "[]") as string[];
       if (url.pathname.endsWith("/versions")) {
         versionBatchSizes.push(ids.length);
-        return Response.json(ids.map((id) => {
-          const index = Number(id.slice(1));
-          return {
-            id,
-            project_id: `p${index}`,
-            name: `Version ${index}`,
-            version_number: "1.0.0",
-            game_versions: ["26.2"],
-            loaders: ["fabric"],
-            files: [{
-              hashes: { sha1: "1".repeat(40), sha256: "2".repeat(64), sha512: "3".repeat(128) },
-              url: `https://cdn.example/mod-${index}.jar`,
-              filename: `mod-${index}.jar`,
-              primary: true,
-              size: 1024,
-            }],
-          };
-        }));
+        return Response.json(
+          ids.map((id) => {
+            const index = Number(id.slice(1));
+            return {
+              id,
+              project_id: `p${index}`,
+              name: `Version ${index}`,
+              version_number: "1.0.0",
+              game_versions: ["26.2"],
+              loaders: ["fabric"],
+              files: [
+                {
+                  hashes: { sha1: "1".repeat(40), sha256: "2".repeat(64), sha512: "3".repeat(128) },
+                  url: `https://cdn.example/mod-${index}.jar`,
+                  filename: `mod-${index}.jar`,
+                  primary: true,
+                  size: 1024,
+                },
+              ],
+            };
+          }),
+        );
       }
       if (url.pathname.endsWith("/projects")) {
         projectBatchCount++;
-        return Response.json(ids.map((id) => ({
-          id,
-          slug: id,
-          title: id,
-          description: "fixture",
-          categories: [],
-        })));
+        return Response.json(
+          ids.map((id) => ({
+            id,
+            slug: id,
+            title: id,
+            description: "fixture",
+            categories: [],
+          })),
+        );
       }
       return new Response("not found", { status: 404 });
     }) as typeof fetch;
@@ -77,14 +102,31 @@ describe("bulk Modrinth resolution", () => {
     const packDir = path.join(dir, "pack");
     const modsDir = path.join(packDir, "mods");
     fs.mkdirSync(modsDir, { recursive: true });
-    fs.writeFileSync(path.join(packDir, "pack.toml"), [
-      "[pack]", 'name = "Stream Test"', 'version = "1.0.0"', 'minecraft = "26.2"',
-      "[loader]", 'type = "fabric"', 'version = "0.19.3"', "",
-    ].join("\n"));
-    fs.writeFileSync(path.join(modsDir, "better-end.toml"), [
-      'name = "BetterEnd"', 'side = "both"', "[provider]", 'type = "modrinth"',
-      'project_id = "gc8OEnCC"', 'version_id = "tBdZGZeX"', "",
-    ].join("\n"));
+    fs.writeFileSync(
+      path.join(packDir, "pack.toml"),
+      [
+        "[pack]",
+        'name = "Stream Test"',
+        'version = "1.0.0"',
+        'minecraft = "26.2"',
+        "[loader]",
+        'type = "fabric"',
+        'version = "0.19.3"',
+        "",
+      ].join("\n"),
+    );
+    fs.writeFileSync(
+      path.join(modsDir, "better-end.toml"),
+      [
+        'name = "BetterEnd"',
+        'side = "both"',
+        "[provider]",
+        'type = "modrinth"',
+        'project_id = "gc8OEnCC"',
+        'version_id = "tBdZGZeX"',
+        "",
+      ].join("\n"),
+    );
 
     const sampleData = Buffer.from("simulated jar content for better-end mod");
     const crypto = await import("node:crypto");
@@ -97,30 +139,36 @@ describe("bulk Modrinth resolution", () => {
     globalThis.fetch = (async (input: string | URL | Request) => {
       const url = typeof input === "string" || input instanceof URL ? input.toString() : input.url;
       if (url.includes("/versions?ids=")) {
-        return Response.json([{
-          id: "tBdZGZeX",
-          project_id: "gc8OEnCC",
-          name: "better-end-26.101.2",
-          version_number: "26.101.2",
-          game_versions: ["26.2"],
-          loaders: ["fabric"],
-          files: [{
-            hashes: { sha1: sampleSha1, sha512: sampleSha512 }, // Note: sha256 omitted as Modrinth does
-            url: "https://cdn.example/better-end-26.101.2.jar",
-            filename: "better-end-26.101.2.jar",
-            primary: true,
-            size: sampleData.length,
-          }],
-        }]);
+        return Response.json([
+          {
+            id: "tBdZGZeX",
+            project_id: "gc8OEnCC",
+            name: "better-end-26.101.2",
+            version_number: "26.101.2",
+            game_versions: ["26.2"],
+            loaders: ["fabric"],
+            files: [
+              {
+                hashes: { sha1: sampleSha1, sha512: sampleSha512 }, // Note: sha256 omitted as Modrinth does
+                url: "https://cdn.example/better-end-26.101.2.jar",
+                filename: "better-end-26.101.2.jar",
+                primary: true,
+                size: sampleData.length,
+              },
+            ],
+          },
+        ]);
       }
       if (url.includes("/projects?ids=")) {
-        return Response.json([{
-          id: "gc8OEnCC",
-          slug: "betterend",
-          title: "BetterEnd",
-          description: "End overhaul",
-          categories: ["worldgen"],
-        }]);
+        return Response.json([
+          {
+            id: "gc8OEnCC",
+            slug: "betterend",
+            title: "BetterEnd",
+            description: "End overhaul",
+            categories: ["worldgen"],
+          },
+        ]);
       }
       if (url === "https://cdn.example/better-end-26.101.2.jar") {
         downloadCount++;
@@ -138,7 +186,15 @@ describe("bulk Modrinth resolution", () => {
       expect(downloadCount).toBe(1);
 
       // Verify cached on disk
-      const cachePath = path.resolve(dir, ".lampas", "cache", "modrinth", "gc8OEnCC", "tBdZGZeX", "better-end-26.101.2.jar");
+      const cachePath = path.resolve(
+        dir,
+        ".lampas",
+        "cache",
+        "modrinth",
+        "gc8OEnCC",
+        "tBdZGZeX",
+        "better-end-26.101.2.jar",
+      );
       expect(fs.existsSync(cachePath)).toBe(true);
 
       // Resolving again should reuse existingLock / disk cache without re-downloading

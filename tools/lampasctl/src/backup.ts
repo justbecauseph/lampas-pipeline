@@ -58,7 +58,8 @@ export async function backupDirectory(options: BackupOptions): Promise<string | 
   fs.cpSync(source, backupDest, { recursive: true });
 
   const backupPrefix = `${label}_`;
-  const backupDirectories = fs.readdirSync(destinationRoot, { withFileTypes: true })
+  const backupDirectories = fs
+    .readdirSync(destinationRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name.startsWith(backupPrefix))
     .map((entry) => entry.name)
     .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));

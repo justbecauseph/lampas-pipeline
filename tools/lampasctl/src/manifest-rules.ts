@@ -63,9 +63,7 @@ export function isPortalSafePath(value: string): boolean {
   if (value.startsWith("/") || value.startsWith("//") || /^[a-zA-Z]:($|\/)/.test(value)) {
     return false;
   }
-  return value
-    .split("/")
-    .every((part) => part.length > 0 && part !== "." && part !== "..");
+  return value.split("/").every((part) => part.length > 0 && part !== "." && part !== "..");
 }
 
 function isServerProtectedPath(value: string): boolean {
@@ -81,7 +79,9 @@ function assertDownloadUrl(url: unknown, label: string): void {
     url !== url.trim() ||
     CONTROL_OR_DEL_PATTERN.test(url)
   ) {
-    throw new Error(`${label} must be a non-empty URL of at most ${MAX_URL_LENGTH} characters without padding, control characters, or DEL.`);
+    throw new Error(
+      `${label} must be a non-empty URL of at most ${MAX_URL_LENGTH} characters without padding, control characters, or DEL.`,
+    );
   }
   if (url.startsWith("/")) {
     if (!isPortalSafePath(url.slice(1))) {
@@ -93,16 +93,25 @@ function assertDownloadUrl(url: unknown, label: string): void {
   try {
     parsed = new URL(url);
   } catch {
-    throw new Error(`${label} must be an HTTP(S) URL or a root-relative path: ${JSON.stringify(url)}`);
+    throw new Error(
+      `${label} must be an HTTP(S) URL or a root-relative path: ${JSON.stringify(url)}`,
+    );
   }
-  if ((parsed.protocol !== "http:" && parsed.protocol !== "https:") || parsed.hostname.length === 0) {
+  if (
+    (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+    parsed.hostname.length === 0
+  ) {
     throw new Error(`${label} must be an HTTP(S) URL: ${JSON.stringify(url)}`);
   }
 }
 
 function assertManifestFile(target: "client" | "server", file: ManifestFile, index: number): void {
   const label = `${target} manifest files[${index}]`;
-  if (typeof file.path !== "string" || !isPortalSafePath(file.path) || CONTROL_OR_DEL_PATTERN.test(file.path)) {
+  if (
+    typeof file.path !== "string" ||
+    !isPortalSafePath(file.path) ||
+    CONTROL_OR_DEL_PATTERN.test(file.path)
+  ) {
     throw new Error(`${label} path must be a safe relative path: ${JSON.stringify(file.path)}`);
   }
   if (file.path.length > MAX_FILE_PATH_LENGTH) {
@@ -133,7 +142,9 @@ function assertManifestFile(target: "client" | "server", file: ManifestFile, ind
 
   assertDownloadUrl(file.download?.url, `${label} download url`);
   if (!PROVIDERS.includes(file.download?.provider)) {
-    throw new Error(`${label} download provider is unsupported: ${JSON.stringify(file.download?.provider)}`);
+    throw new Error(
+      `${label} download provider is unsupported: ${JSON.stringify(file.download?.provider)}`,
+    );
   }
   if (!POLICIES.includes(file.policy)) {
     throw new Error(`${label} policy is unsupported: ${JSON.stringify(file.policy)}`);
@@ -159,7 +170,9 @@ function assertBoundedString(value: unknown, max: number, label: string): void {
     value !== value.trim() ||
     CONTROL_OR_DEL_PATTERN.test(value)
   ) {
-    throw new Error(`${label} must be a string of 1 to ${max} characters without padding, control characters, or DEL.`);
+    throw new Error(
+      `${label} must be a string of 1 to ${max} characters without padding, control characters, or DEL.`,
+    );
   }
 }
 
@@ -178,8 +191,14 @@ function assertModEntry(mod: any, index: number): void {
     throw new Error(`${label} size must be a non-negative integer.`);
   }
   if (mod.description !== undefined) {
-    if (typeof mod.description !== "string" || mod.description.length > MAX_MOD_DESCRIPTION_LENGTH || TEXT_CONTROL_PATTERN.test(mod.description)) {
-      throw new Error(`${label} description must be text of at most ${MAX_MOD_DESCRIPTION_LENGTH} characters without control characters.`);
+    if (
+      typeof mod.description !== "string" ||
+      mod.description.length > MAX_MOD_DESCRIPTION_LENGTH ||
+      TEXT_CONTROL_PATTERN.test(mod.description)
+    ) {
+      throw new Error(
+        `${label} description must be text of at most ${MAX_MOD_DESCRIPTION_LENGTH} characters without control characters.`,
+      );
     }
   }
   if (mod.iconUrl !== undefined) assertDownloadUrl(mod.iconUrl, `${label} iconUrl`);
@@ -189,7 +208,11 @@ function assertModEntry(mod: any, index: number): void {
       throw new Error(`${label} categories must be an array of at most ${MAX_ARRAY_LENGTH} items.`);
     }
     mod.categories.forEach((category: unknown, categoryIndex: number) =>
-      assertBoundedString(category, MAX_MOD_CATEGORY_LENGTH, `${label} categories[${categoryIndex}]`),
+      assertBoundedString(
+        category,
+        MAX_MOD_CATEGORY_LENGTH,
+        `${label} categories[${categoryIndex}]`,
+      ),
     );
   }
 }
@@ -201,15 +224,27 @@ function assertEnvelope(manifest: PackManifest): void {
   }
   assertBoundedString(manifest.pack, MAX_PACK_NAME_LENGTH, `${target} manifest pack`);
   assertBoundedString(manifest.minecraft, MAX_MINECRAFT_LENGTH, `${target} manifest minecraft`);
-  assertBoundedString(manifest.loader?.version, MAX_LOADER_VERSION_LENGTH, `${target} manifest loader.version`);
+  assertBoundedString(
+    manifest.loader?.version,
+    MAX_LOADER_VERSION_LENGTH,
+    `${target} manifest loader.version`,
+  );
   if (typeof manifest.version !== "string" || !VERSION_PATTERN.test(manifest.version)) {
-    throw new Error(`${target} manifest version must be a launcher-compatible version (letters, digits, '.', '_', '+', '-').`);
+    throw new Error(
+      `${target} manifest version must be a launcher-compatible version (letters, digits, '.', '_', '+', '-').`,
+    );
   }
   if (manifest.loader?.type !== "fabric") {
     throw new Error(`${target} manifest loader.type must be 'fabric'.`);
   }
-  if (!Number.isSafeInteger(manifest.protocol) || manifest.protocol < 0 || manifest.protocol > MAX_SUPPORTED_PROTOCOL) {
-    throw new Error(`${target} manifest protocol must be an integer from 0 to ${MAX_SUPPORTED_PROTOCOL}.`);
+  if (
+    !Number.isSafeInteger(manifest.protocol) ||
+    manifest.protocol < 0 ||
+    manifest.protocol > MAX_SUPPORTED_PROTOCOL
+  ) {
+    throw new Error(
+      `${target} manifest protocol must be an integer from 0 to ${MAX_SUPPORTED_PROTOCOL}.`,
+    );
   }
   if (manifest.files.length > MAX_ARRAY_LENGTH) {
     throw new Error(`${target} manifest has more than ${MAX_ARRAY_LENGTH} files.`);
@@ -231,7 +266,11 @@ function assertEnvelope(manifest: PackManifest): void {
 /** The Portal's resourcePack rules, with the UUID and provider checks lampasctl needs for the configured id. */
 function assertServerResourcePack(srp: ServerResourcePackConfig): void {
   const label = "server manifest resourcePack";
-  if (typeof srp.artifact !== "string" || srp.artifact.length === 0 || srp.artifact !== srp.artifact.trim()) {
+  if (
+    typeof srp.artifact !== "string" ||
+    srp.artifact.length === 0 ||
+    srp.artifact !== srp.artifact.trim()
+  ) {
     throw new Error(`${label} artifact must be a non-empty string without padding.`);
   }
   if (typeof srp.required !== "boolean") {
@@ -247,8 +286,14 @@ function assertServerResourcePack(srp: ServerResourcePackConfig): void {
   ) {
     throw new Error(`${label} filename must be a safe filename without path separators.`);
   }
-  if (!isPortalSafePath(srp.path) || !srp.path.startsWith("resourcepacks/") || srp.path.split("/").pop() !== filename) {
-    throw new Error(`${label} path must be a safe path under resourcepacks/ that ends with the filename.`);
+  if (
+    !isPortalSafePath(srp.path) ||
+    !srp.path.startsWith("resourcepacks/") ||
+    srp.path.split("/").pop() !== filename
+  ) {
+    throw new Error(
+      `${label} path must be a safe path under resourcepacks/ that ends with the filename.`,
+    );
   }
   if (!Number.isSafeInteger(srp.size) || srp.size < 0) {
     throw new Error(`${label} size must be a non-negative integer.`);
@@ -276,7 +321,11 @@ function assertServerResourcePack(srp: ServerResourcePackConfig): void {
   if (srp.uuid !== undefined && !UUID_PATTERN.test(srp.uuid)) {
     throw new Error(`${label} uuid must be a valid UUID.`);
   }
-  if (srp.id !== undefined && srp.uuid !== undefined && srp.id.toLowerCase() !== srp.uuid.toLowerCase()) {
+  if (
+    srp.id !== undefined &&
+    srp.uuid !== undefined &&
+    srp.id.toLowerCase() !== srp.uuid.toLowerCase()
+  ) {
     throw new Error(`${label} id and uuid must match when both are supplied.`);
   }
   if (!PROVIDERS.includes(srp.provider ?? "")) {
@@ -306,9 +355,12 @@ function assertEnforceOperationsUnique(patches: readonly ConfigPatch[]): void {
       const key = `${patch.path}::${JSON.stringify(op.path)}`;
       const existing = owners.get(key);
       if (existing !== undefined) {
-        const detail = existing === patch.id ? "duplicate within the patch" : `already set by patch '${existing}'`;
+        const detail =
+          existing === patch.id
+            ? "duplicate within the patch"
+            : `already set by patch '${existing}'`;
         throw new Error(
-          `Config patch '${patch.id}' has a conflicting enforce operation for path '${op.path.join(".")}' on '${patch.path}' (${detail}).`
+          `Config patch '${patch.id}' has a conflicting enforce operation for path '${op.path.join(".")}' on '${patch.path}' (${detail}).`,
         );
       }
       owners.set(key, patch.id);
@@ -331,13 +383,17 @@ export function validateManifestRules(manifest: PackManifest): void {
     const key = file.path.toLowerCase();
     const previous = owners.get(key);
     if (previous !== undefined) {
-      throw new Error(`${target} manifest has duplicate file path '${file.path}' (conflicts with '${previous}').`);
+      throw new Error(
+        `${target} manifest has duplicate file path '${file.path}' (conflicts with '${previous}').`,
+      );
     }
     owners.set(key, file.path);
     totalBytes += file.size;
   });
   if (target === "client" && totalBytes > MAX_TOTAL_FILE_BYTES) {
-    throw new Error(`client manifest files total ${totalBytes} bytes, above the ${MAX_TOTAL_FILE_BYTES} byte limit.`);
+    throw new Error(
+      `client manifest files total ${totalBytes} bytes, above the ${MAX_TOTAL_FILE_BYTES} byte limit.`,
+    );
   }
 
   if (manifest.resourcePack !== undefined) {

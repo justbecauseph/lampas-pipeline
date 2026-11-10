@@ -35,7 +35,7 @@ export interface VerifyFabricMetaOptions {
 export async function verifyFabricLoaderCompatibility(
   minecraft: string,
   loaderVersion: string,
-  options?: VerifyFabricMetaOptions
+  options?: VerifyFabricMetaOptions,
 ): Promise<FabricMetaLoaderData> {
   const metaBaseUrl = options?.metaBaseUrl || "https://meta.fabricmc.net";
   const customFetch = options?.fetchFn || fetch;
@@ -54,7 +54,7 @@ export async function verifyFabricLoaderCompatibility(
       // If 404, combination does not exist - fail closed immediately without retry
       if (response.status === 404) {
         throw new Error(
-          `[Loader] Fabric Loader ${loaderVersion} is not available for Minecraft ${minecraft} (Fabric Meta returned 404 Not Found). Release generation aborted.`
+          `[Loader] Fabric Loader ${loaderVersion} is not available for Minecraft ${minecraft} (Fabric Meta returned 404 Not Found). Release generation aborted.`,
         );
       }
 
@@ -71,7 +71,7 @@ export async function verifyFabricLoaderCompatibility(
       // Any other non-ok status (e.g. 400, 403) - do not retry
       if (!response.ok) {
         throw new Error(
-          `[Loader] Fabric Meta query failed with HTTP ${response.status} ${response.statusText} (${url}). Release generation aborted.`
+          `[Loader] Fabric Meta query failed with HTTP ${response.status} ${response.statusText} (${url}). Release generation aborted.`,
         );
       }
 
@@ -104,7 +104,9 @@ export async function verifyFabricLoaderCompatibility(
   }
 
   if (!data || typeof data !== "object") {
-    throw new Error(`[Loader] Fabric Meta response for Minecraft ${minecraft} and Loader ${loaderVersion} is malformed.`);
+    throw new Error(
+      `[Loader] Fabric Meta response for Minecraft ${minecraft} and Loader ${loaderVersion} is malformed.`,
+    );
   }
 
   if (
@@ -116,11 +118,11 @@ export async function verifyFabricLoaderCompatibility(
   ) {
     if (data?.loader?.version && data.loader.version !== loaderVersion) {
       throw new Error(
-        `[Loader] Fabric Meta returned loader version '${data?.loader?.version}', but '${loaderVersion}' was requested.`
+        `[Loader] Fabric Meta returned loader version '${data?.loader?.version}', but '${loaderVersion}' was requested.`,
       );
     }
     throw new Error(
-      `[Loader] Fabric Meta response has missing or invalid loader metadata (expected valid 'version' and 'maven' coordinates).`
+      `[Loader] Fabric Meta response has missing or invalid loader metadata (expected valid 'version' and 'maven' coordinates).`,
     );
   }
 
@@ -133,7 +135,7 @@ export async function verifyFabricLoaderCompatibility(
     !data.intermediary.version.trim()
   ) {
     throw new Error(
-      `[Loader] Fabric Meta response is missing valid intermediary mappings for Minecraft ${minecraft} (expected valid 'version' and 'maven' coordinates).`
+      `[Loader] Fabric Meta response is missing valid intermediary mappings for Minecraft ${minecraft} (expected valid 'version' and 'maven' coordinates).`,
     );
   }
 
@@ -147,7 +149,9 @@ export async function verifyFabricLoaderCompatibility(
 
   const commonLibs = data.launcherMeta.libraries?.common;
   if (!Array.isArray(commonLibs) || commonLibs.length === 0) {
-    throw new Error(`[Loader] Fabric Meta response has malformed or empty required library metadata.`);
+    throw new Error(
+      `[Loader] Fabric Meta response has malformed or empty required library metadata.`,
+    );
   }
 
   return data as FabricMetaLoaderData;

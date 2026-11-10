@@ -1,4 +1,3 @@
-
 # Systemd Units & Timers:
 
 - `/etc/systemd/system/lampas-server.service`

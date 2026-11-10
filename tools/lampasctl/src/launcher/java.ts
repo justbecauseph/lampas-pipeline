@@ -9,7 +9,7 @@ import * as path from "node:path";
 export function findJavaBinary(
   env: Record<string, string | undefined> = process.env,
   platform: NodeJS.Platform = process.platform,
-  home: string = os.homedir()
+  home: string = os.homedir(),
 ): string {
   const envBin = env.JAVA_BIN;
   if (envBin && fs.existsSync(envBin)) {
@@ -62,7 +62,9 @@ export function isOracleGraalvm(javaBin: string): boolean {
   const releasePath = path.join(path.dirname(path.dirname(real)), "release");
   try {
     const release = fs.readFileSync(releasePath, "utf-8");
-    return release.includes("GRAALVM_VERSION=") && release.includes('IMPLEMENTOR="Oracle Corporation"');
+    return (
+      release.includes("GRAALVM_VERSION=") && release.includes('IMPLEMENTOR="Oracle Corporation"')
+    );
   } catch {
     return false;
   }

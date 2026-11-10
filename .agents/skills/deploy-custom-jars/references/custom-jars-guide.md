@@ -9,6 +9,7 @@ This document details how proprietary, in-house, and custom override JARs are ma
 Unlike third-party mods sourced from Modrinth or CurseForge CDNs, custom JARs are hosted and distributed directly through the **Lampas Portal content-addressed blob CDN** (`/api/v1/blobs/<sha256>`).
 
 ### TOML Definition (`pack/mods/<slug>.toml`)
+
 ```toml
 name = "Lampas Overrides"
 side = "both" # "client" | "server" | "both"
@@ -19,6 +20,7 @@ file = "custom/lampas2-overrides-1.0.0.jar"
 ```
 
 ### Key Properties:
+
 - `name`: Display name rendered in the Launcher and client catalog.
 - `side`: Controls which distribution manifests include the mod:
   - `client`: Client-only HUD, visuals, audio, or client mods. Excluded from `server-manifest.json`.
@@ -32,6 +34,7 @@ file = "custom/lampas2-overrides-1.0.0.jar"
 ## 2. Lockfile Representation (`pack.lock.json`)
 
 When `lampasctl resolve` runs, the resolver:
+
 1. Locates the physical `.jar` under `pack/custom/`.
 2. Computes the SHA-256 and SHA-512 streaming hashes.
 3. Generates the download URL as `/api/v1/blobs/<sha256>`.
@@ -63,6 +66,7 @@ When `lampasctl resolve` runs, the resolver:
 Because releases can be published to both local development portal instances (`http://localhost:3000`) and the cloud development environment (`https://dev.lampas.town`), manifests must be generated with appropriate base URLs:
 
 ### Localhost 3000:
+
 - Portal URL: `http://localhost:3000`
 - Manifest Output: `manifest/localhost/`
 - Pointers generated:
@@ -71,6 +75,7 @@ Because releases can be published to both local development portal instances (`h
   - Server Resource Pack: `http://localhost:3000/api/v1/blobs/<sha256>`
 
 ### Dev Portal:
+
 - Portal URL: `https://dev.lampas.town`
 - Manifest Output: `manifest/dev/`
 - Pointers generated:

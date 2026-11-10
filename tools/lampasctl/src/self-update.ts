@@ -11,7 +11,11 @@ import {
   resolveHostTarget,
   type TargetDefinition,
 } from "./release-targets";
-import { DEFAULT_DOWNLOAD_TIMEOUT_MS, DEFAULT_OPERATION_TIMEOUT_MS, withAbortTimeout } from "./utils";
+import {
+  DEFAULT_DOWNLOAD_TIMEOUT_MS,
+  DEFAULT_OPERATION_TIMEOUT_MS,
+  withAbortTimeout,
+} from "./utils";
 
 export const LAMPASCTL_RELEASE_REPO = "justbecauseph/lampas-pipeline";
 export const LAMPASCTL_TAG_PREFIX = "lampasctl-v";
@@ -99,7 +103,7 @@ export function versionFromTag(tag: string): string | null {
 /** The highest-precedence published lampasctl release. Prereleases count only when `includePrerelease` is set. */
 export function selectNewestRelease(
   releases: GithubRelease[],
-  includePrerelease: boolean
+  includePrerelease: boolean,
 ): { release: GithubRelease; version: string } | null {
   let best: { release: GithubRelease; version: string; semver: SemVer } | null = null;
   for (const release of releases) {
@@ -134,7 +138,7 @@ function githubToken(options: GithubClientOptions): string | undefined {
 
 async function githubGetJson<T>(
   apiPath: string,
-  options: GithubClientOptions
+  options: GithubClientOptions,
 ): Promise<{ status: number; body: T | null }> {
   const base = (options.apiBaseUrl ?? GITHUB_API_BASE_URL).replace(/\/+$/, "");
   const url = `${base}${apiPath}`;
@@ -153,16 +157,22 @@ async function githubGetJson<T>(
       if (res.status === 404) return { status: 404, body: null };
       if (!res.ok) {
         const rateLimited =
-          res.status === 429 || (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0");
+          res.status === 429 ||
+          (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0");
         if (rateLimited) {
           const reset = Number(res.headers.get("x-ratelimit-reset"));
-          const resetAt = Number.isFinite(reset) && reset > 0 ? ` until ${new Date(reset * 1000).toISOString()}` : "";
+          const resetAt =
+            Number.isFinite(reset) && reset > 0
+              ? ` until ${new Date(reset * 1000).toISOString()}`
+              : "";
           throw new Error(
-            `GitHub API rate limit reached${resetAt}. Set GITHUB_TOKEN or GH_TOKEN to raise the limit.`
+            `GitHub API rate limit reached${resetAt}. Set GITHUB_TOKEN or GH_TOKEN to raise the limit.`,
           );
         }
         if (res.status === 401 && token) {
-          throw new Error("GitHub API rejected the token (HTTP 401). Check or unset GITHUB_TOKEN / GH_TOKEN.");
+          throw new Error(
+            "GitHub API rejected the token (HTTP 401). Check or unset GITHUB_TOKEN / GH_TOKEN.",
+          );
         }
         throw new Error(`GitHub API request ${url} failed: HTTP ${res.status} ${res.statusText}`);
       }
@@ -173,20 +183,23 @@ async function githubGetJson<T>(
         throw new Error(`GitHub API returned invalid JSON for ${url}`);
       }
     },
-    options.timeoutMs ?? DEFAULT_OPERATION_TIMEOUT_MS
+    options.timeoutMs ?? DEFAULT_OPERATION_TIMEOUT_MS,
   );
 }
 
-export async function listGithubReleases(options: GithubClientOptions = {}): Promise<GithubRelease[]> {
+export async function listGithubReleases(
+  options: GithubClientOptions = {},
+): Promise<GithubRelease[]> {
   const repo = options.repo ?? LAMPASCTL_RELEASE_REPO;
   const releases: GithubRelease[] = [];
   for (let page = 1; page <= MAX_RELEASE_PAGES; page++) {
     const { status, body } = await githubGetJson<GithubRelease[]>(
       `/repos/${repo}/releases?per_page=${RELEASES_PER_PAGE}&page=${page}`,
-      options
+      options,
     );
     if (status === 404) throw new Error(`GitHub repository ${repo} was not found`);
-    if (!Array.isArray(body)) throw new Error(`GitHub API returned an unexpected release list for ${repo}`);
+    if (!Array.isArray(body))
+      throw new Error(`GitHub API returned an unexpected release list for ${repo}`);
     releases.push(...body);
     if (body.length < RELEASES_PER_PAGE) break;
   }
@@ -195,12 +208,12 @@ export async function listGithubReleases(options: GithubClientOptions = {}): Pro
 
 export async function getGithubReleaseByTag(
   tag: string,
-  options: GithubClientOptions = {}
+  options: GithubClientOptions = {},
 ): Promise<GithubRelease | null> {
   const repo = options.repo ?? LAMPASCTL_RELEASE_REPO;
   const { body } = await githubGetJson<GithubRelease>(
     `/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`,
-    options
+    options,
   );
   return body && !body.draft ? body : null;
 }
@@ -209,7 +222,11 @@ export async function getGithubReleaseByTag(
 // Downloads, checksums and archives
 // ---------------------------------------------------------------------------
 
-async function downloadBytes(url: string, timeoutMs: number, attempts: number): Promise<Uint8Array> {
+async function downloadBytes(
+  url: string,
+  timeoutMs: number,
+  attempts: number,
+): Promise<Uint8Array> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
@@ -220,7 +237,7 @@ async function downloadBytes(url: string, timeoutMs: number, attempts: number): 
           if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
           return new Uint8Array(await res.arrayBuffer());
         },
-        timeoutMs
+        timeoutMs,
       );
     } catch (error) {
       lastError = error;
@@ -230,7 +247,9 @@ async function downloadBytes(url: string, timeoutMs: number, attempts: number): 
     }
   }
   const reason = lastError instanceof Error ? lastError.message : String(lastError);
-  throw new Error(`Failed to download ${url} after ${attempts} attempts: ${reason}`, { cause: lastError });
+  throw new Error(`Failed to download ${url} after ${attempts} attempts: ${reason}`, {
+    cause: lastError,
+  });
 }
 
 /** Parses `sha256sum` output (`<hex>  <name>` or `<hex> *<name>`) into a name → lowercase hex map. */
@@ -260,10 +279,12 @@ export function extractFromTarGz(archive: Uint8Array, fileName: string): Uint8Ar
 
     const sizeField = readTarString(header, 124, 12).trim();
     const size = sizeField ? parseInt(sizeField, 8) : 0;
-    if (!Number.isFinite(size) || size < 0) throw new Error("Corrupt tar archive: invalid entry size");
+    if (!Number.isFinite(size) || size < 0)
+      throw new Error("Corrupt tar archive: invalid entry size");
     const dataStart = offset + 512;
     const dataEnd = dataStart + size;
-    if (dataEnd > tar.length) throw new Error("Corrupt tar archive: entry extends past the end of the archive");
+    if (dataEnd > tar.length)
+      throw new Error("Corrupt tar archive: entry extends past the end of the archive");
 
     const typeFlag = String.fromCharCode(header[156]);
     if (typeFlag === "L") {
@@ -315,7 +336,7 @@ export async function downloadReleaseExecutable(
   release: GithubRelease,
   version: string,
   target: TargetDefinition,
-  options: { timeoutMs?: number; attempts?: number } = {}
+  options: { timeoutMs?: number; attempts?: number } = {},
 ): Promise<DownloadedRelease> {
   const archiveName = releaseArchiveName(version, target);
   const asset = release.assets.find((a) => a.name === archiveName);
@@ -325,17 +346,19 @@ export async function downloadReleaseExecutable(
       .filter((name) => name.startsWith("lampasctl_"))
       .join(", ");
     throw new Error(
-      `${release.tag_name} has no build for ${target.id} (expected ${archiveName}; available: ${available || "none"})`
+      `${release.tag_name} has no build for ${target.id} (expected ${archiveName}; available: ${available || "none"})`,
     );
   }
   const sumsAsset = release.assets.find((a) => a.name === CHECKSUMS_ASSET);
   if (!sumsAsset) {
-    throw new Error(`${release.tag_name} has no ${CHECKSUMS_ASSET} asset; refusing to install an unverified binary`);
+    throw new Error(
+      `${release.tag_name} has no ${CHECKSUMS_ASSET} asset; refusing to install an unverified binary`,
+    );
   }
 
   const attempts = options.attempts ?? DOWNLOAD_ATTEMPTS;
   const sumsText = Buffer.from(
-    await downloadBytes(sumsAsset.browser_download_url, DEFAULT_OPERATION_TIMEOUT_MS, attempts)
+    await downloadBytes(sumsAsset.browser_download_url, DEFAULT_OPERATION_TIMEOUT_MS, attempts),
   ).toString("utf-8");
   const expected = parseChecksums(sumsText).get(archiveName);
   if (!expected) {
@@ -349,10 +372,12 @@ export async function downloadReleaseExecutable(
   const archive = await downloadBytes(
     asset.browser_download_url,
     options.timeoutMs ?? DEFAULT_DOWNLOAD_TIMEOUT_MS,
-    attempts
+    attempts,
   );
   if (asset.size > 0 && archive.length !== asset.size) {
-    throw new Error(`Size mismatch for ${archiveName}: expected ${asset.size} bytes, got ${archive.length}`);
+    throw new Error(
+      `Size mismatch for ${archiveName}: expected ${asset.size} bytes, got ${archive.length}`,
+    );
   }
   const actual = createHash("sha256").update(archive).digest("hex");
   if (actual !== expected) {
@@ -418,7 +443,7 @@ export function previousExecutablePath(exePath: string): string {
  * running lampasctl process are skipped; a later run removes them.
  */
 export function cleanupPreviousExecutables(
-  exePath: string | null = compiledTargetId() ? resolveStandaloneExecutable() : null
+  exePath: string | null = compiledTargetId() ? resolveStandaloneExecutable() : null,
 ): void {
   if (!exePath) return;
   const { dir, stem, ext } = splitExecutableName(exePath);
@@ -457,7 +482,7 @@ function permissionHint(error: any, dir: string): Error {
   if (error?.code === "EACCES" || error?.code === "EPERM" || error?.code === "EROFS") {
     return new Error(
       `Cannot write to ${dir} (${error.code}). Rerun with permission to modify the lampasctl install (for example with sudo).`,
-      { cause: error }
+      { cause: error },
     );
   }
   return error;
@@ -535,7 +560,7 @@ export function installExecutable(options: InstallExecutableOptions): void {
     } catch (restoreError: any) {
       throw new Error(
         `Failed to install the new binary and to restore the previous one; it is at ${oldPath}: ${restoreError?.message}`,
-        { cause: error }
+        { cause: error },
       );
     }
     fs.rmSync(stagedPath, { force: true });
@@ -569,7 +594,8 @@ export type SelfUpdateOutcome =
 
 function normalizeRequestedVersion(raw: string): string {
   let version = raw.trim();
-  if (version.startsWith(LAMPASCTL_TAG_PREFIX)) version = version.substring(LAMPASCTL_TAG_PREFIX.length);
+  if (version.startsWith(LAMPASCTL_TAG_PREFIX))
+    version = version.substring(LAMPASCTL_TAG_PREFIX.length);
   else if (version.startsWith("v")) version = version.substring(1);
   if (!parseSemver(version)) {
     throw new Error(`--version must be a semantic version such as 1.2.0 (got '${raw}')`);
@@ -595,13 +621,20 @@ export async function selfUpdate(options: SelfUpdateOptions): Promise<SelfUpdate
     version = normalizeRequestedVersion(options.version);
     const found = await getGithubReleaseByTag(`${LAMPASCTL_TAG_PREFIX}${version}`, client);
     if (!found) {
-      throw new Error(`No published release ${LAMPASCTL_TAG_PREFIX}${version} in ${client.repo ?? LAMPASCTL_RELEASE_REPO}`);
+      throw new Error(
+        `No published release ${LAMPASCTL_TAG_PREFIX}${version} in ${client.repo ?? LAMPASCTL_RELEASE_REPO}`,
+      );
     }
     release = found;
   } else {
-    const newest = selectNewestRelease(await listGithubReleases(client), options.includePrerelease === true);
+    const newest = selectNewestRelease(
+      await listGithubReleases(client),
+      options.includePrerelease === true,
+    );
     if (!newest) {
-      throw new Error(`No published lampasctl releases found in ${client.repo ?? LAMPASCTL_RELEASE_REPO}`);
+      throw new Error(
+        `No published lampasctl releases found in ${client.repo ?? LAMPASCTL_RELEASE_REPO}`,
+      );
     }
     ({ release, version } = newest);
   }
@@ -616,13 +649,15 @@ export async function selfUpdate(options: SelfUpdateOptions): Promise<SelfUpdate
       return { status: "update-available", currentVersion: current, latestVersion: version };
     }
     if (order > 0) {
-      log(`lampasctl ${version} is available (current: ${current}). Run 'lampasctl self-update' to install it.`);
+      log(
+        `lampasctl ${version} is available (current: ${current}). Run 'lampasctl self-update' to install it.`,
+      );
       return { status: "update-available", currentVersion: current, latestVersion: version };
     }
     log(
       order === 0
         ? `lampasctl ${current} is up to date.`
-        : `lampasctl ${current} is newer than ${explicit ? "the requested" : "the latest published"} release ${version}.`
+        : `lampasctl ${current} is newer than ${explicit ? "the requested" : "the latest published"} release ${version}.`,
     );
     return { status: "up-to-date", currentVersion: current, latestVersion: version };
   }
@@ -632,7 +667,7 @@ export async function selfUpdate(options: SelfUpdateOptions): Promise<SelfUpdate
     log(
       order === 0
         ? `lampasctl ${current} is up to date.`
-        : `lampasctl ${current} is newer than the latest published release ${version}; nothing to do.`
+        : `lampasctl ${current} is newer than the latest published release ${version}; nothing to do.`,
     );
     return { status: "up-to-date", currentVersion: current, latestVersion: version };
   }
@@ -642,16 +677,24 @@ export async function selfUpdate(options: SelfUpdateOptions): Promise<SelfUpdate
   }
 
   const exePath =
-    options.exePath === undefined ? (compiledTargetId() ? resolveStandaloneExecutable() : null) : options.exePath;
+    options.exePath === undefined
+      ? compiledTargetId()
+        ? resolveStandaloneExecutable()
+        : null
+      : options.exePath;
   if (!exePath) {
     throw new Error(
-      "self-update replaces the standalone lampasctl binary, but this lampasctl runs from source. Update the checkout with git instead."
+      "self-update replaces the standalone lampasctl binary, but this lampasctl runs from source. Update the checkout with git instead.",
     );
   }
   const target = options.target ?? resolveUpdateTarget();
 
-  log(`Downloading lampasctl ${version} (${target.id}) from ${release.html_url ?? release.tag_name}...`);
-  const downloaded = await downloadReleaseExecutable(release, version, target, { timeoutMs: options.timeoutMs });
+  log(
+    `Downloading lampasctl ${version} (${target.id}) from ${release.html_url ?? release.tag_name}...`,
+  );
+  const downloaded = await downloadReleaseExecutable(release, version, target, {
+    timeoutMs: options.timeoutMs,
+  });
   log(`Verified ${downloaded.archiveName} (SHA-256 ${downloaded.sha256}).`);
 
   installExecutable({

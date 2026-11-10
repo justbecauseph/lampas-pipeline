@@ -19,13 +19,15 @@ describe("withAbortTimeout", () => {
               wasAborted = true;
               reject(signal.reason);
             },
-            { once: true }
+            { once: true },
           );
         }),
-      10
+      10,
     );
 
-    await expect(operation).rejects.toThrow("Timed out after 10ms while reading a test response body");
+    await expect(operation).rejects.toThrow(
+      "Timed out after 10ms while reading a test response body",
+    );
     expect(wasAborted).toBe(true);
   });
 });
@@ -50,11 +52,12 @@ describe("streaming file utilities", () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-download-"));
     const destination = path.join(dir, "blob");
     try {
-      await expect(downloadFileVerified(
-        "data:application/octet-stream;base64,Y29ycnVwdA==",
-        destination,
-        { expectedHash: "0".repeat(64), attempts: 1 }
-      )).rejects.toThrow("Failed to download");
+      await expect(
+        downloadFileVerified("data:application/octet-stream;base64,Y29ycnVwdA==", destination, {
+          expectedHash: "0".repeat(64),
+          attempts: 1,
+        }),
+      ).rejects.toThrow("Failed to download");
       expect(fs.existsSync(destination)).toBe(false);
       expect(fs.readdirSync(dir).some((name) => name.includes(".partial."))).toBe(false);
     } finally {
@@ -93,7 +96,7 @@ describe("streaming file utilities", () => {
       const bytes = await downloadFileVerified(
         `http://127.0.0.1:${server.port}/api/v1/blobs/${sha256}`,
         destination,
-        { expectedHash: sha256, expectedSize: payload.length, attempts: 1 }
+        { expectedHash: sha256, expectedSize: payload.length, attempts: 1 },
       );
 
       expect(bytes).toBe(payload.length);

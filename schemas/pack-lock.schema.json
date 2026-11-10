@@ -4,15 +4,7 @@
   "title": "Lampas Pack Lockfile",
   "description": "Deterministic resolved lockfile mapping all modpack artifacts to immutable checksums and URLs.",
   "type": "object",
-  "required": [
-    "schema",
-    "packName",
-    "packVersion",
-    "minecraft",
-    "loader",
-    "updated",
-    "artifacts"
-  ],
+  "required": ["schema", "packName", "packVersion", "minecraft", "loader", "updated", "artifacts"],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -36,10 +28,7 @@
     },
     "loader": {
       "type": "object",
-      "required": [
-        "type",
-        "version"
-      ],
+      "required": ["type", "version"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -59,16 +48,7 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "side",
-          "filename",
-          "size",
-          "sha256",
-          "downloadUrl",
-          "provider"
-        ],
+        "required": ["id", "name", "side", "filename", "size", "sha256", "downloadUrl", "provider"],
         "properties": {
           "id": {
             "type": "string"
@@ -77,11 +57,7 @@
             "type": "string"
           },
           "side": {
-            "enum": [
-              "client",
-              "server",
-              "both"
-            ]
+            "enum": ["client", "server", "both"]
           },
           "filename": {
             "type": "string"
@@ -109,37 +85,20 @@
             "type": "string"
           },
           "artifactType": {
-            "enum": [
-              "mod",
-              "shader",
-              "resourcepack"
-            ]
+            "enum": ["mod", "shader", "resourcepack"]
           },
           "provider": {
             "type": "object",
-            "required": [
-              "type"
-            ],
+            "required": ["type"],
             "properties": {
               "type": {
-                "enum": [
-                  "modrinth",
-                  "curseforge",
-                  "lampas",
-                  "direct"
-                ]
+                "enum": ["modrinth", "curseforge", "lampas", "direct"]
               },
               "projectId": {
-                "type": [
-                  "string",
-                  "number"
-                ]
+                "type": ["string", "number"]
               },
               "versionId": {
-                "type": [
-                  "string",
-                  "number"
-                ]
+                "type": ["string", "number"]
               },
               "fileId": {
                 "type": "integer"

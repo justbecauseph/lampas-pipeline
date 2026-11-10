@@ -22,10 +22,19 @@ function createPackFixture(): { dir: string; packDir: string } {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-curseforge-"));
   const packDir = path.join(dir, "pack");
   fs.mkdirSync(path.join(packDir, "mods"), { recursive: true });
-  fs.writeFileSync(path.join(packDir, "pack.toml"), [
-    "[pack]", 'name = "CurseForge Test"', 'version = "1.0.0"', 'minecraft = "26.2"',
-    "[loader]", 'type = "fabric"', 'version = "0.19.3"', "",
-  ].join("\n"));
+  fs.writeFileSync(
+    path.join(packDir, "pack.toml"),
+    [
+      "[pack]",
+      'name = "CurseForge Test"',
+      'version = "1.0.0"',
+      'minecraft = "26.2"',
+      "[loader]",
+      'type = "fabric"',
+      'version = "0.19.3"',
+      "",
+    ].join("\n"),
+  );
   return { dir, packDir };
 }
 
@@ -68,7 +77,8 @@ function fileFixture(options: {
     hashes: [{ value: createHash("sha1").update(options.content).digest("hex"), algo: 1 }],
     fileDate: "2026-08-22T00:00:00Z",
     fileLength: options.content.length,
-    downloadUrl: options.downloadUrl === undefined ? `https://cdn.example/${fileName}` : options.downloadUrl,
+    downloadUrl:
+      options.downloadUrl === undefined ? `https://cdn.example/${fileName}` : options.downloadUrl,
     gameVersions: ["26.2", "Fabric"],
     dependencies: options.dependencies || [],
   };
@@ -89,7 +99,9 @@ describe("CurseForge provider", () => {
     process.env.CURSEFORGE_API_KEY = "test-api-key";
 
     globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       const method = init?.method || "GET";
       if (url.hostname === "cdn.example") {
         downloadCount++;
@@ -104,7 +116,8 @@ describe("CurseForge provider", () => {
         return Response.json({ data: [mod] });
       }
       if (url.pathname === "/v1/mods/100/files/200") return Response.json({ data: file });
-      if (url.pathname === "/v1/mods/files" && method === "POST") return Response.json({ data: [file] });
+      if (url.pathname === "/v1/mods/files" && method === "POST")
+        return Response.json({ data: [file] });
       if (url.pathname === "/v1/mods" && method === "POST") return Response.json({ data: [mod] });
       return new Response("not found", { status: 404 });
     }) as typeof fetch;
@@ -128,7 +141,9 @@ describe("CurseForge provider", () => {
       expect(artifact.sha256).toBe(createHash("sha256").update(content).digest("hex"));
       expect(artifact.metadata?.author).toBe("Fixture Author");
 
-      const manifest = readJsonFile<PackManifest>(path.join(fixture.dir, "manifest", "client-manifest.json"));
+      const manifest = readJsonFile<PackManifest>(
+        path.join(fixture.dir, "manifest", "client-manifest.json"),
+      );
       const manifestFile = manifest.files.find((entry) => entry.path === "mods/example-mod.jar");
       expect(manifestFile?.download).toEqual({
         url: "https://cdn.example/example-mod.jar",
@@ -162,7 +177,9 @@ describe("CurseForge provider", () => {
     process.env.CURSEFORGE_API_KEY = "test-api-key";
 
     globalThis.fetch = (async (input: string | URL | Request) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       if (url.pathname === "/v1/mods/100") return Response.json({ data: parentProject });
       if (url.pathname === "/v1/mods/101") return Response.json({ data: dependencyProject });
       if (url.pathname === "/v1/mods/100/files") return Response.json({ data: [parentFile] });
@@ -179,9 +196,11 @@ describe("CurseForge provider", () => {
         depth: 1,
       });
 
-      const parent = parseTomlFile<ModDefinition>(path.join(fixture.packDir, "mods", "example-mod.toml"));
+      const parent = parseTomlFile<ModDefinition>(
+        path.join(fixture.packDir, "mods", "example-mod.toml"),
+      );
       const dependency = parseTomlFile<ModDefinition>(
-        path.join(fixture.packDir, "mods", "required-library.toml")
+        path.join(fixture.packDir, "mods", "required-library.toml"),
       );
       expect(parent.provider).toEqual({ type: "curseforge", project_id: 100, file_id: 200 });
       expect(dependency.provider).toEqual({ type: "curseforge", project_id: 101, file_id: 201 });
@@ -197,7 +216,9 @@ describe("CurseForge provider", () => {
     process.env.CURSEFORGE_API_KEY = "test-api-key";
 
     globalThis.fetch = (async (input: string | URL | Request) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       if (url.pathname === "/v1/mods/100") return Response.json({ data: restrictedProject });
       if (url.pathname === "/v1/mods/100/files") {
         return Response.json({ data: [fileFixture({ content, downloadUrl: null })] });
@@ -209,12 +230,14 @@ describe("CurseForge provider", () => {
     }) as typeof fetch;
 
     try {
-      await expect(addMod({
-        packDir: fixture.packDir,
-        query: "100",
-        provider: "curseforge",
-        depth: 1,
-      })).rejects.toThrow("does not permit third-party downloads");
+      await expect(
+        addMod({
+          packDir: fixture.packDir,
+          query: "100",
+          provider: "curseforge",
+          depth: 1,
+        }),
+      ).rejects.toThrow("does not permit third-party downloads");
       expect(fs.existsSync(path.join(fixture.packDir, "mods", "example-mod.toml"))).toBe(false);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });

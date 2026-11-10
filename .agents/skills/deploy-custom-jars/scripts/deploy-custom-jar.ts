@@ -77,7 +77,7 @@ async function main() {
   // Step 3: Dual Manifest Generation
   console.log("\n📑 [3/4] Generating manifests for localhost:3000 and https://dev.lampas.town...");
   const rootDir = path.dirname(packDir);
-  
+
   // Localhost
   const localOut = path.join(rootDir, "manifest/localhost");
   await buildManifests({

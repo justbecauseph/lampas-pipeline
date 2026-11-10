@@ -59,7 +59,7 @@ function extractWebhookFromEnvFile(filePath: string): string | undefined {
 export function resolveWebhookUrl(
   overrideUrl?: string,
   env?: Record<string, string | undefined>,
-  targetDir?: string
+  targetDir?: string,
 ): string {
   if (overrideUrl && overrideUrl.trim()) {
     return overrideUrl.trim();
@@ -92,7 +92,7 @@ export function resolveWebhookUrl(
 export async function sendDiscordWebhook(
   webhookUrl: string,
   payload: any,
-  fetchFn: FetchFn = fetch
+  fetchFn: FetchFn = fetch,
 ): Promise<boolean> {
   const url = webhookUrl ? webhookUrl.trim() : "";
   if (!url) {
@@ -169,7 +169,8 @@ export async function notifyServerOffline(options: NotifyOfflineOptions): Promis
     embeds: [
       {
         title: "🔴 Lampas 2 Server is Offline",
-        description: "The Minecraft server is currently stopped or unreachable. Player connections are unavailable.",
+        description:
+          "The Minecraft server is currently stopped or unreachable. Player connections are unavailable.",
         color: 15158332, // Red (#e74c3c)
         fields: [
           { name: "Server Address", value: `\`${publicAddress}\``, inline: true },

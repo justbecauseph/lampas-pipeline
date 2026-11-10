@@ -26,7 +26,9 @@ export interface PublishOptions {
   skipFabricMetaCheck?: boolean;
 }
 
-export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel[] | string): ReleaseChannel[] {
+export function resolvePublishChannels(
+  channel?: ReleaseChannel | ReleaseChannel[] | string,
+): ReleaseChannel[] {
   if (!channel || channel === "all" || channel === "true") {
     return [...ALL_RELEASE_CHANNELS];
   }
@@ -35,7 +37,10 @@ export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel
   if (Array.isArray(channel)) {
     channels = channel;
   } else if (typeof channel === "string") {
-    channels = channel.split(",").map((c) => c.trim()).filter(Boolean);
+    channels = channel
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
   } else {
     channels = [String(channel)];
   }
@@ -46,7 +51,9 @@ export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel
 
   for (const ch of channels) {
     if (!ALL_RELEASE_CHANNELS.includes(ch as ReleaseChannel)) {
-      throw new Error(`Invalid channel '${ch}'. Supported channels are: ${ALL_RELEASE_CHANNELS.join(", ")} (or omit --channel to publish to all).`);
+      throw new Error(
+        `Invalid channel '${ch}'. Supported channels are: ${ALL_RELEASE_CHANNELS.join(", ")} (or omit --channel to publish to all).`,
+      );
     }
   }
 
@@ -54,14 +61,20 @@ export function resolvePublishChannels(channel?: ReleaseChannel | ReleaseChannel
 }
 
 /** Resolve the publish target: --portal / PACK_PORTAL_URL, then pack.toml [portal] base_url. */
-export function resolvePublishPortalUrl(options: Pick<PublishOptions, "portalUrl" | "packDir">): string {
+export function resolvePublishPortalUrl(
+  options: Pick<PublishOptions, "portalUrl" | "packDir">,
+): string {
   if (options.portalUrl) {
     return normalizePortalBaseUrl(options.portalUrl, "--portal / PACK_PORTAL_URL");
   }
   const packTomlPath = path.join(options.packDir, "pack.toml");
-  const fromPack = fs.existsSync(packTomlPath) ? readPackPortalBaseUrl(parseTomlFile<PackConfig>(packTomlPath)) : undefined;
+  const fromPack = fs.existsSync(packTomlPath)
+    ? readPackPortalBaseUrl(parseTomlFile<PackConfig>(packTomlPath))
+    : undefined;
   if (!fromPack) {
-    throw new Error("Portal URL is required for 'publish'. Specify --portal <url>, PACK_PORTAL_URL, or [portal] base_url in pack.toml.");
+    throw new Error(
+      "Portal URL is required for 'publish'. Specify --portal <url>, PACK_PORTAL_URL, or [portal] base_url in pack.toml.",
+    );
   }
   return fromPack;
 }
@@ -71,7 +84,11 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
   const clientManifestPath = path.join(options.manifestDir, "client-manifest.json");
   const serverManifestPath = path.join(options.manifestDir, "server-manifest.json");
 
-  if (!fs.existsSync(releasePath) || !fs.existsSync(clientManifestPath) || !fs.existsSync(serverManifestPath)) {
+  if (
+    !fs.existsSync(releasePath) ||
+    !fs.existsSync(clientManifestPath) ||
+    !fs.existsSync(serverManifestPath)
+  ) {
     throw new Error(`Manifests missing in ${options.manifestDir}. Run 'lampasctl manifest' first.`);
   }
 
@@ -83,9 +100,12 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
   const targetChannels = resolvePublishChannels(options.channel);
 
   // Runtime and descriptor consistency check
-  if (clientManifest.minecraft !== release.minecraft || serverManifest.minecraft !== release.minecraft) {
+  if (
+    clientManifest.minecraft !== release.minecraft ||
+    serverManifest.minecraft !== release.minecraft
+  ) {
     throw new Error(
-      `Manifest Minecraft version mismatch: client declares ${clientManifest.minecraft}, server declares ${serverManifest.minecraft}, release declares ${release.minecraft}.`
+      `Manifest Minecraft version mismatch: client declares ${clientManifest.minecraft}, server declares ${serverManifest.minecraft}, release declares ${release.minecraft}.`,
     );
   }
   if (
@@ -95,17 +115,21 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     serverManifest.loader?.version !== release.loader?.version
   ) {
     throw new Error(
-      `Manifest Loader mismatch: client declares ${clientManifest.loader?.type}/${clientManifest.loader?.version}, server declares ${serverManifest.loader?.type}/${serverManifest.loader?.version}, release declares ${release.loader?.type}/${release.loader?.version}.`
+      `Manifest Loader mismatch: client declares ${clientManifest.loader?.type}/${clientManifest.loader?.version}, server declares ${serverManifest.loader?.type}/${serverManifest.loader?.version}, release declares ${release.loader?.type}/${release.loader?.version}.`,
     );
   }
 
   // Verify Fabric Loader compatibility with Fabric Meta API unless explicitly skipped
   if (!options.skipFabricMetaCheck) {
-    console.log(`[Publish] Verifying Fabric Loader ${release.loader.version} compatibility with Minecraft ${release.minecraft}...`);
+    console.log(
+      `[Publish] Verifying Fabric Loader ${release.loader.version} compatibility with Minecraft ${release.minecraft}...`,
+    );
     await verifyFabricLoaderCompatibility(release.minecraft, release.loader.version);
   }
 
-  console.log(`[Publish] Preparing to publish ${release.pack} v${release.version} to ${portalUrl} (channels: ${targetChannels.join(", ")})...`);
+  console.log(
+    `[Publish] Preparing to publish ${release.pack} v${release.version} to ${portalUrl} (channels: ${targetChannels.join(", ")})...`,
+  );
 
   // 1. Discover, locate, and validate all local Lampas blobs without buffering them into memory
   const localBlobs: LocalPublishBlob[] = await discoverLocalLampasBlobs({
@@ -140,7 +164,9 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
       }
     }
 
-    console.log(`[Publish] ${existingCount} already stored; ${blobsToUpload.length} need upload (${formatBytes(missingBytes)})`);
+    console.log(
+      `[Publish] ${existingCount} already stored; ${blobsToUpload.length} need upload (${formatBytes(missingBytes)})`,
+    );
 
     // 3. Direct presigned PUT upload with bounded concurrency
     if (blobsToUpload.length > 0) {
@@ -167,7 +193,9 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     gitCommit: release.gitCommit,
   };
 
-  console.log(`[Publish] Publishing release metadata to ${publishUrl} (channels: ${targetChannels.join(", ")})...`);
+  console.log(
+    `[Publish] Publishing release metadata to ${publishUrl} (channels: ${targetChannels.join(", ")})...`,
+  );
 
   const res = await fetch(publishUrl, {
     method: "POST",
@@ -188,6 +216,7 @@ export async function publishRelease(options: PublishOptions): Promise<void> {
     ? result.channelsUpdated.join(", ")
     : result?.channelUpdated || targetChannels.join(", ");
 
-  console.log(`\n✓ [Publish Success] Release v${release.version} published! (channels: ${channelsStr})`);
+  console.log(
+    `\n✓ [Publish Success] Release v${release.version} published! (channels: ${channelsStr})`,
+  );
 }
-

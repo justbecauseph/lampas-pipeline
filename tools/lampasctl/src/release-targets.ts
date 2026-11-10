@@ -98,7 +98,7 @@ export function isMuslHost(): boolean {
  * `musl` selects the musl Linux build; it defaults to false so host builds keep the glibc target.
  */
 export function resolveHostTarget(
-  options: { platform?: NodeJS.Platform; arch?: string; musl?: boolean } = {}
+  options: { platform?: NodeJS.Platform; arch?: string; musl?: boolean } = {},
 ): TargetDefinition {
   const platform = options.platform ?? process.platform;
   const arch = options.arch ?? process.arch;

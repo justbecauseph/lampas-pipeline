@@ -23,7 +23,10 @@ function mockFetch(respond: (index: number, url: string) => Response): void {
 }
 
 function json(headers: Record<string, string> = {}): Response {
-  return new Response("{}", { status: 200, headers: { "Content-Type": "application/json", ...headers } });
+  return new Response("{}", {
+    status: 200,
+    headers: { "Content-Type": "application/json", ...headers },
+  });
 }
 
 function limited(headers: Record<string, string> = {}): Response {
@@ -79,7 +82,9 @@ describe("modrinthFetch 429 handling", () => {
 
   test("honors an HTTP-date Retry-After relative to the clock", async () => {
     t = 1_700_000_000_000;
-    mockFetch((i) => (i === 0 ? limited({ "Retry-After": new Date(t + 5000).toUTCString() }) : json()));
+    mockFetch((i) =>
+      i === 0 ? limited({ "Retry-After": new Date(t + 5000).toUTCString() }) : json(),
+    );
     const res = await modrinthFetch(`${API}/project/example`);
     expect(res.status).toBe(200);
     expect(slept).toEqual([5000]);
@@ -114,7 +119,9 @@ describe("modrinthFetch 429 handling", () => {
   });
 
   test("ignores a negative Retry-After and uses X-Ratelimit-Reset", async () => {
-    mockFetch((i) => (i === 0 ? limited({ "Retry-After": "-5", "X-Ratelimit-Reset": "20" }) : json()));
+    mockFetch((i) =>
+      i === 0 ? limited({ "Retry-After": "-5", "X-Ratelimit-Reset": "20" }) : json(),
+    );
     await modrinthFetch(`${API}/project/example`);
     expect(slept).toEqual([20000]);
   });
@@ -141,7 +148,10 @@ describe("modrinthFetch proactive pause", () => {
       body: JSON.stringify({ hashes: ["abc"], algorithm: "sha512" }),
     });
     expect(res.status).toBe(200);
-    expect(bodies).toEqual(['{"hashes":["abc"],"algorithm":"sha512"}', '{"hashes":["abc"],"algorithm":"sha512"}']);
+    expect(bodies).toEqual([
+      '{"hashes":["abc"],"algorithm":"sha512"}',
+      '{"hashes":["abc"],"algorithm":"sha512"}',
+    ]);
     for (const call of calls) expect(call.headers.get("Content-Type")).toBe("application/json");
   });
 
@@ -204,6 +214,8 @@ describe("modrinthFetch timeout", () => {
       return new Response(body, { status: 200 });
     }) as typeof fetch;
 
-    await expect(modrinthFetch(`${API}/project/stall`, {}, 50)).rejects.toThrow("Timed out after 50ms");
+    await expect(modrinthFetch(`${API}/project/stall`, {}, 50)).rejects.toThrow(
+      "Timed out after 50ms",
+    );
   });
 });

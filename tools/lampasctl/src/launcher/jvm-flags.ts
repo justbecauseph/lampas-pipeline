@@ -24,7 +24,7 @@ export function planHeap(
   ram: number,
   container: boolean,
   extraReserve = 0,
-  gc: GcKind = "g1"
+  gc: GcKind = "g1",
 ): number {
   let osReserve: number;
   if (container) {
@@ -74,7 +74,8 @@ export function buildJvmFlags(options: BuildJvmFlagsOptions): string[] {
 
   const [thpEnabled, thpShmem] = thp;
   const thpEnabledValid = thpEnabled === "always" || thpEnabled === "madvise";
-  const thpShmemValid = thpShmem === "advise" || thpShmem === "within_size" || thpShmem === "always";
+  const thpShmemValid =
+    thpShmem === "advise" || thpShmem === "within_size" || thpShmem === "always";
   if (thpEnabledValid && (gc !== "zgc" || thpShmemValid)) {
     flags.push("-XX:+UseTransparentHugePages");
   }
@@ -103,7 +104,7 @@ export function buildJvmFlags(options: BuildJvmFlagsOptions): string[] {
       "-XX:SurvivorRatio=32",
       "-XX:MaxTenuringThreshold=1",
       "-Dusing.aikars.flags=https://mcflags.emc.gs",
-      "-Daikars.new.flags=true"
+      "-Daikars.new.flags=true",
     );
   }
 
@@ -112,10 +113,7 @@ export function buildJvmFlags(options: BuildJvmFlagsOptions): string[] {
     flags.push("-Djdk.graal.TuneInlinerExploration=1");
   }
 
-  flags.push(
-    "-Dfile.encoding=UTF-8",
-    "-Dlog4j2.formatMsgNoLookups=true"
-  );
+  flags.push("-Dfile.encoding=UTF-8", "-Dlog4j2.formatMsgNoLookups=true");
 
   return flags;
 }

@@ -57,7 +57,9 @@ describe("world backup utility", () => {
       expect(fs.existsSync(backupPath!)).toBe(true);
       expect(fs.existsSync(path.join(backupPath!, "level.dat"))).toBe(true);
       expect(fs.existsSync(path.join(backupPath!, "region", "r.0.0.mca"))).toBe(true);
-      expect(fs.readFileSync(path.join(backupPath!, "level.dat"), "utf-8")).toBe("level-data-binary");
+      expect(fs.readFileSync(path.join(backupPath!, "level.dat"), "utf-8")).toBe(
+        "level-data-binary",
+      );
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

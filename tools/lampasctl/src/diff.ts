@@ -128,7 +128,9 @@ export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
   const { added, removed, modified, totalSizeDelta } = diff;
 
   console.log("=".repeat(60));
-  console.log(` Pack Manifest Diff: ${manifestA.version} -> ${manifestB.version} (${manifestB.target})`);
+  console.log(
+    ` Pack Manifest Diff: ${manifestA.version} -> ${manifestB.version} (${manifestB.target})`,
+  );
   console.log("=".repeat(60));
 
   if (added.length > 0) {
@@ -150,13 +152,15 @@ export async function diffManifests(options: DiffOptions): Promise<DiffResult> {
     for (const m of modified) {
       const delta = m.newSize - m.oldSize;
       const deltaStr = delta >= 0 ? `+${formatBytes(delta)}` : formatBytes(delta);
-      console.log(`  ~ ${m.path} (${formatBytes(m.oldSize)} -> ${formatBytes(m.newSize)}, delta: ${deltaStr})`);
+      console.log(
+        `  ~ ${m.path} (${formatBytes(m.oldSize)} -> ${formatBytes(m.newSize)}, delta: ${deltaStr})`,
+      );
     }
   }
 
   console.log("\n" + "-".repeat(60));
   console.log(
-    ` Summary: +${added.length} added, -${removed.length} removed, ~${modified.length} updated.`
+    ` Summary: +${added.length} added, -${removed.length} removed, ~${modified.length} updated.`,
   );
   console.log(` Net Size Delta: ${totalSizeDelta >= 0 ? "+" : ""}${formatBytes(totalSizeDelta)}`);
   console.log("-".repeat(60) + "\n");

@@ -36,7 +36,10 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
 
   // 1. Scan mods
   if (fs.existsSync(modsDir)) {
-    const modFiles = fs.readdirSync(modsDir).filter((f) => f.endsWith(".toml")).sort();
+    const modFiles = fs
+      .readdirSync(modsDir)
+      .filter((f) => f.endsWith(".toml"))
+      .sort();
     for (const f of modFiles) {
       allDefinitions.push({
         id: path.basename(f, ".toml"),
@@ -49,7 +52,10 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   // 2. Scan shaderpacks / shaders
   for (const sDir of [shaderpacksDir, shadersDir]) {
     if (fs.existsSync(sDir)) {
-      const sFiles = fs.readdirSync(sDir).filter((f) => f.endsWith(".toml")).sort();
+      const sFiles = fs
+        .readdirSync(sDir)
+        .filter((f) => f.endsWith(".toml"))
+        .sort();
       for (const f of sFiles) {
         allDefinitions.push({
           id: path.basename(f, ".toml"),
@@ -62,7 +68,10 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
 
   // 3. Scan resourcepacks
   if (fs.existsSync(resourcepacksDir)) {
-    const rFiles = fs.readdirSync(resourcepacksDir).filter((f) => f.endsWith(".toml")).sort();
+    const rFiles = fs
+      .readdirSync(resourcepacksDir)
+      .filter((f) => f.endsWith(".toml"))
+      .sort();
     for (const f of rFiles) {
       allDefinitions.push({
         id: path.basename(f, ".toml"),
@@ -72,7 +81,9 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
     }
   }
 
-  console.log(`[Resolver] Resolving ${allDefinitions.length} artifact definitions for ${packConfig.pack.name} v${packConfig.pack.version}...`);
+  console.log(
+    `[Resolver] Resolving ${allDefinitions.length} artifact definitions for ${packConfig.pack.name} v${packConfig.pack.version}...`,
+  );
 
   let existingLock: PackLock | undefined;
   if (fs.existsSync(options.lockFile)) {
@@ -89,31 +100,48 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   const parsedDefinitions = allDefinitions.map((item) => {
     const def = parseTomlFile<ModDefinition>(item.filePath);
     if (!def.type) def.type = item.defaultType;
-    if (def.type === "shader" || def.type === "resourcepack" || item.defaultType === "shader" || item.defaultType === "resourcepack") {
+    if (
+      def.type === "shader" ||
+      def.type === "resourcepack" ||
+      item.defaultType === "shader" ||
+      item.defaultType === "resourcepack"
+    ) {
       def.side = "client";
     }
     return { item, def };
   });
 
-  const versionIds = [...new Set(parsedDefinitions.flatMap(({ def }) =>
-    def.provider.type === "modrinth" ? [def.provider.version_id] : []
-  ))];
+  const versionIds = [
+    ...new Set(
+      parsedDefinitions.flatMap(({ def }) =>
+        def.provider.type === "modrinth" ? [def.provider.version_id] : [],
+      ),
+    ),
+  ];
   const versionChunks: string[][] = [];
   for (let i = 0; i < versionIds.length; i += 80) versionChunks.push(versionIds.slice(i, i + 80));
-  const versionResponses = await Promise.all(versionChunks.map((chunk) => ModrinthClient.getVersions(chunk)));
+  const versionResponses = await Promise.all(
+    versionChunks.map((chunk) => ModrinthClient.getVersions(chunk)),
+  );
   const versionsById = new Map(versionResponses.flat().map((version) => [version.id, version]));
 
-  const curseForgeFileIds = [...new Set(parsedDefinitions.flatMap(({ def }) =>
-    def.provider.type === "curseforge" ? [def.provider.file_id] : []
-  ))];
+  const curseForgeFileIds = [
+    ...new Set(
+      parsedDefinitions.flatMap(({ def }) =>
+        def.provider.type === "curseforge" ? [def.provider.file_id] : [],
+      ),
+    ),
+  ];
   const curseForgeFileChunks: number[][] = [];
   for (let i = 0; i < curseForgeFileIds.length; i += 50) {
     curseForgeFileChunks.push(curseForgeFileIds.slice(i, i + 50));
   }
   const curseForgeFileResponses = await Promise.all(
-    curseForgeFileChunks.map((chunk) => CurseForgeClient.getFiles(chunk))
+    curseForgeFileChunks.map((chunk) => CurseForgeClient.getFiles(chunk)),
   );
-  const curseForgeFilesById = new Map(curseForgeFileResponses.flat().map((file) => [file.id, file]));
+  const curseForgeFilesById = new Map(
+    curseForgeFileResponses.flat().map((file) => [file.id, file]),
+  );
 
   // Parallel resolution with concurrency limit
   const concurrency = 10;
@@ -124,17 +152,21 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
       const { item, def } = parsedDefinitions[nextDefinition++];
 
       try {
-        const prefetchedVersion = def.provider.type === "modrinth"
-          ? versionsById.get(def.provider.version_id)
-          : undefined;
+        const prefetchedVersion =
+          def.provider.type === "modrinth" ? versionsById.get(def.provider.version_id) : undefined;
         if (def.provider.type === "modrinth" && !prefetchedVersion) {
-          throw new Error(`Modrinth version '${def.provider.version_id}' was not returned by the bulk API.`);
+          throw new Error(
+            `Modrinth version '${def.provider.version_id}' was not returned by the bulk API.`,
+          );
         }
-        const prefetchedCurseForgeFile = def.provider.type === "curseforge"
-          ? curseForgeFilesById.get(def.provider.file_id)
-          : undefined;
+        const prefetchedCurseForgeFile =
+          def.provider.type === "curseforge"
+            ? curseForgeFilesById.get(def.provider.file_id)
+            : undefined;
         if (def.provider.type === "curseforge" && !prefetchedCurseForgeFile) {
-          throw new Error(`CurseForge file '${def.provider.file_id}' was not returned by the bulk API.`);
+          throw new Error(
+            `CurseForge file '${def.provider.file_id}' was not returned by the bulk API.`,
+          );
         }
         const cachedArtifact =
           existingLock?.artifacts?.[item.id] ||
@@ -146,10 +178,12 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
           baseDir,
           prefetchedVersion,
           prefetchedCurseForgeFile,
-          cachedArtifact
+          cachedArtifact,
         );
         artifacts[item.id] = artifact;
-        logVerbose(`  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`);
+        logVerbose(
+          `  ✓ [Resolved] ${item.id} -> ${artifact.targetDir || "mods"}/${artifact.filename} (${artifact.sha256.substring(0, 10)}...)`,
+        );
       } catch (err: any) {
         console.error(`  ✗ [Failed] ${item.id}: ${err.message}`);
         throw err;
@@ -157,7 +191,9 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, allDefinitions.length) }, () => worker());
+  const workers = Array.from({ length: Math.min(concurrency, allDefinitions.length) }, () =>
+    worker(),
+  );
   await Promise.all(workers);
 
   const lock: PackLock = {
@@ -175,7 +211,9 @@ export async function resolvePack(options: ResolveOptions): Promise<PackLock> {
   };
 
   writeJsonFile(options.lockFile, lock, true);
-  console.log(`\n[Resolver] Successfully resolved ${Object.keys(artifacts).length} artifacts to ${options.lockFile}`);
+  console.log(
+    `\n[Resolver] Successfully resolved ${Object.keys(artifacts).length} artifacts to ${options.lockFile}`,
+  );
 
   // Automatically enrich metadata from Modrinth
   try {

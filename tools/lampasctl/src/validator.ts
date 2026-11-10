@@ -2,7 +2,11 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { isValidServerAddress, parseTomlFile, readJsonFile } from "./utils";
 import type { BlacklistTarget, FilePolicy, PackConfig, PackLock, ProviderConfig } from "./types";
-import { describeBlacklistRule, matchingBlacklistRules, parsePackBlacklistRules } from "./blacklist";
+import {
+  describeBlacklistRule,
+  matchingBlacklistRules,
+  parsePackBlacklistRules,
+} from "./blacklist";
 import {
   clientStaticFilePolicy,
   commonStaticFilePolicy,
@@ -17,7 +21,12 @@ import { checkPackModMetadata } from "./mod-metadata";
 import { readPackPortalBaseUrl } from "./portal";
 
 function requireExactStringIdentity(value: unknown, label: string): string {
-  if (typeof value !== "string" || value.length === 0 || value.trim() !== value || /\s/.test(value)) {
+  if (
+    typeof value !== "string" ||
+    value.length === 0 ||
+    value.trim() !== value ||
+    /\s/.test(value)
+  ) {
     throw new Error(`${label} must be a non-empty exact string without whitespace.`);
   }
   return value;
@@ -33,11 +42,12 @@ function requirePositiveIntegerIdentity(value: unknown, label: string): number {
 function blacklistTarget(
   modId: string,
   providerInput: unknown,
-  sourceKind: "descriptor" | "lock"
+  sourceKind: "descriptor" | "lock",
 ): BlacklistTarget {
-  const provider = providerInput && typeof providerInput === "object"
-    ? providerInput as Record<string, unknown>
-    : {};
+  const provider =
+    providerInput && typeof providerInput === "object"
+      ? (providerInput as Record<string, unknown>)
+      : {};
   const type = typeof provider.type === "string" ? provider.type : "direct";
   const target: BlacklistTarget = {
     modId,
@@ -53,10 +63,19 @@ function blacklistTarget(
     const projectId = sourceKind === "descriptor" ? provider.project_id : provider.projectId;
     const fileId = sourceKind === "descriptor" ? provider.file_id : provider.fileId;
     target.projectId = requirePositiveIntegerIdentity(projectId, "CurseForge project_id");
-    target.versionId = requirePositiveIntegerIdentity(fileId, sourceKind === "descriptor" ? "CurseForge file_id" : "CurseForge fileId");
+    target.versionId = requirePositiveIntegerIdentity(
+      fileId,
+      sourceKind === "descriptor" ? "CurseForge file_id" : "CurseForge fileId",
+    );
 
-    if (sourceKind === "lock" && provider.versionId !== undefined && provider.versionId !== provider.fileId) {
-      throw new Error("CurseForge lock versionId must equal its authoritative fileId when both are present.");
+    if (
+      sourceKind === "lock" &&
+      provider.versionId !== undefined &&
+      provider.versionId !== provider.fileId
+    ) {
+      throw new Error(
+        "CurseForge lock versionId must equal its authoritative fileId when both are present.",
+      );
     }
   }
   return target;
@@ -65,7 +84,7 @@ function blacklistTarget(
 function logBlacklistMatches(
   rules: ReturnType<typeof parsePackBlacklistRules>,
   target: BlacklistTarget,
-  source: string
+  source: string,
 ): boolean {
   const matches = matchingBlacklistRules(rules, target);
   for (const rule of matches) {
@@ -79,10 +98,7 @@ export interface LoaderDefinition {
   version: string;
 }
 
-export function validateLoaderDefinition(
-  minecraft: unknown,
-  loader: unknown
-): LoaderDefinition {
+export function validateLoaderDefinition(minecraft: unknown, loader: unknown): LoaderDefinition {
   if (typeof minecraft !== "string" || minecraft.trim().length === 0) {
     throw new Error("Invalid pack definition: 'pack.minecraft' must be a non-empty string.");
   }
@@ -150,7 +166,9 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   }
 
   if (!fs.existsSync(options.lockFile)) {
-    console.error(`[Validate Error] Lock file missing at ${options.lockFile}. Run 'lampasctl resolve' first.`);
+    console.error(
+      `[Validate Error] Lock file missing at ${options.lockFile}. Run 'lampasctl resolve' first.`,
+    );
     return false;
   }
 
@@ -200,7 +218,7 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   // Check lock consistency with pack.toml
   if (lock.minecraft !== packConfig.pack.minecraft) {
     console.error(
-      `  ✗ [Lock Mismatch] pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`
+      `  ✗ [Lock Mismatch] pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`,
     );
     hasErrors = true;
   }
@@ -211,7 +229,7 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     lock.loader.version !== loaderDef.version
   ) {
     console.error(
-      `  ✗ [Lock Mismatch] pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`
+      `  ✗ [Lock Mismatch] pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`,
     );
     hasErrors = true;
   }
@@ -220,7 +238,9 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   if (options.checkFabricMeta !== false) {
     try {
       await verifyFabricLoaderCompatibility(packConfig.pack.minecraft, loaderDef.version);
-      console.log(`  ✓ [Loader Verified] Fabric Loader ${loaderDef.version} is compatible with Minecraft ${packConfig.pack.minecraft}`);
+      console.log(
+        `  ✓ [Loader Verified] Fabric Loader ${loaderDef.version} is compatible with Minecraft ${packConfig.pack.minecraft}`,
+      );
     } catch (err: any) {
       console.error(`  ✗ ${err.message}`);
       hasErrors = true;
@@ -234,7 +254,9 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   for (const file of modFiles) {
     const modId = path.basename(file, ".toml");
     if (!lock.artifacts[modId]) {
-      console.error(`  ✗ [Missing from Lock] ${modId}.toml is defined in pack/mods but missing from lockfile!`);
+      console.error(
+        `  ✗ [Missing from Lock] ${modId}.toml is defined in pack/mods but missing from lockfile!`,
+      );
       hasErrors = true;
     }
   }
@@ -255,7 +277,9 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   if (packConfig.launcher?.play) {
     const { auto_connect, server } = packConfig.launcher.play;
     if (auto_connect && (!server || !isValidServerAddress(server))) {
-      console.error(`  ✗ [Invalid Play Config] auto_connect is true but server is missing or invalid: '${server || ""}'`);
+      console.error(
+        `  ✗ [Invalid Play Config] auto_connect is true but server is missing or invalid: '${server || ""}'`,
+      );
       hasErrors = true;
     }
     if (server && !isValidServerAddress(server)) {
@@ -268,7 +292,9 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
   const launcherRequiredPacks = packConfig.launcher?.resourcepacks?.required || [];
   const serverResourcePack = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
   if (serverResourcePack?.artifact && launcherRequiredPacks.includes(serverResourcePack.artifact)) {
-    console.error(`  ✗ [Dual-Delivery Conflict] Resource pack '${serverResourcePack.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`);
+    console.error(
+      `  ✗ [Dual-Delivery Conflict] Resource pack '${serverResourcePack.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`,
+    );
     hasErrors = true;
   }
 
@@ -277,25 +303,37 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     for (const packId of packConfig.launcher.resourcepacks.required) {
       const artifact = lock.artifacts[packId];
       if (!artifact) {
-        console.error(`  ✗ [Missing Required Resource Pack] Required resource pack '${packId}' was not found in pack.lock.json.`);
+        console.error(
+          `  ✗ [Missing Required Resource Pack] Required resource pack '${packId}' was not found in pack.lock.json.`,
+        );
         hasErrors = true;
       } else {
-        const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+        const artifactType =
+          artifact.artifactType ||
+          (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
         if (artifactType !== "resourcepack") {
-          console.error(`  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`);
+          console.error(
+            `  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`,
+          );
           hasErrors = true;
         }
         if (artifact.side !== "client" && artifact.side !== "both") {
-          console.error(`  ✗ [Invalid Side] Artifact '${packId}' is configured as a required resource pack but is not available to client (side='${artifact.side}').`);
+          console.error(
+            `  ✗ [Invalid Side] Artifact '${packId}' is configured as a required resource pack but is not available to client (side='${artifact.side}').`,
+          );
           hasErrors = true;
         }
         const targetDir = artifact.targetDir || "resourcepacks";
         if (targetDir !== "resourcepacks") {
-          console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as a required resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
+          console.error(
+            `  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as a required resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`,
+          );
           hasErrors = true;
         }
         if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
-          console.error(`  ✗ [Invalid Hash] Required resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`);
+          console.error(
+            `  ✗ [Invalid Hash] Required resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`,
+          );
           hasErrors = true;
         }
       }
@@ -307,25 +345,36 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     const packId = serverResourcePack.artifact;
     const artifact = lock.artifacts[packId];
     if (!artifact) {
-      console.error(`  ✗ [Missing Server Resource Pack] Server resource pack '${packId}' was not found in pack.lock.json.`);
+      console.error(
+        `  ✗ [Missing Server Resource Pack] Server resource pack '${packId}' was not found in pack.lock.json.`,
+      );
       hasErrors = true;
     } else {
-      const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+      const artifactType =
+        artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
       if (artifactType !== "resourcepack") {
-        console.error(`  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as server resource pack but has type '${artifactType}'.`);
+        console.error(
+          `  ✗ [Invalid Artifact Type] Artifact '${packId}' is configured as server resource pack but has type '${artifactType}'.`,
+        );
         hasErrors = true;
       }
       const targetDir = artifact.targetDir || "resourcepacks";
       if (targetDir !== "resourcepacks") {
-        console.error(`  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as server resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`);
+        console.error(
+          `  ✗ [Invalid Target Dir] Artifact '${packId}' is configured as server resource pack but targetDir '${targetDir}' must be 'resourcepacks'.`,
+        );
         hasErrors = true;
       }
       if (!artifact.sha1 || !/^[0-9a-fA-F]{40}$/.test(artifact.sha1)) {
-        console.error(`  ✗ [Missing SHA-1] Server resource pack '${packId}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`);
+        console.error(
+          `  ✗ [Missing SHA-1] Server resource pack '${packId}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`,
+        );
         hasErrors = true;
       }
       if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
-        console.error(`  ✗ [Invalid SHA-256] Server resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`);
+        console.error(
+          `  ✗ [Invalid SHA-256] Server resource pack '${packId}' has invalid SHA-256: '${artifact.sha256}'.`,
+        );
         hasErrors = true;
       }
     }
@@ -375,8 +424,8 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
         (art.artifactType === "shader"
           ? "shaderpacks"
           : art.artifactType === "resourcepack"
-          ? "resourcepacks"
-          : "mods");
+            ? "resourcepacks"
+            : "mods");
       files.push({ path: `${targetDir}/${art.filename}`, policy: "MANAGED" });
     }
     validateClientFilePaths(files);
@@ -426,6 +475,8 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     return false;
   }
 
-  console.log(`\n[Validation Passed] All ${Object.keys(lock.artifacts).length} artifacts and definitions are valid!`);
+  console.log(
+    `\n[Validation Passed] All ${Object.keys(lock.artifacts).length} artifacts and definitions are valid!`,
+  );
   return true;
 }

@@ -28,7 +28,7 @@ function createPackFixture() {
       'type = "fabric"',
       'version = "0.19.3"',
       "",
-    ].join("\n")
+    ].join("\n"),
   );
   return { dir, packDir };
 }
@@ -80,10 +80,16 @@ function setupModrinthFetchMock() {
     const urlStr = typeof input === "string" || input instanceof URL ? input.toString() : input.url;
     const url = new URL(urlStr);
 
-    if (url.pathname === "/v2/project/entity-model-features" || url.pathname === "/v2/project/4I1XuqiY") {
+    if (
+      url.pathname === "/v2/project/entity-model-features" ||
+      url.pathname === "/v2/project/4I1XuqiY"
+    ) {
       return Response.json(mockProjectData);
     }
-    if (url.pathname === "/v2/project/4I1XuqiY/version" || url.pathname === "/v2/project/entity-model-features/version") {
+    if (
+      url.pathname === "/v2/project/4I1XuqiY/version" ||
+      url.pathname === "/v2/project/entity-model-features/version"
+    ) {
       return Response.json(mockVersions);
     }
     if (url.pathname === "/v2/version/xQeW3qQB") {

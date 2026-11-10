@@ -172,13 +172,19 @@ export function parseFabricModJson(text: string): { mod: ParsedFabricMod; jars: 
   const environmentRaw = json.environment ?? "*";
   if (typeof environmentRaw !== "string") throw new Error("'environment' must be a string");
   const environment = environmentRaw.toLowerCase();
-  if (environment !== "" && environment !== "*" && environment !== "client" && environment !== "server") {
+  if (
+    environment !== "" &&
+    environment !== "*" &&
+    environment !== "client" &&
+    environment !== "server"
+  ) {
     throw new Error(`invalid environment '${environmentRaw}'`);
   }
 
   const jars: string[] = [];
   for (const entry of json.jars ?? []) {
-    if (!entry || typeof entry.file !== "string") throw new Error("'jars' entries must have a string 'file'");
+    if (!entry || typeof entry.file !== "string")
+      throw new Error("'jars' entries must have a string 'file'");
     jars.push(entry.file);
   }
 
@@ -273,7 +279,10 @@ function candidateOf(entry: LoadedMod): Candidate {
 }
 
 /** Fabric Loader's builtin mods for a Lampas pack. */
-export function lampasBuiltinMods(minecraft: string, loaderVersion: string): Record<string, string> {
+export function lampasBuiltinMods(
+  minecraft: string,
+  loaderVersion: string,
+): Record<string, string> {
   return { minecraft, fabricloader: loaderVersion, java: LAMPAS_JAVA_VERSION };
 }
 
@@ -289,7 +298,11 @@ const LOADER_MOD_ID = "fabricloader";
  * Reports duplicate top-level mod IDs (including `provides`), `depends` that no loadable copy satisfies
  * and `breaks` that match a mod that must load.
  */
-export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Record<string, string>): ModSetReport {
+export function analyzeModSet(
+  side: ModSide,
+  jars: ModJarNode[],
+  builtins: Record<string, string>,
+): ModSetReport {
   const issues: ModMetadataIssue[] = [];
   const loaded: LoadedMod[] = [];
   // Mods skipped for this side, by ID. Their nested jars are not scanned (ModDiscoverer).
@@ -320,7 +333,9 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
     for (const id of modIds(entry)) index.set(id, [...(index.get(id) ?? []), entry]);
   }
 
-  const builtinVersions = new Map(Object.entries(builtins).map(([id, v]) => [id, parseVersion(v, false)]));
+  const builtinVersions = new Map(
+    Object.entries(builtins).map(([id, v]) => [id, parseVersion(v, false)]),
+  );
   const builtinCandidate = (id: string): Candidate | undefined => {
     const version = builtinVersions.get(id);
     return version ? { version, label: `${id} ${version.friendly} (builtin)` } : undefined;
@@ -330,7 +345,10 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
   for (const [id, providers] of topProviders) {
     const sources = new Set(providers.map((p) => p.source));
     if (builtinVersions.has(id)) {
-      issues.push({ kind: "duplicate", message: `mod ID '${id}' is builtin and also provided by ${providers.map(describeMod).join(", ")}` });
+      issues.push({
+        kind: "duplicate",
+        message: `mod ID '${id}' is builtin and also provided by ${providers.map(describeMod).join(", ")}`,
+      });
     } else if (sources.size > 1) {
       issues.push({
         kind: "duplicate",
@@ -340,7 +358,10 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
   }
   for (const [id, providers] of nestedProviders) {
     if (builtinVersions.has(id) && id !== LOADER_MOD_ID) {
-      issues.push({ kind: "duplicate", message: `mod ID '${id}' is builtin and also provided by ${providers.map(describeMod).join(", ")}` });
+      issues.push({
+        kind: "duplicate",
+        message: `mod ID '${id}' is builtin and also provided by ${providers.map(describeMod).join(", ")}`,
+      });
     }
   }
 
@@ -364,7 +385,8 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
   const excluded = new Map<LoadedMod, string>();
   for (const entry of nested) {
     const shadow = modIds(entry).find((id) => mandatory(id).length > 0);
-    if (shadow !== undefined) excluded.set(entry, `'${shadow}' is already provided by a top-level or builtin mod`);
+    if (shadow !== undefined)
+      excluded.set(entry, `'${shadow}' is already provided by a top-level or builtin mod`);
   }
   for (const owner of topLevel) {
     for (const rule of owner.mod.breaks) {
@@ -382,7 +404,7 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
     return (nestedProviders.get(id) ?? []).filter((e) => !excluded.has(e)).map(candidateOf);
   };
 
-  for (let changed = true; changed; ) {
+  for (let changed = true; changed;) {
     changed = false;
     for (const entry of nested) {
       if (excluded.has(entry)) continue;
@@ -400,7 +422,10 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
       for (const rule of entry.mod.breaks) {
         if (reason) break;
         const required = mandatory(rule.id);
-        if (required.length > 0 && required.every((c) => matchesAnyPredicate(rule.predicates, c.version))) {
+        if (
+          required.length > 0 &&
+          required.every((c) => matchesAnyPredicate(rule.predicates, c.version))
+        ) {
           reason = `it breaks ${rule.id} ${describeRule(rule)}`;
         }
       }
@@ -427,8 +452,14 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
         const unloadable = describeExcluded(rule.id);
         issues.push(
           unloadable.length === 0
-            ? { kind: "missing-dependency", message: `${describeMod(owner)} depends on ${rule.id} ${describeRule(rule)}, which is not present` }
-            : { kind: "unsatisfied-dependency", message: `${describeMod(owner)} depends on ${rule.id} ${describeRule(rule)}, but only ${unloadable.join("; ")} is present` }
+            ? {
+                kind: "missing-dependency",
+                message: `${describeMod(owner)} depends on ${rule.id} ${describeRule(rule)}, which is not present`,
+              }
+            : {
+                kind: "unsatisfied-dependency",
+                message: `${describeMod(owner)} depends on ${rule.id} ${describeRule(rule)}, but only ${unloadable.join("; ")} is present`,
+              },
         );
       } else if (!found.some((c) => matchesAnyPredicate(rule.predicates, c.version))) {
         issues.push({
@@ -436,14 +467,20 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
           message: `${describeMod(owner)} depends on ${rule.id} ${describeRule(rule)}, but only ${found.map((c) => c.label).join(", ")} is present`,
         });
       } else if (mandatory(rule.id).length === 0) {
-        nestedRequirements.set(rule.id, [...(nestedRequirements.get(rule.id) ?? []), { owner, rule }]);
+        nestedRequirements.set(rule.id, [
+          ...(nestedRequirements.get(rule.id) ?? []),
+          { owner, rule },
+        ]);
       }
     }
 
     for (const rule of owner.mod.breaks) {
       const required = mandatory(rule.id);
       // With several top-level copies of an ID, Fabric Loader can load one the rule does not match.
-      if (required.length > 0 && required.every((c) => matchesAnyPredicate(rule.predicates, c.version))) {
+      if (
+        required.length > 0 &&
+        required.every((c) => matchesAnyPredicate(rule.predicates, c.version))
+      ) {
         issues.push({
           kind: "breaks",
           message: `${describeMod(owner)} breaks ${rule.id} ${describeRule(rule)}, and ${required.map((c) => c.label).join(", ")} is present`,
@@ -455,7 +492,9 @@ export function analyzeModSet(side: ModSide, jars: ModJarNode[], builtins: Recor
   for (const [id, requirements] of nestedRequirements) {
     if (requirements.length < 2) continue;
     const found = available(id);
-    const fitsAll = found.some((c) => requirements.every(({ rule }) => matchesAnyPredicate(rule.predicates, c.version)));
+    const fitsAll = found.some((c) =>
+      requirements.every(({ rule }) => matchesAnyPredicate(rule.predicates, c.version)),
+    );
     if (!fitsAll) {
       issues.push({
         kind: "unsatisfied-dependency",
@@ -472,9 +511,13 @@ export function modJarArtifacts(lock: PackLock, exclude?: string): ResolvedArtif
   return Object.entries(lock.artifacts)
     .filter(([id, artifact]) => {
       if (id === exclude) return false;
-      const targetDir = artifact.targetDir || (artifact.artifactType === "shader"
-        ? "shaderpacks"
-        : artifact.artifactType === "resourcepack" ? "resourcepacks" : "mods");
+      const targetDir =
+        artifact.targetDir ||
+        (artifact.artifactType === "shader"
+          ? "shaderpacks"
+          : artifact.artifactType === "resourcepack"
+            ? "resourcepacks"
+            : "mods");
       return targetDir === "mods" && artifact.filename.toLowerCase().endsWith(".jar");
     })
     .map(([, artifact]) => artifact);
@@ -489,7 +532,10 @@ async function sha256Matches(filePath: string, expected: string): Promise<boolea
  * Returns a local path to the artifact's jar, verified against the lock's sha256: the `lampas` file in the
  * pack, the `resolve` provider cache or the `sync` blob cache, or else a verified download into that cache.
  */
-export async function obtainArtifactJar(artifact: ResolvedArtifact, baseDir: string): Promise<string> {
+export async function obtainArtifactJar(
+  artifact: ResolvedArtifact,
+  baseDir: string,
+): Promise<string> {
   const expected = artifact.sha256.toLowerCase();
   const provider = artifact.provider;
 
@@ -497,16 +543,38 @@ export async function obtainArtifactJar(artifact: ResolvedArtifact, baseDir: str
     if (!provider.file) throw new Error(`'${artifact.id}' has no lampas file in pack.lock.json`);
     const filePath = lampasArtifactPath(baseDir, provider.file);
     if (!(await sha256Matches(filePath, expected))) {
-      throw new Error(`pack/${provider.file} is missing or does not match the pack.lock.json sha256; run 'lampasctl resolve'`);
+      throw new Error(
+        `pack/${provider.file} is missing or does not match the pack.lock.json sha256; run 'lampasctl resolve'`,
+      );
     }
     return filePath;
   }
 
   let providerPath: string | undefined;
-  if (provider.type === "modrinth" && provider.projectId !== undefined && provider.versionId !== undefined) {
-    providerPath = providerCachePath(baseDir, "modrinth", provider.projectId, provider.versionId, artifact.filename);
-  } else if (provider.type === "curseforge" && provider.projectId !== undefined && provider.fileId !== undefined) {
-    providerPath = providerCachePath(baseDir, "curseforge", provider.projectId, provider.fileId, artifact.filename);
+  if (
+    provider.type === "modrinth" &&
+    provider.projectId !== undefined &&
+    provider.versionId !== undefined
+  ) {
+    providerPath = providerCachePath(
+      baseDir,
+      "modrinth",
+      provider.projectId,
+      provider.versionId,
+      artifact.filename,
+    );
+  } else if (
+    provider.type === "curseforge" &&
+    provider.projectId !== undefined &&
+    provider.fileId !== undefined
+  ) {
+    providerPath = providerCachePath(
+      baseDir,
+      "curseforge",
+      provider.projectId,
+      provider.fileId,
+      artifact.filename,
+    );
   }
   const blobPath = blobCachePath(path.resolve(baseDir, ".lampas", "cache", "sha256"), expected);
 
@@ -515,7 +583,9 @@ export async function obtainArtifactJar(artifact: ResolvedArtifact, baseDir: str
   }
 
   if (!/^https?:\/\//i.test(artifact.downloadUrl)) {
-    throw new Error(`not cached locally and its download URL '${artifact.downloadUrl}' is not absolute`);
+    throw new Error(
+      `not cached locally and its download URL '${artifact.downloadUrl}' is not absolute`,
+    );
   }
   const destination = providerPath ?? blobPath;
   await downloadFileVerified(artifact.downloadUrl, destination, {
@@ -548,19 +618,29 @@ export async function checkPackModMetadata(options: CheckModMetadataOptions): Pr
       const artifact = artifacts[next++];
       try {
         const jarPath = await obtainArtifactJar(artifact, baseDir);
-        trees.set(artifact.id, readModJar(new Uint8Array(fs.readFileSync(jarPath)), `mods/${artifact.filename}`));
+        trees.set(
+          artifact.id,
+          readModJar(new Uint8Array(fs.readFileSync(jarPath)), `mods/${artifact.filename}`),
+        );
       } catch (err: any) {
-        failures.push(`'${artifact.id}' (${artifact.filename}): ${err.message}${err.cause?.message ? ` (${err.cause.message})` : ""}`);
+        failures.push(
+          `'${artifact.id}' (${artifact.filename}): ${err.message}${err.cause?.message ? ` (${err.cause.message})` : ""}`,
+        );
       }
     }
   };
-  await Promise.all(Array.from({ length: Math.min(options.concurrency ?? 6, artifacts.length) }, () => worker()));
+  await Promise.all(
+    Array.from({ length: Math.min(options.concurrency ?? 6, artifacts.length) }, () => worker()),
+  );
 
   for (const failure of failures.sort()) {
     console.error(`  ✗ [Mod Jar Unavailable] ${failure}`);
   }
 
-  const builtins = lampasBuiltinMods(options.packConfig.pack.minecraft, options.packConfig.loader.version);
+  const builtins = lampasBuiltinMods(
+    options.packConfig.pack.minecraft,
+    options.packConfig.loader.version,
+  );
   const labels: Record<ModMetadataIssueKind, string> = {
     duplicate: "Duplicate Mod ID",
     "missing-dependency": "Missing Dependency",
@@ -580,7 +660,9 @@ export async function checkPackModMetadata(options: CheckModMetadataOptions): Pr
       console.error(`  ✗ [${labels[issue.kind]}] ${side}: ${issue.message}`);
     }
     const mark = report.issues.length === 0 ? "✓" : "✗";
-    console.log(`  ${mark} [Mod Metadata] ${side}: ${report.modCount} mods from ${report.jarCount} jars (nested included), ${report.issues.length} issues`);
+    console.log(
+      `  ${mark} [Mod Metadata] ${side}: ${report.modCount} mods from ${report.jarCount} jars (nested included), ${report.issues.length} issues`,
+    );
     issueCount += report.issues.length;
   }
   return issueCount;

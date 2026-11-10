@@ -1,5 +1,10 @@
 import { canonicalJson, computeManifestDiff, formatBytes, type DiffResult } from "./diff";
-import { fetchManifest, fetchPortalText, parsePortalJson, resolveChannelVersion } from "./release-resolver";
+import {
+  fetchManifest,
+  fetchPortalText,
+  parsePortalJson,
+  resolveChannelVersion,
+} from "./release-resolver";
 import type { PackManifest, ReleaseDescriptor } from "./types";
 
 export const PORTAL_CHANNELS = ["dev", "beta", "stable"] as const;
@@ -106,17 +111,28 @@ interface PublishConflictOutcome {
   error?: string;
 }
 
-const MANIFEST_FIELDS: Record<Target, string> = { client: "clientManifest", server: "serverManifest" };
+const MANIFEST_FIELDS: Record<Target, string> = {
+  client: "clientManifest",
+  server: "serverManifest",
+};
 
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
 function isPackManifest(value: unknown): value is PackManifest {
-  return typeof value === "object" && value !== null && Array.isArray((value as { files?: unknown }).files);
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Array.isArray((value as { files?: unknown }).files)
+  );
 }
 
-async function resolveChannel(portalUrl: string, name: PortalChannel, timeoutMs: number): Promise<ChannelResult> {
+async function resolveChannel(
+  portalUrl: string,
+  name: PortalChannel,
+  timeoutMs: number,
+): Promise<ChannelResult> {
   try {
     return { name, version: await resolveChannelVersion(portalUrl, name, { timeoutMs }) };
   } catch (err) {
@@ -124,10 +140,16 @@ async function resolveChannel(portalUrl: string, name: PortalChannel, timeoutMs:
   }
 }
 
-async function checkLocalPublished(portalUrl: string, version: string, timeoutMs: number): Promise<LocalPublishedCheck> {
+async function checkLocalPublished(
+  portalUrl: string,
+  version: string,
+  timeoutMs: number,
+): Promise<LocalPublishedCheck> {
   const url = `${portalUrl}/api/v1/releases/${encodeURIComponent(version)}`;
   try {
-    const res = await fetchPortalText(url, `checking whether v${version} is published`, { timeoutMs });
+    const res = await fetchPortalText(url, `checking whether v${version} is published`, {
+      timeoutMs,
+    });
     if (res.status === 404) {
       return { state: { published: false } };
     }
@@ -137,13 +159,23 @@ async function checkLocalPublished(portalUrl: string, version: string, timeoutMs
     if (!res.ok) {
       return { state: null, error: `HTTP ${res.status} ${res.statusText}`.trim() };
     }
-    const data = parsePortalJson<unknown>(res.text, `Invalid response for release v${version} from ${url}`);
-    const record = typeof data === "object" && data !== null ? (data as Record<string, unknown>) : null;
+    const data = parsePortalJson<unknown>(
+      res.text,
+      `Invalid response for release v${version} from ${url}`,
+    );
+    const record =
+      typeof data === "object" && data !== null ? (data as Record<string, unknown>) : null;
     if (typeof record?.version !== "string") {
-      return { state: null, error: `Invalid response for release v${version} from ${url}: missing 'version' property` };
+      return {
+        state: null,
+        error: `Invalid response for release v${version} from ${url}: missing 'version' property`,
+      };
     }
     return {
-      state: typeof record.created === "string" ? { published: true, created: record.created } : { published: true },
+      state:
+        typeof record.created === "string"
+          ? { published: true, created: record.created }
+          : { published: true },
       stored: record as StoredRelease,
     };
   } catch (err) {
@@ -155,7 +187,7 @@ async function fetchPortalManifest(
   portalUrl: string,
   version: string,
   target: Target,
-  timeoutMs: number
+  timeoutMs: number,
 ): Promise<Fetched> {
   try {
     const manifest: unknown = await fetchManifest(portalUrl, version, target, { timeoutMs });
@@ -168,7 +200,11 @@ async function fetchPortalManifest(
   }
 }
 
-async function fetchTargetManifests(portalUrl: string, version: string, timeoutMs: number): Promise<TargetManifests> {
+async function fetchTargetManifests(
+  portalUrl: string,
+  version: string,
+  timeoutMs: number,
+): Promise<TargetManifests> {
   const [client, server] = await Promise.all([
     fetchPortalManifest(portalUrl, version, "client", timeoutMs),
     fetchPortalManifest(portalUrl, version, "server", timeoutMs),
@@ -180,12 +216,20 @@ async function fetchTargetManifests(portalUrl: string, version: string, timeoutM
  * Whether the local version is on the Portal. A failed status check still counts as published when
  * the selected channel already points at the local version.
  */
-function isLocalPublished(state: LocalPublishedState | null, compareVersion: string | null, localVersion: string): boolean | null {
+function isLocalPublished(
+  state: LocalPublishedState | null,
+  compareVersion: string | null,
+  localVersion: string,
+): boolean | null {
   if (state !== null) return state.published;
   return compareVersion === localVersion ? true : null;
 }
 
-function compareTarget(target: Target, fetched: Fetched, local: PackManifest): PortalTargetComparison {
+function compareTarget(
+  target: Target,
+  fetched: Fetched,
+  local: PackManifest,
+): PortalTargetComparison {
   if ("error" in fetched) {
     return { target, diff: null, contentIdentical: false, error: fetched.error };
   }
@@ -209,9 +253,11 @@ function releaseFieldDiffs(release: ReleaseDescriptor, stored: StoredRelease): s
   const diffs: string[] = [];
   if (stored.minecraft !== release.minecraft) diffs.push("minecraft");
   if (stored.loader?.version !== release.loader.version) diffs.push("loader.version");
-  if (stored.minimumLauncherVersion !== release.minimumLauncherVersion) diffs.push("minimumLauncherVersion");
+  if (stored.minimumLauncherVersion !== release.minimumLauncherVersion)
+    diffs.push("minimumLauncherVersion");
   if (stored.protocol !== release.protocol) diffs.push("protocol");
-  if (canonicalJson(stored.launch ?? null) !== canonicalJson(release.launch ?? null)) diffs.push("launch");
+  if (canonicalJson(stored.launch ?? null) !== canonicalJson(release.launch ?? null))
+    diffs.push("launch");
   if ((stored.gitCommit ?? null) !== (release.gitCommit ?? null)) diffs.push("gitCommit");
   if (stored.status !== "STABLE") diffs.push("status");
   if ((stored.signature ?? null) !== null) diffs.push("signature");
@@ -228,7 +274,7 @@ function publishConflictFor(
   release: ReleaseDescriptor,
   released: TargetManifests,
   stored: StoredRelease | undefined,
-  storedError: string | undefined
+  storedError: string | undefined,
 ): PublishConflictOutcome {
   const fields = stored ? releaseFieldDiffs(release, stored) : [];
   const errors: string[] = [];
@@ -251,7 +297,9 @@ function publishConflictFor(
  * check whether the local version is already published with different content.
  * Never throws for network or HTTP failures; they are recorded in the returned result.
  */
-export async function comparePortalRelease(options: ComparePortalReleaseOptions): Promise<PortalComparison> {
+export async function comparePortalRelease(
+  options: ComparePortalReleaseOptions,
+): Promise<PortalComparison> {
   const portalUrl = options.portalUrl.replace(/\/+$/, "");
   const timeoutMs = options.timeoutMs ?? DEFAULT_COMPARE_TIMEOUT_MS;
   const localVersion = options.client.version;
@@ -278,7 +326,10 @@ export async function comparePortalRelease(options: ComparePortalReleaseOptions)
 
   // The selected channel's release gives the diff. The local version's own release gives the publish
   // check. One fetch serves both when the channel already points at the local version.
-  const compareFetch = compareVersion !== null ? fetchTargetManifests(portalUrl, compareVersion, timeoutMs) : undefined;
+  const compareFetch =
+    compareVersion !== null
+      ? fetchTargetManifests(portalUrl, compareVersion, timeoutMs)
+      : undefined;
   const publishedFetch =
     published !== true || revoked
       ? undefined
@@ -304,7 +355,9 @@ export async function comparePortalRelease(options: ComparePortalReleaseOptions)
   }
 
   if (compared) {
-    result.targets = TARGETS.map((target) => compareTarget(target, compared[target], local[target]));
+    result.targets = TARGETS.map((target) =>
+      compareTarget(target, compared[target], local[target]),
+    );
   } else {
     result.error = `Portal channel '${options.channel}' is unavailable: ${channelErrors[options.channel] ?? "unknown error"}`;
   }
@@ -315,7 +368,13 @@ export async function comparePortalRelease(options: ComparePortalReleaseOptions)
     result.publishConflict = true;
     result.publishConflictFields = ["status"];
   } else if (published === true && released) {
-    const outcome = publishConflictFor(local, options.release, released, localCheck.stored, localCheck.error);
+    const outcome = publishConflictFor(
+      local,
+      options.release,
+      released,
+      localCheck.stored,
+      localCheck.error,
+    );
     result.publishConflict = outcome.conflict;
     result.publishConflictFields = outcome.fields;
     if (outcome.error !== undefined) {
@@ -357,11 +416,14 @@ function describeTarget(target: PortalTargetComparison): string[] {
   if (!hasDifferences(diff)) {
     return target.contentIdentical
       ? [`  ${target.target}: identical`]
-      : [`  ${target.target}: identical files; other manifest metadata differs (e.g. download URLs or ordering)`];
+      : [
+          `  ${target.target}: identical files; other manifest metadata differs (e.g. download URLs or ordering)`,
+        ];
   }
 
   const net = `${diff.totalSizeDelta >= 0 ? "+" : ""}${formatBytes(diff.totalSizeDelta)}`;
-  const fields = diff.changedFields.length > 0 ? `; fields changed: ${diff.changedFields.join(", ")}` : "";
+  const fields =
+    diff.changedFields.length > 0 ? `; fields changed: ${diff.changedFields.join(", ")}` : "";
   const lines = [
     `  ${target.target}: +${diff.added.length} added, -${diff.removed.length} removed, ~${diff.modified.length} updated, net ${net}${fields}`,
   ];
@@ -388,7 +450,9 @@ export function printPortalComparison(c: PortalComparison): void {
   console.log(` Local version:    ${c.localVersion}`);
   console.log(` Portal channels:  ${channelList}`);
   console.log(` Local version on Portal: ${describePublished(c)}`);
-  console.log(` Compared against: ${c.compareVersion ? `v${c.compareVersion} (${c.channel})` : "unavailable"}`);
+  console.log(
+    ` Compared against: ${c.compareVersion ? `v${c.compareVersion} (${c.channel})` : "unavailable"}`,
+  );
   console.log("");
 
   // The selected channel's reason is already in c.error when the comparison is skipped.
@@ -397,7 +461,9 @@ export function printPortalComparison(c: PortalComparison): void {
     .map(([name, reason]) => `${name}: ${reason}`)
     .join("; ");
   if (c.error) {
-    console.warn(`[Portal] Comparison skipped: ${c.error}${failures ? `. Other unavailable channels: ${failures}` : ""}`);
+    console.warn(
+      `[Portal] Comparison skipped: ${c.error}${failures ? `. Other unavailable channels: ${failures}` : ""}`,
+    );
   } else if (failures) {
     console.warn(`[Portal] Unavailable channels: ${failures}`);
   }
@@ -413,20 +479,24 @@ export function printPortalComparison(c: PortalComparison): void {
   if (published === true) {
     if (c.localPublished?.revoked) {
       console.warn(
-        `⚠ v${v} is revoked on the Portal; publishing it will be rejected (409). Bump [pack] version in pack.toml before publishing.`
+        `⚠ v${v} is revoked on the Portal; publishing it will be rejected (409). Bump [pack] version in pack.toml before publishing.`,
       );
     } else if (c.publishConflict === true) {
       console.warn(
-        `⚠ v${v} is already published on the Portal with different content (${c.publishConflictFields.join(", ")}); publishing it will be rejected (409). Bump [pack] version in pack.toml before publishing.`
+        `⚠ v${v} is already published on the Portal with different content (${c.publishConflictFields.join(", ")}); publishing it will be rejected (409). Bump [pack] version in pack.toml before publishing.`,
       );
     } else if (c.publishConflict === false) {
-      console.log(`v${v} is already published with identical manifests; publishing it again only moves channel pointers.`);
+      console.log(
+        `v${v} is already published with identical manifests; publishing it again only moves channel pointers.`,
+      );
     } else {
-      console.warn(`v${v} is already published; publish conflicts could not be fully checked (${c.publishConflictError ?? "unknown error"}).`);
+      console.warn(
+        `v${v} is already published; publish conflicts could not be fully checked (${c.publishConflictError ?? "unknown error"}).`,
+      );
     }
   } else if (published === null) {
     console.warn(
-      `v${v} publish status is unknown (${c.localPublishedError ?? "check failed"}); publish conflicts were not checked.`
+      `v${v} publish status is unknown (${c.localPublishedError ?? "check failed"}); publish conflicts were not checked.`,
     );
   }
 }

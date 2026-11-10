@@ -58,9 +58,14 @@ export async function discoverLocalLampasBlobs(params: {
   const srp = release?.serverResourcePack || serverManifest.resourcePack;
   if (srp?.sha256) {
     const sha = srp.sha256.toLowerCase().trim();
-    const isLampasBlob = srp.provider === "lampas" || srp.url.includes("/api/v1/blobs/") || !srp.url.startsWith("http");
+    const isLampasBlob =
+      srp.provider === "lampas" ||
+      srp.url.includes("/api/v1/blobs/") ||
+      !srp.url.startsWith("http");
     if (isLampasBlob && !uniqueBlobs.has(sha)) {
-      const relPath = srp.path || (srp.filename ? `resourcepacks/${srp.filename}` : `resourcepacks/${srp.artifact}.zip`);
+      const relPath =
+        srp.path ||
+        (srp.filename ? `resourcepacks/${srp.filename}` : `resourcepacks/${srp.artifact}.zip`);
       uniqueBlobs.set(sha, { path: relPath, size: srp.size });
     }
   }
@@ -82,31 +87,31 @@ export async function discoverLocalLampasBlobs(params: {
     if (!foundPath) {
       throw new Error(
         `Lampas blob ${sha} for manifest path '${info.path}' could not be found locally.\n` +
-        `Checked candidate paths:\n  ${candidatePaths.join("\n  ")}`
+          `Checked candidate paths:\n  ${candidatePaths.join("\n  ")}`,
       );
     }
 
     const stat = fs.statSync(foundPath);
     if (typeof info.size === "number" && stat.size !== info.size) {
       throw new Error(
-        `Local file size mismatch for '${info.path}' (${foundPath}): manifest declares ${info.size} bytes, but found ${stat.size} bytes on disk.`
+        `Local file size mismatch for '${info.path}' (${foundPath}): manifest declares ${info.size} bytes, but found ${stat.size} bytes on disk.`,
       );
     }
 
     const hashes = await computeFileHashesStreaming(foundPath);
     if (hashes.sha256.toLowerCase() !== sha) {
       throw new Error(
-        `Local SHA-256 mismatch for '${info.path}' (${foundPath}): manifest declares ${sha}, but computed ${hashes.sha256}.`
+        `Local SHA-256 mismatch for '${info.path}' (${foundPath}): manifest declares ${sha}, but computed ${hashes.sha256}.`,
       );
     }
 
     const mimeType = info.path.endsWith(".json")
       ? "application/json"
       : info.path.endsWith(".jar")
-      ? "application/java-archive"
-      : info.path.endsWith(".zip")
-      ? "application/zip"
-      : "application/octet-stream";
+        ? "application/java-archive"
+        : info.path.endsWith(".zip")
+          ? "application/zip"
+          : "application/octet-stream";
 
     discoveredBlobs.push({
       sha256: sha,
@@ -126,7 +131,7 @@ export async function discoverLocalLampasBlobs(params: {
 export async function prepareBlobs(
   portalUrl: string,
   publishSecret: string,
-  blobs: LocalPublishBlob[]
+  blobs: LocalPublishBlob[],
 ): Promise<PreparedBlob[]> {
   if (blobs.length === 0) return [];
 
@@ -190,11 +195,13 @@ export async function uploadSingleBlob(blob: LocalPublishBlob, uploadUrl: string
       if (!RETRYABLE_STATUS_CODES.has(res.status)) {
         const errorText = await res.text();
         throw new Error(
-          `Direct PUT upload failed with status ${res.status} ${res.statusText}: ${errorText}`
+          `Direct PUT upload failed with status ${res.status} ${res.statusText}: ${errorText}`,
         );
       }
 
-      lastError = new Error(`Direct PUT upload received transient status ${res.status} ${res.statusText}`);
+      lastError = new Error(
+        `Direct PUT upload received transient status ${res.status} ${res.statusText}`,
+      );
     } catch (err: any) {
       if (err.message?.includes("Direct PUT upload failed with status")) {
         throw err;
@@ -209,7 +216,7 @@ export async function uploadSingleBlob(blob: LocalPublishBlob, uploadUrl: string
   }
 
   throw new Error(
-    `Direct PUT upload failed for '${blob.manifestPath}' (${blob.sha256}) after ${maxAttempts} attempts: ${lastError?.message || lastError}`
+    `Direct PUT upload failed for '${blob.manifestPath}' (${blob.sha256}) after ${maxAttempts} attempts: ${lastError?.message || lastError}`,
   );
 }
 
@@ -237,7 +244,9 @@ export async function uploadMissingBlobs(options: UploadMissingBlobsOptions): Pr
       const item = blobsToUpload[taskIndex];
       if (!item) break;
 
-      log(`  ↑ [Upload ${taskIndex + 1}/${total}] ${item.blob.manifestPath} (${formatBytes(item.blob.size)})...`);
+      log(
+        `  ↑ [Upload ${taskIndex + 1}/${total}] ${item.blob.manifestPath} (${formatBytes(item.blob.size)})...`,
+      );
 
       try {
         await uploadSingleBlob(item.blob, item.uploadUrl);

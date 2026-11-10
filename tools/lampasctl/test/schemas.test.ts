@@ -43,17 +43,26 @@ describe("schemas and IDE validation configuration", () => {
       expect(variant.required).toContain("id");
     }
 
-    const providerVariants = variants.filter((variant) => variant.properties.scope.const !== "mod_id");
+    const providerVariants = variants.filter(
+      (variant) => variant.properties.scope.const !== "mod_id",
+    );
     expect(providerVariants).toHaveLength(4);
     expect(providerVariants.every((variant) => variant.required.includes("provider"))).toBe(true);
-    expect(variants.find((variant) => variant.properties.scope.const === "mod_id")?.properties.provider).toBeUndefined();
-    expect(providerVariants.map((variant) => [variant.properties.scope.const, variant.properties.provider.const, variant.properties.id.type]))
-      .toEqual([
-        ["project_id", "modrinth", "string"],
-        ["project_id", "curseforge", "integer"],
-        ["version_id", "modrinth", "string"],
-        ["version_id", "curseforge", "integer"],
-      ]);
+    expect(
+      variants.find((variant) => variant.properties.scope.const === "mod_id")?.properties.provider,
+    ).toBeUndefined();
+    expect(
+      providerVariants.map((variant) => [
+        variant.properties.scope.const,
+        variant.properties.provider.const,
+        variant.properties.id.type,
+      ]),
+    ).toEqual([
+      ["project_id", "modrinth", "string"],
+      ["project_id", "curseforge", "integer"],
+      ["version_id", "modrinth", "string"],
+      ["version_id", "curseforge", "integer"],
+    ]);
   });
 
   test("pack schema admits [client].preserve as an array of non-empty strings only", () => {
@@ -85,8 +94,12 @@ describe("schemas and IDE validation configuration", () => {
     const tomlMappings = settings["evenBetterToml.schema.associations"];
     expect(tomlMappings["pack/pack\\.toml"]).toBe("./schemas/pack.schema.json");
     expect(tomlMappings["pack/mods/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
-    expect(tomlMappings["pack/resourcepacks/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
-    expect(tomlMappings["pack/shaderpacks/.*\\.toml"]).toBe("./schemas/artifact-definition.schema.json");
+    expect(tomlMappings["pack/resourcepacks/.*\\.toml"]).toBe(
+      "./schemas/artifact-definition.schema.json",
+    );
+    expect(tomlMappings["pack/shaderpacks/.*\\.toml"]).toBe(
+      "./schemas/artifact-definition.schema.json",
+    );
   });
 
   test("repository files match their corresponding schema definitions", () => {
@@ -177,7 +190,9 @@ describe("schemas and IDE validation configuration", () => {
       for (const f of fs.readdirSync(fullDir)) {
         if (!f.endsWith(".toml")) continue;
         const fileContent = fs.readFileSync(path.join(fullDir, f), "utf-8");
-        expect(fileContent.startsWith("#:schema ../../schemas/artifact-definition.schema.json")).toBe(true);
+        expect(
+          fileContent.startsWith("#:schema ../../schemas/artifact-definition.schema.json"),
+        ).toBe(true);
       }
     }
   });
@@ -185,11 +200,21 @@ describe("schemas and IDE validation configuration", () => {
   test("writeTomlFile automatically prepends #:schema header for pipeline configuration TOMLs", async () => {
     const { inferTomlSchemaHeader, writeTomlFile } = await import("../src/utils");
 
-    expect(inferTomlSchemaHeader("pack/pack.toml")).toBe("#:schema ../schemas/pack.schema.json\n\n");
-    expect(inferTomlSchemaHeader("C:\\Users\\user\\repo\\pack\\pack.toml")).toBe("#:schema ../schemas/pack.schema.json\n\n");
-    expect(inferTomlSchemaHeader("pack/mods/sodium.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
-    expect(inferTomlSchemaHeader("pack/resourcepacks/lampas2.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
-    expect(inferTomlSchemaHeader("pack/shaderpacks/photon.toml")).toBe("#:schema ../../schemas/artifact-definition.schema.json\n\n");
+    expect(inferTomlSchemaHeader("pack/pack.toml")).toBe(
+      "#:schema ../schemas/pack.schema.json\n\n",
+    );
+    expect(inferTomlSchemaHeader("C:\\Users\\user\\repo\\pack\\pack.toml")).toBe(
+      "#:schema ../schemas/pack.schema.json\n\n",
+    );
+    expect(inferTomlSchemaHeader("pack/mods/sodium.toml")).toBe(
+      "#:schema ../../schemas/artifact-definition.schema.json\n\n",
+    );
+    expect(inferTomlSchemaHeader("pack/resourcepacks/lampas2.toml")).toBe(
+      "#:schema ../../schemas/artifact-definition.schema.json\n\n",
+    );
+    expect(inferTomlSchemaHeader("pack/shaderpacks/photon.toml")).toBe(
+      "#:schema ../../schemas/artifact-definition.schema.json\n\n",
+    );
 
     // Distributed configs should NOT have schema injected
     expect(inferTomlSchemaHeader("pack/client/config/c2me.toml")).toBeNull();
@@ -200,7 +225,9 @@ describe("schemas and IDE validation configuration", () => {
     try {
       writeTomlFile(tmpFile, { name: "Test Mod", side: "client" });
       const written = fs.readFileSync(tmpFile, "utf-8");
-      expect(written.startsWith("#:schema ../../schemas/artifact-definition.schema.json\n\n")).toBe(true);
+      expect(written.startsWith("#:schema ../../schemas/artifact-definition.schema.json\n\n")).toBe(
+        true,
+      );
       expect(written).toContain('name = "Test Mod"');
     } finally {
       if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);

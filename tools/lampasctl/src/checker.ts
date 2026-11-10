@@ -1,7 +1,17 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { matchingBlacklistRules, parsePackBlacklistRules, describeBlacklistRule } from "./blacklist";
-import type { ArtifactType, BlacklistRule, BlacklistTarget, ModDefinition, PackConfig } from "./types";
+import {
+  matchingBlacklistRules,
+  parsePackBlacklistRules,
+  describeBlacklistRule,
+} from "./blacklist";
+import type {
+  ArtifactType,
+  BlacklistRule,
+  BlacklistTarget,
+  ModDefinition,
+  PackConfig,
+} from "./types";
 import { CURSEFORGE_FABRIC_LOADER_TYPE, CurseForgeClient, type CurseForgeFile } from "./curseforge";
 import { parseTomlFile, writeTomlFile } from "./utils";
 import { MODRINTH_API, modrinthFetch } from "./modrinth-http";
@@ -95,19 +105,29 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 function validateDescriptorProviderIds(file: string, definition: ModDefinition): void {
   const provider = definition?.provider as unknown as Record<string, unknown> | undefined;
-  if (!isPlainObject(provider)) throw new Error(`Invalid provider configuration in ${file}: provider must be a table.`);
+  if (!isPlainObject(provider))
+    throw new Error(`Invalid provider configuration in ${file}: provider must be a table.`);
   if (provider.type === "modrinth") {
     for (const key of ["project_id", "version_id"] as const) {
       const value = provider[key];
-      if (typeof value !== "string" || value.length === 0 || value.trim() !== value || /\s/.test(value)) {
-        throw new Error(`Invalid provider configuration in ${file}: Modrinth ${key} must be a non-empty string without whitespace.`);
+      if (
+        typeof value !== "string" ||
+        value.length === 0 ||
+        value.trim() !== value ||
+        /\s/.test(value)
+      ) {
+        throw new Error(
+          `Invalid provider configuration in ${file}: Modrinth ${key} must be a non-empty string without whitespace.`,
+        );
       }
     }
   } else if (provider.type === "curseforge") {
     for (const key of ["project_id", "file_id"] as const) {
       const value = provider[key];
       if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
-        throw new Error(`Invalid provider configuration in ${file}: CurseForge ${key} must be a positive safe integer.`);
+        throw new Error(
+          `Invalid provider configuration in ${file}: CurseForge ${key} must be a positive safe integer.`,
+        );
       }
     }
   }
@@ -129,7 +149,13 @@ function hasComparableDates(releases: UpstreamRelease[]): boolean {
 }
 
 function describeRelease(release: UpstreamRelease): string {
-  return release.version_number || release.displayName || release.name || release.fileName || String(release.id);
+  return (
+    release.version_number ||
+    release.displayName ||
+    release.name ||
+    release.fileName ||
+    String(release.id)
+  );
 }
 
 /**
@@ -139,7 +165,12 @@ function describeRelease(release: UpstreamRelease): string {
  */
 export function taggedMinecraftVersion(release: UpstreamRelease): string | undefined {
   const primaryFile = release.files?.find((file) => file.primary) || release.files?.[0];
-  for (const label of [release.version_number, release.displayName, release.fileName, primaryFile?.filename]) {
+  for (const label of [
+    release.version_number,
+    release.displayName,
+    release.fileName,
+    primaryFile?.filename,
+  ]) {
     const match = label?.match(/(?:^|[^a-z0-9])mc[-_]?(\d+\.\d+(?:\.\d+)?)(?!\.?\d)/i);
     if (match) return match[1];
   }
@@ -151,7 +182,10 @@ export function taggedMinecraftVersion(release: UpstreamRelease): string | undef
  * Versions on the same release line (the same first two components, so `26.2.1` for a `26.2` pack) count as the pack's; an
  * untagged release is never treated as another version's build.
  */
-export function otherTaggedMinecraftVersion(release: UpstreamRelease, targetMc: string): string | undefined {
+export function otherTaggedMinecraftVersion(
+  release: UpstreamRelease,
+  targetMc: string,
+): string | undefined {
   const tagged = taggedMinecraftVersion(release);
   if (!tagged) return undefined;
   const line = (version: string) => version.split(".").slice(0, 2).join(".");
@@ -170,7 +204,7 @@ function projectAndPinTarget(
   modId: string,
   provider: "modrinth" | "curseforge",
   projectId: string | number,
-  versionId?: string | number
+  versionId?: string | number,
 ): BlacklistTarget {
   return { modId, provider, projectId, versionId };
 }
@@ -179,7 +213,7 @@ function recordBlacklistMatches(
   diagnostics: BlacklistDiagnostic[],
   matches: readonly BlacklistRule[],
   details: Omit<BlacklistDiagnostic, "rule" | "kind">,
-  force: boolean
+  force: boolean,
 ): void {
   for (const rule of matches) {
     const kind = force ? "override" : "blocked";
@@ -187,11 +221,11 @@ function recordBlacklistMatches(
     diagnostics.push(item);
     if (force) {
       console.warn(
-        `  ⚠ [Blacklist Override] ${details.modName} (${details.descriptorId}): --force ignored ${describeRule(rule)}${details.releaseId ? ` for release ${details.releaseId}` : ""}.`
+        `  ⚠ [Blacklist Override] ${details.modName} (${details.descriptorId}): --force ignored ${describeRule(rule)}${details.releaseId ? ` for release ${details.releaseId}` : ""}.`,
       );
     } else {
       console.warn(
-        `  ⛔ [Blocked by Blacklist] ${details.modName} (${details.descriptorId}): ${describeRule(rule)}${details.releaseId ? ` matched release ${details.releaseId}` : ""}.`
+        `  ⛔ [Blocked by Blacklist] ${details.modName} (${details.descriptorId}): ${describeRule(rule)}${details.releaseId ? ` matched release ${details.releaseId}` : ""}.`,
       );
     }
   }
@@ -201,7 +235,7 @@ function associateDescriptorOverrideWithUpdate(
   diagnostics: BlacklistDiagnostic[],
   descriptorId: string,
   rules: readonly BlacklistRule[],
-  release: UpstreamRelease
+  release: UpstreamRelease,
 ): void {
   for (const diagnostic of diagnostics) {
     if (
@@ -219,7 +253,7 @@ function associateDescriptorOverrideWithUpdate(
 
 function matchingBroadRules(
   rules: readonly BlacklistRule[],
-  target: BlacklistTarget
+  target: BlacklistTarget,
 ): BlacklistRule[] {
   return matchingBlacklistRules(rules, target).filter((rule) => rule.scope !== "version_id");
 }
@@ -227,9 +261,11 @@ function matchingBroadRules(
 function releaseBlacklistRules(
   rules: readonly BlacklistRule[],
   target: BlacklistTarget,
-  releaseId: string | number
+  releaseId: string | number,
 ): BlacklistRule[] {
-  return matchingBlacklistRules(rules, { ...target, versionId: releaseId }).filter((rule) => rule.scope === "version_id");
+  return matchingBlacklistRules(rules, { ...target, versionId: releaseId }).filter(
+    (rule) => rule.scope === "version_id",
+  );
 }
 
 function writeMarkdownReport(
@@ -238,7 +274,7 @@ function writeMarkdownReport(
   updates: ModUpdateInfo[],
   diagnostics: BlacklistDiagnostic[],
   skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }>,
-  otherMinecraftBuilds: OtherMinecraftBuild[]
+  otherMinecraftBuilds: OtherMinecraftBuild[],
 ): void {
   let md = `## 📦 Upstream Mod Updates Available (${updates.length})\n\n`;
   md += `Target: **Minecraft ${packConfig.pack.minecraft}** • **Fabric ${packConfig.loader.version}**\n\n`;
@@ -259,7 +295,9 @@ function writeMarkdownReport(
     md += `| Descriptor | Mod | Scope and exact rule | Project ID | Release | Exact release ID |\n`;
     md += `| :--- | :--- | :--- | :--- | :--- | :--- |\n`;
     for (const item of blocked) {
-      const label = item.releaseName ? `${item.releaseName}${item.reason === "current_pin" ? " (current pin)" : ""}` : "Entire descriptor skipped";
+      const label = item.releaseName
+        ? `${item.releaseName}${item.reason === "current_pin" ? " (current pin)" : ""}`
+        : "Entire descriptor skipped";
       const releaseId = item.releaseId ? `\`${item.releaseId}\`` : "—";
       md += `| \`${item.descriptorId}.toml\` | ${escapeMarkdownCell(item.modName)} | ${escapeMarkdownCell(describeRule(item.rule))} | \`${escapeMarkdownCell(item.projectId)}\` | ${escapeMarkdownCell(label)} | ${releaseId} |\n`;
     }
@@ -273,7 +311,9 @@ function writeMarkdownReport(
     md += `| Descriptor | Mod | Scope and exact rule | Project ID | Release | Exact release ID | Override context |\n`;
     md += `| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n`;
     for (const item of overrides) {
-      const label = item.releaseName ? `${item.releaseName}${item.reason === "current_pin" ? " (current pin)" : ""}` : "All compatible releases checked";
+      const label = item.releaseName
+        ? `${item.releaseName}${item.reason === "current_pin" ? " (current pin)" : ""}`
+        : "All compatible releases checked";
       md += `| \`${item.descriptorId}.toml\` | ${escapeMarkdownCell(item.modName)} | ${escapeMarkdownCell(describeRule(item.rule))} | \`${escapeMarkdownCell(item.projectId)}\` | ${escapeMarkdownCell(label)} | ${item.releaseId ? `\`${item.releaseId}\`` : "—"} | ${item.reason.replace(/_/g, " ")} |\n`;
     }
   }
@@ -321,15 +361,25 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   for (const { dir, defaultType } of DESCRIPTOR_DIRS) {
     const descriptorDir = path.join(options.packDir, dir);
     if (!fs.existsSync(descriptorDir)) continue;
-    for (const file of fs.readdirSync(descriptorDir).filter((name) => name.endsWith(".toml")).sort()) {
+    for (const file of fs
+      .readdirSync(descriptorDir)
+      .filter((name) => name.endsWith(".toml"))
+      .sort()) {
       const filePath = path.join(descriptorDir, file);
       const definition = parseTomlFile<ModDefinition>(filePath);
       validateDescriptorProviderIds(file, definition);
-      descriptors.push({ file, filePath, definition, artifactType: definition.type || defaultType });
+      descriptors.push({
+        file,
+        filePath,
+        definition,
+        artifactType: definition.type || defaultType,
+      });
     }
   }
 
-  console.log(`[Update Checker] Scanning upstream updates for Minecraft ${targetMc} (${targetLoader})...\n`);
+  console.log(
+    `[Update Checker] Scanning upstream updates for Minecraft ${targetMc} (${targetLoader})...\n`,
+  );
 
   const updatesAvailable: ModUpdateInfo[] = [];
   const blacklistDiagnostics: BlacklistDiagnostic[] = [];
@@ -343,13 +393,23 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
     console.warn(`  ⚠ [Skipped] ${modName} (${descriptorId}): ${reason}`);
   };
   // Upstream lists the release for the pack's Minecraft version, but its version tag names another one.
-  const passOverOtherMinecraftBuild = (descriptorId: string, modName: string, release: UpstreamRelease): boolean => {
+  const passOverOtherMinecraftBuild = (
+    descriptorId: string,
+    modName: string,
+    release: UpstreamRelease,
+  ): boolean => {
     const namedMinecraft = otherTaggedMinecraftVersion(release, targetMc);
     if (!namedMinecraft) return false;
     const releaseName = describeRelease(release);
-    otherMinecraftBuilds.push({ descriptorId, modName, releaseId: String(release.id), releaseName, namedMinecraft });
+    otherMinecraftBuilds.push({
+      descriptorId,
+      modName,
+      releaseId: String(release.id),
+      releaseName,
+      namedMinecraft,
+    });
     console.warn(
-      `  ⚠ [Other Minecraft Build] ${modName} (${descriptorId}): ${releaseName} names Minecraft ${namedMinecraft}, not ${targetMc}; not offered.`
+      `  ⚠ [Other Minecraft Build] ${modName} (${descriptorId}): ${releaseName} names Minecraft ${namedMinecraft}, not ${targetMc}; not offered.`,
     );
     return true;
   };
@@ -386,7 +446,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               releaseName: currentVersionId,
               reason: "current_pin",
             },
-            force
+            force,
           );
         }
         const broadMatches = matchingBroadRules(blacklistRules, baseTarget);
@@ -401,7 +461,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               provider: "modrinth",
               reason: "descriptor",
             },
-            force
+            force,
           );
           if (!force) continue;
         }
@@ -415,9 +475,17 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           }
 
           const response = await res.json();
-          if (!Array.isArray(response) || response.some((release) =>
-            !isPlainObject(release) || typeof release.id !== "string" || release.id.length === 0 || release.id.trim() !== release.id || /\s/.test(release.id)
-          )) {
+          if (
+            !Array.isArray(response) ||
+            response.some(
+              (release) =>
+                !isPlainObject(release) ||
+                typeof release.id !== "string" ||
+                release.id.length === 0 ||
+                release.id.trim() !== release.id ||
+                /\s/.test(release.id),
+            )
+          ) {
             recordSkip(modId, def.name, "Modrinth returned malformed version metadata.");
             continue;
           }
@@ -427,21 +495,27 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
             continue;
           }
 
-          let currentVersionMetadata = rawVersions.find((version) => version.id === currentVersionId);
+          let currentVersionMetadata = rawVersions.find(
+            (version) => version.id === currentVersionId,
+          );
           if (!currentVersionMetadata || publishedTime(currentVersionMetadata) === undefined) {
             try {
-              const currentRes = await modrinthFetch(`${MODRINTH_API}/version/${encodeURIComponent(currentVersionId)}`);
+              const currentRes = await modrinthFetch(
+                `${MODRINTH_API}/version/${encodeURIComponent(currentVersionId)}`,
+              );
               if (currentRes.ok) {
                 const metadata = await currentRes.json();
-                if (isPlainObject(metadata) && metadata.id === currentVersionId) currentVersionMetadata = metadata as UpstreamRelease;
+                if (isPlainObject(metadata) && metadata.id === currentVersionId)
+                  currentVersionMetadata = metadata as UpstreamRelease;
               }
             } catch {
               // If the current pin cannot be dated, newness cannot be established safely.
             }
           }
-          const currentTime = currentVersionMetadata && currentVersionMetadata.id === currentVersionId
-            ? publishedTime(currentVersionMetadata)
-            : undefined;
+          const currentTime =
+            currentVersionMetadata && currentVersionMetadata.id === currentVersionId
+              ? publishedTime(currentVersionMetadata)
+              : undefined;
           if (currentTime === undefined || !hasComparableDates(rawVersions)) {
             const reason = `Pinned release ${currentVersionId} or a compatible candidate has no valid publication date; newness could not be established.`;
             recordSkip(modId, def.name, reason);
@@ -467,7 +541,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
                   releaseName: describeRelease(release),
                   reason: "candidate",
                 },
-                force
+                force,
               );
               continue;
             }
@@ -485,7 +559,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
                   releaseName: describeRelease(release),
                   reason: "selected_update",
                 },
-                force
+                force,
               );
             }
             break;
@@ -497,17 +571,26 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           }
 
           if (force && broadMatches.length > 0) {
-            associateDescriptorOverrideWithUpdate(blacklistDiagnostics, modId, broadMatches, latest);
+            associateDescriptorOverrideWithUpdate(
+              blacklistDiagnostics,
+              modId,
+              broadMatches,
+              latest,
+            );
           }
           const latestId = String(latest.id);
-          const primaryFile = latest.files?.find((candidate) => candidate.primary) || latest.files?.[0];
+          const primaryFile =
+            latest.files?.find((candidate) => candidate.primary) || latest.files?.[0];
           const updateInfo: ModUpdateInfo = {
             modId,
             name: def.name,
             provider: "modrinth",
             projectId,
             currentVersionId,
-            currentVersionName: currentVersionMetadata?.version_number || currentVersionMetadata?.name || currentVersionId,
+            currentVersionName:
+              currentVersionMetadata?.version_number ||
+              currentVersionMetadata?.name ||
+              currentVersionId,
             latestVersionId: latestId,
             latestVersionName: latest.version_number || latest.name || latestId,
             latestVersionUrl: `https://modrinth.com/${artifactType}/${encodeURIComponent(projectId)}/version/${encodeURIComponent(latestId)}`,
@@ -519,7 +602,9 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           console.log(`  ⚡ [Update Found] ${def.name}`);
           console.log(`     Mod ID: ${modId}`);
           console.log(`     Project ID: ${projectId}`);
-          console.log(`     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`);
+          console.log(
+            `     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`,
+          );
           console.log(`     Version IDs: ${currentVersionId} -> ${latestId}`);
           console.log(`     Updated version: ${updateInfo.latestVersionUrl}`);
 
@@ -552,7 +637,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               releaseName: String(currentFileId),
               reason: "current_pin",
             },
-            force
+            force,
           );
         }
         const broadMatches = matchingBroadRules(blacklistRules, baseTarget);
@@ -567,7 +652,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               provider: "curseforge",
               reason: "descriptor",
             },
-            force
+            force,
           );
           if (!force) continue;
         }
@@ -597,14 +682,19 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               currentFileMetadata = undefined;
             }
           }
-          const currentTime = currentFileMetadata?.id === currentFileId ? publishedTime(currentFileMetadata) : undefined;
+          const currentTime =
+            currentFileMetadata?.id === currentFileId
+              ? publishedTime(currentFileMetadata)
+              : undefined;
           if (currentTime === undefined || !hasComparableDates(rawFiles)) {
             const reason = `Pinned file ${currentFileId} or a compatible candidate has no valid publication date; newness could not be established.`;
             recordSkip(modId, def.name, reason);
             continue;
           }
           const sortedFiles = sortByPublishedDate(rawFiles) as CurseForgeFile[];
-          const newerFiles = sortedFiles.filter((candidate) => publishedTime(candidate)! > currentTime);
+          const newerFiles = sortedFiles.filter(
+            (candidate) => publishedTime(candidate)! > currentTime,
+          );
 
           let latest: CurseForgeFile | undefined;
           for (const release of newerFiles) {
@@ -623,7 +713,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
                   releaseName: describeRelease(release),
                   reason: "candidate",
                 },
-                force
+                force,
               );
               continue;
             }
@@ -641,7 +731,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
                   releaseName: describeRelease(release),
                   reason: "selected_update",
                 },
-                force
+                force,
               );
             }
             break;
@@ -653,7 +743,12 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           }
 
           if (force && broadMatches.length > 0) {
-            associateDescriptorOverrideWithUpdate(blacklistDiagnostics, modId, broadMatches, latest);
+            associateDescriptorOverrideWithUpdate(
+              blacklistDiagnostics,
+              modId,
+              broadMatches,
+              latest,
+            );
           }
           const project = await CurseForgeClient.getMod(projectId);
           const latestVersionUrl = `https://www.curseforge.com/minecraft/${CURSEFORGE_SITE_SECTIONS[artifactType]}/${project.slug}/files/${latest.id}`;
@@ -663,7 +758,10 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
             provider: "curseforge",
             projectId: String(projectId),
             currentVersionId: String(currentFileId),
-            currentVersionName: currentFileMetadata?.displayName || currentFileMetadata?.fileName || String(currentFileId),
+            currentVersionName:
+              currentFileMetadata?.displayName ||
+              currentFileMetadata?.fileName ||
+              String(currentFileId),
             latestVersionId: String(latest.id),
             latestVersionName: latest.displayName || latest.fileName,
             latestVersionUrl,
@@ -674,7 +772,9 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           console.log(`  ⚡ [Update Found] ${def.name}`);
           console.log(`     Mod ID: ${modId}`);
           console.log(`     Project ID: ${projectId}`);
-          console.log(`     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`);
+          console.log(
+            `     Version: ${updateInfo.currentVersionName} -> ${updateInfo.latestVersionName}`,
+          );
           console.log(`     File IDs: ${currentFileId} -> ${latest.id}`);
           console.log(`     Updated version: ${latestVersionUrl}`);
 
@@ -688,7 +788,10 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
           recordSkip(modId, def.name, err?.message || String(err));
         }
       } else {
-        const modMatches = matchingBlacklistRules(blacklistRules, { modId, provider: provider.type });
+        const modMatches = matchingBlacklistRules(blacklistRules, {
+          modId,
+          provider: provider.type,
+        });
         if (modMatches.length > 0) {
           recordBlacklistMatches(
             blacklistDiagnostics,
@@ -700,11 +803,15 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
               provider: provider.type,
               reason: "descriptor",
             },
-            force
+            force,
           );
           if (!force) continue;
         }
-        recordSkip(modId, def.name, `Provider ${String(provider.type)} has no upstream update source.`);
+        recordSkip(
+          modId,
+          def.name,
+          `Provider ${String(provider.type)} has no upstream update source.`,
+        );
       }
     }
   }
@@ -714,17 +821,31 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
 
   updatesAvailable.sort((a, b) => a.modId.localeCompare(b.modId));
   blacklistDiagnostics.sort(
-    (a, b) => a.descriptorId.localeCompare(b.descriptorId) || (a.releaseId || "").localeCompare(b.releaseId || "")
+    (a, b) =>
+      a.descriptorId.localeCompare(b.descriptorId) ||
+      (a.releaseId || "").localeCompare(b.releaseId || ""),
   );
   const blockedCount = blacklistDiagnostics.filter((item) => item.kind === "blocked").length;
   const overrideCount = blacklistDiagnostics.filter((item) => item.kind === "override").length;
   console.log("\n" + "=".repeat(60));
-  console.log(` [Update Summary] ${updatesAvailable.length} updates found, ${upToDateCount} up-to-date, ${blockedCount} blacklist block(s), ${overrideCount} blacklist override(s), ${skippedCount} custom/skipped.`);
+  console.log(
+    ` [Update Summary] ${updatesAvailable.length} updates found, ${upToDateCount} up-to-date, ${blockedCount} blacklist block(s), ${overrideCount} blacklist override(s), ${skippedCount} custom/skipped.`,
+  );
   console.log("=".repeat(60) + "\n");
 
   if (options.markdownOut) {
-    otherMinecraftBuilds.sort((a, b) => a.descriptorId.localeCompare(b.descriptorId) || a.releaseId.localeCompare(b.releaseId));
-    writeMarkdownReport(options.markdownOut, packConfig, updatesAvailable, blacklistDiagnostics, skippedChecks, otherMinecraftBuilds);
+    otherMinecraftBuilds.sort(
+      (a, b) =>
+        a.descriptorId.localeCompare(b.descriptorId) || a.releaseId.localeCompare(b.releaseId),
+    );
+    writeMarkdownReport(
+      options.markdownOut,
+      packConfig,
+      updatesAvailable,
+      blacklistDiagnostics,
+      skippedChecks,
+      otherMinecraftBuilds,
+    );
     console.log(`[Update Checker] Markdown report written to ${options.markdownOut}`);
   }
 

@@ -30,7 +30,7 @@ describe("server resource-pack manifest validation", () => {
   test("requires a non-negative integer resource-pack size", () => {
     for (const size of [undefined, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
       expect(() => validateManifestForSync(manifestWithSize(size) as any)).toThrow(
-        "Invalid server resourcePack: 'size' must be a non-negative integer"
+        "Invalid server resourcePack: 'size' must be a non-negative integer",
       );
     }
     expect(() => validateManifestForSync(manifestWithSize(0) as any)).not.toThrow();
@@ -53,28 +53,46 @@ describe("sync verification modes", () => {
     const stat = fs.statSync(managedPath);
 
     const manifestPath = path.join(dir, "manifest.json");
-    fs.writeFileSync(manifestPath, JSON.stringify({
-      schemaVersion: 1,
-      pack: "Test",
-      version: "1.0.0",
-      target: "client",
-      minecraft: "26.2",
-      loader: { type: "fabric", version: "0.19.3" },
-      protocol: 1,
-      files: [{
-        path: "config/fixture.txt",
-        size: desired.length,
-        hashes: { sha256 },
-        download: { url: `data:text/plain;base64,${Buffer.from(desired).toString("base64")}`, provider: "direct" },
-        policy: "MANAGED",
-      }],
-    }));
-    fs.writeFileSync(path.join(stateDir, "installation.json"), JSON.stringify({
-      pack: "Test",
-      version: "1.0.0",
-      installedAt: new Date().toISOString(),
-      files: { "config/fixture.txt": { sha256, size: desired.length, policy: "MANAGED", mtimeMs: stat.mtimeMs } },
-    }));
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        schemaVersion: 1,
+        pack: "Test",
+        version: "1.0.0",
+        target: "client",
+        minecraft: "26.2",
+        loader: { type: "fabric", version: "0.19.3" },
+        protocol: 1,
+        files: [
+          {
+            path: "config/fixture.txt",
+            size: desired.length,
+            hashes: { sha256 },
+            download: {
+              url: `data:text/plain;base64,${Buffer.from(desired).toString("base64")}`,
+              provider: "direct",
+            },
+            policy: "MANAGED",
+          },
+        ],
+      }),
+    );
+    fs.writeFileSync(
+      path.join(stateDir, "installation.json"),
+      JSON.stringify({
+        pack: "Test",
+        version: "1.0.0",
+        installedAt: new Date().toISOString(),
+        files: {
+          "config/fixture.txt": {
+            sha256,
+            size: desired.length,
+            policy: "MANAGED",
+            mtimeMs: stat.mtimeMs,
+          },
+        },
+      }),
+    );
 
     try {
       await syncInstance({ manifestPath, targetDir: target, verificationMode: "fast" });
@@ -123,7 +141,7 @@ describe("sync verification modes", () => {
           prompt: "Lampas requires its resource pack.",
         },
         files: [],
-      })
+      }),
     );
 
     try {
@@ -132,10 +150,14 @@ describe("sync verification modes", () => {
       expect(propsContent).toContain("server-port=25565");
       expect(propsContent).toContain("motd=Lampas SMP");
       expect(propsContent).toContain("difficulty=hard");
-      expect(propsContent).toContain("resource-pack=https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip");
+      expect(propsContent).toContain(
+        "resource-pack=https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+      );
       expect(propsContent).toContain("resource-pack-sha1=abc1234567890123456789012345678901234567");
       expect(propsContent).toContain("require-resource-pack=true");
-      expect(propsContent).toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
+      expect(propsContent).toContain(
+        'resource-pack-prompt={"text":"Lampas requires its resource pack."}',
+      );
 
       // Test sync where prompt is removed
       const manifestNoPrompt = path.join(dir, "server-manifest-noprompt.json");
@@ -161,13 +183,15 @@ describe("sync verification modes", () => {
             // prompt omitted
           },
           files: [],
-        })
+        }),
       );
 
       await syncInstance({ manifestPath: manifestNoPrompt, targetDir: target });
       const noPromptProps = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
       expect(noPromptProps).toContain("resource-pack-prompt=");
-      expect(noPromptProps).not.toContain('resource-pack-prompt={"text":"Lampas requires its resource pack."}');
+      expect(noPromptProps).not.toContain(
+        'resource-pack-prompt={"text":"Lampas requires its resource pack."}',
+      );
 
       // Test subsequent sync where resource pack is removed
       const manifestWithoutPack = path.join(dir, "server-manifest-nopack.json");
@@ -182,7 +206,7 @@ describe("sync verification modes", () => {
           loader: { type: "fabric", version: "0.19.3" },
           protocol: 2,
           files: [],
-        })
+        }),
       );
 
       await syncInstance({ manifestPath: manifestWithoutPack, targetDir: target });
@@ -223,12 +247,12 @@ describe("sync verification modes", () => {
             policy: "MANAGED",
           },
         ],
-      })
+      }),
     );
 
     try {
       await expect(syncInstance({ manifestPath, targetDir: target })).rejects.toThrow(
-        /Unsafe relative path in manifest/
+        /Unsafe relative path in manifest/,
       );
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });

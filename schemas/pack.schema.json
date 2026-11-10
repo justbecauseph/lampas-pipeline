@@ -4,18 +4,11 @@
   "title": "Lampas Pack Configuration (pack.toml)",
   "description": "Root modpack definition specifying pack metadata, Minecraft version, mod loader, and launcher settings.",
   "type": "object",
-  "required": [
-    "pack",
-    "loader"
-  ],
+  "required": ["pack", "loader"],
   "properties": {
     "pack": {
       "type": "object",
-      "required": [
-        "name",
-        "version",
-        "minecraft"
-      ],
+      "required": ["name", "version", "minecraft"],
       "properties": {
         "name": {
           "type": "string",
@@ -33,10 +26,7 @@
     },
     "loader": {
       "type": "object",
-      "required": [
-        "type",
-        "version"
-      ],
+      "required": ["type", "version"],
       "additionalProperties": false,
       "properties": {
         "type": {

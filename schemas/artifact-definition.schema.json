@@ -4,11 +4,7 @@
   "title": "Lampas Pack Artifact Descriptor",
   "description": "Declarative artifact definition file for Lampas mods (pack/mods/*.toml), resource packs (pack/resourcepacks/*.toml), and shader packs (pack/shaderpacks/*.toml) specifying side, type, upstream provider, and version pinning.",
   "type": "object",
-  "required": [
-    "name",
-    "side",
-    "provider"
-  ],
+  "required": ["name", "side", "provider"],
   "properties": {
     "name": {
       "type": "string",
@@ -16,20 +12,12 @@
     },
     "side": {
       "type": "string",
-      "enum": [
-        "client",
-        "server",
-        "both"
-      ],
+      "enum": ["client", "server", "both"],
       "description": "Distribution side target: 'client' for player instances only, 'server' for dedicated servers only, or 'both'."
     },
     "type": {
       "type": "string",
-      "enum": [
-        "mod",
-        "shader",
-        "resourcepack"
-      ],
+      "enum": ["mod", "shader", "resourcepack"],
       "default": "mod",
       "description": "Artifact category: 'mod' (Fabric mod JAR), 'shader' (Iris shaderpack), or 'resourcepack' (asset zip)."
     },
@@ -48,25 +36,15 @@
     },
     "provider": {
       "type": "object",
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "modrinth",
-            "curseforge",
-            "lampas",
-            "direct"
-          ],
+          "enum": ["modrinth", "curseforge", "lampas", "direct"],
           "description": "Upstream source provider."
         },
         "project_id": {
-          "type": [
-            "string",
-            "integer"
-          ],
+          "type": ["string", "integer"],
           "description": "Modrinth project slug/ID (string) or CurseForge project ID (integer)."
         },
         "version_id": {

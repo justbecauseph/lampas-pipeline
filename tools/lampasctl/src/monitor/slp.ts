@@ -49,10 +49,7 @@ export function encodeVarInt(val: number): Buffer {
 /**
  * Decodes a Minecraft VarInt from a buffer starting at offset.
  */
-export function decodeVarInt(
-  buffer: Buffer,
-  offset = 0
-): { value: number; bytesRead: number } {
+export function decodeVarInt(buffer: Buffer, offset = 0): { value: number; bytesRead: number } {
   let value = 0;
   let bytesRead = 0;
   for (let i = 0; i < 5; i++) {
@@ -72,11 +69,7 @@ export function decodeVarInt(
 /**
  * Constructs a Minecraft Handshake packet (Packet ID 0, next state 1 = status).
  */
-export function createHandshakePacket(
-  host: string,
-  port: number,
-  protocolVersion = 767
-): Buffer {
+export function createHandshakePacket(host: string, port: number, protocolVersion = 767): Buffer {
   const hostBuf = Buffer.from(host, "utf-8");
   const portBuf = Buffer.alloc(2);
   portBuf.writeUInt16BE(port, 0);
@@ -114,7 +107,7 @@ export function createStatusRequestPacket(): Buffer {
 export function pingMinecraft(
   host: string,
   port: number,
-  timeoutMs = 4000
+  timeoutMs = 4000,
 ): Promise<MinecraftStatus> {
   return new Promise((resolve, reject) => {
     const socket = new net.Socket();

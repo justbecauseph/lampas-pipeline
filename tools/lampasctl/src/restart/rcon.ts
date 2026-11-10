@@ -24,7 +24,12 @@ export interface ResolveRconConfigOptions {
   targetDir?: string;
 }
 
-export type RconPasswordSource = "option" | "env" | "minecraft-env" | "server.properties" | "default";
+export type RconPasswordSource =
+  | "option"
+  | "env"
+  | "minecraft-env"
+  | "server.properties"
+  | "default";
 
 export interface RconConfig {
   host: string;
@@ -109,11 +114,7 @@ export function resolveRconConfig(options: ResolveRconConfigOptions = {}): RconC
   }
 
   // 1. Host resolution: options -> env -> .minecraft-env -> default 127.0.0.1
-  const host =
-    options.host ||
-    process.env.RCON_HOST ||
-    envVars.RCON_HOST ||
-    "127.0.0.1";
+  const host = options.host || process.env.RCON_HOST || envVars.RCON_HOST || "127.0.0.1";
 
   // 2. Port resolution: options -> env -> .minecraft-env -> server.properties -> default 25575
   let port: number | undefined = options.port;
@@ -205,7 +206,11 @@ export class RconClient {
         if (!settled) {
           settled = true;
           this.close();
-          reject(new Error(`Timeout (${timeoutMs}ms) waiting for RCON connection/authentication to ${host}:${port}`));
+          reject(
+            new Error(
+              `Timeout (${timeoutMs}ms) waiting for RCON connection/authentication to ${host}:${port}`,
+            ),
+          );
         }
       }, timeoutMs);
 
@@ -294,7 +299,9 @@ export class RconClient {
     return new Promise<string>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pendingRequests.delete(reqId);
-        reject(new Error(`Timeout (${timeoutMs}ms) waiting for RCON command response: "${command}"`));
+        reject(
+          new Error(`Timeout (${timeoutMs}ms) waiting for RCON command response: "${command}"`),
+        );
       }, timeoutMs);
 
       this.pendingRequests.set(reqId, { resolve, reject, timer });

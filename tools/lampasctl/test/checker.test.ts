@@ -2,7 +2,11 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { checkPackUpdates, otherTaggedMinecraftVersion, taggedMinecraftVersion } from "../src/checker";
+import {
+  checkPackUpdates,
+  otherTaggedMinecraftVersion,
+  taggedMinecraftVersion,
+} from "../src/checker";
 import { resetModrinthRateLimit, setModrinthRateLimitClock } from "../src/modrinth-http";
 
 const originalFetch = globalThis.fetch;
@@ -28,7 +32,9 @@ interface Fixture {
   packConfig: string;
 }
 
-function createFixture(options: { provider?: "modrinth" | "curseforge"; blacklist?: string } = {}): Fixture {
+function createFixture(
+  options: { provider?: "modrinth" | "curseforge"; blacklist?: string } = {},
+): Fixture {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-checker-"));
   const packDir = path.join(dir, "pack");
   const modsDir = path.join(packDir, "mods");
@@ -39,22 +45,45 @@ function createFixture(options: { provider?: "modrinth" | "curseforge"; blacklis
   fs.mkdirSync(modsDir, { recursive: true });
   const packConfig = [
     ...(emptyRootBlacklist ? ["blacklist = []"] : []),
-    "[pack]", 'name = "Test Pack"', 'version = "1.0.0"', 'minecraft = "26.2"',
-    "[loader]", 'type = "fabric"', 'version = "0.19.3"', emptyRootBlacklist ? "" : options.blacklist || "", "",
+    "[pack]",
+    'name = "Test Pack"',
+    'version = "1.0.0"',
+    'minecraft = "26.2"',
+    "[loader]",
+    'type = "fabric"',
+    'version = "0.19.3"',
+    emptyRootBlacklist ? "" : options.blacklist || "",
+    "",
   ].join("\n");
   fs.writeFileSync(path.join(packDir, "pack.toml"), packConfig);
-  fs.writeFileSync(descriptor, provider === "modrinth" ? [
-    'name = "Example Mod"', 'side = "both"', "[provider]", 'type = "modrinth"',
-    'project_id = "example-project"', 'version_id = "old-version-id"', "",
-  ].join("\n") : [
-    'name = "Example CF Mod"', 'side = "both"', "[provider]", 'type = "curseforge"',
-    "project_id = 100", "file_id = 200", "",
-  ].join("\n"));
+  fs.writeFileSync(
+    descriptor,
+    provider === "modrinth"
+      ? [
+          'name = "Example Mod"',
+          'side = "both"',
+          "[provider]",
+          'type = "modrinth"',
+          'project_id = "example-project"',
+          'version_id = "old-version-id"',
+          "",
+        ].join("\n")
+      : [
+          'name = "Example CF Mod"',
+          'side = "both"',
+          "[provider]",
+          'type = "curseforge"',
+          "project_id = 100",
+          "file_id = 200",
+          "",
+        ].join("\n"),
+  );
   return { dir, packDir, modsDir, descriptor, markdownOut, packConfig };
 }
 
 function modrinthRelease(id: string, version: string, publishedAt?: string) {
-  const publicationDate = publishedAt || (id === "old-version-id" ? "2026-08-20T00:00:00Z" : undefined);
+  const publicationDate =
+    publishedAt || (id === "old-version-id" ? "2026-08-20T00:00:00Z" : undefined);
   return {
     id,
     name: `Example Mod ${version}`,
@@ -68,29 +97,46 @@ function useModrinth(
   versions: unknown[],
   current?: unknown,
   projectId = "example-project",
-  currentVersionId = "old-version-id"
+  currentVersionId = "old-version-id",
 ): { requests: string[] } {
   const requests: string[] = [];
   globalThis.fetch = (async (input: string | URL | Request) => {
-    const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+    const url = new URL(
+      typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+    );
     requests.push(url.toString());
     if (url.pathname === `/v2/project/${projectId}/version`) return Response.json(versions);
-    if (url.pathname === `/v2/version/${currentVersionId}` && current) return Response.json(current);
+    if (url.pathname === `/v2/version/${currentVersionId}` && current)
+      return Response.json(current);
     return new Response("not found", { status: 404 });
   }) as typeof fetch;
   return { requests };
 }
 
-function useCurseForge(options: { files: Array<Record<string, unknown>>; current?: Record<string, unknown> }) {
+function useCurseForge(options: {
+  files: Array<Record<string, unknown>>;
+  current?: Record<string, unknown>;
+}) {
   const requests: string[] = [];
   process.env.CURSEFORGE_API_KEY = "test-api-key";
   globalThis.fetch = (async (input: string | URL | Request) => {
-    const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+    const url = new URL(
+      typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+    );
     requests.push(url.toString());
     if (url.pathname === "/v1/mods/100/files") return Response.json({ data: options.files });
-    if (url.pathname === "/v1/mods/100/files/200" && options.current) return Response.json({ data: options.current });
+    if (url.pathname === "/v1/mods/100/files/200" && options.current)
+      return Response.json({ data: options.current });
     if (url.pathname === "/v1/mods/100") {
-      return Response.json({ data: { id: 100, gameId: 432, name: "Example CF Mod", slug: "example-cf", isAvailable: true } });
+      return Response.json({
+        data: {
+          id: 100,
+          gameId: 432,
+          name: "Example CF Mod",
+          slug: "example-cf",
+          isAvailable: true,
+        },
+      });
     }
     return new Response("not found", { status: 404 });
   }) as typeof fetch;
@@ -99,15 +145,26 @@ function useCurseForge(options: { files: Array<Record<string, unknown>>; current
 
 function curseForgeFile(id: number, version: string, fileDate: string) {
   return {
-    id, modId: 100, isAvailable: true, displayName: version, fileName: `example-${version}.jar`,
-    fileDate, fileLength: 1, hashes: [], gameVersions: ["26.2", "Fabric"],
+    id,
+    modId: 100,
+    isAvailable: true,
+    displayName: version,
+    fileName: `example-${version}.jar`,
+    fileDate,
+    fileLength: 1,
+    hashes: [],
+    gameVersions: ["26.2", "Fabric"],
   };
 }
 
 function versionRule(id: string, provider: "modrinth" | "curseforge" = "modrinth"): string {
   return [
-    "[[blacklist]]", 'scope = "version_id"', `provider = "${provider}"`,
-    `id = ${provider === "modrinth" ? JSON.stringify(id) : id}`, 'reason = "known incompatible release"', "",
+    "[[blacklist]]",
+    'scope = "version_id"',
+    `provider = "${provider}"`,
+    `id = ${provider === "modrinth" ? JSON.stringify(id) : id}`,
+    'reason = "known incompatible release"',
+    "",
   ].join("\n");
 }
 
@@ -123,10 +180,18 @@ describe("update checker output and blacklist handling", () => {
     console.log = (...args: unknown[]) => logs.push(args.join(" "));
     console.warn = (...args: unknown[]) => logs.push(args.join(" "));
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates.map((update) => update.latestVersionId)).toEqual(["allowed-middle"]);
-      expect(logs.some((line) => line.includes("[Blocked by Blacklist]") && line.includes("blocked-latest"))).toBe(true);
+      expect(
+        logs.some(
+          (line) => line.includes("[Blocked by Blacklist]") && line.includes("blocked-latest"),
+        ),
+      ).toBe(true);
       expect(markdown).toContain("known incompatible release");
       expect(markdown).toContain("blocked-latest");
       expect(markdown).toContain("allowed-middle");
@@ -137,7 +202,9 @@ describe("update checker output and blacklist handling", () => {
   });
 
   test("does not downgrade or write when every newer Modrinth release is blocked", async () => {
-    const fixture = createFixture({ blacklist: `${versionRule("blocked-newest")}${versionRule("blocked-next")}` });
+    const fixture = createFixture({
+      blacklist: `${versionRule("blocked-newest")}${versionRule("blocked-next")}`,
+    });
     useModrinth([
       modrinthRelease("blocked-newest", "3.0.0", "2026-08-22T00:00:00Z"),
       modrinthRelease("blocked-next", "2.0.0", "2026-08-21T00:00:00Z"),
@@ -145,7 +212,12 @@ describe("update checker output and blacklist handling", () => {
     ]);
     const before = fs.readFileSync(fixture.descriptor, "utf-8");
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates).toHaveLength(0);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
@@ -167,10 +239,16 @@ describe("update checker output and blacklist handling", () => {
     const logs: string[] = [];
     console.warn = (...args: unknown[]) => logs.push(args.join(" "));
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates).toHaveLength(0);
-      expect(logs.some((line) => line.includes("current_pin") || line.includes("old-version-id"))).toBe(true);
+      expect(
+        logs.some((line) => line.includes("current_pin") || line.includes("old-version-id")),
+      ).toBe(true);
       expect(markdown).toContain("old-version-id");
       expect(markdown).toContain("current pin");
       expect(markdown).not.toContain("0.9.0");
@@ -184,13 +262,20 @@ describe("update checker output and blacklist handling", () => {
     const before = fs.readFileSync(fixture.descriptor, "utf-8");
     const requests: string[] = [];
     globalThis.fetch = (async (input: string | URL | Request) => {
-      requests.push(typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url);
+      requests.push(
+        typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url,
+      );
       return new Response("upstream unavailable", { status: 503 });
     }) as typeof fetch;
     const logs: string[] = [];
     console.warn = (...args: unknown[]) => logs.push(args.join(" "));
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       expect(updates).toHaveLength(0);
       expect(requests).toHaveLength(1);
       expect(logs.some((line) => line.includes("old-version-id"))).toBe(true);
@@ -206,16 +291,27 @@ describe("update checker output and blacklist handling", () => {
 
   test("blocks the exact SnappyTappy 26.3 version ID while retaining the Lampas 26.2 pin", async () => {
     const fixture = createFixture({ blacklist: versionRule("ER3HfIOr") });
-    const descriptor = fs.readFileSync(fixture.descriptor, "utf-8")
+    const descriptor = fs
+      .readFileSync(fixture.descriptor, "utf-8")
       .replace('project_id = "example-project"', 'project_id = "dWOPoahl"')
       .replace('version_id = "old-version-id"', 'version_id = "ISW3ltTi"');
     fs.writeFileSync(fixture.descriptor, descriptor);
-    useModrinth([
-      modrinthRelease("ER3HfIOr", "26.3", "2026-08-22T00:00:00Z"),
-      modrinthRelease("ISW3ltTi", "26.2", "2026-08-20T00:00:00Z"),
-    ], undefined, "dWOPoahl", "ISW3ltTi");
+    useModrinth(
+      [
+        modrinthRelease("ER3HfIOr", "26.3", "2026-08-22T00:00:00Z"),
+        modrinthRelease("ISW3ltTi", "26.2", "2026-08-20T00:00:00Z"),
+      ],
+      undefined,
+      "dWOPoahl",
+      "ISW3ltTi",
+    );
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       expect(updates).toHaveLength(0);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "ISW3ltTi"');
       expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("ER3HfIOr");
@@ -227,18 +323,37 @@ describe("update checker output and blacklist handling", () => {
   test("mod_id and project_id rules skip the descriptor before any upstream request", async () => {
     for (const { rule, expected } of [
       {
-        rule: ["[[blacklist]]", 'scope = "mod_id"', 'id = "example-mod"', 'reason = "skip descriptor"', ""].join("\n"),
+        rule: [
+          "[[blacklist]]",
+          'scope = "mod_id"',
+          'id = "example-mod"',
+          'reason = "skip descriptor"',
+          "",
+        ].join("\n"),
         expected: "mod_id 'example-mod'",
       },
       {
-        rule: ["[[blacklist]]", 'scope = "project_id"', 'provider = "modrinth"', 'id = "example-project"', 'reason = "skip project"', ""].join("\n"),
+        rule: [
+          "[[blacklist]]",
+          'scope = "project_id"',
+          'provider = "modrinth"',
+          'id = "example-project"',
+          'reason = "skip project"',
+          "",
+        ].join("\n"),
         expected: "project_id 'example-project'",
       },
     ]) {
       const fixture = createFixture({ blacklist: rule });
-      const mock = useModrinth([modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z")]);
+      const mock = useModrinth([
+        modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+      ]);
       try {
-        const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, concurrency: 1 });
+        const updates = await checkPackUpdates({
+          packDir: fixture.packDir,
+          markdownOut: fixture.markdownOut,
+          concurrency: 1,
+        });
         expect(updates).toHaveLength(0);
         expect(mock.requests).toHaveLength(0);
         const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
@@ -251,18 +366,34 @@ describe("update checker output and blacklist handling", () => {
   });
 
   test("--force bypasses a descriptor-level rule and reports the selected update", async () => {
-    const fixture = createFixture({ blacklist: [
-      "[[blacklist]]", 'scope = "mod_id"', 'id = "example-mod"', 'reason = "temporarily excluded"', "",
-    ].join("\n") });
+    const fixture = createFixture({
+      blacklist: [
+        "[[blacklist]]",
+        'scope = "mod_id"',
+        'id = "example-mod"',
+        'reason = "temporarily excluded"',
+        "",
+      ].join("\n"),
+    });
     useModrinth([
       modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
       modrinthRelease("old-version-id", "1.0.0"),
     ]);
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, force: true, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        force: true,
+        apply: true,
+        concurrency: 1,
+      });
       expect(updates.map((update) => update.latestVersionId)).toEqual(["new-version-id"]);
-      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
-      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(fixture.packConfig);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain(
+        'version_id = "new-version-id"',
+      );
+      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(
+        fixture.packConfig,
+      );
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(markdown).toContain("Blacklist Overrides (1)");
       expect(markdown).toContain("mod_id 'example-mod'");
@@ -302,10 +433,13 @@ describe("update checker output and blacklist handling", () => {
 
   test("compares dates when the pinned Modrinth release is absent from the compatible list", async () => {
     const fixture = createFixture();
-    useModrinth([
-      modrinthRelease("newer", "2.0.0", "2026-08-22T00:00:00Z"),
-      modrinthRelease("older", "0.9.0", "2026-08-18T00:00:00Z"),
-    ], { id: "old-version-id", version_number: "1.0.0", date_published: "2026-08-20T00:00:00Z" });
+    useModrinth(
+      [
+        modrinthRelease("newer", "2.0.0", "2026-08-22T00:00:00Z"),
+        modrinthRelease("older", "0.9.0", "2026-08-18T00:00:00Z"),
+      ],
+      { id: "old-version-id", version_number: "1.0.0", date_published: "2026-08-20T00:00:00Z" },
+    );
     try {
       const updates = await checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 });
       expect(updates.map((update) => update.latestVersionId)).toEqual(["newer"]);
@@ -318,7 +452,11 @@ describe("update checker output and blacklist handling", () => {
     const fixture = createFixture();
     const mock = useModrinth([modrinthRelease("newer", "2.0.0", "2026-08-22T00:00:00Z")]);
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        concurrency: 1,
+      });
       expect(updates).toHaveLength(0);
       expect(mock.requests.some((url) => url.includes("/v2/version/old-version-id"))).toBe(true);
       expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("no valid publication date");
@@ -337,10 +475,18 @@ describe("update checker output and blacklist handling", () => {
       ]);
       const before = fs.readFileSync(fixture.descriptor, "utf-8");
       try {
-        const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, force, markdownOut: fixture.markdownOut, concurrency: 1 });
+        const updates = await checkPackUpdates({
+          packDir: fixture.packDir,
+          apply: true,
+          force,
+          markdownOut: fixture.markdownOut,
+          concurrency: 1,
+        });
         expect(updates).toHaveLength(0);
         expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
-        expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("newness could not be established");
+        expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain(
+          "newness could not be established",
+        );
       } finally {
         fs.rmSync(fixture.dir, { recursive: true, force: true });
       }
@@ -355,8 +501,12 @@ describe("update checker output and blacklist handling", () => {
     ]);
     try {
       await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
-      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
-      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(fixture.packConfig);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain(
+        'version_id = "new-version-id"',
+      );
+      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(
+        fixture.packConfig,
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -376,10 +526,13 @@ describe("update checker output and blacklist handling", () => {
     console.warn = () => {};
     let versionRequests = 0;
     globalThis.fetch = (async (input: string | URL | Request) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       if (url.pathname === "/v2/project/example-project/version") {
         versionRequests++;
-        if (versionRequests === 1) return new Response("slow down", { status: 429, headers: { "Retry-After": "1" } });
+        if (versionRequests === 1)
+          return new Response("slow down", { status: 429, headers: { "Retry-After": "1" } });
         return Response.json([
           modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
           modrinthRelease("old-version-id", "1.0.0"),
@@ -388,38 +541,73 @@ describe("update checker output and blacklist handling", () => {
       return new Response("not found", { status: 404 });
     }) as typeof fetch;
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        apply: true,
+        concurrency: 1,
+      });
       expect(versionRequests).toBe(2);
       expect(slept).toEqual([1000]);
       expect(updates.map((update) => update.latestVersionId)).toEqual(["new-version-id"]);
-      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain(
+        'version_id = "new-version-id"',
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
   });
 
   test("applies CurseForge updates while preserving the typed blacklist policy", async () => {
-    const fixture = createFixture({ provider: "curseforge", blacklist: versionRule("999", "curseforge") });
-    useCurseForge({ files: [curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z")] });
+    const fixture = createFixture({
+      provider: "curseforge",
+      blacklist: versionRule("999", "curseforge"),
+    });
+    useCurseForge({
+      files: [
+        curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"),
+        curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+      ],
+    });
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       const descriptor = fs.readFileSync(fixture.descriptor, "utf-8");
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates.map((update) => update.latestVersionId)).toEqual(["201"]);
       expect(descriptor).toContain("file_id = 201");
-      expect(markdown).toContain("https://www.curseforge.com/minecraft/mc-mods/example-cf/files/201");
-      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(fixture.packConfig);
+      expect(markdown).toContain(
+        "https://www.curseforge.com/minecraft/mc-mods/example-cf/files/201",
+      );
+      expect(fs.readFileSync(path.join(fixture.packDir, "pack.toml"), "utf-8")).toBe(
+        fixture.packConfig,
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
   });
 
   test("rejects malformed CurseForge candidate IDs before blacklist matching or applying", async () => {
-    const fixture = createFixture({ provider: "curseforge", blacklist: versionRule("201", "curseforge") });
-    useCurseForge({ files: [curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"), { ...curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), id: "201" }] });
+    const fixture = createFixture({
+      provider: "curseforge",
+      blacklist: versionRule("201", "curseforge"),
+    });
+    useCurseForge({
+      files: [
+        curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+        { ...curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), id: "201" },
+      ],
+    });
     const before = fs.readFileSync(fixture.descriptor, "utf-8");
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        apply: true,
+        concurrency: 1,
+      });
       expect(updates).toHaveLength(0);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
     } finally {
@@ -436,11 +624,23 @@ describe("update checker output and blacklist handling", () => {
     const logs: string[] = [];
     console.warn = (...args: unknown[]) => logs.push(args.join(" "));
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, force: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        force: true,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates.map((update) => update.latestVersionId)).toEqual(["new-version-id"]);
-      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "new-version-id"');
-      expect(logs.some((line) => line.includes("[Blacklist Override]") && line.includes("new-version-id"))).toBe(true);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain(
+        'version_id = "new-version-id"',
+      );
+      expect(
+        logs.some(
+          (line) => line.includes("[Blacklist Override]") && line.includes("new-version-id"),
+        ),
+      ).toBe(true);
       expect(markdown).toContain("Blacklist Overrides (1)");
       expect(markdown).toContain("selected update");
       expect(markdown).toContain("Blocked Releases (0)");
@@ -450,10 +650,24 @@ describe("update checker output and blacklist handling", () => {
   });
 
   test("--force selects and applies a blacklisted CurseForge file with an override report", async () => {
-    const fixture = createFixture({ provider: "curseforge", blacklist: versionRule("201", "curseforge") });
-    useCurseForge({ files: [curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z")] });
+    const fixture = createFixture({
+      provider: "curseforge",
+      blacklist: versionRule("201", "curseforge"),
+    });
+    useCurseForge({
+      files: [
+        curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"),
+        curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+      ],
+    });
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, force: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        force: true,
+        concurrency: 1,
+      });
       expect(updates.map((update) => update.latestVersionId)).toEqual(["201"]);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain("file_id = 201");
       expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("selected update");
@@ -468,16 +682,30 @@ describe("update checker output and blacklist handling", () => {
       modrinthRelease("old-version-id", "1.0.0"),
       modrinthRelease("older-version-id", "0.9.0"),
     ]);
-    const updates = await checkPackUpdates({ packDir: fixture.packDir, force: true, concurrency: 1 });
+    const updates = await checkPackUpdates({
+      packDir: fixture.packDir,
+      force: true,
+      concurrency: 1,
+    });
     expect(updates).toHaveLength(0);
 
-    const malformed = createFixture({ blacklist: [
-      "[[blacklist]]", 'scope = "version_id"', 'provider = "modrinth"', 'id = "   "', "",
-    ].join("\n") });
+    const malformed = createFixture({
+      blacklist: [
+        "[[blacklist]]",
+        'scope = "version_id"',
+        'provider = "modrinth"',
+        'id = "   "',
+        "",
+      ].join("\n"),
+    });
     const before = fs.readFileSync(malformed.descriptor, "utf-8");
-    const noRequests = useModrinth([modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z")]);
+    const noRequests = useModrinth([
+      modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+    ]);
     try {
-      await expect(checkPackUpdates({ packDir: malformed.packDir, force: true, apply: true, concurrency: 1 })).rejects.toThrow();
+      await expect(
+        checkPackUpdates({ packDir: malformed.packDir, force: true, apply: true, concurrency: 1 }),
+      ).rejects.toThrow();
       expect(noRequests.requests).toHaveLength(0);
       expect(fs.readFileSync(malformed.descriptor, "utf-8")).toBe(before);
     } finally {
@@ -487,13 +715,21 @@ describe("update checker output and blacklist handling", () => {
   });
 
   test("malformed policy preflight prevents all requests and partial descriptor writes", async () => {
-    const fixture = createFixture({ blacklist: [
-      "[[blacklist]]", 'scope = "version_id"', 'provider = "curseforge"', "id = 0", "",
-    ].join("\n") });
+    const fixture = createFixture({
+      blacklist: [
+        "[[blacklist]]",
+        'scope = "version_id"',
+        'provider = "curseforge"',
+        "id = 0",
+        "",
+      ].join("\n"),
+    });
     const before = fs.readFileSync(fixture.descriptor, "utf-8");
     const mock = useModrinth([modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z")]);
     try {
-      await expect(checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 })).rejects.toThrow();
+      await expect(
+        checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 }),
+      ).rejects.toThrow();
       expect(mock.requests).toHaveLength(0);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
     } finally {
@@ -506,7 +742,9 @@ describe("update checker output and blacklist handling", () => {
     fs.appendFileSync(path.join(fixture.packDir, "pack.toml"), "blacklist = []\n");
     const mock = useModrinth([modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z")]);
     try {
-      await expect(checkPackUpdates({ packDir: fixture.packDir, force: true, concurrency: 1 })).rejects.toThrow("at the root");
+      await expect(
+        checkPackUpdates({ packDir: fixture.packDir, force: true, concurrency: 1 }),
+      ).rejects.toThrow("at the root");
       expect(mock.requests).toHaveLength(0);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -538,11 +776,18 @@ describe("update checker output and blacklist handling", () => {
     ];
     for (const item of cases) {
       const fixture = createFixture({ provider: item.provider, blacklist: item.blacklist });
-      fs.writeFileSync(fixture.descriptor, fs.readFileSync(fixture.descriptor, "utf-8").replace(item.replace[0], item.replace[1]));
+      fs.writeFileSync(
+        fixture.descriptor,
+        fs.readFileSync(fixture.descriptor, "utf-8").replace(item.replace[0], item.replace[1]),
+      );
       const before = fs.readFileSync(fixture.descriptor, "utf-8");
-      const mock = useModrinth([modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z")]);
+      const mock = useModrinth([
+        modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+      ]);
       try {
-        await expect(checkPackUpdates({ packDir: fixture.packDir, force: true, apply: true, concurrency: 1 })).rejects.toThrow();
+        await expect(
+          checkPackUpdates({ packDir: fixture.packDir, force: true, apply: true, concurrency: 1 }),
+        ).rejects.toThrow();
         expect(mock.requests).toHaveLength(0);
         expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
       } finally {
@@ -556,7 +801,11 @@ describe("update checker output and blacklist handling", () => {
     fs.writeFileSync(fixture.markdownOut, "stale previous report");
     useModrinth([modrinthRelease("old-version-id", "1.0.0")]);
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates).toHaveLength(0);
       expect(markdown).toContain("Upstream Mod Updates Available (0)");
@@ -580,7 +829,9 @@ describe("update checker artifact coverage", () => {
   function useModrinthProjects(projects: Record<string, unknown[]>): { requests: URL[] } {
     const requests: URL[] = [];
     globalThis.fetch = (async (input: string | URL | Request) => {
-      const url = new URL(typeof input === "string" || input instanceof URL ? input.toString() : input.url);
+      const url = new URL(
+        typeof input === "string" || input instanceof URL ? input.toString() : input.url,
+      );
       requests.push(url);
       const match = url.pathname.match(/^\/v2\/project\/([^/]+)\/version$/);
       if (match && projects[match[1]]) return Response.json(projects[match[1]]);
@@ -592,14 +843,27 @@ describe("update checker artifact coverage", () => {
   test("checks shaderpacks and resourcepacks with their Modrinth loaders and applies updates", async () => {
     const fixture = createFixture();
     const shader = writeDescriptor(fixture.packDir, "shaderpacks", "example-shader", [
-      'name = "Example Shader"', 'side = "client"', 'type = "shader"', "[provider]", 'type = "modrinth"',
-      'project_id = "shader-project"', 'version_id = "old-version-id"',
+      'name = "Example Shader"',
+      'side = "client"',
+      'type = "shader"',
+      "[provider]",
+      'type = "modrinth"',
+      'project_id = "shader-project"',
+      'version_id = "old-version-id"',
     ]);
     const resourcepack = writeDescriptor(fixture.packDir, "resourcepacks", "example-pack", [
-      'name = "Example Pack"', 'side = "client"', 'type = "resourcepack"', "[provider]", 'type = "modrinth"',
-      'project_id = "pack-project"', 'version_id = "old-version-id"',
+      'name = "Example Pack"',
+      'side = "client"',
+      'type = "resourcepack"',
+      "[provider]",
+      'type = "modrinth"',
+      'project_id = "pack-project"',
+      'version_id = "old-version-id"',
     ]);
-    const releases = (id: string) => [modrinthRelease(id, "2.0.0", "2026-08-22T00:00:00Z"), modrinthRelease("old-version-id", "1.0.0")];
+    const releases = (id: string) => [
+      modrinthRelease(id, "2.0.0", "2026-08-22T00:00:00Z"),
+      modrinthRelease("old-version-id", "1.0.0"),
+    ];
     const { requests } = useModrinthProjects({
       "example-project": [modrinthRelease("old-version-id", "1.0.0")],
       "shader-project": releases("new-shader-id"),
@@ -607,9 +871,16 @@ describe("update checker artifact coverage", () => {
     });
     console.log = () => {};
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       const loadersFor = (projectId: string) =>
-        requests.find((url) => url.pathname === `/v2/project/${projectId}/version`)?.searchParams.get("loaders");
+        requests
+          .find((url) => url.pathname === `/v2/project/${projectId}/version`)
+          ?.searchParams.get("loaders");
       expect(loadersFor("example-project")).toBe('["fabric"]');
       expect(loadersFor("shader-project")).toBe('["iris"]');
       expect(loadersFor("pack-project")).toBe('["minecraft"]');
@@ -617,8 +888,12 @@ describe("update checker artifact coverage", () => {
       expect(fs.readFileSync(shader, "utf-8")).toContain('version_id = "new-shader-id"');
       expect(fs.readFileSync(resourcepack, "utf-8")).toContain('version_id = "new-pack-id"');
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
-      expect(markdown).toContain("https://modrinth.com/shader/shader-project/version/new-shader-id");
-      expect(markdown).toContain("https://modrinth.com/resourcepack/pack-project/version/new-pack-id");
+      expect(markdown).toContain(
+        "https://modrinth.com/shader/shader-project/version/new-shader-id",
+      );
+      expect(markdown).toContain(
+        "https://modrinth.com/resourcepack/pack-project/version/new-pack-id",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -627,8 +902,12 @@ describe("update checker artifact coverage", () => {
   test("uses the descriptor directory default type when a shader descriptor omits type", async () => {
     const fixture = createFixture();
     writeDescriptor(fixture.packDir, "shaders", "untyped-shader", [
-      'name = "Untyped Shader"', 'side = "client"', "[provider]", 'type = "modrinth"',
-      'project_id = "shader-project"', 'version_id = "old-version-id"',
+      'name = "Untyped Shader"',
+      'side = "client"',
+      "[provider]",
+      'type = "modrinth"',
+      'project_id = "shader-project"',
+      'version_id = "old-version-id"',
     ]);
     const { requests } = useModrinthProjects({
       "example-project": [modrinthRelease("old-version-id", "1.0.0")],
@@ -637,7 +916,9 @@ describe("update checker artifact coverage", () => {
     console.log = () => {};
     try {
       await checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 });
-      const shaderRequest = requests.find((url) => url.pathname === "/v2/project/shader-project/version");
+      const shaderRequest = requests.find(
+        (url) => url.pathname === "/v2/project/shader-project/version",
+      );
       expect(shaderRequest?.searchParams.get("loaders")).toBe('["iris"]');
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -648,20 +929,37 @@ describe("update checker artifact coverage", () => {
     const fixture = createFixture({ provider: "curseforge" });
     fs.rmSync(fixture.descriptor);
     const shader = writeDescriptor(fixture.packDir, "shaderpacks", "example-cf-shader", [
-      'name = "Example CF Shader"', 'side = "client"', 'type = "shader"', "[provider]", 'type = "curseforge"',
-      "project_id = 100", "file_id = 200",
+      'name = "Example CF Shader"',
+      'side = "client"',
+      'type = "shader"',
+      "[provider]",
+      'type = "curseforge"',
+      "project_id = 100",
+      "file_id = 200",
     ]);
     const { requests } = useCurseForge({
-      files: [curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"), curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z")],
+      files: [
+        curseForgeFile(201, "2.0.0", "2026-08-22T00:00:00Z"),
+        curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+      ],
     });
     console.log = () => {};
     try {
-      await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
-      const filesRequest = requests.map((url) => new URL(url)).find((url) => url.pathname === "/v1/mods/100/files");
+      await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
+      const filesRequest = requests
+        .map((url) => new URL(url))
+        .find((url) => url.pathname === "/v1/mods/100/files");
       expect(filesRequest?.searchParams.get("gameVersion")).toBe("26.2");
       expect(filesRequest?.searchParams.has("modLoaderType")).toBe(false);
       expect(fs.readFileSync(shader, "utf-8")).toContain("file_id = 201");
-      expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("https://www.curseforge.com/minecraft/shaders/example-cf/files/201");
+      expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain(
+        "https://www.curseforge.com/minecraft/shaders/example-cf/files/201",
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -681,11 +979,23 @@ describe("update checker builds for another Minecraft version", () => {
     console.log = (...args: unknown[]) => logs.push(args.join(" "));
     console.warn = (...args: unknown[]) => logs.push(args.join(" "));
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, markdownOut: fixture.markdownOut, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
       const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
       expect(updates).toHaveLength(0);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
-      expect(logs.some((line) => line.includes("[Other Minecraft Build]") && line.includes("1.1.0+mc26.1.2") && line.includes("26.1.2"))).toBe(true);
+      expect(
+        logs.some(
+          (line) =>
+            line.includes("[Other Minecraft Build]") &&
+            line.includes("1.1.0+mc26.1.2") &&
+            line.includes("26.1.2"),
+        ),
+      ).toBe(true);
       expect(markdown).toContain("Builds for Another Minecraft Version (1)");
       expect(markdown).toContain("`c7NJIaAM`");
     } finally {
@@ -703,7 +1013,11 @@ describe("update checker builds for another Minecraft version", () => {
     console.log = () => {};
     console.warn = () => {};
     try {
-      const updates = await checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 });
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        apply: true,
+        concurrency: 1,
+      });
       expect(updates.map((update) => update.latestVersionId)).toEqual(["same-mc"]);
       expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain('version_id = "same-mc"');
     } finally {
@@ -733,10 +1047,26 @@ describe("update checker builds for another Minecraft version", () => {
     expect(taggedMinecraftVersion({ id: "a", version_number: "1.1.0+mc26.1.2" })).toBe("26.1.2");
     expect(taggedMinecraftVersion({ id: "b", displayName: "Mod MC1.21.1 build" })).toBe("1.21.1");
     expect(taggedMinecraftVersion({ id: "c", fileName: "example-mc1.21.1.jar" })).toBe("1.21.1");
-    expect(taggedMinecraftVersion({ id: "d", version_number: "3.0.0", files: [{ primary: true, filename: "x-mc_26.3.jar" }] })).toBe("26.3");
-    expect(taggedMinecraftVersion({ id: "e", version_number: "3.0.0", files: [{ filename: "emcee-2.jar" }] })).toBeUndefined();
-    expect(otherTaggedMinecraftVersion({ id: "f", version_number: "1.0+mc26.2.1" }, "26.2")).toBeUndefined();
-    expect(otherTaggedMinecraftVersion({ id: "g", version_number: "1.0+mc26.3" }, "26.2")).toBe("26.3");
+    expect(
+      taggedMinecraftVersion({
+        id: "d",
+        version_number: "3.0.0",
+        files: [{ primary: true, filename: "x-mc_26.3.jar" }],
+      }),
+    ).toBe("26.3");
+    expect(
+      taggedMinecraftVersion({
+        id: "e",
+        version_number: "3.0.0",
+        files: [{ filename: "emcee-2.jar" }],
+      }),
+    ).toBeUndefined();
+    expect(
+      otherTaggedMinecraftVersion({ id: "f", version_number: "1.0+mc26.2.1" }, "26.2"),
+    ).toBeUndefined();
+    expect(otherTaggedMinecraftVersion({ id: "g", version_number: "1.0+mc26.3" }, "26.2")).toBe(
+      "26.3",
+    );
   });
 
   test("does not offer a CurseForge file tagged for another Minecraft version", async () => {

@@ -9,7 +9,9 @@ function invalid(source: string, index: number | undefined, detail: string): nev
 }
 
 function hasNonWhitespaceId(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0 && value.trim() === value && !/\s/.test(value);
+  return (
+    typeof value === "string" && value.length > 0 && value.trim() === value && !/\s/.test(value)
+  );
 }
 
 /** Parse and validate the root pack blacklist without consulting any provider. */
@@ -25,10 +27,17 @@ export function parseBlacklistRules(raw: unknown, source = "pack.toml blacklist"
     const entry = value as Record<string, unknown>;
     const extraFields = Object.keys(entry).filter((key) => !RULE_FIELDS.has(key));
     if (extraFields.length > 0) {
-      invalid(source, index, `unknown field${extraFields.length > 1 ? "s" : ""}: ${extraFields.join(", ")}`);
+      invalid(
+        source,
+        index,
+        `unknown field${extraFields.length > 1 ? "s" : ""}: ${extraFields.join(", ")}`,
+      );
     }
 
-    if (typeof entry.scope !== "string" || !["mod_id", "project_id", "version_id"].includes(entry.scope)) {
+    if (
+      typeof entry.scope !== "string" ||
+      !["mod_id", "project_id", "version_id"].includes(entry.scope)
+    ) {
       invalid(source, index, "scope must be 'mod_id', 'project_id', or 'version_id'");
     }
 
@@ -49,11 +58,18 @@ export function parseBlacklistRules(raw: unknown, source = "pack.toml blacklist"
           invalid(source, index, `${entry.scope} CurseForge id must be a positive safe integer`);
         }
       } else if (!hasNonWhitespaceId(entry.id)) {
-        invalid(source, index, `${entry.scope} Modrinth id must be a non-empty string without whitespace`);
+        invalid(
+          source,
+          index,
+          `${entry.scope} Modrinth id must be a non-empty string without whitespace`,
+        );
       }
     }
 
-    if (Object.hasOwn(entry, "reason") && (typeof entry.reason !== "string" || entry.reason.trim().length === 0)) {
+    if (
+      Object.hasOwn(entry, "reason") &&
+      (typeof entry.reason !== "string" || entry.reason.trim().length === 0)
+    ) {
       invalid(source, index, "reason must be a non-empty string when provided");
     }
 
@@ -62,12 +78,21 @@ export function parseBlacklistRules(raw: unknown, source = "pack.toml blacklist"
 }
 
 /** Validate that blacklist is declared only at the pack.toml root, then parse its rules. */
-export function parsePackBlacklistRules(packConfig: unknown, source = "pack.toml"): BlacklistRule[] {
+export function parsePackBlacklistRules(
+  packConfig: unknown,
+  source = "pack.toml",
+): BlacklistRule[] {
   if (!packConfig || typeof packConfig !== "object" || Array.isArray(packConfig)) {
-    throw new Error(`Invalid blacklist configuration in ${source}: pack configuration must be a root table.`);
+    throw new Error(
+      `Invalid blacklist configuration in ${source}: pack configuration must be a root table.`,
+    );
   }
 
-  const nestedBlacklistPath = (value: unknown, currentPath: string[], root: boolean): string | undefined => {
+  const nestedBlacklistPath = (
+    value: unknown,
+    currentPath: string[],
+    root: boolean,
+  ): string | undefined => {
     if (!value || typeof value !== "object") return undefined;
     if (Array.isArray(value)) {
       for (let index = 0; index < value.length; index++) {
@@ -91,7 +116,7 @@ export function parsePackBlacklistRules(packConfig: unknown, source = "pack.toml
   const misplaced = nestedBlacklistPath(root, [], true);
   if (misplaced) {
     throw new Error(
-      `Invalid blacklist configuration in ${source}: blacklist must be declared at the root, not under '${misplaced}'.`
+      `Invalid blacklist configuration in ${source}: blacklist must be declared at the root, not under '${misplaced}'.`,
     );
   }
   return parseBlacklistRules(root.blacklist, source);
@@ -100,7 +125,7 @@ export function parsePackBlacklistRules(packConfig: unknown, source = "pack.toml
 /** Match only the explicitly selected identity scope and, where present, provider. */
 export function matchingBlacklistRules(
   rules: readonly BlacklistRule[],
-  target: BlacklistTarget
+  target: BlacklistTarget,
 ): BlacklistRule[] {
   return rules.filter((rule) => {
     if (rule.scope === "mod_id") return target.modId === rule.id;

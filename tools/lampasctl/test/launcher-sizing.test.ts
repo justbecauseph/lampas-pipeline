@@ -12,11 +12,7 @@ import {
   readThpMode,
 } from "../src/launcher/host";
 import { findJavaBinary, isOracleGraalvm } from "../src/launcher/java";
-import {
-  buildJvmFlags,
-  MIN_HEAP,
-  planHeap,
-} from "../src/launcher/jvm-flags";
+import { buildJvmFlags, MIN_HEAP, planHeap } from "../src/launcher/jvm-flags";
 
 const isWin = process.platform === "win32";
 
@@ -95,7 +91,7 @@ describe("launcher sizing and JVM flag planning", () => {
     }
 
     expect(flags.indexOf("-XX:+UnlockExperimentalVMOptions")).toBeLessThan(
-      flags.indexOf("-XX:G1NewSizePercent=30")
+      flags.indexOf("-XX:G1NewSizePercent=30"),
     );
   });
 
@@ -208,11 +204,9 @@ describe("launcher sizing and JVM flag planning", () => {
     expect(host.container).toBe(false);
 
     expect(() => detectHost({ env: { LAMPAS_CPUS: "invalid" } })).toThrow(
-      "LAMPAS_CPUS must be a whole number"
+      "LAMPAS_CPUS must be a whole number",
     );
-    expect(() => detectHost({ env: { LAMPAS_RAM: "invalid" } })).toThrow(
-      "Invalid size"
-    );
+    expect(() => detectHost({ env: { LAMPAS_RAM: "invalid" } })).toThrow("Invalid size");
   });
 
   test("parseSize and formatSize cases incl. invalid input throws", () => {
@@ -246,17 +240,17 @@ describe("launcher sizing and JVM flag planning", () => {
       const oracleBin = makeJdk(
         tempDir,
         "oracle",
-        'IMPLEMENTOR="Oracle Corporation"\nJAVA_VERSION="25.0.4"\nGRAALVM_VERSION="25.2.4"\n'
+        'IMPLEMENTOR="Oracle Corporation"\nJAVA_VERSION="25.0.4"\nGRAALVM_VERSION="25.2.4"\n',
       );
       const ceBin = makeJdk(
         tempDir,
         "ce",
-        'IMPLEMENTOR="GraalVM Community"\nJAVA_VERSION="25.0.2"\nGRAALVM_VERSION="25.0.2"\n'
+        'IMPLEMENTOR="GraalVM Community"\nJAVA_VERSION="25.0.2"\nGRAALVM_VERSION="25.0.2"\n',
       );
       const standardBin = makeJdk(
         tempDir,
         "standard",
-        'IMPLEMENTOR="Eclipse Adoptium"\nJAVA_VERSION="25.0.4"\n'
+        'IMPLEMENTOR="Eclipse Adoptium"\nJAVA_VERSION="25.0.4"\n',
       );
       const missingBin = makeJdk(tempDir, "missing", null);
 
@@ -283,13 +277,21 @@ describe("launcher sizing and JVM flag planning", () => {
       const expectedHomeJava = makeJdk(tempDir, "home-override", null, isWin ? "java.exe" : "java");
       const homeRes = findJavaBinary(
         { JAVA_BIN: path.join(tempDir, "missing-bin"), JAVA_HOME: javaHomeDir },
-        process.platform
+        process.platform,
       );
       expect(homeRes).toBe(expectedHomeJava);
 
       // 3. SDKMAN candidates on non-Windows
       const fakeHome = path.join(tempDir, "fake-home");
-      const sdkmanJava = path.join(fakeHome, ".sdkman", "candidates", "java", "current", "bin", "java");
+      const sdkmanJava = path.join(
+        fakeHome,
+        ".sdkman",
+        "candidates",
+        "java",
+        "current",
+        "bin",
+        "java",
+      );
       fs.mkdirSync(path.dirname(sdkmanJava), { recursive: true });
       fs.writeFileSync(sdkmanJava, "#!/bin/sh\nexit 0\n");
       fs.chmodSync(sdkmanJava, 0o755);
@@ -308,7 +310,11 @@ describe("launcher sizing and JVM flag planning", () => {
       fs.writeFileSync(pathJava, "fake");
       if (!isWin) fs.chmodSync(pathJava, 0o755);
 
-      const pathRes = findJavaBinary({ PATH: fakePathDir }, process.platform, path.join(tempDir, "empty-home"));
+      const pathRes = findJavaBinary(
+        { PATH: fakePathDir },
+        process.platform,
+        path.join(tempDir, "empty-home"),
+      );
       expect(pathRes).toBe(pathJava);
 
       // 5. Fallback to 'java'
@@ -344,7 +350,7 @@ describe("launcher sizing and JVM flag planning", () => {
         expect(host.ram).toBe(7516192768);
         expect(host.container).toBe(true);
         expect(host.ramSource).toBe("cgroup v2 limit");
-      }
+      },
     );
   });
 
@@ -363,7 +369,7 @@ describe("launcher sizing and JVM flag planning", () => {
         expect(host.ram).toBe(7889008 * 1024);
         expect(host.container).toBe(false);
         expect(host.ramSource).toBe("meminfo");
-      }
+      },
     );
   });
 
@@ -375,14 +381,15 @@ describe("launcher sizing and JVM flag planning", () => {
         "sys/fs/cgroup/cpu,cpuacct/docker/abc/cpu.cfs_quota_us": "400000\n",
         "sys/fs/cgroup/cpu,cpuacct/docker/abc/cpu.cfs_period_us": "100000\n",
         "sys/fs/cgroup/memory/docker/abc/memory.limit_in_bytes": "9223372036854771712\n",
-        "sys/fs/cgroup/memory/docker/abc/memory.stat": "cache 0\nhierarchical_memory_limit 6442450944\n",
+        "sys/fs/cgroup/memory/docker/abc/memory.stat":
+          "cache 0\nhierarchical_memory_limit 6442450944\n",
       },
       (root) => {
         const limits = readCgroupLimits(root);
         expect(limits.cpuQuota).toBe(4);
         expect(limits.memLimit).toBe(6442450944);
         expect(limits.version).toBe(1);
-      }
+      },
     );
   });
 
@@ -391,7 +398,8 @@ describe("launcher sizing and JVM flag planning", () => {
       "lampas-thp-",
       {
         "sys/kernel/mm/transparent_hugepage/enabled": "always [madvise] never\n",
-        "sys/kernel/mm/transparent_hugepage/shmem_enabled": "always within_size advise [never] deny force\n",
+        "sys/kernel/mm/transparent_hugepage/shmem_enabled":
+          "always within_size advise [never] deny force\n",
       },
       (root) => {
         const thp = readThpMode(root);
@@ -418,7 +426,7 @@ describe("launcher sizing and JVM flag planning", () => {
           compactHeaders: true,
         });
         expect(zgc).not.toContain("-XX:+UseTransparentHugePages");
-      }
+      },
     );
   });
 });

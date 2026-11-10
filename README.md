@@ -2,7 +2,7 @@
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2-brightgreen.svg)](https://minecraft.net)
 [![Fabric Loader](https://img.shields.io/badge/Fabric-Manifest--Defined-blue.svg)](https://fabricmc.net)
-[![Java](https://img.shields.io/badge/OpenJDK-25%20(epsilon)-orange.svg)](https://adoptium.net)
+[![Java](<https://img.shields.io/badge/OpenJDK-25%20(epsilon)-orange.svg>)](https://adoptium.net)
 [![Runtime](https://img.shields.io/badge/Runtime-Bun-black.svg)](https://bun.sh)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
@@ -115,8 +115,9 @@ flowchart LR
 ```
 
 ### 1. Publication Flow (`lampasctl publish`)
+
 1. **Discover & Verify**: `lampasctl` scans manifests for `provider = "lampas"` artifacts and computes local SHA-256 hashes and file sizes.
-2. **Prepare**: Sends `POST /api/v1/blobs/prepare` to the Portal. The Portal checks object storage and returns presigned PUT URLs *only* for missing SHA-256 hashes.
+2. **Prepare**: Sends `POST /api/v1/blobs/prepare` to the Portal. The Portal checks object storage and returns presigned PUT URLs _only_ for missing SHA-256 hashes.
 3. **Direct Upload**: `lampasctl` uploads missing blobs directly to Railway Bucket via presigned PUT with bounded concurrency and retry logic.
 4. **Publish Release**: Sends `POST /api/v1/releases/publish` with release metadata and target channels.
 5. **Atomic Commit**: The Portal verifies that all referenced blobs exist in object storage with the declared sizes, records the release, and atomically updates the target channel pointers.
@@ -225,6 +226,7 @@ lampas-pipeline/
 Output lists counts and summaries. Add `--verbose` to any command to also print per-item progress: each resolved artifact, and each sync cache hit and download start.
 
 ### 1. 1-Click Mod Management (`add` & `remove`)
+
 Add or remove mods directly from the command line. Automatically detects project metadata, fetches latest compatible releases for Minecraft 26.2, updates `pack/mods/*.toml`, updates `pack.lock.json`, and rebuilds manifests in one step:
 
 ```bash
@@ -260,7 +262,9 @@ size, calculates the SHA-256/SHA-512 hashes required by Lampas, and keeps a veri
 added as a local JAR instead.
 
 ### 2. Upstream Update Checker
+
 Scan all pack mods concurrently against Modrinth / CurseForge APIs:
+
 ```bash
 # Check for newer compatible releases on Minecraft 26.2
 bun run lampasctl check-updates
@@ -310,6 +314,7 @@ reason = "Known incompatible CurseForge file"
 The checker skips matching descriptors and releases, then can choose the newest allowed release newer than the current pin; it never selects an older release. `lampasctl validate` rejects descriptor pins and lockfile artifacts that match blacklist rules. `check-updates --force` overrides blacklist filtering for that scan or application only; it still validates the policy, and `validate` has no bypass. `add` and `resolve` do not consult these rules.
 
 ### 3. Lockfile & Manifest Generation
+
 ```bash
 # Resolve all TOML descriptors into pack.lock.json
 bun run lampasctl resolve
@@ -353,9 +358,11 @@ Bun loads `.env` from the working directory, so `PACK_PORTAL_URL` or `PORTAL_BAS
 After writing the manifests, `manifest` compares them with the Portal that the `manifest` precedence above resolves (not `PACK_PORTAL_URL`) and prints the result. It shows the version each channel (`dev`, `beta`, `stable`) points to and whether the local version is published (`published (revoked)` when the Portal answers 410). The per-target (client, server) diff lists files added, removed, or updated and changed top-level fields, relative to the release the selected channel points to. A target whose file hashes and top-level fields match but whose manifest differs elsewhere (download URLs or file order) is reported as identical files with other metadata differing. `--channel dev|beta|stable` selects the channel (default `stable`); any other value skips the comparison with a warning. `--no-portal-diff` skips the comparison. When the local version is already published, the publish check compares the Portal's stored copy of that version with the local build, in full: both manifests (file order and download URLs count) and the stored release metadata (status, minimum launcher version, launch settings, loader and Minecraft versions, git commit, signature). If any of these differ, the summary names the differing fields and warns that publishing will be rejected (409) and to bump `[pack] version` in `pack.toml`. A revoked version (410) gets a warning that publishing will be rejected (409), without a field list. If nothing differs, it says publishing only moves channel pointers. Portal request failures are reported in the summary and never change the exit code.
 
 ### 4. Managed Configuration Patches
+
 In addition to distributing whole files, Lampas supports **property-level / targeted config management** defined in `pack/config-patches/client.json`.
 
 #### Ownership Levels:
+
 - **`MANAGED`**: Lampas owns the whole file. Any local modifications are overwritten on synchronization, and obsolete files are deleted.
 - **`PRESERVE`**: The mod or player owns the whole file. Lampas places initial defaults only if missing.
 - **`CONFIG PATCH / enforce`**: The mod or player owns the file; Lampas owns selected values. If the player changes an enforced value, the next synchronization restores the Lampas value while preserving unrelated settings and comments.
@@ -364,6 +371,7 @@ In addition to distributing whole files, Lampas supports **property-level / targ
 > **Syntax Adapters**: The `adapter` property describes internal file syntax (`json`, `jsonc`, `yaml`, `toml`, `properties`, `ini`, `text`). **File extension does not determine the adapter.**
 
 Supported adapters:
+
 - **JSON / JSONC** (`adapter: "json"` / `"jsonc"`): Preserves unrelated whitespace, ordering, and comments.
 - **YAML** (`adapter: "yaml"`): AST-based targeted editing preserving comments and formatting.
 - **TOML** (`adapter: "toml"`): Conservative in-place scalar editor for tables and keys.
@@ -382,12 +390,15 @@ Patch paths, `[client].preserve` entries, and client manifest paths follow the l
 Seed files and `options.txt` keybind patches need launcher 1.6.0 or later; the current pack sets `minimum_version = "1.6.0"`. `lampasctl` does not check this value against the features a pack uses, and writes `1.0.0` when the key is missing. `[launcher].minimum_version` does not protect older launchers. Launchers before 1.6.0 check the manifest schema before they check the version, so a pack that uses these rules shows those launchers a schema error, not an "update required" message, until the player updates the launcher. Launchers 1.6.0 and later check the version first and show the update message.
 
 ### 5. Release Diff Tool
+
 Compare two manifests to inspect added, removed, or updated mods along with size deltas:
+
 ```bash
 bun run lampasctl diff --from manifest/client-manifest.json --to manifest/server-manifest.json
 ```
 
 ### 6. Portal Release Publishing
+
 Publish Lampas-owned artifacts to content-addressed object storage and atomically publish release metadata to [`lampas2-portal`](https://github.com/justbecauseph/lampas2-portal):
 
 ```bash
@@ -437,9 +448,11 @@ sequenceDiagram
 ```
 
 #### Multi-Channel Publishing:
+
 Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publishes the release metadata once and atomically points `dev`, `beta`, and `stable` to the new release in a single operation. `--channel dev,beta` selects multiple channels. Publication is an explicit CLI operation; this repository does not currently contain a pack-tag publication workflow.
 
 #### Publishing Guarantees:
+
 - **Local Pre-validation**: Lampas blobs are verified for existence, byte size, and SHA-256 hash before any network transfer.
 - **Content-Addressed Deduplication**: Existing SHA-256 objects in object storage are detected during prepare and never re-uploaded.
 - **Direct Object Storage Upload**: Missing blobs upload directly to object storage via presigned PUT URLs.
@@ -448,6 +461,7 @@ Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publi
 - **Atomic Pointer Updates**: Release creation and channel pointer updates are committed in a single atomic database transaction.
 
 #### Immutable Portal Publication Contract:
+
 - `lampasctl publish` sends a bearer token to `/api/v1/blobs/prepare` and `/api/v1/releases/publish`; inline/base64 blob publishing is not supported.
 - The prepare response identifies missing SHA-256 blobs and supplies short-lived presigned PUT URLs. Existing content-addressed objects are reused.
 - The publish request contains the release metadata plus both schema-version-1 manifests. The Portal validates target/version parity, verifies every Lampas blob reference and declared size in object storage, then commits the release and requested channel pointers atomically.
@@ -455,11 +469,13 @@ Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publi
 - Blob URLs are stable and content-addressed (`/api/v1/blobs/<sha256>`). The redirect response is not cached because its presigned `Location` expires; the underlying blob identity remains the SHA-256 path. Bucket credentials remain in the Portal; `lampasctl` receives only presigned upload URLs, and launchers/server deployments use public blob redirects without publish credentials.
 
 #### Blob Storage Security Model:
+
 - **Railway Bucket Credentials**: Held exclusively by the Portal backend.
 - **`lampasctl`**: Requires `PACK_PUBLISH_SECRET`; receives short-lived presigned PUT URLs for missing hashes from `/api/v1/blobs/prepare`.
 - **Launcher / Server Deployments**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
 
 ### 7. Headless Client / Server Sync
+
 ```bash
 bun run lampasctl install --manifest manifest/client-manifest.json --target ./my-instance
 
@@ -498,18 +514,28 @@ Minecraft native server-resource-pack protocol downloads on join
 
 ### Current Configuration
 
-| Resource Pack | Delivery Owner | Target Location | Configuration |
-|---|---|---|---|
-| Every `required` entry (for example `fluid-foolish`) | **Launcher-Managed** | `<gameDir>/resourcepacks/` | `[launcher.resourcepacks] required = [...]` |
-| `lampas2` | **Server-Enforced** | `server.properties` | `[server.resourcepack] artifact = "lampas2"` |
+| Resource Pack                                        | Delivery Owner       | Target Location            | Configuration                                |
+| ---------------------------------------------------- | -------------------- | -------------------------- | -------------------------------------------- |
+| Every `required` entry (for example `fluid-foolish`) | **Launcher-Managed** | `<gameDir>/resourcepacks/` | `[launcher.resourcepacks] required = [...]`  |
+| `lampas2`                                            | **Server-Enforced**  | `server.properties`        | `[server.resourcepack] artifact = "lampas2"` |
 
 ### 1. Launcher-Managed Resource Packs (`[launcher.resourcepacks]`)
 
 Configured in `pack/pack.toml`:
+
 ```toml
 [launcher.resourcepacks]
-required = ["fresh-animations-extensions", "fresh-animations", "fluid-foolish", "recolourful-containers-gui", "hud-reignited", "flintl0cks", "modded-swords-x-punchy"]
+required = [
+  "fresh-animations-extensions",
+  "fresh-animations",
+  "fluid-foolish",
+  "recolourful-containers-gui",
+  "hud-reignited",
+  "flintl0cks",
+  "modded-swords-x-punchy",
+]
 ```
+
 - **Sync & Verification**: The launcher synchronizes required packs into `<gameDir>/resourcepacks/` and validates their SHA-256 checksums. If a local file has modified content with the same filename, the launcher detects the hash mismatch, downloads the updated revision, and replaces it atomically.
 - **Activation in `options.txt`**: Prior to bootstrapping the game, the launcher reconciles `options.txt`, deterministically placing managed packs into the active resource pack array while strictly preserving user-installed packs, ordering, comments, and game settings.
 - **Cleanup**: If a pack is removed from the required set, it is cleanly removed from `options.txt` on the next launch.
@@ -517,12 +543,14 @@ required = ["fresh-animations-extensions", "fresh-animations", "fluid-foolish", 
 ### 2. Server-Enforced Resource Pack (`[server.resourcepack]`)
 
 Configured in `pack/pack.toml`:
+
 ```toml
 [server.resourcepack]
 artifact = "lampas2"
 required = true
 prompt = '{"text":"The Lampas 2 resource pack"}'
 ```
+
 - **Server-only CAS descriptor**: The generated `server-manifest.json` is the authoritative desired server state and carries the resource pack descriptor; it is deliberately absent from `files[]` and from the client manifest. For a Lampas resource pack, the descriptor must include `provider = "lampas"`, a safe `path` under `resourcepacks/`, `size` in bytes, a 40-character `sha1`, a 64-character `sha256`, and a URL whose path is exactly `/api/v1/blobs/<sha256>`. `lampasctl manifest` writes the descriptor to `manifest/server-resource-pack.json` (local, gitignored).
 - **CAS Blob Address**: Published to the Portal under stable, content-addressed URL `/api/v1/blobs/<sha256>`; the redirect target is short-lived. The Portal release descriptor links consumers to the published server manifest rather than maintaining a separate resource-pack definition. The pipeline's generated `release.json` may mirror build metadata, including the resource-pack descriptor, for publication and artifact inspection.
 - **`server.properties` Reconciliation**: During server deployment (`lampasctl deploy` or `lampasctl install`), the engine reconciles exactly 5 managed properties:
@@ -540,7 +568,9 @@ prompt = '{"text":"The Lampas 2 resource pack"}'
 auto_connect = true
 server = "play.lampas.town:25576"
 ```
+
 When `auto_connect = true` and a valid server address is specified:
+
 - The launcher UI displays the connection target directly beneath the **PLAY** button (`Connecting to: play.lampas.town:25576`).
 - The game runner launches Minecraft Java Edition passing `--quickPlayMultiplayer <server>` to join the server automatically on boot.
 
@@ -552,6 +582,7 @@ The official desktop client launcher is maintained in its dedicated repository:
 👉 **[justbecauseph/lampas-launcher](https://github.com/justbecauseph/lampas-launcher)**
 
 ### Features:
+
 - **Zero Third-Party Dependencies**: Completely standalone Electron + TypeScript desktop app. No PrismLauncher, MultiMC, or vanilla launcher required.
 - **Embedded OpenJDK 25 Discovery**: Auto-detects local Java 25 or seamlessly provisions Mojang's official `java-runtime-epsilon` on first boot.
 - **One-Click Portal Login**: Single unified login button using OAuth2 PKCE via the default web browser.
@@ -578,6 +609,7 @@ flowchart LR
     Manifest["Pack Manifest<br/>(client / server)"] --> URL["Uniform download.url<br/>(Modrinth / CurseForge / Lampas Blob)"]
     URL --> Verified["Verified Local Artifact<br/>(SHA-256 Validated)"]
 ```
+
 It consumes manifest URLs directly, without needing to know whether bytes originate from Modrinth, CurseForge, or Lampas content-addressed blob storage.
 
 ```bash
@@ -594,6 +626,7 @@ lampasctl deploy --target /srv/minecraft --portal https://dev.lampas.town --vers
 When `--version` is omitted, `deploy` resolves the selected channel (default: `dev`) through the Portal, then fetches that exact release descriptor and server manifest. Resolution is fail-closed: an invalid channel, non-success response, missing channel pointer/version, missing release, or missing manifest aborts deployment. There is no fallback to a latest release. Supplying `--version` bypasses the channel pointer but still fetches and validates the immutable release from the Portal.
 
 #### Safeguards:
+
 - **Chunked Streaming**: Downloads are streamed directly to temporary files.
 - **Dual Validation**: Validates both total byte count and SHA-256 hash before replacing files.
 - **Transparent Redirect Handling**: Seamlessly follows `302` redirects from Portal blob URLs to presigned Railway Bucket download links.
@@ -614,7 +647,7 @@ Dedicated servers use an immutable, manifest-defined runtime managed exclusively
    - Before applying any pack changes, `DeploymentTransaction` snapshots modified files, deleted files, `server.properties`, `installation.json`, and previous runtime files.
    - An atomic journal (`journal.json`) is persisted to disk before any target mutations.
    - If runtime activation fails or an unhandled exception occurs, the transaction automatically rolls back: restores modified/deleted files, purges newly added files, restores previous server properties, and restores the previous coherent runtime.
-   - Writing `.lampas/installation.json` is deferred until *after* runtime activation succeeds.
+   - Writing `.lampas/installation.json` is deferred until _after_ runtime activation succeeds.
    - **Explicit Commit Point**: Once deployment is fully coherent, unlinking `journal.json` commits the transaction. Presence of `journal.json` unambiguously indicates an interrupted deployment requiring recovery; its absence indicates successful commitment.
 
 3. **Fail-Closed Crash Recovery**:
@@ -644,22 +677,24 @@ lampasctl start --target /home/server -- -Dfabric.development=false -XX:+AlwaysP
 ```
 
 #### Command Options (`lampasctl start`)
-| Flag / Option | Environment Variable | Default | Description |
-|---|---|---|---|
-| `-t, --target <path>` | — | Current directory | Minecraft server root directory |
-| `--no-sync` | — | `false` | Skip Portal deployment check; launch existing runtime immediately |
-| `--allow-stale` | — | `false` | If pack deployment fails, recover coherent state and launch anyway |
-| `--memory <size>` | `JAVA_MEMORY` | Auto-sized | Explicit heap allocation (e.g. `4G`, `6144M`) |
-| `--gc <g1\|zgc>` | `LAMPAS_GC` | `g1` | Garbage collector: Aikar-tuned `g1` or generational `zgc` |
-| `--dry-run` | — | `false` | Log host sizing and Java execution command without launching |
-| `--portal <url>` | `PORTAL_URL` | `https://dev.lampas.town` | Portal URL for sync |
-| `-c, --channel <name>` | `RELEASE_CHANNEL` | `dev` | Target channel pointer |
-| `-v, --version <ver>` | — | — | Explicit immutable release version |
-| `--no-backup` | — | `false` | Skip automatic pre-deployment world backup |
-| `--verify <fast\|full>` | — | `fast` | Artifact validation mode |
-| `-- <extra-args>` | — | — | Forward extra arguments directly to the JVM before `-jar` |
+
+| Flag / Option           | Environment Variable | Default                   | Description                                                        |
+| ----------------------- | -------------------- | ------------------------- | ------------------------------------------------------------------ |
+| `-t, --target <path>`   | —                    | Current directory         | Minecraft server root directory                                    |
+| `--no-sync`             | —                    | `false`                   | Skip Portal deployment check; launch existing runtime immediately  |
+| `--allow-stale`         | —                    | `false`                   | If pack deployment fails, recover coherent state and launch anyway |
+| `--memory <size>`       | `JAVA_MEMORY`        | Auto-sized                | Explicit heap allocation (e.g. `4G`, `6144M`)                      |
+| `--gc <g1\|zgc>`        | `LAMPAS_GC`          | `g1`                      | Garbage collector: Aikar-tuned `g1` or generational `zgc`          |
+| `--dry-run`             | —                    | `false`                   | Log host sizing and Java execution command without launching       |
+| `--portal <url>`        | `PORTAL_URL`         | `https://dev.lampas.town` | Portal URL for sync                                                |
+| `-c, --channel <name>`  | `RELEASE_CHANNEL`    | `dev`                     | Target channel pointer                                             |
+| `-v, --version <ver>`   | —                    | —                         | Explicit immutable release version                                 |
+| `--no-backup`           | —                    | `false`                   | Skip automatic pre-deployment world backup                         |
+| `--verify <fast\|full>` | —                    | `fast`                    | Artifact validation mode                                           |
+| `-- <extra-args>`       | —                    | —                         | Forward extra arguments directly to the JVM before `-jar`          |
 
 #### Adaptive Host Sizing Architecture
+
 - **Host Detection**: Inspects cgroup v2 (`cpu.max`, `memory.max`/`memory.high` walked up the hierarchy), cgroup v1 (`cpu.cfs_quota_us`, `memory.limit_in_bytes`), `/proc/meminfo` (`MemTotal`), and Windows memory APIs (`GlobalMemoryStatusEx`).
 - **Dynamic Heap Computation**: Calculated as `RAM - OS_RESERVE - max(1.5 GiB, 15% RAM) - EXTRA_RESERVE`, aligned to 256 MiB boundaries. Capped at 16 GiB for G1 (24 GiB for ZGC). Fails closed if computed heap is below 2 GiB.
 - **Tuned JVM Profiles**:
@@ -692,18 +727,20 @@ lampasctl monitor --interval 15 --threshold 3 --public-address "play.lampas.town
 ```
 
 #### Command Options (`lampasctl monitor`)
-| Flag / Option | Environment Variable | Default | Description |
-|---|---|---|---|
-| `--host <host>` | `MC_HOST` | `127.0.0.1` | Minecraft server host or IP |
-| `-p, --port <port>` | `MC_PORT` | `25576` | Minecraft server port |
-| `--public-address <addr>` | `MC_PUBLIC_ADDRESS` | `play.lampas.town:25576` | Display address in Discord notifications |
-| `--webhook <url>` | `DISCORD_WEBHOOK_URL` | Auto-detected | Discord webhook URL (also loaded from `.minecraft-env`) |
-| `--state-file <path>` | `MONITOR_STATE_FILE` | `~/.lampas-monitor-state.json` | Persistent state file for debouncing across restarts |
-| `--interval <sec>` | — | `10` | Seconds between consecutive status checks |
-| `--threshold <count>` | — | `2` | Number of consecutive failures before triggering offline alert |
-| `--once` | — | `false` | Single-shot check; exits `0` if online, `1` if offline |
+
+| Flag / Option             | Environment Variable  | Default                        | Description                                                    |
+| ------------------------- | --------------------- | ------------------------------ | -------------------------------------------------------------- |
+| `--host <host>`           | `MC_HOST`             | `127.0.0.1`                    | Minecraft server host or IP                                    |
+| `-p, --port <port>`       | `MC_PORT`             | `25576`                        | Minecraft server port                                          |
+| `--public-address <addr>` | `MC_PUBLIC_ADDRESS`   | `play.lampas.town:25576`       | Display address in Discord notifications                       |
+| `--webhook <url>`         | `DISCORD_WEBHOOK_URL` | Auto-detected                  | Discord webhook URL (also loaded from `.minecraft-env`)        |
+| `--state-file <path>`     | `MONITOR_STATE_FILE`  | `~/.lampas-monitor-state.json` | Persistent state file for debouncing across restarts           |
+| `--interval <sec>`        | —                     | `10`                           | Seconds between consecutive status checks                      |
+| `--threshold <count>`     | —                     | `2`                            | Number of consecutive failures before triggering offline alert |
+| `--once`                  | —                     | `false`                        | Single-shot check; exits `0` if online, `1` if offline         |
 
 #### Key Features:
+
 - **Zero-Dependency Native SLP**: Native Minecraft Server List Ping implementation using `node:net` and VarInt framing. Sends protocol 767 in the status handshake; servers answer status requests regardless of the client protocol.
 - **Rich Embed Notifications**: Dispatches formatted Discord webhook embeds:
   - **Online**: Green embed (`#2ecc71`) displaying server version, live player count (`X / Y`), and public address.
@@ -729,18 +766,20 @@ lampasctl restart --target /home/server --countdown 3
 ```
 
 #### Command Options (`lampasctl restart`)
-| Flag / Option | Environment Variable | Default | Description |
-|---|---|---|---|
-| `-t, --target <path>` | — | Current directory | Minecraft server directory (used to read `server.properties`) |
-| `--service <name>` | — | `lampas-server.service` | Systemd service unit to restart |
-| `--countdown <min>` | — | `5` | Countdown duration in minutes |
-| `--immediate` | — | `false` | Skip countdown warnings and restart immediately |
-| `--rcon-host <host>` | `RCON_HOST` | `127.0.0.1` | RCON hostname |
-| `-p, --rcon-port <port>` | `RCON_PORT` | Auto-detected | RCON port (read from `server.properties` or default `25575`) |
-| `--rcon-password <pwd>` | `RCON_PASSWORD` | Auto-detected | RCON password (read from `server.properties` or `.minecraft-env`) |
-| `--dry-run` | — | `false` | Test broadcast and save-all without restarting systemd service |
+
+| Flag / Option            | Environment Variable | Default                 | Description                                                       |
+| ------------------------ | -------------------- | ----------------------- | ----------------------------------------------------------------- |
+| `-t, --target <path>`    | —                    | Current directory       | Minecraft server directory (used to read `server.properties`)     |
+| `--service <name>`       | —                    | `lampas-server.service` | Systemd service unit to restart                                   |
+| `--countdown <min>`      | —                    | `5`                     | Countdown duration in minutes                                     |
+| `--immediate`            | —                    | `false`                 | Skip countdown warnings and restart immediately                   |
+| `--rcon-host <host>`     | `RCON_HOST`          | `127.0.0.1`             | RCON hostname                                                     |
+| `-p, --rcon-port <port>` | `RCON_PORT`          | Auto-detected           | RCON port (read from `server.properties` or default `25575`)      |
+| `--rcon-password <pwd>`  | `RCON_PASSWORD`      | Auto-detected           | RCON password (read from `server.properties` or `.minecraft-env`) |
+| `--dry-run`              | —                    | `false`                 | Test broadcast and save-all without restarting systemd service    |
 
 #### Key Features:
+
 - **Zero-Dependency Native RCON**: Built-in Source RCON client (`node:net`) with Type 3 login authentication, Type 2 command execution, multi-packet response support, and automatic credential resolution from `server.properties`.
 - **Phased Countdown Warnings**: Broadcasts notices via in-game chat (`say [Scheduled Restart] ...`) at T-5m, T-3m, T-1m, and T-0m.
 - **World Data Persistence**: Sends `save-all` via RCON to flush chunks before daemon restarts.
@@ -779,6 +818,7 @@ lampasctl self-update --prerelease
 ## 🔒 Custom Protocol Mod (`lampas-core`)
 
 Packaged inside `lampas2-overrides`, **`lampas-core`** provides protocol verification:
+
 - On multiplayer join, the client transmits a `lampas:handshake_c2s` payload with its pack semantic version.
 - The server validates the version against its required release.
 - If a mismatch is detected, the server displays an informative disconnection prompt directing the player to launch their Lampas Launcher to auto-update.

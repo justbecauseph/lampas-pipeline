@@ -293,7 +293,9 @@ async function main() {
         const unknown = Object.keys(flags).filter((key) => !allowed.has(key));
         if (positional.length > 0 || unknown.length > 0) {
           const extraArgs = [...positional, ...unknown.map((key) => `--${key}`)].join(", ");
-          throw new Error(`self-update does not accept ${extraArgs}. Use --version <ver> to pick a version.`);
+          throw new Error(
+            `self-update does not accept ${extraArgs}. Use --version <ver> to pick a version.`,
+          );
         }
         if (flags.version !== undefined && (flags.version === "" || flags.version === "true")) {
           throw new Error("--version needs a value, e.g. --version 1.2.0");
@@ -311,7 +313,9 @@ async function main() {
       case "add": {
         const query = positional[0] || flags.query;
         if (!query) {
-          console.error("Error: Please specify a mod slug, project ID, Modrinth/CurseForge URL, or .jar file path.");
+          console.error(
+            "Error: Please specify a mod slug, project ID, Modrinth/CurseForge URL, or .jar file path.",
+          );
           console.log("Example: lampasctl add appleskin --side client");
           process.exit(1);
         }
@@ -396,7 +400,8 @@ async function main() {
         const packDir = path.resolve(flags.pack || path.join(rootDir, "pack"));
         const lockFile = path.resolve(flags.lock || path.join(packDir, "pack.lock.json"));
         const outDir = path.resolve(flags.out || path.join(rootDir, "manifest"));
-        const portalOverride = flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL;
+        const portalOverride =
+          flags.portal || flags["portal-base-url"] || process.env.PORTAL_BASE_URL;
 
         const { clientManifest, serverManifest, release } = await buildManifests({
           packDir,
@@ -411,13 +416,17 @@ async function main() {
           const requestedChannel = flags.channel ?? "stable";
           const channel = requestedChannel.toLowerCase();
           if (!isPortalChannel(channel)) {
-            const got = requestedChannel === "true" ? "--channel needs a value" : `got '${requestedChannel}'`;
-            console.warn(`[Portal] Comparison skipped: --channel must be dev, beta, or stable (${got}).`);
+            const got =
+              requestedChannel === "true" ? "--channel needs a value" : `got '${requestedChannel}'`;
+            console.warn(
+              `[Portal] Comparison skipped: --channel must be dev, beta, or stable (${got}).`,
+            );
           } else {
             try {
               const packConfig = parseTomlFile<PackConfig>(path.join(packDir, "pack.toml"));
               const portalUrl =
-                resolvePortalBaseUrl(packConfig, portalOverride, DEFAULT_PORTAL_BASE_URL) ?? DEFAULT_PORTAL_BASE_URL;
+                resolvePortalBaseUrl(packConfig, portalOverride, DEFAULT_PORTAL_BASE_URL) ??
+                DEFAULT_PORTAL_BASE_URL;
               const comparison = await comparePortalRelease({
                 portalUrl,
                 channel,
@@ -427,7 +436,9 @@ async function main() {
               });
               printPortalComparison(comparison);
             } catch (err) {
-              console.warn(`[Portal] Comparison failed: ${err instanceof Error ? err.message : String(err)}`);
+              console.warn(
+                `[Portal] Comparison failed: ${err instanceof Error ? err.message : String(err)}`,
+              );
             }
           }
         }
@@ -547,7 +558,7 @@ async function main() {
         if (positional.some((arg) => arg.startsWith("-"))) {
           console.error(
             'restart: unexpected argument beginning with "-". If it is a value for an option such as --rcon-password, ' +
-              "write it as --option=<value>. Pass the server directory with --target."
+              "write it as --option=<value>. Pass the server directory with --target.",
           );
           process.exit(2);
         }

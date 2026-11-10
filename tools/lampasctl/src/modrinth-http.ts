@@ -56,7 +56,7 @@ export function rateLimitWaitMs(res: Response, retry: number, nowMs: number): nu
 export async function modrinthFetch(
   url: string,
   init: RequestInit = {},
-  timeoutMs = DEFAULT_OPERATION_TIMEOUT_MS
+  timeoutMs = DEFAULT_OPERATION_TIMEOUT_MS,
 ): Promise<Response> {
   const headers = new Headers(init.headers);
   headers.set("User-Agent", MODRINTH_USER_AGENT);
@@ -73,15 +73,24 @@ export async function modrinthFetch(
       async (signal) => {
         const raw = await fetch(url, { ...init, headers, signal });
         const body = await raw.arrayBuffer();
-        return new Response(body, { status: raw.status, statusText: raw.statusText, headers: raw.headers });
+        return new Response(body, {
+          status: raw.status,
+          statusText: raw.statusText,
+          headers: raw.headers,
+        });
       },
-      timeoutMs
+      timeoutMs,
     );
 
     if (res.status !== 429) {
       const remaining = headerNumber(res, "X-Ratelimit-Remaining");
       const reset = headerNumber(res, "X-Ratelimit-Reset");
-      if (remaining !== undefined && remaining <= LOW_REMAINING && reset !== undefined && reset >= 0) {
+      if (
+        remaining !== undefined &&
+        remaining <= LOW_REMAINING &&
+        reset !== undefined &&
+        reset >= 0
+      ) {
         pausedUntil = Math.max(pausedUntil, clock.now() + Math.min(reset * 1000, MAX_WAIT_MS));
       }
       return res;
@@ -90,6 +99,8 @@ export async function modrinthFetch(
     const wait = rateLimitWaitMs(res, retry, clock.now());
     pausedUntil = Math.max(pausedUntil, clock.now() + wait);
     if (retry >= MAX_RETRIES) return res;
-    console.warn(`[Modrinth] HTTP 429 for ${url}; waiting ${Math.ceil(wait / 1000)}s (retry ${retry + 1}/${MAX_RETRIES}).`);
+    console.warn(
+      `[Modrinth] HTTP 429 for ${url}; waiting ${Math.ceil(wait / 1000)}s (retry ${retry + 1}/${MAX_RETRIES}).`,
+    );
   }
 }

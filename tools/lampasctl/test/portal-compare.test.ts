@@ -16,7 +16,13 @@ const VERSION = "2.3.33";
 const OLDER_VERSION = "2.3.32";
 const PUBLISHED_AT = "2026-10-14T08:27:51.253Z";
 
-const EMPTY_DIFF: DiffResult = { added: [], removed: [], modified: [], totalSizeDelta: 0, changedFields: [] };
+const EMPTY_DIFF: DiffResult = {
+  added: [],
+  removed: [],
+  modified: [],
+  totalSizeDelta: 0,
+  changedFields: [],
+};
 
 /** The local release descriptor that the comparisons publish. */
 const RELEASE: ReleaseDescriptor = {
@@ -50,7 +56,12 @@ const STORED_RELEASE = {
   created: PUBLISHED_AT,
 };
 
-function file(filePath: string, size: number, sha256: string, downloadUrl = `${PORTAL}/blobs/${sha256}`): ManifestFile {
+function file(
+  filePath: string,
+  size: number,
+  sha256: string,
+  downloadUrl = `${PORTAL}/blobs/${sha256}`,
+): ManifestFile {
   return {
     path: filePath,
     size,
@@ -64,7 +75,7 @@ function manifest(
   target: "client" | "server",
   files: ManifestFile[],
   overrides: Partial<PackManifest> = {},
-  version = VERSION
+  version = VERSION,
 ): PackManifest {
   return {
     schemaVersion: 2,
@@ -116,7 +127,7 @@ function channelRoutes(version: string): Record<string, Route> {
 /** Portal routes for a release at VERSION that serves `served` as its client and server manifests. */
 function standardRoutes(
   served: { client: PackManifest; server: PackManifest },
-  overrides: Record<string, Route> = {}
+  overrides: Record<string, Route> = {},
 ): Record<string, Route> {
   return {
     ...channelRoutes(VERSION),
@@ -131,7 +142,7 @@ function compareOptions(
   client: PackManifest,
   server: PackManifest,
   channel: ComparePortalReleaseOptions["channel"] = "stable",
-  release: ReleaseDescriptor = RELEASE
+  release: ReleaseDescriptor = RELEASE,
 ): ComparePortalReleaseOptions {
   return { portalUrl: PORTAL, channel, client, server, release };
 }
@@ -181,8 +192,14 @@ function startStallingPortal(): { url: string; stop: () => void } {
   return { url: `http://127.0.0.1:${server.port}`, stop: () => server.stop(true) };
 }
 
-const clientFiles = [file("mods/shared.jar", 1000, "shared-hash"), file("config/options.txt", 20, "options-hash")];
-const serverFiles = [file("mods/shared.jar", 1000, "shared-hash"), file("mods/server-only.jar", 2048, "server-hash")];
+const clientFiles = [
+  file("mods/shared.jar", 1000, "shared-hash"),
+  file("config/options.txt", 20, "options-hash"),
+];
+const serverFiles = [
+  file("mods/shared.jar", 1000, "shared-hash"),
+  file("mods/server-only.jar", 2048, "server-hash"),
+];
 
 afterEach(() => {
   mock.restore();
@@ -206,7 +223,13 @@ describe("computeManifestDiff", () => {
     expect(diff.added.map((f) => f.path)).toEqual(["mods/new.jar"]);
     expect(diff.removed.map((f) => f.path)).toEqual(["mods/gone.jar"]);
     expect(diff.modified).toEqual([
-      { path: "mods/bump.jar", oldSize: 200, newSize: 260, oldHash: "bump-old", newHash: "bump-new" },
+      {
+        path: "mods/bump.jar",
+        oldSize: 200,
+        newSize: 260,
+        oldHash: "bump-old",
+        newHash: "bump-new",
+      },
     ]);
     // +1000 for mods/new.jar, +60 for mods/bump.jar, -50 for mods/gone.jar
     expect(diff.totalSizeDelta).toBe(1010);
@@ -311,12 +334,15 @@ describe("comparePortalRelease", () => {
   test("reports an unpublished local version and a file added to the server manifest", async () => {
     const client = manifest("client", clientFiles);
     const portalServer = manifest("server", serverFiles);
-    const localServer = manifest("server", [...serverFiles, file("mods/new-feature.jar", 4096, "new-hash")]);
+    const localServer = manifest("server", [
+      ...serverFiles,
+      file("mods/new-feature.jar", 4096, "new-hash"),
+    ]);
     installFetch(
       standardRoutes(
         { client, server: portalServer },
-        { [`${PORTAL}/api/v1/releases/${VERSION}`]: notFound }
-      )
+        { [`${PORTAL}/api/v1/releases/${VERSION}`]: notFound },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, localServer));
@@ -335,9 +361,15 @@ describe("comparePortalRelease", () => {
   test("an unpublished local version with different content prints no publish warning", async () => {
     const client = manifest("client", clientFiles);
     const portalServer = manifest("server", serverFiles);
-    const localServer = manifest("server", [...serverFiles, file("mods/new-feature.jar", 4096, "new-hash")]);
+    const localServer = manifest("server", [
+      ...serverFiles,
+      file("mods/new-feature.jar", 4096, "new-hash"),
+    ]);
     installFetch(
-      standardRoutes({ client, server: portalServer }, { [`${PORTAL}/api/v1/releases/${VERSION}`]: notFound })
+      standardRoutes(
+        { client, server: portalServer },
+        { [`${PORTAL}/api/v1/releases/${VERSION}`]: notFound },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, localServer));
@@ -354,8 +386,8 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/channels/beta`]: () => json({ error: "internal" }, 500) }
-      )
+        { [`${PORTAL}/api/v1/channels/beta`]: () => json({ error: "internal" }, 500) },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -375,8 +407,8 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/channels/beta`]: () => new Response("bad channel", { status: 400 }) }
-      )
+        { [`${PORTAL}/api/v1/channels/beta`]: () => new Response("bad channel", { status: 400 }) },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -395,7 +427,11 @@ describe("comparePortalRelease", () => {
     const c = await comparePortalRelease(compareOptions(client, server));
 
     expect(c.channels).toEqual({ dev: null, beta: null, stable: null });
-    expect(c.channelErrors).toEqual({ dev: "fetch failed", beta: "fetch failed", stable: "fetch failed" });
+    expect(c.channelErrors).toEqual({
+      dev: "fetch failed",
+      beta: "fetch failed",
+      stable: "fetch failed",
+    });
     expect(c.localPublished).toBeNull();
     expect(c.localPublishedError).toBe("fetch failed");
     expect(c.publishConflict).toBeNull();
@@ -411,8 +447,11 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/releases/${VERSION}/client-manifest`]: () => json({ error: "boom" }, 500) }
-      )
+        {
+          [`${PORTAL}/api/v1/releases/${VERSION}/client-manifest`]: () =>
+            json({ error: "boom" }, 500),
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -432,7 +471,10 @@ describe("comparePortalRelease", () => {
 
   test("a published version whose manifests differ from the channel's release is a publish conflict", async () => {
     const client = manifest("client", clientFiles);
-    const localServer = manifest("server", [...serverFiles, file("mods/new-feature.jar", 4096, "new-hash")]);
+    const localServer = manifest("server", [
+      ...serverFiles,
+      file("mods/new-feature.jar", 4096, "new-hash"),
+    ]);
     const portalServer = manifest("server", serverFiles);
     installFetch(standardRoutes({ client, server: portalServer }));
 
@@ -449,13 +491,21 @@ describe("comparePortalRelease", () => {
   test("channel on an older version: publish check fetches the local version's manifests", async () => {
     const client = manifest("client", clientFiles);
     const server = manifest("server", serverFiles);
-    const olderServer = manifest("server", [...serverFiles, file("mods/old-only.jar", 5, "old-hash")], {}, OLDER_VERSION);
+    const olderServer = manifest(
+      "server",
+      [...serverFiles, file("mods/old-only.jar", 5, "old-hash")],
+      {},
+      OLDER_VERSION,
+    );
     const requested = installFetch({
       [`${PORTAL}/api/v1/channels/dev`]: () => json({ channel: "dev", version: OLDER_VERSION }),
       [`${PORTAL}/api/v1/channels/beta`]: () => json({ channel: "beta", version: OLDER_VERSION }),
-      [`${PORTAL}/api/v1/channels/stable`]: () => json({ channel: "stable", version: OLDER_VERSION }),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () => json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () => json(manifest("client", clientFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/channels/stable`]: () =>
+        json({ channel: "stable", version: OLDER_VERSION }),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () =>
+        json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () =>
+        json(manifest("client", clientFiles, {}, OLDER_VERSION)),
       [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () => json(olderServer),
       [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json(STORED_RELEASE),
       [`${PORTAL}/api/v1/releases/${VERSION}/client-manifest`]: () => json(client),
@@ -475,14 +525,21 @@ describe("comparePortalRelease", () => {
   test("channel on an older version and the local version published with different content is a publish conflict", async () => {
     const client = manifest("client", clientFiles);
     const server = manifest("server", serverFiles);
-    const publishedServer = manifest("server", [...serverFiles, file("mods/published-only.jar", 7, "pub-hash")]);
+    const publishedServer = manifest("server", [
+      ...serverFiles,
+      file("mods/published-only.jar", 7, "pub-hash"),
+    ]);
     installFetch({
       [`${PORTAL}/api/v1/channels/dev`]: () => json({ channel: "dev", version: OLDER_VERSION }),
       [`${PORTAL}/api/v1/channels/beta`]: () => json({ channel: "beta", version: OLDER_VERSION }),
-      [`${PORTAL}/api/v1/channels/stable`]: () => json({ channel: "stable", version: OLDER_VERSION }),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () => json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () => json(manifest("client", clientFiles, {}, OLDER_VERSION)),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () => json(manifest("server", serverFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/channels/stable`]: () =>
+        json({ channel: "stable", version: OLDER_VERSION }),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () =>
+        json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () =>
+        json(manifest("client", clientFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () =>
+        json(manifest("server", serverFiles, {}, OLDER_VERSION)),
       [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json(STORED_RELEASE),
       [`${PORTAL}/api/v1/releases/${VERSION}/client-manifest`]: () => json(client),
       [`${PORTAL}/api/v1/releases/${VERSION}/server-manifest`]: () => json(publishedServer),
@@ -520,7 +577,9 @@ describe("comparePortalRelease", () => {
     expect(c.publishConflictFields).toEqual(["clientManifest"]);
 
     const output = printed(c);
-    expect(output.logs).toContain("  client: identical files; other manifest metadata differs (e.g. download URLs or ordering)");
+    expect(output.logs).toContain(
+      "  client: identical files; other manifest metadata differs (e.g. download URLs or ordering)",
+    );
     expect(output.logs).toContain("  server: identical");
   });
 
@@ -530,8 +589,8 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/releases/${VERSION}`]: () => new Response("Gone", { status: 410 }) }
-      )
+        { [`${PORTAL}/api/v1/releases/${VERSION}`]: () => new Response("Gone", { status: 410 }) },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -549,9 +608,12 @@ describe("comparePortalRelease", () => {
         { client, server },
         {
           [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
-            new Response("<!doctype html><html></html>", { status: 200, headers: { "Content-Type": "text/html" } }),
-        }
-      )
+            new Response("<!doctype html><html></html>", {
+              status: 200,
+              headers: { "Content-Type": "text/html" },
+            }),
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -562,19 +624,25 @@ describe("comparePortalRelease", () => {
     // but the stored release fields could not be read, so the publish check stays unknown.
     expect(c.publishConflict).toBeNull();
     expect(c.publishConflictFields).toEqual([]);
-    expect(c.publishConflictError).toContain("release fields not checked: Invalid response for release v2.3.33");
+    expect(c.publishConflictError).toContain(
+      "release fields not checked: Invalid response for release v2.3.33",
+    );
     expect(c.publishConflictError).toContain("body is not valid JSON");
     const output = printed(c);
-    expect(output.logs.join("\n")).toContain(" Local version on Portal: published (status check failed:");
+    expect(output.logs.join("\n")).toContain(
+      " Local version on Portal: published (status check failed:",
+    );
     expect(output.warnings).toHaveLength(1);
     expect(output.warnings[0]).toMatch(
-      /^v2\.3\.33 is already published; publish conflicts could not be fully checked \(release fields not checked: Invalid response for release v2\.3\.33 from .*: body is not valid JSON \(.*\)\)\.$/
+      /^v2\.3\.33 is already published; publish conflicts could not be fully checked \(release fields not checked: Invalid response for release v2\.3\.33 from .*: body is not valid JSON \(.*\)\)\.$/,
     );
   });
 
   test("a local mods entry with description: undefined matches a Portal manifest without the key", async () => {
     const localClient = manifest("client", clientFiles, {
-      mods: [{ id: "a", name: "A", side: "client", filename: "a.jar", size: 10, description: undefined }],
+      mods: [
+        { id: "a", name: "A", side: "client", filename: "a.jar", size: 10, description: undefined },
+      ],
     });
     const portalClient = manifest("client", clientFiles, {
       mods: [{ id: "a", name: "A", side: "client", filename: "a.jar", size: 10 }],
@@ -600,8 +668,8 @@ describe("comparePortalRelease", () => {
           [`${PORTAL}/api/v1/channels/dev`]: () => json({ error: "internal" }, 500),
           [`${PORTAL}/api/v1/channels/beta`]: () => json({ error: "internal" }, 500),
           [`${PORTAL}/api/v1/channels/stable`]: () => json({ error: "internal" }, 500),
-        }
-      )
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -651,7 +719,7 @@ describe("comparePortalRelease", () => {
     expect(c.publishConflict).toBe(false);
     expect(c.publishConflictFields).toEqual([]);
     expect(printed(c).logs).toContain(
-      "v2.3.33 is already published with identical manifests; publishing it again only moves channel pointers."
+      "v2.3.33 is already published with identical manifests; publishing it again only moves channel pointers.",
     );
   });
 
@@ -661,8 +729,11 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json({ ...STORED_RELEASE, minimumLauncherVersion: "1.1.0" }) }
-      )
+        {
+          [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
+            json({ ...STORED_RELEASE, minimumLauncherVersion: "1.1.0" }),
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -677,8 +748,11 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json({ ...STORED_RELEASE, status: "BETA" }) }
-      )
+        {
+          [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
+            json({ ...STORED_RELEASE, status: "BETA" }),
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -696,8 +770,8 @@ describe("comparePortalRelease", () => {
         {
           [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
             json({ ...STORED_RELEASE, launch: { server: "play.lampas.town", autoConnect: true } }),
-        }
-      )
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -715,8 +789,8 @@ describe("comparePortalRelease", () => {
         {
           [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
             json({ ...STORED_RELEASE, launch: { autoConnect: false, server: "play.lampas.town" } }),
-        }
-      )
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
@@ -741,14 +815,20 @@ describe("comparePortalRelease", () => {
               gitCommit: "other1",
               signature: "sig-abc",
             }),
-        }
-      )
+        },
+      ),
     );
 
     const c = await comparePortalRelease(compareOptions(client, server));
 
     expect(c.publishConflict).toBe(true);
-    expect(c.publishConflictFields).toEqual(["minecraft", "loader.version", "protocol", "gitCommit", "signature"]);
+    expect(c.publishConflictFields).toEqual([
+      "minecraft",
+      "loader.version",
+      "protocol",
+      "gitCommit",
+      "signature",
+    ]);
   });
 
   test("a local release without a git commit matches a stored null gitCommit", async () => {
@@ -757,11 +837,16 @@ describe("comparePortalRelease", () => {
     installFetch(
       standardRoutes(
         { client, server },
-        { [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json({ ...STORED_RELEASE, gitCommit: null }) }
-      )
+        {
+          [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
+            json({ ...STORED_RELEASE, gitCommit: null }),
+        },
+      ),
     );
 
-    const c = await comparePortalRelease(compareOptions(client, server, "stable", { ...RELEASE, gitCommit: undefined }));
+    const c = await comparePortalRelease(
+      compareOptions(client, server, "stable", { ...RELEASE, gitCommit: undefined }),
+    );
 
     expect(c.publishConflict).toBe(false);
     expect(c.publishConflictFields).toEqual([]);
@@ -772,9 +857,12 @@ describe("comparePortalRelease", () => {
     const server = manifest("server", serverFiles);
     const requested = installFetch({
       ...channelRoutes(OLDER_VERSION),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () => json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () => json(manifest("client", clientFiles, {}, OLDER_VERSION)),
-      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () => json(manifest("server", serverFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}`]: () =>
+        json({ version: OLDER_VERSION, created: "2026-10-01T00:00:00Z" }),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () =>
+        json(manifest("client", clientFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () =>
+        json(manifest("server", serverFiles, {}, OLDER_VERSION)),
       [`${PORTAL}/api/v1/releases/${VERSION}`]: () => new Response("Gone", { status: 410 }),
     });
 
@@ -851,7 +939,7 @@ describe("printPortalComparison", () => {
 
     expect(output.warnings).toEqual([]);
     expect(output.logs).toContain(
-      "v2.3.33 is already published with identical manifests; publishing it again only moves channel pointers."
+      "v2.3.33 is already published with identical manifests; publishing it again only moves channel pointers.",
     );
   });
 
@@ -897,7 +985,9 @@ describe("printPortalComparison", () => {
 
     const output = printed(comparison);
 
-    expect(output.logs).toContain(" Local version on Portal: unknown (HTTP 503 Service Unavailable)");
+    expect(output.logs).toContain(
+      " Local version on Portal: unknown (HTTP 503 Service Unavailable)",
+    );
     expect(output.warnings).toEqual([
       "v2.3.33 publish status is unknown (HTTP 503 Service Unavailable); publish conflicts were not checked.",
     ]);
@@ -921,7 +1011,9 @@ describe("printPortalComparison", () => {
 
     const output = printed(comparison);
 
-    expect(output.logs).toContain(" Portal channels:  dev=2.3.33, beta=unavailable, stable=unavailable");
+    expect(output.logs).toContain(
+      " Portal channels:  dev=2.3.33, beta=unavailable, stable=unavailable",
+    );
     expect(output.warnings).toEqual([
       "[Portal] Comparison skipped: Portal channel 'stable' is unavailable: HTTP 404. Other unavailable channels: beta: HTTP 500",
       "v2.3.33 publish status is unknown (HTTP 500); publish conflicts were not checked.",
@@ -966,11 +1058,16 @@ describe("diffManifests console output", () => {
   });
 
   test("prints the summary and the added, removed, and updated file lines", async () => {
-    const from = manifest("client", [
-      file("mods/keep.jar", 100, "keep-hash"),
-      file("mods/bump.jar", 200, "bump-old"),
-      file("mods/gone.jar", 100, "gone-hash"),
-    ], {}, OLDER_VERSION);
+    const from = manifest(
+      "client",
+      [
+        file("mods/keep.jar", 100, "keep-hash"),
+        file("mods/bump.jar", 200, "bump-old"),
+        file("mods/gone.jar", 100, "gone-hash"),
+      ],
+      {},
+      OLDER_VERSION,
+    );
     const to = manifest("client", [
       file("mods/keep.jar", 100, "keep-hash"),
       file("mods/bump.jar", 260, "bump-new"),

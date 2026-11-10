@@ -81,7 +81,9 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
   }
 
   const curseForgeProjectIds = Object.keys(curseForgeMap).map(Number);
-  console.log(`[Enricher] Fetching batch metadata for ${curseForgeProjectIds.length} CurseForge projects...`);
+  console.log(
+    `[Enricher] Fetching batch metadata for ${curseForgeProjectIds.length} CurseForge projects...`,
+  );
   for (let i = 0; i < curseForgeProjectIds.length; i += 50) {
     const chunk = curseForgeProjectIds.slice(i, i + 50);
     try {
@@ -114,20 +116,23 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
     if (art.provider.type === "lampas") {
       if (key.includes("lampas2-overrides") || key.includes("overrides")) {
         (art as any).metadata = {
-          description: "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
+          description:
+            "Official Lampas SMP protocol verification handshake and client/server mixin bridge.",
           categories: ["protocol", "core", "utility"],
           sourceUrl: "https://github.com/justbecauseph/lampas2-overrides",
         };
         enrichedCount++;
       } else if (key.includes("camerapture")) {
         (art as any).metadata = {
-          description: "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
+          description:
+            "In-game camera and photographic screenshot gallery engine for Minecraft 26.2.",
           categories: ["utility", "media"],
         };
         enrichedCount++;
       } else if (key.includes("figura")) {
         (art as any).metadata = {
-          description: "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
+          description:
+            "Advanced customizable 3D avatar and Lua scripting engine (Minecraft 26.2 Port).",
           categories: ["cosmetic", "avatar"],
         };
         enrichedCount++;
@@ -136,7 +141,9 @@ export async function enrichPackLock(options: EnrichOptions): Promise<PackLock> 
   }
 
   writeJsonFile(options.lockFile, lock, true);
-  console.log(`[Enricher] Successfully enriched ${enrichedCount} mods with descriptions, icons, and categories!`);
+  console.log(
+    `[Enricher] Successfully enriched ${enrichedCount} mods with descriptions, icons, and categories!`,
+  );
 
   return lock;
 }

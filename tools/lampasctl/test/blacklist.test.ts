@@ -18,7 +18,7 @@ describe("blacklist rule parsing and matching", () => {
         { scope: "version_id", provider: "modrinth", id: "exact-version" },
         { scope: "project_id", provider: "curseforge", id: 42 },
         { scope: "version_id", provider: "curseforge", id: 43, reason: "bad file" },
-      ])
+      ]),
     ).toEqual([
       { scope: "mod_id", id: "descriptor-id" },
       { scope: "project_id", provider: "modrinth", id: "project-id", reason: "review" },
@@ -29,11 +29,16 @@ describe("blacklist rule parsing and matching", () => {
   });
 
   test("accepts root blacklist policy and rejects blacklist nested under pack configuration sections", () => {
-    expect(parsePackBlacklistRules({
-      pack: { name: "test" },
-      loader: { type: "fabric" },
-      blacklist: [{ scope: "mod_id", id: "blocked" }],
-    }, "root.toml")).toEqual([{ scope: "mod_id", id: "blocked" }]);
+    expect(
+      parsePackBlacklistRules(
+        {
+          pack: { name: "test" },
+          loader: { type: "fabric" },
+          blacklist: [{ scope: "mod_id", id: "blocked" }],
+        },
+        "root.toml",
+      ),
+    ).toEqual([{ scope: "mod_id", id: "blocked" }]);
 
     for (const section of [
       { pack: { blacklist: [] } },
@@ -41,7 +46,9 @@ describe("blacklist rule parsing and matching", () => {
       { launcher: { resourcepacks: { blacklist: [] } } },
       { server: { resourcepack: { blacklist: [] } } },
     ]) {
-      expect(() => parsePackBlacklistRules(section, "nested.toml")).toThrow("must be declared at the root");
+      expect(() => parsePackBlacklistRules(section, "nested.toml")).toThrow(
+        "must be declared at the root",
+      );
     }
   });
 
@@ -63,7 +70,9 @@ describe("blacklist rule parsing and matching", () => {
     ];
 
     for (const rule of invalidRules) {
-      expect(() => parseBlacklistRules([rule], "test pack.toml")).toThrow("Invalid blacklist configuration in test pack.toml[0]");
+      expect(() => parseBlacklistRules([rule], "test pack.toml")).toThrow(
+        "Invalid blacklist configuration in test pack.toml[0]",
+      );
     }
     expect(() => parseBlacklistRules({})).toThrow("must be an array");
   });
@@ -77,32 +86,48 @@ describe("blacklist rule parsing and matching", () => {
       { scope: "version_id", provider: "curseforge", id: 200 },
     ];
 
-    expect(matchingBlacklistRules(rules, {
-      modId: "other-mod",
-      provider: "modrinth",
-      projectId: "shared-value",
-      versionId: "different-version",
-    })).toEqual([rules[1]]);
-    expect(matchingBlacklistRules(rules, {
-      modId: "shared-value",
-      provider: "modrinth",
-      projectId: "different-project",
-      versionId: "different-version",
-    })).toEqual([rules[0]]);
-    expect(matchingBlacklistRules(rules, {
-      modId: "other-mod",
-      provider: "curseforge",
-      projectId: 100,
-      versionId: 200,
-    })).toEqual([rules[3], rules[4]]);
-    expect(matchingBlacklistRules(rules, {
-      modId: "other-mod",
-      provider: "curseforge",
-      projectId: "100",
-      versionId: "200",
-    })).toEqual([]);
-    expect(describeBlacklistRule({ scope: "version_id", provider: "modrinth", id: "bad", reason: "unsafe" }))
-      .toContain("version_id 'bad' (modrinth)");
-    expect(describeBlacklistRule({ scope: "mod_id", id: "blocked", reason: "unsafe" })).toContain("unsafe");
+    expect(
+      matchingBlacklistRules(rules, {
+        modId: "other-mod",
+        provider: "modrinth",
+        projectId: "shared-value",
+        versionId: "different-version",
+      }),
+    ).toEqual([rules[1]]);
+    expect(
+      matchingBlacklistRules(rules, {
+        modId: "shared-value",
+        provider: "modrinth",
+        projectId: "different-project",
+        versionId: "different-version",
+      }),
+    ).toEqual([rules[0]]);
+    expect(
+      matchingBlacklistRules(rules, {
+        modId: "other-mod",
+        provider: "curseforge",
+        projectId: 100,
+        versionId: 200,
+      }),
+    ).toEqual([rules[3], rules[4]]);
+    expect(
+      matchingBlacklistRules(rules, {
+        modId: "other-mod",
+        provider: "curseforge",
+        projectId: "100",
+        versionId: "200",
+      }),
+    ).toEqual([]);
+    expect(
+      describeBlacklistRule({
+        scope: "version_id",
+        provider: "modrinth",
+        id: "bad",
+        reason: "unsafe",
+      }),
+    ).toContain("version_id 'bad' (modrinth)");
+    expect(describeBlacklistRule({ scope: "mod_id", id: "blocked", reason: "unsafe" })).toContain(
+      "unsafe",
+    );
   });
 });

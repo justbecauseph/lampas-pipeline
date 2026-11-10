@@ -57,6 +57,7 @@ file = "custom/my-custom-mod-1.0.0.jar"
 ```
 
 #### Side Selection Guidelines:
+
 - **`side = "both"`**: Synced gameplay mechanics, custom network protocol mods (`lampas-core`), blocks, entities, items.
 - **`side = "client"`**: Client-only visual tweaks, HUD enhancements, GUI mods, sound filters.
 - **`side = "server"`**: Server-side optimization patches, admin tools, logging, dedicated server worldgen.

@@ -18,11 +18,17 @@ export const SUPPORTED_MINECRAFT_VERSIONS = new Set(["26.2"]);
 export function validateFabricServerLauncherJar(
   buffer: Buffer,
   expectedMinecraft: string,
-  expectedLoaderVersion: string
+  expectedLoaderVersion: string,
 ): void {
-  if (buffer.length < 4 || buffer[0] !== 0x50 || buffer[1] !== 0x4b || buffer[2] !== 0x03 || buffer[3] !== 0x04) {
+  if (
+    buffer.length < 4 ||
+    buffer[0] !== 0x50 ||
+    buffer[1] !== 0x4b ||
+    buffer[2] !== 0x03 ||
+    buffer[3] !== 0x04
+  ) {
     throw new Error(
-      `Invalid Fabric server launcher JAR received for ${expectedMinecraft} / ${expectedLoaderVersion} (invalid ZIP magic bytes)`
+      `Invalid Fabric server launcher JAR received for ${expectedMinecraft} / ${expectedLoaderVersion} (invalid ZIP magic bytes)`,
     );
   }
 
@@ -31,14 +37,14 @@ export function validateFabricServerLauncherJar(
     entries = unzipSync(new Uint8Array(buffer));
   } catch (err: any) {
     throw new Error(
-      `Failed to parse Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: ${err.message}`
+      `Failed to parse Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: ${err.message}`,
     );
   }
 
   const manifestEntry = entries["META-INF/MANIFEST.MF"];
   if (!manifestEntry) {
     throw new Error(
-      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing META-INF/MANIFEST.MF`
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing META-INF/MANIFEST.MF`,
     );
   }
 
@@ -47,14 +53,14 @@ export function validateFabricServerLauncherJar(
   const actualMainClass = mainClassMatch ? mainClassMatch[1].trim() : undefined;
   if (actualMainClass !== "net.fabricmc.installer.ServerLauncher") {
     throw new Error(
-      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: unexpected Main-Class in manifest (found '${actualMainClass || "none"}', expected 'net.fabricmc.installer.ServerLauncher')`
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: unexpected Main-Class in manifest (found '${actualMainClass || "none"}', expected 'net.fabricmc.installer.ServerLauncher')`,
     );
   }
 
   const installPropsEntry = entries["install.properties"];
   if (!installPropsEntry) {
     throw new Error(
-      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing install.properties`
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: missing install.properties`,
     );
   }
 
@@ -66,7 +72,7 @@ export function validateFabricServerLauncherJar(
 
   if (actualLoader !== expectedLoaderVersion || actualGame !== expectedMinecraft) {
     throw new Error(
-      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: install.properties does not match requested runtime (found game-version=${actualGame || "none"}, fabric-loader-version=${actualLoader || "none"})`
+      `Invalid Fabric server launcher JAR for ${expectedMinecraft} / ${expectedLoaderVersion}: install.properties does not match requested runtime (found game-version=${actualGame || "none"}, fabric-loader-version=${actualLoader || "none"})`,
     );
   }
 }
@@ -79,17 +85,14 @@ export interface RuntimeDefinition {
   };
 }
 
-export function validateRuntimeDefinition(
-  minecraft: unknown,
-  loader: unknown
-): RuntimeDefinition {
+export function validateRuntimeDefinition(minecraft: unknown, loader: unknown): RuntimeDefinition {
   if (typeof minecraft !== "string" || minecraft.trim().length === 0) {
     throw new Error("Invalid pack definition: 'pack.minecraft' must be a non-empty string.");
   }
   const mc = minecraft.trim();
   if (!SUPPORTED_MINECRAFT_VERSIONS.has(mc)) {
     throw new Error(
-      `Unsupported Minecraft version '${mc}'. Only Minecraft 26.2 is currently supported.`
+      `Unsupported Minecraft version '${mc}'. Only Minecraft 26.2 is currently supported.`,
     );
   }
 
@@ -136,7 +139,7 @@ export interface PrepareFabricServerRuntimeOptions {
 }
 
 export async function prepareFabricServerRuntime(
-  options: PrepareFabricServerRuntimeOptions
+  options: PrepareFabricServerRuntimeOptions,
 ): Promise<StagedFabricServerRuntime> {
   const { targetDir, minecraft, loaderVersion } = options;
   const installerVersion = options.installerVersion || DEFAULT_FABRIC_SERVER_INSTALLER_VERSION;
@@ -168,7 +171,9 @@ export async function prepareFabricServerRuntime(
 
       if (isMatch) {
         if (verificationMode === "fast") {
-          console.log(`  ⚡ [Server Runtime] Reusing existing Fabric server runtime (${minecraft} / Fabric ${loaderVersion})`);
+          console.log(
+            `  ⚡ [Server Runtime] Reusing existing Fabric server runtime (${minecraft} / Fabric ${loaderVersion})`,
+          );
           return {
             isReused: true,
             runtimeState: cachedState,
@@ -179,7 +184,9 @@ export async function prepareFabricServerRuntime(
           // Full verification mode: recompute hash of existing launcher JAR
           const hashes = await computeFileHashesStreaming(launcherJarPath);
           if (hashes.sha256.toLowerCase() === cachedState.launcherSha256.toLowerCase()) {
-            console.log(`  ✓ [Server Runtime Verified] Existing Fabric server runtime verified (${minecraft} / Fabric ${loaderVersion})`);
+            console.log(
+              `  ✓ [Server Runtime Verified] Existing Fabric server runtime verified (${minecraft} / Fabric ${loaderVersion})`,
+            );
             return {
               isReused: true,
               runtimeState: cachedState,
@@ -188,7 +195,7 @@ export async function prepareFabricServerRuntime(
             };
           } else {
             console.warn(
-              `  ⚠ [Server Runtime Checksum Mismatch] Corrupted server launcher JAR detected (expected ${cachedState.launcherSha256}, got ${hashes.sha256}), re-downloading...`
+              `  ⚠ [Server Runtime Checksum Mismatch] Corrupted server launcher JAR detected (expected ${cachedState.launcherSha256}, got ${hashes.sha256}), re-downloading...`,
             );
           }
         }
@@ -200,7 +207,7 @@ export async function prepareFabricServerRuntime(
 
   // Staged download required
   console.log(
-    `  ↓ [Server Runtime] Resolving Fabric server launcher for Minecraft ${minecraft} / Loader ${loaderVersion} (installer ${installerVersion})...`
+    `  ↓ [Server Runtime] Resolving Fabric server launcher for Minecraft ${minecraft} / Loader ${loaderVersion} (installer ${installerVersion})...`,
   );
 
   ensureDir(stagingDir);
@@ -221,12 +228,12 @@ export async function prepareFabricServerRuntime(
             Accept: "application/java-archive, application/octet-stream, */*",
           },
         }),
-      30000
+      30000,
     );
 
     if (!res.ok) {
       throw new Error(
-        `Failed to download Fabric server launcher for Minecraft ${minecraft} and Loader ${loaderVersion}: HTTP ${res.status} ${res.statusText}`
+        `Failed to download Fabric server launcher for Minecraft ${minecraft} and Loader ${loaderVersion}: HTTP ${res.status} ${res.statusText}`,
       );
     }
 
@@ -261,7 +268,9 @@ export async function prepareFabricServerRuntime(
         await replaceFile(stagedJarPath, launcherJarPath);
         await replaceFile(stagedJsonPath, runtimeStatePath);
         await fs.promises.rm(stagingDir, { recursive: true, force: true }).catch(() => {});
-        console.log(`  ✓ [Server Runtime Activated] Fabric server launcher ${loaderVersion} activated`);
+        console.log(
+          `  ✓ [Server Runtime Activated] Fabric server launcher ${loaderVersion} activated`,
+        );
         return runtimeState;
       },
       cleanup: async () => {
@@ -287,7 +296,7 @@ export async function prepareFabricServerRuntime(
 }
 
 export async function ensureFabricServerRuntime(
-  options: PrepareFabricServerRuntimeOptions
+  options: PrepareFabricServerRuntimeOptions,
 ): Promise<ServerRuntimeState> {
   const staged = await prepareFabricServerRuntime(options);
   return staged.activate();

@@ -24,7 +24,7 @@ function setupPublishFixture() {
   const customModSize = Buffer.byteLength(customModContent);
   fs.writeFileSync(path.join(packDir, "custom", "custom-mod.jar"), customModContent, "utf-8");
 
-  const configContent = "{\"setting\": true}";
+  const configContent = '{"setting": true}';
   const configSha = crypto.createHash("sha256").update(configContent).digest("hex");
   const configSize = Buffer.byteLength(configContent);
   fs.writeFileSync(path.join(packDir, "common", "config", "lampas.json"), configContent, "utf-8");
@@ -97,9 +97,21 @@ function setupPublishFixture() {
     ],
   };
 
-  fs.writeFileSync(path.join(manifestDir, "release.json"), JSON.stringify(releaseJson, null, 2), "utf-8");
-  fs.writeFileSync(path.join(manifestDir, "client-manifest.json"), JSON.stringify(clientManifest, null, 2), "utf-8");
-  fs.writeFileSync(path.join(manifestDir, "server-manifest.json"), JSON.stringify(serverManifest, null, 2), "utf-8");
+  fs.writeFileSync(
+    path.join(manifestDir, "release.json"),
+    JSON.stringify(releaseJson, null, 2),
+    "utf-8",
+  );
+  fs.writeFileSync(
+    path.join(manifestDir, "client-manifest.json"),
+    JSON.stringify(clientManifest, null, 2),
+    "utf-8",
+  );
+  fs.writeFileSync(
+    path.join(manifestDir, "server-manifest.json"),
+    JSON.stringify(serverManifest, null, 2),
+    "utf-8",
+  );
 
   return {
     dir,
@@ -169,7 +181,9 @@ describe("discoverLocalLampasBlobs", () => {
       expect(configBlob).toBeDefined();
       expect(configBlob?.size).toBe(fixture.configSize);
       expect(configBlob?.mimeType).toBe("application/json");
-      expect(configBlob?.localPath).toBe(path.join(fixture.packDir, "common", "config", "lampas.json"));
+      expect(configBlob?.localPath).toBe(
+        path.join(fixture.packDir, "common", "config", "lampas.json"),
+      );
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
@@ -185,7 +199,7 @@ describe("discoverLocalLampasBlobs", () => {
           clientManifest: fixture.clientManifest as any,
           serverManifest: fixture.serverManifest as any,
           packDir: fixture.packDir,
-        })
+        }),
       ).rejects.toThrow("could not be found locally");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -194,7 +208,10 @@ describe("discoverLocalLampasBlobs", () => {
 
   test("throws a hard error if local file size differs from manifest", async () => {
     const fixture = setupPublishFixture();
-    fs.writeFileSync(path.join(fixture.packDir, "custom", "custom-mod.jar"), "modified larger content bytes");
+    fs.writeFileSync(
+      path.join(fixture.packDir, "custom", "custom-mod.jar"),
+      "modified larger content bytes",
+    );
 
     try {
       await expect(
@@ -202,7 +219,7 @@ describe("discoverLocalLampasBlobs", () => {
           clientManifest: fixture.clientManifest as any,
           serverManifest: fixture.serverManifest as any,
           packDir: fixture.packDir,
-        })
+        }),
       ).rejects.toThrow("size mismatch");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -220,7 +237,7 @@ describe("discoverLocalLampasBlobs", () => {
           clientManifest: fixture.clientManifest as any,
           serverManifest: fixture.serverManifest as any,
           packDir: fixture.packDir,
-        })
+        }),
       ).rejects.toThrow("SHA-256 mismatch");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -231,7 +248,11 @@ describe("discoverLocalLampasBlobs", () => {
     const fixture = setupPublishFixture();
     const srpContent = "dummy server resource pack zip bytes";
     const srpSha = crypto.createHash("sha256").update(srpContent).digest("hex");
-    fs.writeFileSync(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"), srpContent, "utf-8");
+    fs.writeFileSync(
+      path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"),
+      srpContent,
+      "utf-8",
+    );
 
     const releaseWithSrp: any = {
       serverResourcePack: {
@@ -258,7 +279,9 @@ describe("discoverLocalLampasBlobs", () => {
       const srpBlob = blobs.find((b) => b.sha256 === srpSha);
       expect(srpBlob).toBeDefined();
       expect(srpBlob?.manifestPath).toBe("resourcepacks/lampas2-resource-pack.zip");
-      expect(srpBlob?.localPath).toBe(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"));
+      expect(srpBlob?.localPath).toBe(
+        path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"),
+      );
       expect(srpBlob?.mimeType).toBe("application/zip");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -269,7 +292,11 @@ describe("discoverLocalLampasBlobs", () => {
     const fixture = setupPublishFixture();
     const srpContent = "dummy server resource pack zip bytes";
     const srpSha = crypto.createHash("sha256").update(srpContent).digest("hex");
-    fs.writeFileSync(path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"), srpContent, "utf-8");
+    fs.writeFileSync(
+      path.join(fixture.packDir, "custom", "lampas2-resource-pack.zip"),
+      srpContent,
+      "utf-8",
+    );
 
     const releaseWithSrp: any = {
       serverResourcePack: {
@@ -292,7 +319,7 @@ describe("discoverLocalLampasBlobs", () => {
           serverManifest: fixture.serverManifest as any,
           packDir: fixture.packDir,
           release: releaseWithSrp,
-        })
+        }),
       ).rejects.toThrow("size mismatch");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -314,7 +341,10 @@ describe("uploadSingleBlob", () => {
     globalThis.fetch = (async () => {
       callCount++;
       if (callCount < 2) {
-        return new Response("Internal Server Error", { status: 500, statusText: "Internal Server Error" });
+        return new Response("Internal Server Error", {
+          status: 500,
+          statusText: "Internal Server Error",
+        });
       }
       return new Response("", { status: 200 });
     }) as any;
@@ -353,7 +383,9 @@ describe("uploadSingleBlob", () => {
         manifestPath: "mods/custom-mod.jar",
       };
 
-      await expect(uploadSingleBlob(blob, "https://storage.railway.app/test-upload")).rejects.toThrow("status 403");
+      await expect(
+        uploadSingleBlob(blob, "https://storage.railway.app/test-upload"),
+      ).rejects.toThrow("status 403");
       expect(callCount).toBe(1);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -411,7 +443,7 @@ describe("publishRelease", () => {
               },
             ],
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -429,7 +461,7 @@ describe("publishRelease", () => {
             version: "2.1.0",
             channelsUpdated: parsedBody?.channels || ["dev", "beta", "stable"],
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -485,18 +517,26 @@ describe("publishRelease", () => {
         return new Response(
           JSON.stringify({
             blobs: [
-              { sha256: fixture.configSha, status: "exists", storageKey: `blobs/co/${fixture.configSha}` },
-              { sha256: fixture.customModSha, status: "exists", storageKey: `blobs/cu/${fixture.customModSha}` },
+              {
+                sha256: fixture.configSha,
+                status: "exists",
+                storageKey: `blobs/co/${fixture.configSha}`,
+              },
+              {
+                sha256: fixture.customModSha,
+                status: "exists",
+                storageKey: `blobs/cu/${fixture.customModSha}`,
+              },
             ],
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
 
       if (url.endsWith("/api/v1/releases/publish")) {
         return new Response(
           JSON.stringify({ success: true, version: "2.1.0", channelsUpdated: ["dev"] }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -542,7 +582,7 @@ describe("publishRelease", () => {
               },
             ],
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -561,7 +601,7 @@ describe("publishRelease", () => {
           portalUrl: "http://localhost:3000",
           publishSecret: "secret-token",
           skipFabricMetaCheck: true,
-        })
+        }),
       ).rejects.toThrow("Direct PUT upload failed");
 
       // Verify that publish endpoint was NEVER called
@@ -588,7 +628,7 @@ describe("publishRelease", () => {
           publishSecret: "invalid-token",
           channel: "dev",
           skipFabricMetaCheck: true,
-        })
+        }),
       ).rejects.toThrow("Blob preparation failed (401 Unauthorized)");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -604,11 +644,19 @@ describe("publishRelease", () => {
         return new Response(
           JSON.stringify({
             blobs: [
-              { sha256: fixture.configSha, status: "exists", storageKey: `blobs/co/${fixture.configSha}` },
-              { sha256: fixture.customModSha, status: "exists", storageKey: `blobs/cu/${fixture.customModSha}` },
+              {
+                sha256: fixture.configSha,
+                status: "exists",
+                storageKey: `blobs/co/${fixture.configSha}`,
+              },
+              {
+                sha256: fixture.customModSha,
+                status: "exists",
+                storageKey: `blobs/cu/${fixture.customModSha}`,
+              },
             ],
           }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { status: 200, headers: { "Content-Type": "application/json" } },
         );
       }
       return new Response("Database error", { status: 500, statusText: "Internal Server Error" });
@@ -623,7 +671,7 @@ describe("publishRelease", () => {
           publishSecret: "secret",
           channel: "dev",
           skipFabricMetaCheck: true,
-        })
+        }),
       ).rejects.toThrow("Failed to publish release (500 Internal Server Error)");
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -647,7 +695,7 @@ describe("publishRelease", () => {
           portalUrl: "http://localhost:3000",
           publishSecret: "secret",
           skipFabricMetaCheck: true,
-        })
+        }),
       ).rejects.toThrow(/Manifest Loader mismatch/);
     } finally {
       fs.rmSync(fixture.dir, { recursive: true, force: true });
@@ -658,7 +706,10 @@ describe("publishRelease", () => {
 describe("Architecture Guard: Publisher & Blob Publisher", () => {
   test("publisher and blob-publisher modules must not contain base64 packaging logic", () => {
     const publisherCode = fs.readFileSync(path.resolve(__dirname, "../src/publisher.ts"), "utf-8");
-    const blobPublisherCode = fs.readFileSync(path.resolve(__dirname, "../src/blob-publisher.ts"), "utf-8");
+    const blobPublisherCode = fs.readFileSync(
+      path.resolve(__dirname, "../src/blob-publisher.ts"),
+      "utf-8",
+    );
 
     const forbiddenPatterns = [/contentBase64/, /\.toString\(["']base64["']\)/];
 

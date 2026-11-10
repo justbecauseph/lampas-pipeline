@@ -1,7 +1,27 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { computeFileHashesStreaming, formatPromptJson, generateDeterministicUuid, isValidServerAddress, normalizeRelPath, parseTomlFile, readJsonFile, writeJsonFile } from "./utils";
-import type { ConfigPatch, ManifestFile, ModCatalogEntry, PackConfig, PackLock, PackManifest, ReleaseDescriptor, ReleaseLaunchConfig, ReleaseRequiredResourcePack, ServerResourcePackConfig } from "./types";
+import {
+  computeFileHashesStreaming,
+  formatPromptJson,
+  generateDeterministicUuid,
+  isValidServerAddress,
+  normalizeRelPath,
+  parseTomlFile,
+  readJsonFile,
+  writeJsonFile,
+} from "./utils";
+import type {
+  ConfigPatch,
+  ManifestFile,
+  ModCatalogEntry,
+  PackConfig,
+  PackLock,
+  PackManifest,
+  ReleaseDescriptor,
+  ReleaseLaunchConfig,
+  ReleaseRequiredResourcePack,
+  ServerResourcePackConfig,
+} from "./types";
 import {
   clientStaticFilePolicy,
   commonStaticFilePolicy,
@@ -81,7 +101,9 @@ export interface ComputedManifests {
  * Assembles the manifests and checks them against the Portal and launcher rules, without writing.
  * `validate` calls this so it fails on what `manifest` would fail on.
  */
-export async function computeManifests(options: Omit<ManifestOptions, "outDir">): Promise<ComputedManifests> {
+export async function computeManifests(
+  options: Omit<ManifestOptions, "outDir">,
+): Promise<ComputedManifests> {
   const packConfigPath = path.join(options.packDir, "pack.toml");
   const packConfig = parseTomlFile<PackConfig>(packConfigPath);
   const lock = readJsonFile<PackLock>(options.lockFile);
@@ -92,7 +114,7 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
   // Lock consistency check
   if (lock.minecraft !== packConfig.pack.minecraft) {
     throw new Error(
-      `pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`
+      `pack.lock.json was generated for Minecraft ${lock.minecraft}, but pack.toml requires ${packConfig.pack.minecraft}. Regenerate the lock before publishing.`,
     );
   }
 
@@ -102,7 +124,7 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
     lock.loader.version !== loaderDef.version
   ) {
     throw new Error(
-      `pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`
+      `pack.lock.json was generated for Fabric Loader ${lock.loader?.version ?? "unknown"}, but pack.toml requires ${loaderDef.version}. Regenerate the lock before publishing.`,
     );
   }
 
@@ -115,11 +137,13 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
   if (packConfig.launcher?.play) {
     const { auto_connect, server } = packConfig.launcher.play;
     if (server && !isValidServerAddress(server)) {
-      throw new Error(`Invalid server address in pack.toml ([launcher.play] server = '${server}'): malformed address.`);
+      throw new Error(
+        `Invalid server address in pack.toml ([launcher.play] server = '${server}'): malformed address.`,
+      );
     }
     if (auto_connect && !server) {
       throw new Error(
-        `Auto-connect is enabled in pack.toml ([launcher.play] auto_connect = true) but no valid server address was specified.`
+        `Auto-connect is enabled in pack.toml ([launcher.play] auto_connect = true) but no valid server address was specified.`,
       );
     }
   }
@@ -129,7 +153,7 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
   const srpDef = packConfig.server?.resourcepack || packConfig.server?.resource_pack;
   if (srpDef?.artifact && launcherRequiredPacks.includes(srpDef.artifact)) {
     throw new Error(
-      `Resource pack '${srpDef.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`
+      `Resource pack '${srpDef.artifact}' is configured for both launcher-local and server-resource-pack delivery. Choose one delivery mechanism.`,
     );
   }
 
@@ -141,22 +165,33 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
       if (!artifact) {
         throw new Error(`Required resource pack '${packId}' was not found in pack.lock.json.`);
       }
-      const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+      const artifactType =
+        artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
       if (artifactType !== "resourcepack") {
-        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`);
+        throw new Error(
+          `Artifact '${packId}' is configured as a required resource pack but has type '${artifactType}'.`,
+        );
       }
       if (artifact.side !== "client" && artifact.side !== "both") {
-        throw new Error(`Artifact '${packId}' is configured as a required resource pack but is not available to the client (side='${artifact.side}').`);
+        throw new Error(
+          `Artifact '${packId}' is configured as a required resource pack but is not available to the client (side='${artifact.side}').`,
+        );
       }
       if (!artifact.filename) {
-        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has no filename.`);
+        throw new Error(
+          `Artifact '${packId}' is configured as a required resource pack but has no filename.`,
+        );
       }
       const targetDir = artifact.targetDir || "resourcepacks";
       if (targetDir !== "resourcepacks") {
-        throw new Error(`Artifact '${packId}' is configured as a required resource pack but its path does not resolve to resourcepacks/ (${targetDir}/${artifact.filename}).`);
+        throw new Error(
+          `Artifact '${packId}' is configured as a required resource pack but its path does not resolve to resourcepacks/ (${targetDir}/${artifact.filename}).`,
+        );
       }
       if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
-        throw new Error(`Artifact '${packId}' is configured as a required resource pack but has invalid SHA-256: '${artifact.sha256}'.`);
+        throw new Error(
+          `Artifact '${packId}' is configured as a required resource pack but has invalid SHA-256: '${artifact.sha256}'.`,
+        );
       }
 
       requiredResourcePacks.push({
@@ -204,7 +239,13 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
       continue;
     }
 
-    const targetDir = artifact.targetDir || (artifact.artifactType === "shader" ? "shaderpacks" : artifact.artifactType === "resourcepack" ? "resourcepacks" : "mods");
+    const targetDir =
+      artifact.targetDir ||
+      (artifact.artifactType === "shader"
+        ? "shaderpacks"
+        : artifact.artifactType === "resourcepack"
+          ? "resourcepacks"
+          : "mods");
     const fileEntry: ManifestFile = {
       path: `${targetDir}/${artifact.filename}`,
       size: artifact.size,
@@ -276,7 +317,9 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
     protocol: packConfig.launcher?.protocol || 1,
     mods: clientModsCatalog,
     files: allClientFiles,
-    ...(clientConfigPatches && clientConfigPatches.length > 0 ? { configPatches: clientConfigPatches } : {}),
+    ...(clientConfigPatches && clientConfigPatches.length > 0
+      ? { configPatches: clientConfigPatches }
+      : {}),
   };
 
   const serverManifest: PackManifest = {
@@ -297,7 +340,8 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
   // Build resolved release launch configuration
   let launchConfig: ReleaseLaunchConfig | undefined = undefined;
   const playConfig = packConfig.launcher?.play;
-  const hasPlay = playConfig && (playConfig.auto_connect !== undefined || playConfig.server !== undefined);
+  const hasPlay =
+    playConfig && (playConfig.auto_connect !== undefined || playConfig.server !== undefined);
   const hasRequiredPacks = requiredResourcePacks.length > 0;
 
   if (hasPlay || hasRequiredPacks) {
@@ -315,28 +359,42 @@ export async function computeManifests(options: Omit<ManifestOptions, "outDir">)
 
   // Build server resource pack configuration
   let serverResourcePackConfig: ServerResourcePackConfig | undefined = undefined;
-  const portalBase = resolvePortalBaseUrl(packConfig, options.portalBaseUrl, options.defaultPortalBaseUrl) || "";
+  const portalBase =
+    resolvePortalBaseUrl(packConfig, options.portalBaseUrl, options.defaultPortalBaseUrl) || "";
 
   if (srpDef?.artifact) {
     const artifact = lock.artifacts[srpDef.artifact];
     if (!artifact) {
-      throw new Error(`Server resource pack artifact '${srpDef.artifact}' was not found in pack.lock.json.`);
+      throw new Error(
+        `Server resource pack artifact '${srpDef.artifact}' was not found in pack.lock.json.`,
+      );
     }
-    const artifactType = artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
+    const artifactType =
+      artifact.artifactType || (artifact.targetDir === "resourcepacks" ? "resourcepack" : "mod");
     if (artifactType !== "resourcepack") {
-      throw new Error(`Artifact '${srpDef.artifact}' is configured as server resource pack but has type '${artifactType}'.`);
+      throw new Error(
+        `Artifact '${srpDef.artifact}' is configured as server resource pack but has type '${artifactType}'.`,
+      );
     }
     if (!artifact.sha1 || !/^[0-9a-fA-F]{40}$/.test(artifact.sha1)) {
-      throw new Error(`Server resource pack artifact '${srpDef.artifact}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`);
+      throw new Error(
+        `Server resource pack artifact '${srpDef.artifact}' requires a valid 40-character SHA-1 hash for Minecraft dedicated server.`,
+      );
     }
     if (!artifact.sha256 || !/^[0-9a-fA-F]{64}$/.test(artifact.sha256)) {
-      throw new Error(`Server resource pack artifact '${srpDef.artifact}' has invalid SHA-256: '${artifact.sha256}'.`);
+      throw new Error(
+        `Server resource pack artifact '${srpDef.artifact}' has invalid SHA-256: '${artifact.sha256}'.`,
+      );
     }
     let downloadUrl = artifact.downloadUrl;
     if (downloadUrl.startsWith("/") && portalBase) {
       downloadUrl = `${portalBase}${downloadUrl}`;
     }
-    const packId = srpDef.id || (srpDef as any).uuid || (artifact as any).uuid || generateDeterministicUuid(`resourcepack:${artifact.id}`);
+    const packId =
+      srpDef.id ||
+      (srpDef as any).uuid ||
+      (artifact as any).uuid ||
+      generateDeterministicUuid(`resourcepack:${artifact.id}`);
     serverResourcePackConfig = {
       artifact: srpDef.artifact,
       required: srpDef.required !== false,
@@ -387,7 +445,8 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   serverManifest: PackManifest;
   release: ReleaseDescriptor;
 }> {
-  const { clientManifest, serverManifest, release, serverResourcePackConfig } = await computeManifests(options);
+  const { clientManifest, serverManifest, release, serverResourcePackConfig } =
+    await computeManifests(options);
 
   const clientOut = path.join(options.outDir, "client-manifest.json");
   const serverOut = path.join(options.outDir, "server-manifest.json");
@@ -398,8 +457,12 @@ export async function buildManifests(options: ManifestOptions): Promise<{
   writeJsonFile(releaseOut, release, true);
 
   console.log(`[Manifest] Built manifests for v${release.version}:`);
-  console.log(`  - Client manifest (${clientManifest.files.length} files, ${(clientManifest.mods ?? []).length} cataloged mods) -> ${clientOut}`);
-  console.log(`  - Server manifest (${serverManifest.files.length} files, ${(serverManifest.mods ?? []).length} cataloged mods) -> ${serverOut}`);
+  console.log(
+    `  - Client manifest (${clientManifest.files.length} files, ${(clientManifest.mods ?? []).length} cataloged mods) -> ${clientOut}`,
+  );
+  console.log(
+    `  - Server manifest (${serverManifest.files.length} files, ${(serverManifest.mods ?? []).length} cataloged mods) -> ${serverOut}`,
+  );
   console.log(`  - Release descriptor -> ${releaseOut}`);
 
   // Optional: Generate server-side resource-pack configuration if server resource pack is present

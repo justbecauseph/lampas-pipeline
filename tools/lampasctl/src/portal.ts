@@ -15,7 +15,9 @@ export function normalizePortalBaseUrl(raw: string, source: string): string {
     throw new Error(`Invalid portal base URL from ${source}: '${raw}' must use http or https.`);
   }
   if (parsed.search || parsed.hash) {
-    throw new Error(`Invalid portal base URL from ${source}: '${raw}' must not contain a query or fragment.`);
+    throw new Error(
+      `Invalid portal base URL from ${source}: '${raw}' must not contain a query or fragment.`,
+    );
   }
   return value.replace(/\/+$/, "");
 }
@@ -31,7 +33,14 @@ export function readPackPortalBaseUrl(packConfig: PackConfig): string | undefine
 }
 
 /** Resolve the portal base URL: explicit override, then pack.toml, then fallback. */
-export function resolvePortalBaseUrl(packConfig: PackConfig, override?: string, fallback?: string): string | undefined {
+export function resolvePortalBaseUrl(
+  packConfig: PackConfig,
+  override?: string,
+  fallback?: string,
+): string | undefined {
   if (override) return normalizePortalBaseUrl(override, "--portal / environment");
-  return readPackPortalBaseUrl(packConfig) ?? (fallback ? normalizePortalBaseUrl(fallback, "default") : undefined);
+  return (
+    readPackPortalBaseUrl(packConfig) ??
+    (fallback ? normalizePortalBaseUrl(fallback, "default") : undefined)
+  );
 }

@@ -54,7 +54,7 @@ describe("release-resolver", () => {
     }) as any;
 
     await expect(
-      resolveChannelVersion("https://portal.lampas.town", "nonexistent")
+      resolveChannelVersion("https://portal.lampas.town", "nonexistent"),
     ).rejects.toThrow("Failed to resolve release channel 'nonexistent'");
   });
 
@@ -150,9 +150,9 @@ describe("release-resolver", () => {
   test("fetchManifest rejects when the body stalls after the headers", async () => {
     const stub = startStalledBodyServer();
     try {
-      await expect(fetchManifest(stub.baseUrl, "2.3.33", "client", { timeoutMs: 200 })).rejects.toThrow(
-        "Timed out after 200ms while fetching client manifest for v2.3.33"
-      );
+      await expect(
+        fetchManifest(stub.baseUrl, "2.3.33", "client", { timeoutMs: 200 }),
+      ).rejects.toThrow("Timed out after 200ms while fetching client manifest for v2.3.33");
     } finally {
       stub.stop();
     }
@@ -162,11 +162,11 @@ describe("release-resolver", () => {
     const stub = startStalledBodyServer();
     try {
       await expect(resolveChannelVersion(stub.baseUrl, "dev", { timeoutMs: 200 })).rejects.toThrow(
-        "Timed out after 200ms while resolving channel 'dev'"
+        "Timed out after 200ms while resolving channel 'dev'",
       );
-      await expect(fetchReleaseDescriptor(stub.baseUrl, "2.3.33", { timeoutMs: 200 })).rejects.toThrow(
-        "Timed out after 200ms while fetching release descriptor for v2.3.33"
-      );
+      await expect(
+        fetchReleaseDescriptor(stub.baseUrl, "2.3.33", { timeoutMs: 200 }),
+      ).rejects.toThrow("Timed out after 200ms while fetching release descriptor for v2.3.33");
     } finally {
       stub.stop();
     }
@@ -181,7 +181,7 @@ describe("release-resolver", () => {
     }) as any;
 
     await expect(fetchManifest("https://portal.lampas.town", "2.3.33", "server")).rejects.toThrow(
-      "Invalid response for server manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/server-manifest: body is not valid JSON"
+      "Invalid response for server manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/server-manifest: body is not valid JSON",
     );
   });
 
@@ -191,7 +191,7 @@ describe("release-resolver", () => {
     }) as any;
 
     await expect(fetchManifest("https://portal.lampas.town", "2.3.33", "client")).rejects.toThrow(
-      "Failed to fetch client manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/client-manifest: HTTP 404 Not Found"
+      "Failed to fetch client manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/client-manifest: HTTP 404 Not Found",
     );
   });
 });

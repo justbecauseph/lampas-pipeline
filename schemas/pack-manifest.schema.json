@@ -36,10 +36,7 @@
     },
     "target": {
       "type": "string",
-      "enum": [
-        "client",
-        "server"
-      ],
+      "enum": ["client", "server"],
       "description": "Target distribution side: 'client' for player instances, 'server' for dedicated server."
     },
     "minecraft": {
@@ -49,10 +46,7 @@
     },
     "loader": {
       "type": "object",
-      "required": [
-        "type",
-        "version"
-      ],
+      "required": ["type", "version"],
       "additionalProperties": false,
       "properties": {
         "type": {
@@ -76,13 +70,7 @@
       "description": "Informational catalog of included mods.",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "side",
-          "filename",
-          "size"
-        ],
+        "required": ["id", "name", "side", "filename", "size"],
         "properties": {
           "id": {
             "type": "string"
@@ -91,11 +79,7 @@
             "type": "string"
           },
           "side": {
-            "enum": [
-              "client",
-              "server",
-              "both"
-            ]
+            "enum": ["client", "server", "both"]
           },
           "filename": {
             "type": "string"
@@ -127,13 +111,7 @@
       "description": "Authoritative list of files to install and verify.",
       "items": {
         "type": "object",
-        "required": [
-          "path",
-          "size",
-          "hashes",
-          "download",
-          "policy"
-        ],
+        "required": ["path", "size", "hashes", "download", "policy"],
         "additionalProperties": false,
         "properties": {
           "path": {
@@ -148,9 +126,7 @@
           },
           "hashes": {
             "type": "object",
-            "required": [
-              "sha256"
-            ],
+            "required": ["sha256"],
             "additionalProperties": false,
             "properties": {
               "sha256": {
@@ -165,10 +141,7 @@
           },
           "download": {
             "type": "object",
-            "required": [
-              "url",
-              "provider"
-            ],
+            "required": ["url", "provider"],
             "additionalProperties": false,
             "properties": {
               "url": {
@@ -176,22 +149,12 @@
                 "minLength": 1
               },
               "provider": {
-                "enum": [
-                  "modrinth",
-                  "curseforge",
-                  "lampas",
-                  "direct"
-                ]
+                "enum": ["modrinth", "curseforge", "lampas", "direct"]
               }
             }
           },
           "policy": {
-            "enum": [
-              "MANAGED",
-              "PRESERVE",
-              "OPTIONAL",
-              "GENERATED"
-            ],
+            "enum": ["MANAGED", "PRESERVE", "OPTIONAL", "GENERATED"],
             "description": "Ownership policy: MANAGED (wholly owned by Lampas), PRESERVE (mod/player owned)."
           }
         }

@@ -3,7 +3,7 @@ import { describeRconError, RconClient, resolveRconConfig, type RconPasswordSour
 
 export type ExecCommandFn = (
   cmd: string,
-  args: string[]
+  args: string[],
 ) => Promise<{ code: number; stdout: string; stderr: string }>;
 
 export interface ScheduledRestartOptions {
@@ -70,9 +70,7 @@ const RCON_PASSWORD_SOURCE_LABELS: Record<RconPasswordSource, string> = {
  * Connects to RCON to broadcast countdown warnings and trigger `save-all`,
  * then restarts the systemd service and verifies active status.
  */
-export async function runScheduledRestart(
-  options: ScheduledRestartOptions = {}
-): Promise<number> {
+export async function runScheduledRestart(options: ScheduledRestartOptions = {}): Promise<number> {
   const targetDir = options.targetDir || process.cwd();
   const serviceName = options.serviceName || "lampas-server.service";
   const countdownMinutes = options.countdownMinutes !== undefined ? options.countdownMinutes : 5;
@@ -107,7 +105,7 @@ export async function runScheduledRestart(
     log(
       `Warning: No server.properties in ${targetDir} and no RCON password from --rcon-password, ` +
         "RCON_PASSWORD or .minecraft-env; using an empty password. " +
-        "Pass --target <server directory> if this is not the server directory."
+        "Pass --target <server directory> if this is not the server directory.",
     );
   }
 
@@ -126,7 +124,9 @@ export async function runScheduledRestart(
   const broadcast = async (msg: string) => {
     log(`Broadcasting: ${msg}`);
     if (rcon && !rcon.isConnected) {
-      log(`Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping broadcast.`);
+      log(
+        `Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping broadcast.`,
+      );
       return;
     }
     if (!rcon) {
@@ -145,7 +145,9 @@ export async function runScheduledRestart(
   const sendCommand = async (cmd: string) => {
     log(`Executing RCON command: ${cmd}`);
     if (rcon && !rcon.isConnected) {
-      log(`Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping ${cmd}.`);
+      log(
+        `Notice: RCON connection lost (${rcon.lastError ?? "connection closed after connecting"}). Skipping ${cmd}.`,
+      );
       return;
     }
     if (!rcon) {
@@ -192,7 +194,9 @@ export async function runScheduledRestart(
     }
 
     if (remaining === 1) {
-      await broadcast("[Scheduled Restart] Server will restart in 1 minute. Please find a safe place to disconnect!");
+      await broadcast(
+        "[Scheduled Restart] Server will restart in 1 minute. Please find a safe place to disconnect!",
+      );
       await sleepFn(60 * 1000);
       remaining = 0;
     }
