@@ -1,5 +1,10 @@
 MINECRAFT_MANAGEMENT_TLS_KEYSTORE_PASSWORD=
 PORTAL_URL=https://dev.lampas.town
+# Read-only Portal token for the metadata reads of `lampasctl start`, which loads this file.
+# `lampasctl deploy` does not load it: export the variable first. Set the same value on the Portal
+# before setting it here; a token the Portal does not accept stops the server from starting.
+# Not PACK_PUBLISH_SECRET, which must never be on this host. Keep this file at mode 0600.
+PACK_DEPLOY_TOKEN=
 YG_DB_AUTH=peer
 YG_DB_NAME=yggdrasil
 YG_DB_USER=server

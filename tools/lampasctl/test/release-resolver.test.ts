@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import {
+  deployTokenFromEnv,
   fetchManifest,
   fetchReleaseDescriptor,
   resolveChannelVersion,
@@ -193,5 +194,96 @@ describe("release-resolver", () => {
     await expect(fetchManifest("https://portal.lampas.town", "2.3.33", "client")).rejects.toThrow(
       "Failed to fetch client manifest for version '2.3.33' from https://portal.lampas.town/api/v1/releases/2.3.33/client-manifest: HTTP 404 Not Found",
     );
+  });
+
+  test("a 404 error does not mention the deploy token", async () => {
+    globalThis.fetch = (async () => {
+      return new Response("Not Found", { status: 404, statusText: "Not Found" });
+    }) as any;
+
+    const err = await fetchManifest("https://portal.lampas.town", "2.3.33", "server").catch(
+      (e: Error) => e,
+    );
+    expect((err as Error).message).not.toContain("PACK_DEPLOY_TOKEN");
+  });
+
+  test("deployTokenFromEnv trims the value and treats unset, empty and whitespace-only as no token", () => {
+    expect(deployTokenFromEnv({ PACK_DEPLOY_TOKEN: "abc123" })).toBe("abc123");
+    expect(deployTokenFromEnv({ PACK_DEPLOY_TOKEN: "  abc123\r" })).toBe("abc123");
+    expect(deployTokenFromEnv({})).toBeUndefined();
+    expect(deployTokenFromEnv({ PACK_DEPLOY_TOKEN: "" })).toBeUndefined();
+    expect(deployTokenFromEnv({ PACK_DEPLOY_TOKEN: "  \t" })).toBeUndefined();
+    // The publish secret is never a fallback.
+    expect(deployTokenFromEnv({ PACK_PUBLISH_SECRET: "publish-secret" })).toBeUndefined();
+  });
+
+  describe("401 and 403 name PACK_DEPLOY_TOKEN alongside the URL and status", () => {
+    const PORTAL = "https://portal.lampas.town";
+    const respondWith = (status: number, statusText: string) => {
+      globalThis.fetch = (async () => new Response(statusText, { status, statusText })) as any;
+    };
+    const messageOf = async (promise: Promise<unknown>): Promise<string> => {
+      const err = await promise.then(
+        () => undefined,
+        (e: Error) => e,
+      );
+      expect(err).toBeInstanceOf(Error);
+      return (err as Error).message;
+    };
+
+    test("401 without a token says the token is missing, for the channel, release and manifest reads", async () => {
+      respondWith(401, "Unauthorized");
+
+      const reads: [string, Promise<unknown>][] = [
+        [`${PORTAL}/api/v1/channels/dev`, resolveChannelVersion(PORTAL, "dev")],
+        [`${PORTAL}/api/v1/releases/2.3.33`, fetchReleaseDescriptor(PORTAL, "2.3.33")],
+        [
+          `${PORTAL}/api/v1/releases/2.3.33/server-manifest`,
+          fetchManifest(PORTAL, "2.3.33", "server"),
+        ],
+        [
+          `${PORTAL}/api/v1/releases/2.3.33/client-manifest`,
+          fetchManifest(PORTAL, "2.3.33", "client"),
+        ],
+      ];
+      for (const [url, read] of reads) {
+        const message = await messageOf(read);
+        expect(message).toContain(url);
+        expect(message).toContain("HTTP 401 Unauthorized");
+        expect(message).toContain("PACK_DEPLOY_TOKEN is missing");
+      }
+    });
+
+    test("403 with a token says the token was not accepted and does not print it", async () => {
+      respondWith(403, "Forbidden");
+      const token = "resolver-token-for-tests";
+
+      const reads: [string, Promise<unknown>][] = [
+        [`${PORTAL}/api/v1/channels/beta`, resolveChannelVersion(PORTAL, "beta", { token })],
+        [`${PORTAL}/api/v1/releases/2.3.33`, fetchReleaseDescriptor(PORTAL, "2.3.33", { token })],
+        [
+          `${PORTAL}/api/v1/releases/2.3.33/server-manifest`,
+          fetchManifest(PORTAL, "2.3.33", "server", { token }),
+        ],
+      ];
+      for (const [url, read] of reads) {
+        const message = await messageOf(read);
+        expect(message).toContain(url);
+        expect(message).toContain("HTTP 403 Forbidden");
+        expect(message).toContain("PACK_DEPLOY_TOKEN was not accepted");
+        expect(message).not.toContain(token);
+      }
+    });
+
+    test("resolveRelease fails on the first 401 with the channel URL and the token named", async () => {
+      respondWith(401, "Unauthorized");
+
+      const message = await messageOf(
+        resolveRelease({ portalUrl: PORTAL, channel: "dev", target: "server" }),
+      );
+      expect(message).toContain(`${PORTAL}/api/v1/channels/dev`);
+      expect(message).toContain("HTTP 401");
+      expect(message).toContain("PACK_DEPLOY_TOKEN");
+    });
   });
 });

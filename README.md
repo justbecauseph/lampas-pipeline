@@ -355,7 +355,9 @@ Precedence per command:
 
 Bun loads `.env` from the working directory, so `PACK_PORTAL_URL` or `PORTAL_BASE_URL` in `.env` overrides `[portal] base_url` like a shell variable. `publish` does not check that the manifests' URLs point at the Portal it publishes to; pass `--portal` explicitly when publishing. `lampasctl validate` rejects a malformed `base_url`. The `https://portal.lampas.town` fallback does not currently serve the Portal API (production is `https://dev.lampas.town`).
 
-After writing the manifests, `manifest` compares them with the Portal that the `manifest` precedence above resolves (not `PACK_PORTAL_URL`) and prints the result. It shows the version each channel (`dev`, `beta`, `stable`) points to and whether the local version is published (`published (revoked)` when the Portal answers 410). The per-target (client, server) diff lists files added, removed, or updated and changed top-level fields, relative to the release the selected channel points to. A target whose file hashes and top-level fields match but whose manifest differs elsewhere (download URLs or file order) is reported as identical files with other metadata differing. `--channel dev|beta|stable` selects the channel (default `stable`); any other value skips the comparison with a warning. `--no-portal-diff` skips the comparison. When the local version is already published, the publish check compares the Portal's stored copy of that version with the local build, in full: both manifests (file order and download URLs count) and the stored release metadata (status, minimum launcher version, launch settings, loader and Minecraft versions, git commit, signature). If any of these differ, the summary names the differing fields and warns that publishing will be rejected (409) and to bump `[pack] version` in `pack.toml`. A revoked version (410) gets a warning that publishing will be rejected (409), without a field list. If nothing differs, it says publishing only moves channel pointers. Portal request failures are reported in the summary and never change the exit code.
+After writing the manifests, `manifest` compares them with the Portal that the `manifest` precedence above resolves (not `PACK_PORTAL_URL`) and prints the result. It shows the version each channel (`dev`, `beta`, `stable`) points to and whether the local version is published (`published (revoked)` when the Portal answers 410). The per-target (client, server) diff lists files added, removed, or updated and changed top-level fields, relative to the release the selected channel points to. A target whose file hashes and top-level fields match but whose manifest differs elsewhere (download URLs or file order) is reported as identical files with other metadata differing. `--channel dev|beta|stable` selects the channel (default `stable`); any other value skips the comparison with a warning. `--no-portal-diff` skips the comparison. When the local version is already published, the publish check compares the Portal's stored copy of that version with the local build, in full: both manifests (file order and download URLs count) and the stored release metadata (minimum launcher version, launch settings, loader and Minecraft versions, git commit, signature). The stored `status` is not compared: the Portal sets it from the widest channel the version was published to and does not compare it on publish. If any of these differ, the summary names the differing fields and warns that publishing will be rejected (409) and to bump `[pack] version` in `pack.toml`. A revoked version (410) gets a warning that publishing will be rejected (409), without a field list. If nothing differs, it says publishing only moves channel pointers. Portal request failures are reported in the summary and never change the exit code.
+
+The comparison sends the read-only deploy token `PACK_DEPLOY_TOKEN` (shell or `.env`) as `Authorization: Bearer` on every Portal read it makes, and never sends `PACK_PUBLISH_SECRET`. The Portal's read gate keeps `stable` and `STABLE` releases' descriptors and client manifests public, and requires the token for the `dev` and `beta` channels, other releases, and every server manifest. Without the token, a gated read answers 401 once the Portal enforces the gate: gated channels show as `unavailable`, and a local version whose release check answers 401 or 403 is reported as publish status unknown, not as "not published". The reason names `PACK_DEPLOY_TOKEN`.
 
 ### 4. Managed Configuration Patches
 
@@ -451,6 +453,8 @@ sequenceDiagram
 
 Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publishes the release metadata once and atomically points `dev`, `beta`, and `stable` to the new release in a single operation. `--channel dev,beta` selects multiple channels. Publication is an explicit CLI operation; this repository does not currently contain a pack-tag publication workflow.
 
+`lampasctl publish` sends no release `status`. The Portal stores the status of the widest channel in the publish: `STABLE` when `stable` is a target, else `BETA`, else `DEV` (`DRAFT` with no channel). Republishing the same version to a wider channel raises the status, for example `--channel dev` followed by `--channel stable` takes it from `DEV` to `STABLE`. The Portal does not compare `status` when it decides whether a republish conflicts; republishing a `REVOKED` version is still rejected with 409. The status also decides who can read the release: only `STABLE` releases have a public descriptor and client manifest.
+
 #### Publishing Guarantees:
 
 - **Local Pre-validation**: Lampas blobs are verified for existence, byte size, and SHA-256 hash before any network transfer.
@@ -472,7 +476,7 @@ Invoking `lampasctl publish` without `--channel` (or with `--channel all`) publi
 
 - **Railway Bucket Credentials**: Held exclusively by the Portal backend.
 - **`lampasctl`**: Requires `PACK_PUBLISH_SECRET`; receives short-lived presigned PUT URLs for missing hashes from `/api/v1/blobs/prepare`.
-- **Launcher / Server Deployments**: Require zero S3 or publish credentials; interact only with public Lampas API endpoints and follow short-lived presigned GET redirects.
+- **Launcher / Server Deployments**: Require zero S3 or publish credentials. Blob downloads (`/api/v1/blobs/<sha256>`) are public and follow short-lived presigned GET redirects. Server deployments read channel, release and server-manifest metadata with the read-only `PACK_DEPLOY_TOKEN` (see `lampasctl deploy`), which cannot publish.
 
 ### 7. Headless Client / Server Sync
 
@@ -625,6 +629,23 @@ lampasctl deploy --target /srv/minecraft --portal https://dev.lampas.town --vers
 
 When `--version` is omitted, `deploy` resolves the selected channel (default: `dev`) through the Portal, then fetches that exact release descriptor and server manifest. Resolution is fail-closed: an invalid channel, non-success response, missing channel pointer/version, missing release, or missing manifest aborts deployment. There is no fallback to a latest release. Supplying `--version` bypasses the channel pointer but still fetches and validates the immutable release from the Portal.
 
+#### Read-only deploy token (`PACK_DEPLOY_TOKEN`)
+
+The Portal's read gate requires credentials for the `dev` and `beta` channel pointers, for the descriptor of any release that is not `STABLE`, and for every server manifest. `deploy` and `start` authenticate with `PACK_DEPLOY_TOKEN`, a read-only bearer token:
+
+| Environment Variable | Used by                       | Description                                                                                                  |
+| -------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `PACK_DEPLOY_TOKEN`  | `deploy`, `start`, `manifest` | Read-only token sent as `Authorization: Bearer` on channel, release-descriptor and manifest reads. No flag.  |
+| `PORTAL_URL`         | `deploy`, `start`             | Portal URL when `--portal` is omitted (default `https://dev.lampas.town`). The token is sent to this Portal. |
+
+- **Read-only, and separate from `PACK_PUBLISH_SECRET`**: the token can read release metadata and cannot publish. Never put `PACK_PUBLISH_SECRET` on a game server host.
+- **Where it lives**: on a server host, in `<target>/.minecraft-env` (for example `/home/server/.minecraft-env`), owned by the server user with mode `0600`. `lampasctl start` loads that file itself, and `lampas-server.service` passes it through `EnvironmentFile=`. `lampasctl deploy` reads the variable from its environment only and does not load `.minecraft-env`. There is no command-line flag, so the token never appears in the process list.
+- **Metadata reads only**: the token is sent on `GET /api/v1/channels/<channel>`, `GET /api/v1/releases/<version>` and `GET /api/v1/releases/<version>/server-manifest`. File downloads never carry it: Portal blobs (`/api/v1/blobs/<sha256>`, public), Modrinth and CurseForge URLs from the manifest, and the Fabric Meta launcher download are requested without an `Authorization` header.
+- **Unset**: no `Authorization` header is sent. Once the Portal enforces the gate, a gated read without the token answers 401.
+- **Set but not accepted**: the Portal answers 403 to a token it does not accept, whether or not the gate is enforced yet. A mistyped token, or one set on the server before the Portal has the same value, therefore stops `deploy` and `start` immediately. Set `PACK_DEPLOY_TOKEN` on the Portal first, then on the server host.
+- **Failure**: a 401 or 403 aborts the deployment before any file in the target directory changes. The error names `PACK_DEPLOY_TOKEN` (missing for 401, not accepted for 403) with the URL and status, and never prints the token.
+- **Not passed to the game**: `lampasctl start` removes `PACK_DEPLOY_TOKEN` from the environment of the Minecraft server process. The server runs as the same user and can still read `.minecraft-env`, so this does not isolate the token from code running in the server.
+
 #### Safeguards:
 
 - **Chunked Streaming**: Downloads are streamed directly to temporary files.
@@ -687,11 +708,14 @@ lampasctl start --target /home/server -- -Dfabric.development=false -XX:+AlwaysP
 | `--gc <g1\|zgc>`        | `LAMPAS_GC`          | `g1`                      | Garbage collector: Aikar-tuned `g1` or generational `zgc`          |
 | `--dry-run`             | —                    | `false`                   | Log host sizing and Java execution command without launching       |
 | `--portal <url>`        | `PORTAL_URL`         | `https://dev.lampas.town` | Portal URL for sync                                                |
+| —                       | `PACK_DEPLOY_TOKEN`  | —                         | Read-only token for the sync's Portal metadata reads (no flag)     |
 | `-c, --channel <name>`  | `RELEASE_CHANNEL`    | `dev`                     | Target channel pointer                                             |
 | `-v, --version <ver>`   | —                    | —                         | Explicit immutable release version                                 |
 | `--no-backup`           | —                    | `false`                   | Skip automatic pre-deployment world backup                         |
 | `--verify <fast\|full>` | —                    | `fast`                    | Artifact validation mode                                           |
 | `-- <extra-args>`       | —                    | —                         | Forward extra arguments directly to the JVM before `-jar`          |
+
+The sync step authenticates its Portal metadata reads with `PACK_DEPLOY_TOKEN` (see [Read-only deploy token](#read-only-deploy-token-pack_deploy_token)). Put `PACK_DEPLOY_TOKEN=<token>` in `<target>/.minecraft-env` (mode `0600`); `start` loads the file before it syncs. The default channel is `dev`, which the Portal's read gate covers, and the sync is fail-closed: a token the Portal does not accept (403, at any time) or, once the gate is enforced, a missing token (401) stops the launch with an error that names `PACK_DEPLOY_TOKEN`, unless `--allow-stale` or `--no-sync` is set. The token is removed from the environment of the Minecraft server process; every other variable is passed on.
 
 #### Adaptive Host Sizing Architecture
 
@@ -708,7 +732,7 @@ lampasctl start --target /home/server -- -Dfabric.development=false -XX:+AlwaysP
   - `LAMPAS_RAM`: Override detected RAM (e.g. `8G`).
   - `LAMPAS_CPUS`: Override CPU count (sets `-XX:ActiveProcessorCount`).
   - `LAMPAS_EXTRA_RESERVE`: Reserve RAM for co-located processes (e.g. `1G` for PostgreSQL).
-  - `.minecraft-env`: Automatically loaded from target directory (existing process environment keys take precedence).
+  - `.minecraft-env`: Automatically loaded from target directory (existing process environment keys take precedence). It holds `PACK_DEPLOY_TOKEN`, so keep it at mode `0600`.
 - **Process Management**: Spawns Java in target directory with signal forwarding (SIGINT/SIGTERM) ensuring clean server shutdown, and preserves legacy launcher scripts in `SERVER_PROTECTED`.
 
 ### 4. Discord Status Monitoring (`lampasctl monitor`)
@@ -845,7 +869,7 @@ bun run lampasctl manifest
 
 The canonical pack tag is `lampas-pack-v<pack-version>`. It is a traceability marker; creating or pushing it does not publish the pack. Portal publication is performed explicitly with `lampasctl publish`; omitting `--channel` moves `dev`, `beta` and `stable` together. The canonical CLI tag is `lampasctl-v<cli-version>`; pushing it triggers [`release-lampasctl.yml`](.github/workflows/release-lampasctl.yml). Keep the two version streams independent and do not use a generic `v<version>` tag.
 
-Commit, tag, push, Portal publication, and server deployment are separate authorization boundaries. A successful validation or build does not authorize any of the others. Publishing requires the Portal URL and `PACK_PUBLISH_SECRET`; deployment requires its own explicit `lampasctl deploy` action against a target server.
+Commit, tag, push, Portal publication, and server deployment are separate authorization boundaries. A successful validation or build does not authorize any of the others. Publishing requires the Portal URL and `PACK_PUBLISH_SECRET`; deployment requires its own explicit `lampasctl deploy` action against a target server, which reads the Portal with the read-only `PACK_DEPLOY_TOKEN`.
 
 For end-to-end maintenance, pack publication, CLI release, and deployment recipes, see [`EXAMPLE.md`](EXAMPLE.md).
 

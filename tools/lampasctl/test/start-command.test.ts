@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadMinecraftEnv } from "../src/launcher/start";
+import { loadMinecraftEnv, serverProcessEnv } from "../src/launcher/start";
 
 const cliPath = path.resolve(__dirname, "../src/cli.ts");
 
@@ -417,6 +417,224 @@ describe("lampasctl start CLI command", () => {
       expect(smallHostRes.stderr).toContain("[Starter Error] Computed heap");
       expect(smallHostRes.stderr).toContain("is below the 2G minimum for this modpack.");
     } finally {
+      ctx.cleanup();
+    }
+  });
+});
+
+describe("lampasctl start and the read-only deploy token (PACK_DEPLOY_TOKEN)", () => {
+  const TOKEN = "start-deploy-token-for-tests";
+
+  /**
+   * Mock Java that prints the deploy token and a control variable as the server process sees
+   * them. An unset variable prints as an empty pair of brackets.
+   */
+  function writeEnvPrintingJava(serverDir: string): string {
+    const isWin = process.platform === "win32";
+    const javaBin = path.join(serverDir, isWin ? "mock_java_env.bat" : "mock_java_env.sh");
+    if (isWin) {
+      fs.writeFileSync(
+        javaBin,
+        [
+          "@echo off",
+          "echo MOCK JAVA LAUNCHED",
+          "echo CHILD_DEPLOY_TOKEN=[%PACK_DEPLOY_TOKEN%]",
+          "echo CHILD_CONTROL=[%LAMPAS_TEST_CONTROL%]",
+          "exit /b 0",
+          "",
+        ].join("\r\n"),
+      );
+    } else {
+      fs.writeFileSync(
+        javaBin,
+        [
+          "#!/usr/bin/env bash",
+          "echo MOCK JAVA LAUNCHED",
+          'echo "CHILD_DEPLOY_TOKEN=[${PACK_DEPLOY_TOKEN:-}]"',
+          'echo "CHILD_CONTROL=[${LAMPAS_TEST_CONTROL:-}]"',
+          "exit 0",
+          "",
+        ].join("\n"),
+      );
+      fs.chmodSync(javaBin, 0o755);
+    }
+    return javaBin;
+  }
+
+  /** The test process's environment without the deploy token, plus `extra`. */
+  function envWithoutToken(extra: Record<string, string>): Record<string, string> {
+    const env: Record<string, string> = {};
+    for (const [key, value] of Object.entries(process.env)) {
+      if (value !== undefined && key.toUpperCase() !== "PACK_DEPLOY_TOKEN") {
+        env[key] = value;
+      }
+    }
+    return { ...env, ...extra };
+  }
+
+  /**
+   * Runs lampasctl without blocking the event loop, so a mock Portal in this process can answer.
+   * `cwd` is the temporary server directory: Bun loads `.env` from the working directory, and a
+   * developer's `.env` with PACK_DEPLOY_TOKEN must not reach these runs.
+   */
+  async function runLampasctlAsync(
+    args: string[],
+    env: Record<string, string>,
+    cwd: string,
+  ): Promise<{ status: number; stdout: string; stderr: string }> {
+    const proc = Bun.spawn(["bun", "run", cliPath, ...args], {
+      cwd,
+      env,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const [stdout, stderr, status] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    return { status, stdout, stderr };
+  }
+
+  test("a token in .minecraft-env reaches the Portal reads of the deploy and is absent from the server process", async () => {
+    const ctx = setupServerDir();
+    const seen: { path: string; authorization: string | null }[] = [];
+    // Enforces the read gate, then has no release to serve, so the deploy fails after its reads.
+    const portal = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        const authorization = req.headers.get("authorization");
+        seen.push({ path: url.pathname, authorization });
+        if (authorization !== `Bearer ${TOKEN}`) {
+          return new Response("Unauthorized", { status: 401, statusText: "Unauthorized" });
+        }
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: "9.9.9" });
+        }
+        return new Response("Not Found", { status: 404, statusText: "Not Found" });
+      },
+    });
+    try {
+      ctx.createManagedRuntime();
+      const javaBin = writeEnvPrintingJava(ctx.serverDir);
+      fs.writeFileSync(
+        path.join(ctx.serverDir, ".minecraft-env"),
+        [`PACK_DEPLOY_TOKEN=${TOKEN}`, "LAMPAS_TEST_CONTROL=from-env-file", ""].join("\n"),
+      );
+
+      const res = await runLampasctlAsync(
+        [
+          "start",
+          "--target",
+          ctx.serverDir,
+          "--portal",
+          `http://127.0.0.1:${portal.port}`,
+          "--channel",
+          "dev",
+          "--allow-stale",
+        ],
+        envWithoutToken({ JAVA_BIN: javaBin }),
+        ctx.serverDir,
+      );
+
+      // The deploy's channel and release reads carried the token from .minecraft-env.
+      expect(seen).toEqual([
+        { path: "/api/v1/channels/dev", authorization: `Bearer ${TOKEN}` },
+        { path: "/api/v1/releases/9.9.9", authorization: `Bearer ${TOKEN}` },
+      ]);
+
+      expect(res.status).toBe(0);
+      expect(res.stdout).toContain("MOCK JAVA LAUNCHED");
+      // Other .minecraft-env values still reach the server process; the token does not.
+      expect(res.stdout).toContain("CHILD_CONTROL=[from-env-file]");
+      expect(res.stdout).toContain("CHILD_DEPLOY_TOKEN=[]");
+      // lampasctl never prints the token either.
+      expect(res.stdout).not.toContain(TOKEN);
+      expect(res.stderr).not.toContain(TOKEN);
+    } finally {
+      await portal.stop(true);
+      ctx.cleanup();
+    }
+  });
+
+  test("a token in the process environment (systemd EnvironmentFile) is absent from the server process", async () => {
+    const ctx = setupServerDir();
+    try {
+      ctx.createManagedRuntime();
+      const javaBin = writeEnvPrintingJava(ctx.serverDir);
+
+      const res = await runLampasctlAsync(
+        ["start", "--target", ctx.serverDir, "--no-sync"],
+        envWithoutToken({
+          JAVA_BIN: javaBin,
+          PACK_DEPLOY_TOKEN: TOKEN,
+          LAMPAS_TEST_CONTROL: "from-process-env",
+        }),
+        ctx.serverDir,
+      );
+
+      expect(res.status).toBe(0);
+      expect(res.stdout).toContain("MOCK JAVA LAUNCHED");
+      expect(res.stdout).toContain("CHILD_CONTROL=[from-process-env]");
+      expect(res.stdout).toContain("CHILD_DEPLOY_TOKEN=[]");
+      expect(res.stdout).not.toContain(TOKEN);
+      expect(res.stderr).not.toContain(TOKEN);
+    } finally {
+      ctx.cleanup();
+    }
+  });
+
+  test("serverProcessEnv drops only the deploy token and leaves its input unchanged", () => {
+    const env = { PATH: "/usr/bin", PACK_DEPLOY_TOKEN: TOKEN, JDK_JAVA_OPTIONS: "-Dx=y" };
+
+    expect(serverProcessEnv(env, "linux")).toEqual({ PATH: "/usr/bin", JDK_JAVA_OPTIONS: "-Dx=y" });
+    expect(env.PACK_DEPLOY_TOKEN).toBe(TOKEN);
+    // POSIX names are case-sensitive: a differently cased name is another variable.
+    expect(serverProcessEnv({ pack_deploy_token: "other" }, "linux")).toEqual({
+      pack_deploy_token: "other",
+    });
+  });
+
+  test("serverProcessEnv matches the token name case-insensitively on Windows", () => {
+    expect(serverProcessEnv({ Path: "C:/bin", Pack_Deploy_Token: TOKEN }, "win32")).toEqual({
+      Path: "C:/bin",
+    });
+  });
+
+  test("a deploy rejected with 401 for a missing token stops the launch and names PACK_DEPLOY_TOKEN", async () => {
+    const ctx = setupServerDir();
+    const portal = Bun.serve({
+      port: 0,
+      fetch() {
+        return new Response("Unauthorized", { status: 401, statusText: "Unauthorized" });
+      },
+    });
+    try {
+      ctx.createManagedRuntime();
+      const javaBin = writeEnvPrintingJava(ctx.serverDir);
+
+      const res = await runLampasctlAsync(
+        [
+          "start",
+          "--target",
+          ctx.serverDir,
+          "--portal",
+          `http://127.0.0.1:${portal.port}`,
+          "--channel",
+          "dev",
+        ],
+        envWithoutToken({ JAVA_BIN: javaBin }),
+        ctx.serverDir,
+      );
+
+      expect(res.status).toBe(1);
+      expect(res.stderr).toContain("[Starter Error] Pack deployment failed:");
+      expect(res.stderr).toContain("PACK_DEPLOY_TOKEN");
+      expect(res.stderr).toContain("HTTP 401");
+      expect(res.stdout).not.toContain("MOCK JAVA LAUNCHED");
+    } finally {
+      await portal.stop(true);
       ctx.cleanup();
     }
   });

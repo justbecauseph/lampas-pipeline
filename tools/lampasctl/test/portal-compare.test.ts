@@ -1,4 +1,14 @@
-import { afterAll, afterEach, beforeAll, describe, expect, mock, spyOn, test } from "bun:test";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  spyOn,
+  test,
+} from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -742,7 +752,36 @@ describe("comparePortalRelease", () => {
     expect(c.publishConflictFields).toEqual(["minimumLauncherVersion"]);
   });
 
-  test("a stored status other than STABLE is a publish conflict on status", async () => {
+  // The Portal stores the widest published channel's status and does not compare it on publish.
+  test.each(["DEV", "BETA", "DRAFT"])(
+    "a stored status of %s is not a publish conflict",
+    async (status) => {
+      const client = manifest("client", clientFiles);
+      const server = manifest("server", serverFiles);
+      installFetch(
+        standardRoutes(
+          { client, server },
+          {
+            [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json({ ...STORED_RELEASE, status }),
+          },
+        ),
+      );
+
+      const c = await comparePortalRelease(compareOptions(client, server));
+
+      expect(c.localPublished).toEqual({ published: true, created: PUBLISHED_AT });
+      expect(c.publishConflict).toBe(false);
+      expect(c.publishConflictFields).toEqual([]);
+      expect(c.publishConflictError).toBeUndefined();
+      const output = printed(c);
+      expect(output.warnings).toEqual([]);
+      expect(output.logs).toContain(
+        `v${VERSION} is already published with identical manifests; publishing it again only moves channel pointers.`,
+      );
+    },
+  );
+
+  test("a stored status of DEV does not hide a real conflict on another field", async () => {
     const client = manifest("client", clientFiles);
     const server = manifest("server", serverFiles);
     installFetch(
@@ -750,7 +789,7 @@ describe("comparePortalRelease", () => {
         { client, server },
         {
           [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
-            json({ ...STORED_RELEASE, status: "BETA" }),
+            json({ ...STORED_RELEASE, status: "DEV", minimumLauncherVersion: "1.1.0" }),
         },
       ),
     );
@@ -758,7 +797,7 @@ describe("comparePortalRelease", () => {
     const c = await comparePortalRelease(compareOptions(client, server));
 
     expect(c.publishConflict).toBe(true);
-    expect(c.publishConflictFields).toEqual(["status"]);
+    expect(c.publishConflictFields).toEqual(["minimumLauncherVersion"]);
   });
 
   test("stored launch settings that differ only in key order do not conflict", async () => {
@@ -877,6 +916,201 @@ describe("comparePortalRelease", () => {
     expect(printed(c).warnings).toEqual([
       "⚠ v2.3.33 is revoked on the Portal; publishing it will be rejected (409). Bump [pack] version in pack.toml before publishing.",
     ]);
+  });
+});
+
+describe("comparePortalRelease read-only deploy token (PACK_DEPLOY_TOKEN)", () => {
+  const TOKEN = "compare-deploy-token-for-tests";
+  const originalFetch = globalThis.fetch;
+  let savedToken: string | undefined;
+  let savedPublishSecret: string | undefined;
+
+  interface SeenRequest {
+    url: string;
+    authorization: string | null;
+  }
+
+  /** Like installFetch, and records the Authorization header of every request. */
+  function installRecordingFetch(routes: Record<string, Route>): SeenRequest[] {
+    const seen: SeenRequest[] = [];
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const key = url instanceof Request ? url.url : url instanceof URL ? url.href : url;
+      const headers = new Headers(url instanceof Request ? url.headers : init?.headers);
+      seen.push({ url: key, authorization: headers.get("authorization") });
+      const handler = routes[key];
+      return handler ? handler() : notFound();
+    }) as any;
+    return seen;
+  }
+
+  /**
+   * Channels point at OLDER_VERSION and VERSION is published, so one comparison makes every kind
+   * of Portal read: three channels, the release check, and both manifests of both versions.
+   */
+  function allReadRoutes(client: PackManifest, server: PackManifest): Record<string, Route> {
+    return {
+      ...channelRoutes(OLDER_VERSION),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`]: () =>
+        json(manifest("client", clientFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`]: () =>
+        json(manifest("server", serverFiles, {}, OLDER_VERSION)),
+      [`${PORTAL}/api/v1/releases/${VERSION}`]: () => json(STORED_RELEASE),
+      [`${PORTAL}/api/v1/releases/${VERSION}/client-manifest`]: () => json(client),
+      [`${PORTAL}/api/v1/releases/${VERSION}/server-manifest`]: () => json(server),
+    };
+  }
+
+  const ALL_READ_URLS = [
+    `${PORTAL}/api/v1/channels/dev`,
+    `${PORTAL}/api/v1/channels/beta`,
+    `${PORTAL}/api/v1/channels/stable`,
+    `${PORTAL}/api/v1/releases/${VERSION}`,
+    `${PORTAL}/api/v1/releases/${OLDER_VERSION}/client-manifest`,
+    `${PORTAL}/api/v1/releases/${OLDER_VERSION}/server-manifest`,
+    `${PORTAL}/api/v1/releases/${VERSION}/client-manifest`,
+    `${PORTAL}/api/v1/releases/${VERSION}/server-manifest`,
+  ].sort();
+
+  function restoreEnv(name: string, value: string | undefined): void {
+    if (value === undefined) {
+      delete process.env[name];
+    } else {
+      process.env[name] = value;
+    }
+  }
+
+  beforeEach(() => {
+    savedToken = process.env.PACK_DEPLOY_TOKEN;
+    savedPublishSecret = process.env.PACK_PUBLISH_SECRET;
+    delete process.env.PACK_DEPLOY_TOKEN;
+    delete process.env.PACK_PUBLISH_SECRET;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    restoreEnv("PACK_DEPLOY_TOKEN", savedToken);
+    restoreEnv("PACK_PUBLISH_SECRET", savedPublishSecret);
+  });
+
+  test("the token reaches every Portal read: channels, the release check and the manifests", async () => {
+    process.env.PACK_DEPLOY_TOKEN = TOKEN;
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    const seen = installRecordingFetch(allReadRoutes(client, server));
+
+    const c = await comparePortalRelease(compareOptions(client, server));
+
+    expect(c.publishConflict).toBe(false);
+    expect(seen.map((r) => r.url).sort()).toEqual(ALL_READ_URLS);
+    for (const r of seen) {
+      expect(r).toEqual({ url: r.url, authorization: `Bearer ${TOKEN}` });
+    }
+  });
+
+  test("with the token unset no read carries Authorization, and the publish secret is never sent", async () => {
+    process.env.PACK_PUBLISH_SECRET = "publish-secret-must-not-be-sent";
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    const seen = installRecordingFetch(allReadRoutes(client, server));
+
+    const c = await comparePortalRelease(compareOptions(client, server));
+
+    expect(c.publishConflict).toBe(false);
+    expect(seen.map((r) => r.url).sort()).toEqual(ALL_READ_URLS);
+    for (const r of seen) {
+      expect(r).toEqual({ url: r.url, authorization: null });
+    }
+  });
+
+  test("with both set, reads carry the deploy token and not the publish secret", async () => {
+    process.env.PACK_DEPLOY_TOKEN = TOKEN;
+    process.env.PACK_PUBLISH_SECRET = "publish-secret-must-not-be-sent";
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    const seen = installRecordingFetch(allReadRoutes(client, server));
+
+    await comparePortalRelease(compareOptions(client, server));
+
+    expect(seen.length).toBe(ALL_READ_URLS.length);
+    for (const r of seen) {
+      expect(r).toEqual({ url: r.url, authorization: `Bearer ${TOKEN}` });
+    }
+  });
+
+  test("a 401 on the release check is reported as status unknown, not as not published", async () => {
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    installFetch({
+      ...allReadRoutes(client, server),
+      [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
+        new Response("Unauthorized", { status: 401, statusText: "Unauthorized" }),
+    });
+
+    const c = await comparePortalRelease(compareOptions(client, server));
+
+    expect(c.localPublished).toBeNull();
+    expect(c.localPublishedError).toContain("HTTP 401");
+    expect(c.localPublishedError).toContain("PACK_DEPLOY_TOKEN");
+    expect(c.localPublishedError).toContain("missing");
+    expect(c.publishConflict).toBeNull();
+    expect(c.publishConflictFields).toEqual([]);
+
+    const output = printed(c);
+    const publishedLine = output.logs.find((l) => l.startsWith(" Local version on Portal:"));
+    expect(publishedLine).toStartWith(" Local version on Portal: unknown (HTTP 401");
+    expect(output.logs.join("\n")).not.toContain("not published");
+    expect(output.warnings.length).toBe(1);
+    expect(output.warnings[0]).toStartWith(`v${VERSION} publish status is unknown (HTTP 401`);
+    expect(output.warnings[0]).toContain("PACK_DEPLOY_TOKEN");
+    expect(output.warnings[0]).toEndWith("publish conflicts were not checked.");
+  });
+
+  test("a 403 on the release check with a token is status unknown and says the token was not accepted", async () => {
+    process.env.PACK_DEPLOY_TOKEN = TOKEN;
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    installFetch({
+      ...allReadRoutes(client, server),
+      [`${PORTAL}/api/v1/releases/${VERSION}`]: () =>
+        new Response("Forbidden", { status: 403, statusText: "Forbidden" }),
+    });
+
+    const c = await comparePortalRelease(compareOptions(client, server));
+
+    expect(c.localPublished).toBeNull();
+    expect(c.localPublishedError).toContain("HTTP 403");
+    expect(c.localPublishedError).toContain("PACK_DEPLOY_TOKEN");
+    expect(c.localPublishedError).toContain("not accepted");
+    expect(c.localPublishedError).not.toContain(TOKEN);
+    expect(c.publishConflict).toBeNull();
+  });
+
+  test("gated dev and beta channels answering 401 are unavailable with the token named; public stable still compares", async () => {
+    const client = manifest("client", clientFiles);
+    const server = manifest("server", serverFiles);
+    const unauthorized = () =>
+      new Response("Unauthorized", { status: 401, statusText: "Unauthorized" });
+    installFetch(
+      standardRoutes(
+        { client, server },
+        {
+          [`${PORTAL}/api/v1/channels/dev`]: unauthorized,
+          [`${PORTAL}/api/v1/channels/beta`]: unauthorized,
+        },
+      ),
+    );
+
+    const c = await comparePortalRelease(compareOptions(client, server, "stable"));
+
+    expect(c.channels).toEqual({ dev: null, beta: null, stable: VERSION });
+    for (const name of ["dev", "beta"]) {
+      expect(c.channelErrors[name]).toContain("HTTP 401");
+      expect(c.channelErrors[name]).toContain("PACK_DEPLOY_TOKEN");
+    }
+    expect(c.channelErrors.stable).toBeUndefined();
+    expect(c.error).toBeUndefined();
+    expect(c.compareVersion).toBe(VERSION);
+    expect(c.targets.map((t) => t.contentIdentical)).toEqual([true, true]);
   });
 });
 

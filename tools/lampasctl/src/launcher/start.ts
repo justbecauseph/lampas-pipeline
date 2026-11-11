@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { DEPLOY_TOKEN_ENV } from "../release-resolver";
 import { deployServer } from "../sync";
 import { DeploymentTransaction } from "../transaction";
 import { detectHost, formatSize, parseSize, readThpMode, type ThpMode } from "./host";
@@ -70,6 +71,25 @@ export function loadMinecraftEnv(targetDir: string): Record<string, string> {
     }
   }
   return loaded;
+}
+
+/**
+ * The environment for the Minecraft server process: the current environment without the deploy
+ * token. Only lampasctl's own Portal reads use the token; the JVM and its mods do not get it.
+ * Windows environment names are case-insensitive, so the name is matched that way there.
+ */
+export function serverProcessEnv(
+  env: NodeJS.ProcessEnv = process.env,
+  platform: NodeJS.Platform = process.platform,
+): NodeJS.ProcessEnv {
+  const childEnv: NodeJS.ProcessEnv = {};
+  for (const [key, value] of Object.entries(env)) {
+    const name = platform === "win32" ? key.toUpperCase() : key;
+    if (name !== DEPLOY_TOKEN_ENV) {
+      childEnv[key] = value;
+    }
+  }
+  return childEnv;
 }
 
 /**
@@ -276,6 +296,7 @@ export async function startServer(options: StartOptions = {}): Promise<number> {
   const child = spawn(executable, cmdArgs, {
     cwd: targetDir,
     stdio: "inherit",
+    env: serverProcessEnv(),
   });
 
   const handleSignal = (sig: NodeJS.Signals) => {

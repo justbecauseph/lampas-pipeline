@@ -25,6 +25,48 @@ export interface PortalTextResponse {
   text: string;
 }
 
+/** Environment variable that holds the read-only deploy token for Portal metadata reads. */
+export const DEPLOY_TOKEN_ENV = "PACK_DEPLOY_TOKEN";
+
+/**
+ * The read-only deploy token from the environment, or undefined when it is unset or blank. It is
+ * sent on channel, release-descriptor and manifest reads only, never on blob or third-party
+ * downloads. This is not the publish secret (PACK_PUBLISH_SECRET).
+ */
+export function deployTokenFromEnv(
+  env: Record<string, string | undefined> = process.env,
+): string | undefined {
+  return env[DEPLOY_TOKEN_ENV]?.trim() || undefined;
+}
+
+/**
+ * Explains a 401 or 403 from a Portal metadata read in terms of the deploy token. Returns "" for
+ * any other status. `tokenSent` says whether the request carried an Authorization header.
+ */
+export function portalAuthHint(status: number, tokenSent: boolean): string {
+  if (status === 401) {
+    return tokenSent
+      ? `${DEPLOY_TOKEN_ENV} is set, but the Portal did not receive or did not accept it`
+      : `${DEPLOY_TOKEN_ENV} is missing; this read needs the read-only deploy token, so set ${DEPLOY_TOKEN_ENV}`;
+  }
+  if (status === 403) {
+    return tokenSent
+      ? `${DEPLOY_TOKEN_ENV} was not accepted; the token does not grant this read`
+      : `${DEPLOY_TOKEN_ENV} is missing and the Portal refused the read; set ${DEPLOY_TOKEN_ENV}`;
+  }
+  return "";
+}
+
+/** "HTTP <status> <statusText>", followed by the deploy-token hint on 401 and 403. */
+export function describePortalFailure(
+  res: { status: number; statusText: string },
+  tokenSent: boolean,
+): string {
+  const base = `HTTP ${res.status} ${res.statusText}`.trim();
+  const hint = portalAuthHint(res.status, tokenSent);
+  return hint ? `${base} (${hint})` : base;
+}
+
 /**
  * GET a Portal URL and read its body inside the timeout. A body that stalls after the headers
  * fails with the same "Timed out" error as a response that never arrives.
@@ -75,7 +117,7 @@ export async function resolveChannelVersion(
   const res = await fetchPortalText(url, `resolving channel '${channel}'`, options);
   if (!res.ok) {
     throw new Error(
-      `Failed to resolve release channel '${channel}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+      `Failed to resolve release channel '${channel}' from ${url}: ${describePortalFailure(res, Boolean(options?.token))}`,
     );
   }
   const data = parsePortalJson<{ channel?: string; version?: string } | null>(
@@ -101,7 +143,7 @@ export async function fetchReleaseDescriptor(
   const res = await fetchPortalText(url, `fetching release descriptor for v${version}`, options);
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch release descriptor for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+      `Failed to fetch release descriptor for version '${version}' from ${url}: ${describePortalFailure(res, Boolean(options?.token))}`,
     );
   }
   return parsePortalJson<ReleaseDescriptor>(
@@ -123,7 +165,7 @@ export async function fetchManifest(
   const res = await fetchPortalText(url, `fetching ${target} manifest for v${version}`, options);
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch ${target} manifest for version '${version}' from ${url}: HTTP ${res.status} ${res.statusText}`,
+      `Failed to fetch ${target} manifest for version '${version}' from ${url}: ${describePortalFailure(res, Boolean(options?.token))}`,
     );
   }
   return parsePortalJson<PackManifest>(

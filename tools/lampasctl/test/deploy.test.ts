@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
@@ -1081,6 +1081,341 @@ describe("lampasctl deploy server deployment workflow", () => {
       expect(fs.existsSync(journalPath)).toBe(true);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("lampasctl deploy read-only deploy token (PACK_DEPLOY_TOKEN)", () => {
+  const TOKEN = "deploy-token-for-tests";
+  const VERSION = "3.0.0";
+  const METADATA_PATHS = [
+    "/api/v1/channels/dev",
+    `/api/v1/releases/${VERSION}`,
+    `/api/v1/releases/${VERSION}/server-manifest`,
+  ];
+
+  const blobContent = Buffer.from("portal-blob-mod-bytes");
+  const blobSha = crypto.createHash("sha256").update(blobContent).digest("hex");
+  const thirdPartyContent = Buffer.from("third-party-mod-bytes");
+  const thirdPartySha = crypto.createHash("sha256").update(thirdPartyContent).digest("hex");
+  const THIRD_PARTY_PATH = "/data/AANobbMI/versions/abc123/sodium.jar";
+
+  interface SeenRequest {
+    path: string;
+    authorization: string | null;
+  }
+
+  let portal: ReturnType<typeof Bun.serve>;
+  let thirdParty: ReturnType<typeof Bun.serve>;
+  let portalUrl: string;
+  let thirdPartyUrl: string;
+  let portalRequests: SeenRequest[] = [];
+  let thirdPartyRequests: SeenRequest[] = [];
+  /** When true the Portal enforces the read gate: 401 without a token, 403 for any other token. */
+  let enforce = false;
+  let savedToken: string | undefined;
+  let dir: string;
+  let serverDir: string;
+
+  function fabricLauncherJar(mc: string, loader: string): Uint8Array {
+    return zipSync({
+      "META-INF/MANIFEST.MF": new Uint8Array(
+        Buffer.from(
+          "Manifest-Version: 1.0\r\nImplementation-Title: FabricInstaller\r\nImplementation-Version: 1.1.2\r\nMain-Class: net.fabricmc.installer.ServerLauncher\r\n\r\n",
+        ),
+      ),
+      "install.properties": new Uint8Array(
+        Buffer.from(`fabric-loader-version=${loader}\r\ngame-version=${mc}\r\n`),
+      ),
+    });
+  }
+
+  /** Every file under `root` with its content hash, for before/after comparison. */
+  function snapshotTree(root: string): Record<string, string> {
+    const out: Record<string, string> = {};
+    const walk = (current: string) => {
+      for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+        const full = path.join(current, entry.name);
+        const rel = path.relative(root, full).replace(/\\/g, "/");
+        if (entry.isDirectory()) {
+          out[`${rel}/`] = "dir";
+          walk(full);
+        } else {
+          out[rel] = crypto.createHash("sha256").update(fs.readFileSync(full)).digest("hex");
+        }
+      }
+    };
+    walk(root);
+    return out;
+  }
+
+  const requestsFor = (paths: string[]) => portalRequests.filter((r) => paths.includes(r.path));
+  const blobRequests = () => portalRequests.filter((r) => r.path.startsWith("/api/v1/blobs/"));
+
+  beforeAll(() => {
+    thirdParty = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        thirdPartyRequests.push({
+          path: url.pathname,
+          authorization: req.headers.get("authorization"),
+        });
+        if (url.pathname.includes("/server/jar")) {
+          return new Response(new Uint8Array(fabricLauncherJar("26.2", "0.19.3")), {
+            headers: { "Content-Type": "application/java-archive" },
+          });
+        }
+        if (url.pathname === THIRD_PARTY_PATH) {
+          return new Response(thirdPartyContent);
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+    thirdPartyUrl = `http://127.0.0.1:${thirdParty.port}`;
+
+    portal = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        const authorization = req.headers.get("authorization");
+        portalRequests.push({ path: url.pathname, authorization });
+
+        // Blobs stay public: the read gate covers channel, release and manifest reads only.
+        if (url.pathname === `/api/v1/blobs/${blobSha}`) {
+          return new Response(blobContent);
+        }
+
+        if (enforce && authorization === null) {
+          return new Response("Unauthorized", { status: 401, statusText: "Unauthorized" });
+        }
+        if (enforce && authorization !== `Bearer ${TOKEN}`) {
+          return new Response("Forbidden", { status: 403, statusText: "Forbidden" });
+        }
+
+        if (url.pathname === "/api/v1/channels/dev") {
+          return Response.json({ channel: "dev", version: VERSION });
+        }
+        if (url.pathname === `/api/v1/releases/${VERSION}`) {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: VERSION,
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+            minimumLauncherVersion: "1.0.0",
+            protocol: 2,
+            status: "DEV",
+            created: "2026-11-01T00:00:00Z",
+            clientManifest: `/api/v1/releases/${VERSION}/client-manifest`,
+            serverManifest: `/api/v1/releases/${VERSION}/server-manifest`,
+          });
+        }
+        if (url.pathname === `/api/v1/releases/${VERSION}/server-manifest`) {
+          return Response.json({
+            schemaVersion: 1,
+            pack: "Lampas 2",
+            version: VERSION,
+            target: "server",
+            minecraft: "26.2",
+            loader: { type: "fabric", version: "0.19.3" },
+            protocol: 2,
+            files: [
+              {
+                path: "mods/lampas-core.jar",
+                hashes: { sha256: blobSha },
+                size: blobContent.length,
+                download: { url: `/api/v1/blobs/${blobSha}`, provider: "lampas" },
+                policy: "MANAGED",
+              },
+              {
+                path: "mods/sodium.jar",
+                hashes: { sha256: thirdPartySha },
+                size: thirdPartyContent.length,
+                download: { url: `${thirdPartyUrl}${THIRD_PARTY_PATH}`, provider: "modrinth" },
+                policy: "MANAGED",
+              },
+            ],
+          });
+        }
+        return new Response("Not Found", { status: 404 });
+      },
+    });
+    portalUrl = `http://127.0.0.1:${portal.port}`;
+  });
+
+  afterAll(async () => {
+    await portal.stop(true);
+    await thirdParty.stop(true);
+  });
+
+  beforeEach(() => {
+    savedToken = process.env.PACK_DEPLOY_TOKEN;
+    delete process.env.PACK_DEPLOY_TOKEN;
+    portalRequests = [];
+    thirdPartyRequests = [];
+    enforce = false;
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-deploy-token-test-"));
+    serverDir = path.join(dir, "minecraft-server");
+    fs.mkdirSync(serverDir, { recursive: true });
+  });
+
+  afterEach(() => {
+    if (savedToken === undefined) {
+      delete process.env.PACK_DEPLOY_TOKEN;
+    } else {
+      process.env.PACK_DEPLOY_TOKEN = savedToken;
+    }
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  const deploy = (extra: Partial<Parameters<typeof deployServer>[0]> = {}) =>
+    deployServer({
+      targetDir: serverDir,
+      portalUrl,
+      channel: "dev",
+      backupWorld: false,
+      fabricMetaUrl: thirdPartyUrl,
+      ...extra,
+    });
+
+  function expectDeployed(): void {
+    expect(
+      fs.readFileSync(path.join(serverDir, "mods", "lampas-core.jar")).equals(blobContent),
+    ).toBe(true);
+    expect(
+      fs.readFileSync(path.join(serverDir, "mods", "sodium.jar")).equals(thirdPartyContent),
+    ).toBe(true);
+    const state = JSON.parse(
+      fs.readFileSync(path.join(serverDir, ".lampas", "installation.json"), "utf-8"),
+    );
+    expect(state.version).toBe(VERSION);
+  }
+
+  test("with the token set, channel, release and server-manifest reads carry it; blob and third-party downloads do not", async () => {
+    process.env.PACK_DEPLOY_TOKEN = TOKEN;
+    enforce = true;
+
+    await deploy();
+
+    expectDeployed();
+    const metadata = requestsFor(METADATA_PATHS);
+    expect(metadata.map((r) => r.path).sort()).toEqual([...METADATA_PATHS].sort());
+    for (const r of metadata) {
+      expect(r).toEqual({ path: r.path, authorization: `Bearer ${TOKEN}` });
+    }
+
+    // The Portal blob download happened and carried no credentials.
+    expect(blobRequests()).toEqual([{ path: `/api/v1/blobs/${blobSha}`, authorization: null }]);
+
+    // Neither did the third-party mod download or the Fabric Meta launcher download.
+    expect(thirdPartyRequests.map((r) => r.path)).toContain(THIRD_PARTY_PATH);
+    expect(thirdPartyRequests.some((r) => r.path.includes("/server/jar"))).toBe(true);
+    for (const r of thirdPartyRequests) {
+      expect(r).toEqual({ path: r.path, authorization: null });
+    }
+  });
+
+  test("deploying a pinned version sends the token on the release and server-manifest reads", async () => {
+    process.env.PACK_DEPLOY_TOKEN = TOKEN;
+    enforce = true;
+
+    await deploy({ channel: undefined, version: VERSION });
+
+    expectDeployed();
+    expect(portalRequests.filter((r) => r.path.startsWith("/api/v1/channels/"))).toEqual([]);
+    expect(requestsFor(METADATA_PATHS)).toEqual([
+      { path: `/api/v1/releases/${VERSION}`, authorization: `Bearer ${TOKEN}` },
+      { path: `/api/v1/releases/${VERSION}/server-manifest`, authorization: `Bearer ${TOKEN}` },
+    ]);
+    expect(blobRequests().every((r) => r.authorization === null)).toBe(true);
+  });
+
+  test("with the token unset, no request carries Authorization and the deploy still works", async () => {
+    await deploy();
+
+    expectDeployed();
+    expect(requestsFor(METADATA_PATHS).length).toBe(3);
+    expect(blobRequests().length).toBe(1);
+    expect(thirdPartyRequests.length).toBeGreaterThan(0);
+    for (const r of [...portalRequests, ...thirdPartyRequests]) {
+      expect(r).toEqual({ path: r.path, authorization: null });
+    }
+  });
+
+  test("a blank token sends no Authorization header", async () => {
+    process.env.PACK_DEPLOY_TOKEN = "";
+
+    await deploy();
+
+    expectDeployed();
+    for (const r of portalRequests) {
+      expect(r).toEqual({ path: r.path, authorization: null });
+    }
+  });
+
+  test("a 401 without the token fails the deploy before any file changes and names PACK_DEPLOY_TOKEN", async () => {
+    enforce = true;
+    fs.writeFileSync(path.join(serverDir, "server.properties"), "motd=Lampas\nserver-port=25565\n");
+    fs.mkdirSync(path.join(serverDir, "mods"), { recursive: true });
+    fs.writeFileSync(path.join(serverDir, "mods", "existing.jar"), "existing-mod-bytes");
+    fs.mkdirSync(path.join(serverDir, "world"), { recursive: true });
+    fs.writeFileSync(path.join(serverDir, "world", "level.dat"), "world-save-data");
+    const before = snapshotTree(serverDir);
+
+    let error: Error | undefined;
+    try {
+      await deploy({ backupWorld: true });
+    } catch (err) {
+      error = err as Error;
+    }
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error!.message).toContain("PACK_DEPLOY_TOKEN");
+    expect(error!.message).toContain("missing");
+    expect(error!.message).toContain("HTTP 401");
+    expect(error!.message).toContain(`${portalUrl}/api/v1/channels/dev`);
+
+    expect(snapshotTree(serverDir)).toEqual(before);
+    // Nothing past the channel read was requested.
+    expect(portalRequests).toEqual([{ path: "/api/v1/channels/dev", authorization: null }]);
+    expect(thirdPartyRequests).toEqual([]);
+  });
+
+  test("a 403 for a token that grants nothing fails the deploy before any file changes and names PACK_DEPLOY_TOKEN", async () => {
+    process.env.PACK_DEPLOY_TOKEN = "some-other-token";
+    enforce = true;
+    fs.writeFileSync(path.join(serverDir, "server.properties"), "motd=Lampas\n");
+    const before = snapshotTree(serverDir);
+
+    let error: Error | undefined;
+    try {
+      await deploy();
+    } catch (err) {
+      error = err as Error;
+    }
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error!.message).toContain("PACK_DEPLOY_TOKEN");
+    expect(error!.message).toContain("not accepted");
+    expect(error!.message).toContain("HTTP 403");
+    // The error names the variable, never the token's value.
+    expect(error!.message).not.toContain("some-other-token");
+
+    expect(snapshotTree(serverDir)).toEqual(before);
+    expect(blobRequests()).toEqual([]);
+    expect(thirdPartyRequests).toEqual([]);
+  });
+
+  test("an explicit token option takes precedence over the environment", async () => {
+    process.env.PACK_DEPLOY_TOKEN = "some-other-token";
+    enforce = true;
+
+    await deploy({ token: TOKEN });
+
+    expectDeployed();
+    for (const r of requestsFor(METADATA_PATHS)) {
+      expect(r).toEqual({ path: r.path, authorization: `Bearer ${TOKEN}` });
     }
   });
 });

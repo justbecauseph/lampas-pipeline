@@ -1,5 +1,7 @@
 import { canonicalJson, computeManifestDiff, formatBytes, type DiffResult } from "./diff";
 import {
+  deployTokenFromEnv,
+  describePortalFailure,
   fetchManifest,
   fetchPortalText,
   parsePortalJson,
@@ -59,8 +61,8 @@ export interface PortalComparison {
   publishConflict: boolean | null;
   /**
    * The fields that differ when publishConflict is true: release fields in the order
-   * minecraft, loader.version, minimumLauncherVersion, protocol, launch, gitCommit, status, signature,
-   * then clientManifest and serverManifest. Empty otherwise.
+   * minecraft, loader.version, minimumLauncherVersion, protocol, launch, gitCommit, signature,
+   * then clientManifest and serverManifest. A revoked version reports ["status"]. Empty otherwise.
    */
   publishConflictFields: string[];
   publishConflictError?: string;
@@ -74,7 +76,18 @@ export interface ComparePortalReleaseOptions {
   server: PackManifest;
   /** The locally built release descriptor (buildManifests' `release`). */
   release: ReleaseDescriptor;
+  /**
+   * Read-only deploy token sent on every Portal read of the comparison (default: PACK_DEPLOY_TOKEN).
+   * Never the publish secret.
+   */
+  token?: string;
   timeoutMs?: number;
+}
+
+/** Options for one Portal read: the request timeout and the deploy token, when one is set. */
+interface ReadOptions {
+  timeoutMs: number;
+  token?: string;
 }
 
 type Fetched = { manifest: PackManifest } | { error: string };
@@ -131,10 +144,10 @@ function isPackManifest(value: unknown): value is PackManifest {
 async function resolveChannel(
   portalUrl: string,
   name: PortalChannel,
-  timeoutMs: number,
+  read: ReadOptions,
 ): Promise<ChannelResult> {
   try {
-    return { name, version: await resolveChannelVersion(portalUrl, name, { timeoutMs }) };
+    return { name, version: await resolveChannelVersion(portalUrl, name, read) };
   } catch (err) {
     return { name, version: null, error: errorMessage(err) };
   }
@@ -143,13 +156,11 @@ async function resolveChannel(
 async function checkLocalPublished(
   portalUrl: string,
   version: string,
-  timeoutMs: number,
+  read: ReadOptions,
 ): Promise<LocalPublishedCheck> {
   const url = `${portalUrl}/api/v1/releases/${encodeURIComponent(version)}`;
   try {
-    const res = await fetchPortalText(url, `checking whether v${version} is published`, {
-      timeoutMs,
-    });
+    const res = await fetchPortalText(url, `checking whether v${version} is published`, read);
     if (res.status === 404) {
       return { state: { published: false } };
     }
@@ -157,7 +168,8 @@ async function checkLocalPublished(
       return { state: { published: true, revoked: true } };
     }
     if (!res.ok) {
-      return { state: null, error: `HTTP ${res.status} ${res.statusText}`.trim() };
+      // 401 and 403 land here: the release may exist, so the state is unknown, not "not published".
+      return { state: null, error: describePortalFailure(res, Boolean(read.token)) };
     }
     const data = parsePortalJson<unknown>(
       res.text,
@@ -187,10 +199,10 @@ async function fetchPortalManifest(
   portalUrl: string,
   version: string,
   target: Target,
-  timeoutMs: number,
+  read: ReadOptions,
 ): Promise<Fetched> {
   try {
-    const manifest: unknown = await fetchManifest(portalUrl, version, target, { timeoutMs });
+    const manifest: unknown = await fetchManifest(portalUrl, version, target, read);
     if (!isPackManifest(manifest)) {
       return { error: `Portal ${target} manifest for v${version} has no 'files' array` };
     }
@@ -203,11 +215,11 @@ async function fetchPortalManifest(
 async function fetchTargetManifests(
   portalUrl: string,
   version: string,
-  timeoutMs: number,
+  read: ReadOptions,
 ): Promise<TargetManifests> {
   const [client, server] = await Promise.all([
-    fetchPortalManifest(portalUrl, version, "client", timeoutMs),
-    fetchPortalManifest(portalUrl, version, "server", timeoutMs),
+    fetchPortalManifest(portalUrl, version, "client", read),
+    fetchPortalManifest(portalUrl, version, "server", read),
   ]);
   return { client, server };
 }
@@ -246,8 +258,10 @@ function compareTarget(
 
 /**
  * Release fields the Portal compares on publish (releaseContentMatches in the Portal's publish route),
- * each against the stored descriptor's value. Publishing sends no signature and always sends STABLE,
- * so any stored signature or other status differs.
+ * each against the stored descriptor's value. Publishing sends no signature, so any stored signature
+ * differs. The Portal does not compare status: a publish without one stores the widest target
+ * channel's status (DEV, BETA, STABLE, or DRAFT with no channel) and a republish to a wider channel
+ * raises it. A revoked version is handled by the caller.
  */
 function releaseFieldDiffs(release: ReleaseDescriptor, stored: StoredRelease): string[] {
   const diffs: string[] = [];
@@ -259,7 +273,6 @@ function releaseFieldDiffs(release: ReleaseDescriptor, stored: StoredRelease): s
   if (canonicalJson(stored.launch ?? null) !== canonicalJson(release.launch ?? null))
     diffs.push("launch");
   if ((stored.gitCommit ?? null) !== (release.gitCommit ?? null)) diffs.push("gitCommit");
-  if (stored.status !== "STABLE") diffs.push("status");
   if ((stored.signature ?? null) !== null) diffs.push("signature");
   return diffs;
 }
@@ -301,13 +314,16 @@ export async function comparePortalRelease(
   options: ComparePortalReleaseOptions,
 ): Promise<PortalComparison> {
   const portalUrl = options.portalUrl.replace(/\/+$/, "");
-  const timeoutMs = options.timeoutMs ?? DEFAULT_COMPARE_TIMEOUT_MS;
+  const read: ReadOptions = {
+    timeoutMs: options.timeoutMs ?? DEFAULT_COMPARE_TIMEOUT_MS,
+    token: options.token ?? deployTokenFromEnv(),
+  };
   const localVersion = options.client.version;
   const local: Record<Target, PackManifest> = { client: options.client, server: options.server };
 
   const [channelResults, localCheck] = await Promise.all([
-    Promise.all(PORTAL_CHANNELS.map((name) => resolveChannel(portalUrl, name, timeoutMs))),
-    checkLocalPublished(portalUrl, localVersion, timeoutMs),
+    Promise.all(PORTAL_CHANNELS.map((name) => resolveChannel(portalUrl, name, read))),
+    checkLocalPublished(portalUrl, localVersion, read),
   ]);
 
   const channels: Record<string, string | null> = {};
@@ -327,15 +343,13 @@ export async function comparePortalRelease(
   // The selected channel's release gives the diff. The local version's own release gives the publish
   // check. One fetch serves both when the channel already points at the local version.
   const compareFetch =
-    compareVersion !== null
-      ? fetchTargetManifests(portalUrl, compareVersion, timeoutMs)
-      : undefined;
+    compareVersion !== null ? fetchTargetManifests(portalUrl, compareVersion, read) : undefined;
   const publishedFetch =
     published !== true || revoked
       ? undefined
       : compareVersion === localVersion && compareFetch
         ? compareFetch
-        : fetchTargetManifests(portalUrl, localVersion, timeoutMs);
+        : fetchTargetManifests(portalUrl, localVersion, read);
   const [compared, released] = await Promise.all([compareFetch, publishedFetch]);
 
   const result: PortalComparison = {

@@ -99,6 +99,8 @@ Commands:
     -v, --version <ver> Specific release version to deploy (overrides channel)
     --verify <mode>     Verification mode: fast | full (default: fast)
     --no-backup         Skip automatic world backup before applying mutations
+    Env PACK_DEPLOY_TOKEN: read-only token for the Portal channel, release and
+                        manifest reads (no flag; never sent on file downloads)
 
   start                 Synchronize and launch a dedicated Minecraft server
     -t, --target <path> Target Minecraft server directory (default: current directory)
@@ -113,6 +115,8 @@ Commands:
     --no-backup         Skip automatic world backup during deployment
     --verify <mode>     Verification mode: fast | full (default: fast)
     -- <extra-jvm-args> Extra JVM arguments appended to the Java command
+    Env PACK_DEPLOY_TOKEN: read-only token for the sync's Portal reads (set it in
+                        <target>/.minecraft-env; not passed to the server process)
 
   monitor               Monitor Minecraft server status and dispatch Discord webhooks
     --host <host>       Server host to ping (default: MC_HOST or 127.0.0.1)

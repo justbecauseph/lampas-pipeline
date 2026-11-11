@@ -13,7 +13,7 @@
 
 # Env
 
-- `/home/server/.minecraft-env`
+- `/home/server/.minecraft-env` (mode `0600`; holds `PACK_DEPLOY_TOKEN`, the read-only Portal token `lampasctl start` uses. See `.minecraft-env.sample`.)
 
 # Extra config
 

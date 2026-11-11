@@ -13,7 +13,7 @@ import {
   writeJsonFile,
 } from "./utils";
 import { backupDirectory } from "./backup";
-import { resolveRelease } from "./release-resolver";
+import { deployTokenFromEnv, resolveRelease } from "./release-resolver";
 import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
 import { DeploymentTransaction } from "./transaction";
 import { logVerbose } from "./log";
@@ -37,6 +37,11 @@ export interface DeployOptions {
   portalUrl?: string;
   channel?: string;
   version?: string;
+  /**
+   * Read-only deploy token for the Portal's channel, release and manifest reads (default:
+   * PACK_DEPLOY_TOKEN). Blob and third-party downloads never carry it.
+   */
+  token?: string;
   verificationMode?: "fast" | "full";
   backupWorld?: boolean;
   installerVersion?: string;
@@ -731,6 +736,8 @@ export async function deployServer(options: DeployOptions): Promise<void> {
     channel: options.channel || (options.version ? undefined : "dev"),
     version: options.version,
     target: "server",
+    // Metadata reads only. syncInstance downloads blobs and third-party files without it.
+    token: options.token ?? deployTokenFromEnv(),
   });
 
   validateManifestForSync(manifest, {
