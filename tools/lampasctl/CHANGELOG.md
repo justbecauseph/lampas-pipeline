@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-12
+
 ### Added
 
 - `deploy` and `start` send the read-only deploy token `PACK_DEPLOY_TOKEN` as `Authorization: Bearer` on their Portal metadata reads: the channel pointer, the release descriptor and the server manifest. The Portal's read gate requires credentials for the `dev` and `beta` channels, releases that are not `STABLE`, and every server manifest. The token comes from the environment only (no flag); `start` reads it from `.minecraft-env`. File downloads never carry it: Portal blobs, Modrinth and CurseForge URLs, and the Fabric Meta launcher. With the variable unset no `Authorization` header is sent, as before.
@@ -16,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `start` removes `PACK_DEPLOY_TOKEN` from the environment of the Minecraft server process. Every other variable is passed on as before.
 - `manifest` no longer reports a stored release `status` other than `STABLE` as a publish conflict. The Portal now stores the widest published channel's status (`DEV`, `BETA`, `STABLE`, or `DRAFT` with no channel) and does not compare it on publish. A revoked version is still reported as a conflict.
 - In the `manifest` Portal comparison, a 401 or 403 on the release check is reported as publish status unknown with the reason, not as "not published".
+
+### Security
+
+- Zod is updated from 3.25.76 to 4.6.7. Zod before 4.6.6 can exhaust memory while validating oversized constrained collections. Config patch validation reports the same errors as before.
 
 ## [1.4.1] - 2026-11-01
 
