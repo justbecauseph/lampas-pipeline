@@ -27,7 +27,9 @@ export const ConfigOperationSchema = z.discriminatedUnion("op", [
   z.object({
     op: z.literal("set"),
     path: z.array(z.union([z.string(), z.number()])).min(1, "Operation path must not be empty"),
-    value: z.any(),
+    // Optional here so a missing value reaches validateConfigPatches, which reports
+    // "requires a value". Zod 4 makes a z.any() key required; Zod 3 did not.
+    value: z.any().optional(),
   }),
   z.object({
     op: z.literal("remove"),
@@ -408,7 +410,7 @@ export function validateConfigPatches(
   const warn = options.warn !== false;
   const parseResult = ConfigPatchesFileSchema.safeParse(patchesFileContent);
   if (!parseResult.success) {
-    const errorMessages = parseResult.error.errors
+    const errorMessages = parseResult.error.issues
       .map((e) => `[${e.path.join(".")}] ${e.message}`)
       .join(", ");
     throw new Error(`Invalid config patches file schema: ${errorMessages}`);
