@@ -16,8 +16,8 @@ It guarantees **zero drift between clients and dedicated servers** by managing b
 
 ```mermaid
 graph TD
-    subgraph Git ["1. Pack Source (local workspace)"]
-        Pipeline["lampas-pipeline workspace<br/>• pack/pack.toml (local, gitignored)<br/>• pack/mods/*.toml<br/>• pack/client/ & pack/server/ configs"]
+    subgraph Git ["1. Pack Source (pack submodule)"]
+        Pipeline["lampas-pipeline workspace<br/>• pack/pack.toml (lampas2-pack submodule)<br/>• pack/mods/*.toml<br/>• pack/client/ & pack/server/ configs"]
     end
 
     subgraph CI ["2. Validate & Manifest Build (local)"]
@@ -166,7 +166,7 @@ sequenceDiagram
 
 ```text
 lampas-pipeline/
-├── pack/                         # Local modpack authoring workspace (gitignored)
+├── pack/                         # Modpack authoring workspace (git submodule: justbecauseph/lampas2-pack, private)
 │   ├── pack.toml                 # Root pack descriptor (MC 26.2, Fabric 0.19.5, Pack vX.X.X, [portal], [launcher] (minimum_version, protocol), [launcher.play], [launcher.resourcepacks], [client].preserve)
 │   ├── pack.lock.json            # Lockfile with pinned upstream version IDs & SHA-256 hashes
 │   ├── mods/                     # Declarative mod TOML definitions
@@ -215,7 +215,7 @@ lampas-pipeline/
 ```
 
 > [!NOTE]
-> **Gitignored Local Workspaces**: `pack/` and `manifest/` are local workspaces excluded from Git tracking via `.gitignore`. The repository tracks pipeline tooling, type schemas, systemd service templates, and CI automation. Modpack authoring and generated manifests live in local disk workspaces, and distribution is handled via immutable Portal releases.
+> **Pack Submodule and Generated Manifests**: `pack/` is a git submodule of the private [`justbecauseph/lampas2-pack`](https://github.com/justbecauseph/lampas2-pack) repository. Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in an existing clone. Commit and push pack changes inside `pack/` first, then commit the updated `pack` pointer in this repository. `manifest/` is generated and excluded from Git tracking via `.gitignore`. This repository tracks pipeline tooling, type schemas, systemd service templates, and CI automation; distribution is handled via immutable Portal releases.
 
 ---
 
@@ -857,7 +857,7 @@ Pack validation and update checks have no CI workflow; run `lampasctl validate` 
 
 ### Release gates and version tags
 
-The pack version is authoritative in local `pack/pack.toml` and must match the generated lockfile and manifests. Because `pack/` and `manifest/` are gitignored local workspaces, run the release gates locally before authorizing publication:
+The pack version is authoritative in `pack/pack.toml` and must match the generated lockfile and manifests. CI does not check out the `pack` submodule and `manifest/` is gitignored, so run the release gates locally before authorizing publication:
 
 ```bash
 bun install --frozen-lockfile

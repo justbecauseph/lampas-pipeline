@@ -8,6 +8,9 @@ description: >-
 
 This skill guides the process of adding, updating, and deploying custom or in-house `.jar` mods to the Lampas Modpack Pipeline, and generating distribution manifests for both **`localhost:3000`** and **`https://dev.lampas.town`**.
 
+> [!NOTE]
+> `pack/` is a git submodule of the private `justbecauseph/lampas2-pack` repository. Changes made by this workflow show in `git -C pack status`, not in the lampas-pipeline `git status`. Commit and push inside `pack/` (on `main`) first, then commit the updated `pack` pointer in lampas-pipeline. `manifest/` is gitignored.
+
 ---
 
 ## ⚡ Quick Start (Automated Helper)

@@ -11,7 +11,7 @@ Guidelines and rules for AI assistants working in this repository.
 - **Commit & Push**: Commit and push to GitHub after every completed phase. Present commit range and url to review.
 - **Stop for Review**: Stop development after every completed phase for human code review.
 - Also update CHANGELOG.md for lampasctl scoped changes
-- **Pack is gitignored**: `pack/` (mod and resource pack definitions, `pack.lock.json`, custom JARs) and the generated `manifest/` are deliberately gitignored. Pack changes such as `lampasctl add` or a version bump do not show in `git status`, `git diff` or `git log`, and are never committed. Read pack state from the files themselves, for example a `pack/mods/*.toml` `version_id` against its entry in `pack/pack.lock.json`.
+- **Pack is a submodule**: `pack/` (mod and resource pack definitions, `pack.lock.json`, custom JARs) is a git submodule of the private `justbecauseph/lampas2-pack` repository. Pack changes such as `lampasctl add` or a version bump show in `git -C pack status`, `git -C pack diff` and `git -C pack log`; in this repository they show only as a modified `pack` pointer. Work on `main` inside `pack/` (`git submodule update` leaves a detached HEAD; run `git -C pack switch main`). Commit and push inside `pack/` first, then commit the `pack` pointer here. The generated `manifest/` stays gitignored.
 
 ## Reference Repositories
 

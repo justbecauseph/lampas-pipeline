@@ -80,6 +80,9 @@ bun run lampasctl add chunky --side server
 4. Updates `pack/pack.lock.json` with pinned SHA-256 and SHA-512 hashes.
 5. Re-generates distribution manifests in `manifest/`.
 
+> [!NOTE]
+> `pack/` is a git submodule of the private `justbecauseph/lampas2-pack` repository. Changes made by this workflow show in `git -C pack status`, not in the lampas-pipeline `git status`. Commit and push inside `pack/` (on `main`) first, then commit the updated `pack` pointer in lampas-pipeline. `manifest/` is gitignored.
+
 ### Step 4: Validate Pack Integrity & Dependencies
 
 Run the pack validator to verify Fabric loader compatibility and JiJ integrity:
