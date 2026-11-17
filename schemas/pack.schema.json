@@ -102,6 +102,24 @@
         ]
       }
     },
+    "hold": {
+      "type": "array",
+      "description": "Descriptors that check-updates keeps at their current pin, even with --force. Each mod_id may appear once. validate and check-updates reject a hold that names no descriptor.",
+      "items": {
+        "type": "object",
+        "required": ["mod_id", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "mod_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+            "description": "Exact, case-sensitive descriptor basename under pack/mods, shaderpacks, shaders or resourcepacks, without .toml."
+          },
+          "reason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+        }
+      }
+    },
     "portal": {
       "type": "object",
       "additionalProperties": false,

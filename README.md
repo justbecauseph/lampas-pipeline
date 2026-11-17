@@ -313,6 +313,16 @@ reason = "Known incompatible CurseForge file"
 
 The checker skips matching descriptors and releases, then can choose the newest allowed release newer than the current pin; it never selects an older release. `lampasctl validate` rejects descriptor pins and lockfile artifacts that match blacklist rules. `check-updates --force` overrides blacklist filtering for that scan or application only; it still validates the policy, and `validate` has no bypass. `add` and `resolve` do not consult these rules.
 
+A blacklist rule that names an installed mod makes `validate` fail, so it cannot keep a mod at the version it has. Use a hold for that. `check-updates` does not query or update a held descriptor, `--force` does not release it, and the report lists it under "Held". The hold is checked before blacklist rules, so the report does not also list a held descriptor's blacklist matches; `validate` still rejects them. `validate` accepts the held descriptor's pin. `validate` and `check-updates` both fail when a hold's `mod_id` is not exactly (case included) the file name of a descriptor under `mods`, `shaderpacks`, `shaders` or `resourcepacks`, so removing a held mod also needs its hold removed. Both fields are required:
+
+```toml
+[[hold]]
+mod_id = "incendium"
+reason = "lampas2-overrides' Incendium datapack is audited on 5.5.1 only"
+```
+
+To update a held mod, remove its hold. A hold does not stop `add` or a hand edit from changing the descriptor.
+
 ### 3. Lockfile & Manifest Generation
 
 ```bash

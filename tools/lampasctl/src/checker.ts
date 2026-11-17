@@ -5,6 +5,7 @@ import {
   parsePackBlacklistRules,
   describeBlacklistRule,
 } from "./blacklist";
+import { parsePackHoldRules, unmatchedHolds } from "./hold";
 import type {
   ArtifactType,
   BlacklistRule,
@@ -41,6 +42,12 @@ interface BlacklistDiagnostic {
   releaseName?: string;
   kind: "blocked" | "override";
   reason: "descriptor" | "current_pin" | "candidate" | "selected_update";
+}
+
+interface HeldDescriptor {
+  descriptorId: string;
+  modName: string;
+  reason: string;
 }
 
 interface OtherMinecraftBuild {
@@ -275,6 +282,7 @@ function writeMarkdownReport(
   diagnostics: BlacklistDiagnostic[],
   skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }>,
   otherMinecraftBuilds: OtherMinecraftBuild[],
+  held: HeldDescriptor[],
 ): void {
   let md = `## 📦 Upstream Mod Updates Available (${updates.length})\n\n`;
   md += `Target: **Minecraft ${packConfig.pack.minecraft}** • **Fabric ${packConfig.loader.version}**\n\n`;
@@ -318,6 +326,18 @@ function writeMarkdownReport(
     }
   }
 
+  md += `\n## Held (${held.length})\n\n`;
+  if (held.length === 0) {
+    md += `No descriptors are held.\n`;
+  } else {
+    md += `These descriptors stay at their current pin and were not checked; \`--force\` does not release them. Remove the \`[[hold]]\` rule to update one.\n\n`;
+    md += `| Descriptor | Mod | Reason |\n`;
+    md += `| :--- | :--- | :--- |\n`;
+    for (const item of held) {
+      md += `| \`${item.descriptorId}.toml\` | ${escapeMarkdownCell(item.modName)} | ${escapeMarkdownCell(item.reason)} |\n`;
+    }
+  }
+
   md += `\n## Builds for Another Minecraft Version (${otherMinecraftBuilds.length})\n\n`;
   if (otherMinecraftBuilds.length === 0) {
     md += `No newer release was passed over for naming another Minecraft version.\n`;
@@ -354,6 +374,8 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   const packConfig = parseTomlFile<PackConfig>(packConfigFile);
   // This validates the complete policy before any upstream requests or descriptor writes.
   const blacklistRules = parsePackBlacklistRules(packConfig, packConfigFile);
+  const parsedHolds = parsePackHoldRules(packConfig, packConfigFile);
+  const holdRules = new Map(parsedHolds.map((rule) => [rule.mod_id, rule]));
   const targetMc = packConfig.pack.minecraft;
   const targetLoader = packConfig.loader.type;
 
@@ -377,12 +399,26 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
     }
   }
 
+  // A hold that names no descriptor holds nothing; stop before any request rather than update the mod it meant.
+  const unknownHolds = unmatchedHolds(
+    parsedHolds,
+    new Set(descriptors.map(({ file }) => path.basename(file, ".toml"))),
+  );
+  if (unknownHolds.length > 0) {
+    throw new Error(
+      `Invalid hold configuration in ${packConfigFile}: ${unknownHolds
+        .map((rule) => `hold '${rule.mod_id}'`)
+        .join(", ")} names no descriptor (exact, case-sensitive file name).`,
+    );
+  }
+
   console.log(
     `[Update Checker] Scanning upstream updates for Minecraft ${targetMc} (${targetLoader})...\n`,
   );
 
   const updatesAvailable: ModUpdateInfo[] = [];
   const blacklistDiagnostics: BlacklistDiagnostic[] = [];
+  const heldDescriptors: HeldDescriptor[] = [];
   const skippedChecks: Array<{ descriptorId: string; modName: string; reason: string }> = [];
   const otherMinecraftBuilds: OtherMinecraftBuild[] = [];
   let upToDateCount = 0;
@@ -424,6 +460,14 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
       const { file, filePath, definition: def, artifactType } = descriptor;
       const modId = path.basename(file, ".toml");
       const provider = def.provider;
+
+      // A hold is checked before any blacklist rule or upstream request, and --force does not release it.
+      const hold = holdRules.get(modId);
+      if (hold) {
+        heldDescriptors.push({ descriptorId: modId, modName: def.name, reason: hold.reason });
+        console.log(`  ⏸ [Held] ${def.name} (${modId}): ${hold.reason}`);
+        continue;
+      }
 
       if (provider.type === "modrinth") {
         const projectId = provider.project_id;
@@ -827,9 +871,10 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
   );
   const blockedCount = blacklistDiagnostics.filter((item) => item.kind === "blocked").length;
   const overrideCount = blacklistDiagnostics.filter((item) => item.kind === "override").length;
+  heldDescriptors.sort((a, b) => a.descriptorId.localeCompare(b.descriptorId));
   console.log("\n" + "=".repeat(60));
   console.log(
-    ` [Update Summary] ${updatesAvailable.length} updates found, ${upToDateCount} up-to-date, ${blockedCount} blacklist block(s), ${overrideCount} blacklist override(s), ${skippedCount} custom/skipped.`,
+    ` [Update Summary] ${updatesAvailable.length} updates found, ${upToDateCount} up-to-date, ${blockedCount} blacklist block(s), ${overrideCount} blacklist override(s), ${heldDescriptors.length} held, ${skippedCount} custom/skipped.`,
   );
   console.log("=".repeat(60) + "\n");
 
@@ -845,6 +890,7 @@ export async function checkPackUpdates(options: CheckUpdatesOptions): Promise<Mo
       blacklistDiagnostics,
       skippedChecks,
       otherMinecraftBuilds,
+      heldDescriptors,
     );
     console.log(`[Update Checker] Markdown report written to ${options.markdownOut}`);
   }

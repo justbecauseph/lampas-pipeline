@@ -31,6 +31,17 @@ describe("schemas and IDE validation configuration", () => {
     }
   });
 
+  test("pack hold schema requires an exact mod_id and a reason and nothing else", () => {
+    const schema = JSON.parse(fs.readFileSync(path.join(schemasDir, "pack.schema.json"), "utf-8"));
+    const item = schema.properties.hold.items;
+
+    expect(schema.properties.hold.type).toBe("array");
+    expect(item.additionalProperties).toBe(false);
+    expect(item.required).toEqual(["mod_id", "reason"]);
+    expect(Object.keys(item.properties).sort()).toEqual(["mod_id", "reason"]);
+    expect(item.properties.mod_id.pattern).toBe("^[A-Za-z0-9][A-Za-z0-9._-]*$");
+  });
+
   test("pack blacklist schema admits only the five typed scope/provider forms", () => {
     const schema = JSON.parse(fs.readFileSync(path.join(schemasDir, "pack.schema.json"), "utf-8"));
     const variants = schema.properties.blacklist.items.oneOf as Array<any>;

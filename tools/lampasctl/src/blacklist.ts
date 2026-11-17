@@ -77,6 +77,30 @@ export function parseBlacklistRules(raw: unknown, source = "pack.toml blacklist"
   });
 }
 
+/** The dotted path of the first `name` key below the root of `value`, or undefined when it appears only at the root. */
+export function nestedRootKeyPath(value: unknown, name: string): string | undefined {
+  const search = (node: unknown, currentPath: string[], root: boolean): string | undefined => {
+    if (!node || typeof node !== "object") return undefined;
+    if (Array.isArray(node)) {
+      for (let index = 0; index < node.length; index++) {
+        const found = search(node[index], [...currentPath, `[${index}]`], false);
+        if (found) return found;
+      }
+      return undefined;
+    }
+
+    for (const [key, child] of Object.entries(node)) {
+      if (root && key === name) continue;
+      const childPath = [...currentPath, key];
+      if (key === name) return childPath.join(".");
+      const found = search(child, childPath, false);
+      if (found) return found;
+    }
+    return undefined;
+  };
+  return search(value, [], true);
+}
+
 /** Validate that blacklist is declared only at the pack.toml root, then parse its rules. */
 export function parsePackBlacklistRules(
   packConfig: unknown,
@@ -88,32 +112,8 @@ export function parsePackBlacklistRules(
     );
   }
 
-  const nestedBlacklistPath = (
-    value: unknown,
-    currentPath: string[],
-    root: boolean,
-  ): string | undefined => {
-    if (!value || typeof value !== "object") return undefined;
-    if (Array.isArray(value)) {
-      for (let index = 0; index < value.length; index++) {
-        const found = nestedBlacklistPath(value[index], [...currentPath, `[${index}]`], false);
-        if (found) return found;
-      }
-      return undefined;
-    }
-
-    for (const [key, child] of Object.entries(value)) {
-      if (root && key === "blacklist") continue;
-      const childPath = [...currentPath, key];
-      if (key === "blacklist") return childPath.join(".");
-      const found = nestedBlacklistPath(child, childPath, false);
-      if (found) return found;
-    }
-    return undefined;
-  };
-
   const root = packConfig as Record<string, unknown>;
-  const misplaced = nestedBlacklistPath(root, [], true);
+  const misplaced = nestedRootKeyPath(root, "blacklist");
   if (misplaced) {
     throw new Error(
       `Invalid blacklist configuration in ${source}: blacklist must be declared at the root, not under '${misplaced}'.`,

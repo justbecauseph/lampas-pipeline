@@ -33,6 +33,12 @@ export type BlacklistRule =
       reason?: string;
     };
 
+/** Keeps a descriptor at its current pin: check-updates never queries or updates it, even with --force. */
+export interface HoldRule {
+  mod_id: string;
+  reason: string;
+}
+
 export interface BlacklistTarget {
   modId: string;
   provider: ProviderConfig["type"];
@@ -85,6 +91,7 @@ export interface PackConfig {
     };
   };
   blacklist?: BlacklistRule[];
+  hold?: HoldRule[];
 }
 
 export interface ReleaseRequiredResourcePack {

@@ -817,6 +817,210 @@ describe("update checker output and blacklist handling", () => {
   });
 });
 
+describe("update checker holds", () => {
+  const hold = (modId = "example-mod") =>
+    [
+      "[[hold]]",
+      `mod_id = "${modId}"`,
+      'reason = "datapack override audited on this release"',
+      "",
+    ].join("\n");
+
+  test("a held descriptor is not queried or updated, even with --force and --apply", async () => {
+    for (const provider of ["modrinth", "curseforge"] as const) {
+      const fixture = createFixture({ provider, blacklist: hold() });
+      const before = fs.readFileSync(fixture.descriptor, "utf-8");
+      // Without the hold, both mocks offer an update from the pinned release.
+      const mock =
+        provider === "modrinth"
+          ? useModrinth([
+              modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+              modrinthRelease("old-version-id", "1.0.0"),
+            ])
+          : useCurseForge({
+              files: [
+                curseForgeFile(300, "2.0.0", "2026-08-22T00:00:00Z"),
+                curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+              ],
+              current: curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+            });
+      const logs: string[] = [];
+      console.log = (...args: unknown[]) => logs.push(args.map(String).join(" "));
+      try {
+        const updates = await checkPackUpdates({
+          packDir: fixture.packDir,
+          markdownOut: fixture.markdownOut,
+          force: true,
+          apply: true,
+          concurrency: 1,
+        });
+        expect(updates).toHaveLength(0);
+        expect(mock.requests).toHaveLength(0);
+        expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
+        expect(logs.join("\n")).toContain("[Held]");
+        expect(logs.join("\n")).toContain("1 held");
+        const markdown = fs.readFileSync(fixture.markdownOut, "utf-8");
+        expect(markdown).toContain("## Held (1)");
+        expect(markdown).toContain("`example-mod.toml`");
+        expect(markdown).toContain("datapack override audited on this release");
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("the same mocks update the descriptor when it is not held", async () => {
+    for (const provider of ["modrinth", "curseforge"] as const) {
+      const fixture = createFixture({ provider });
+      if (provider === "modrinth") {
+        useModrinth([
+          modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+          modrinthRelease("old-version-id", "1.0.0"),
+        ]);
+      } else {
+        useCurseForge({
+          files: [
+            curseForgeFile(300, "2.0.0", "2026-08-22T00:00:00Z"),
+            curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+          ],
+          current: curseForgeFile(200, "1.0.0", "2026-08-20T00:00:00Z"),
+        });
+      }
+      try {
+        const updates = await checkPackUpdates({
+          packDir: fixture.packDir,
+          apply: true,
+          concurrency: 1,
+        });
+        expect(updates).toHaveLength(1);
+        expect(fs.readFileSync(fixture.descriptor, "utf-8")).toContain(
+          provider === "modrinth" ? 'version_id = "new-version-id"' : "file_id = 300",
+        );
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("--force releases a blacklist rule but not a hold on the same descriptor", async () => {
+    const fixture = createFixture({
+      blacklist: [
+        hold(),
+        "[[blacklist]]",
+        'scope = "mod_id"',
+        'id = "example-mod"',
+        'reason = "temporarily excluded"',
+        "",
+      ].join("\n"),
+    });
+    const before = fs.readFileSync(fixture.descriptor, "utf-8");
+    const mock = useModrinth([
+      modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+      modrinthRelease("old-version-id", "1.0.0"),
+    ]);
+    try {
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        force: true,
+        apply: true,
+        concurrency: 1,
+      });
+      expect(updates).toHaveLength(0);
+      expect(mock.requests).toHaveLength(0);
+      expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
+      expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("## Held (1)");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("holds a resource pack descriptor while other descriptors are still checked", async () => {
+    const fixture = createFixture({ blacklist: hold("example-pack") });
+    const resourcepacks = path.join(fixture.packDir, "resourcepacks");
+    fs.mkdirSync(resourcepacks, { recursive: true });
+    const packDescriptor = path.join(resourcepacks, "example-pack.toml");
+    fs.writeFileSync(
+      packDescriptor,
+      [
+        'name = "Example Pack"',
+        'side = "client"',
+        "[provider]",
+        'type = "modrinth"',
+        'project_id = "pack-project"',
+        'version_id = "pack-version-id"',
+        "",
+      ].join("\n"),
+    );
+    const before = fs.readFileSync(packDescriptor, "utf-8");
+    const mock = useModrinth([
+      modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+      modrinthRelease("old-version-id", "1.0.0"),
+    ]);
+    try {
+      const updates = await checkPackUpdates({
+        packDir: fixture.packDir,
+        markdownOut: fixture.markdownOut,
+        apply: true,
+        concurrency: 1,
+      });
+      expect(updates.map((update) => update.modId)).toEqual(["example-mod"]);
+      expect(mock.requests.some((url) => url.includes("pack-project"))).toBe(false);
+      expect(mock.requests.some((url) => url.includes("example-project"))).toBe(true);
+      expect(fs.readFileSync(packDescriptor, "utf-8")).toBe(before);
+      expect(fs.readFileSync(fixture.markdownOut, "utf-8")).toContain("`example-pack.toml`");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a hold that is not exactly a descriptor's file name stops the check before any request", async () => {
+    for (const modId of ["other-mod", "Example-Mod", "EXAMPLE-MOD"]) {
+      const fixture = createFixture({ blacklist: hold(modId) });
+      const before = fs.readFileSync(fixture.descriptor, "utf-8");
+      const mock = useModrinth([
+        modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+        modrinthRelease("old-version-id", "1.0.0"),
+      ]);
+      try {
+        await expect(
+          checkPackUpdates({ packDir: fixture.packDir, apply: true, concurrency: 1 }),
+        ).rejects.toThrow(`hold '${modId}' names no descriptor`);
+        expect(mock.requests).toHaveLength(0);
+        expect(fs.readFileSync(fixture.descriptor, "utf-8")).toBe(before);
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("malformed or misplaced holds stop the check before any request", async () => {
+    for (const rule of [
+      ["[[hold]]", 'mod_id = "example-mod"', ""].join("\n"),
+      ["[[hold]]", 'mod_id = "example mod"', 'reason = "r"', ""].join("\n"),
+      ["[[hold]]", 'mod_id = "../mods/example-mod"', 'reason = "r"', ""].join("\n"),
+      ["[[hold]]", 'mod_id = ".."', 'reason = "r"', ""].join("\n"),
+      ["[[hold]]", 'mod_id = "mods\\\\example-mod"', 'reason = "r"', ""].join("\n"),
+      ["[[hold]]", 'mod_id = "example-mod"', 'reason = "r"', 'version_id = "x"', ""].join("\n"),
+      [hold(), hold()].join("\n"),
+      ["[loader.extra]", "hold = []", ""].join("\n"),
+    ]) {
+      const fixture = createFixture({ blacklist: rule });
+      const mock = useModrinth([
+        modrinthRelease("new-version-id", "2.0.0", "2026-08-22T00:00:00Z"),
+      ]);
+      try {
+        await expect(
+          checkPackUpdates({ packDir: fixture.packDir, concurrency: 1 }),
+        ).rejects.toThrow("Invalid hold configuration");
+        expect(mock.requests).toHaveLength(0);
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+});
+
 describe("update checker artifact coverage", () => {
   function writeDescriptor(packDir: string, dir: string, id: string, lines: string[]): string {
     const descriptorDir = path.join(packDir, dir);

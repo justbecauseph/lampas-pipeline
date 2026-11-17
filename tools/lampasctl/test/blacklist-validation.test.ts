@@ -123,6 +123,92 @@ async function captureValidation(
   }
 }
 
+describe("hold validation", () => {
+  const descriptor: DescriptorFixture = {
+    directory: "mods",
+    filename: "incendium.toml",
+    content: descriptorProvider("modrinth", 'project_id = "ZVzW5oNS"\nversion_id = "vPwuqZ5y"'),
+  };
+  const lockArtifacts = {
+    incendium: resolvedArtifact({ type: "modrinth", projectId: "ZVzW5oNS", versionId: "vPwuqZ5y" }),
+  };
+
+  test("accepts a hold on an installed descriptor without rejecting its pin", async () => {
+    const fixture = setupFixture({
+      blacklist:
+        '[[hold]]\nmod_id = "incendium"\nreason = "lampas2-overrides datapack audited on 5.5.1"\n',
+      descriptors: [descriptor],
+      lockArtifacts,
+    });
+    try {
+      const result = await captureValidation(fixture);
+      expect(result.messages.join("\n")).not.toContain("Hold");
+      expect(result.passed).toBe(true);
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test("rejects a hold that is not exactly a descriptor's file name, case included", async () => {
+    for (const modId of ["incendum", "Incendium", "INCENDIUM"]) {
+      const fixture = setupFixture({
+        blacklist: `[[hold]]\nmod_id = "${modId}"\nreason = "typo"\n`,
+        descriptors: [descriptor],
+        lockArtifacts,
+      });
+      try {
+        const result = await captureValidation(fixture);
+        expect(result.passed).toBe(false);
+        expect(result.messages.join("\n")).toContain(`[Unknown Hold] pack.toml hold '${modId}'`);
+      } finally {
+        fixture.cleanup();
+      }
+    }
+  });
+
+  test("accepts a hold on a resource pack descriptor", async () => {
+    const fixture = setupFixture({
+      blacklist: '[[hold]]\nmod_id = "example-pack"\nreason = "pinned"\n',
+      descriptors: [
+        {
+          directory: "resourcepacks",
+          filename: "example-pack.toml",
+          content: descriptorProvider("modrinth", 'project_id = "p"\nversion_id = "v"'),
+        },
+      ],
+      lockArtifacts: {
+        "example-pack": resolvedArtifact({ type: "modrinth", projectId: "p", versionId: "v" }),
+      },
+    });
+    try {
+      const result = await captureValidation(fixture);
+      expect(result.messages.join("\n")).not.toContain("Hold");
+      expect(result.passed).toBe(true);
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test("rejects malformed and misplaced holds", async () => {
+    for (const [policy, append] of [
+      ['[[hold]]\nmod_id = "incendium"\n', ""],
+      ['[[hold]]\nmod_id = "../mods/incendium"\nreason = "path"\n', ""],
+      ['hold = "incendium"\n', ""],
+      ["", "\nhold = []\n"],
+    ]) {
+      const fixture = setupFixture({ blacklist: policy, descriptors: [descriptor], lockArtifacts });
+      if (append) fs.appendFileSync(path.join(fixture.packDir, "pack.toml"), append);
+      try {
+        const result = await captureValidation(fixture);
+        expect(result.passed).toBe(false);
+        expect(result.messages.join("\n")).toContain("[Invalid Hold]");
+      } finally {
+        fixture.cleanup();
+      }
+    }
+  });
+});
+
 describe("blacklist validation", () => {
   test("keeps absent and empty policy behavior valid in offline validation", async () => {
     for (const blacklist of [undefined, "blacklist = []\n"]) {

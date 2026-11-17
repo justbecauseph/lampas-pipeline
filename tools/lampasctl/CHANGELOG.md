@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `[[hold]]` rules at the root of `pack.toml` (`mod_id` and `reason`, both required) keep a descriptor at its current pin. `check-updates` does not query or update a held descriptor, `--force` does not release it, and the console and `--markdown` report list it under "Held". A blacklist `mod_id` rule could not do this, because `validate` rejects an installed descriptor that a blacklist rule matches.
+- `validate` and `check-updates` reject a malformed or misplaced hold and a hold whose `mod_id` is not exactly (case included) a descriptor's file name; `check-updates` stops before any request.
+
 ## [1.5.0] - 2026-11-12
 
 ### Added

@@ -7,6 +7,7 @@ import {
   matchingBlacklistRules,
   parsePackBlacklistRules,
 } from "./blacklist";
+import { HOLD_DESCRIPTOR_DIRS, parsePackHoldRules, unmatchedHolds } from "./hold";
 import {
   clientStaticFilePolicy,
   commonStaticFilePolicy,
@@ -148,6 +149,13 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
     console.error(`  ✗ [Invalid Blacklist] ${err.message}`);
     return false;
   }
+  let holdRules: ReturnType<typeof parsePackHoldRules>;
+  try {
+    holdRules = parsePackHoldRules(packConfig, "pack.toml");
+  } catch (err: any) {
+    console.error(`  ✗ [Invalid Hold] ${err.message}`);
+    return false;
+  }
   console.log(`[Validator] Validating ${packConfig.pack.name} v${packConfig.pack.version}...`);
 
   let loaderDef: LoaderDefinition;
@@ -212,6 +220,24 @@ export async function validatePack(options: ValidateOptions): Promise<boolean> {
         console.error(`  ✗ [Invalid Provider Identity] ${source}: ${err.message}`);
         hasErrors = true;
       }
+    }
+  }
+
+  // A hold names a descriptor by exact file name; one that names none is a typo that would hold nothing.
+  if (holdRules.length > 0) {
+    const descriptorIds = new Set<string>();
+    for (const directory of HOLD_DESCRIPTOR_DIRS) {
+      const artifactDir = path.join(options.packDir, directory);
+      if (!fs.existsSync(artifactDir)) continue;
+      for (const file of fs.readdirSync(artifactDir)) {
+        if (file.endsWith(".toml")) descriptorIds.add(path.basename(file, ".toml"));
+      }
+    }
+    for (const rule of unmatchedHolds(holdRules, descriptorIds)) {
+      console.error(
+        `  ✗ [Unknown Hold] pack.toml hold '${rule.mod_id}' names no descriptor under mods, shaderpacks, shaders or resourcepacks (exact, case-sensitive file name).`,
+      );
+      hasErrors = true;
     }
   }
 
