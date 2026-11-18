@@ -18,3 +18,7 @@ Guidelines and rules for AI assistants working in this repository.
 - C:\Users\markj\source\repos\lampas-pipeline
 - C:\Users\markj\source\repos\lampas-launcher
 - C:\Users\markj\source\repos\lampas2-portal
+
+## Lampas knowledgebase (lampas-kb)
+
+`.mcp.json` connects the `lampas-kb` MCP server at `https://kb.lampas.town/mcp`; it needs a token from https://kb.lampas.town/auth/token in the `LAMPAS_KB_TOKEN` environment variable ([kb README](https://github.com/justbecauseph/lampas-two-kb/blob/main/kb/README.md#mcp-server-lampas-kb)). Ask it before stating what is deployed, decided or designed for Lampas 2 outside this repository: take versions from its `status` tool, attribute discussion to the person who said it, and treat plans as intent.
