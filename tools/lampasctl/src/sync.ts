@@ -13,6 +13,7 @@ import {
   writeJsonFile,
 } from "./utils";
 import { backupDirectory } from "./backup";
+import { assertServerMotd } from "./manifest-rules";
 import { deployTokenFromEnv, resolveRelease } from "./release-resolver";
 import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
 import { DeploymentTransaction } from "./transaction";
@@ -180,6 +181,13 @@ export function validateManifestForSync(
     ) {
       throw new Error(`Missing or empty download URL for file '${file.path}'`);
     }
+  }
+
+  if (manifest.motd !== undefined) {
+    if (manifest.target !== "server") {
+      throw new Error("Invalid manifest: 'motd' is only valid on a server manifest");
+    }
+    assertServerMotd(manifest.motd, "server manifest motd");
   }
 
   if (manifest.resourcePack) {
@@ -442,13 +450,28 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
     }
   }
 
-  // Apply server-side resource pack configuration to server.properties
+  // Apply server-side resource pack and MOTD settings to server.properties in one write, so the
+  // backup taken before the write holds the file as it was before this sync.
   if (manifest.target === "server") {
+    const serverProps: Record<string, string> = {};
+    const changes: string[] = [];
     if (manifest.resourcePack) {
-      applyServerResourcePackProperties(targetDir, manifest.resourcePack);
-    } else if (prevState.serverResourcePack?.managed) {
-      // Clear/reset managed properties
-      resetServerResourcePackProperties(targetDir);
+      Object.assign(serverProps, serverResourcePackProperties(manifest.resourcePack));
+      changes.push("configured resource-pack settings");
+    } else if (
+      prevState.serverResourcePack?.managed &&
+      fs.existsSync(path.join(targetDir, "server.properties"))
+    ) {
+      Object.assign(serverProps, SERVER_RESOURCE_PACK_RESET_PROPERTIES);
+      changes.push("reset Lampas resource-pack settings");
+    }
+    if (manifest.motd !== undefined) {
+      serverProps.motd = escapePropertiesValue(manifest.motd);
+      changes.push("set motd");
+    }
+    if (changes.length > 0) {
+      writeServerProperties(targetDir, serverProps);
+      console.log(`  ⚙ [Server Config] server.properties: ${changes.join(", ")}`);
     }
   }
 
@@ -481,6 +504,14 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
 
   if (manifest.target === "server") {
     const props = readServerPropertiesMap(targetDir);
+    if (manifest.motd !== undefined) {
+      const expectedMotd = escapePropertiesValue(manifest.motd);
+      if (props["motd"] !== expectedMotd) {
+        throw new Error(
+          `Final verification failed: server.properties 'motd' mismatch (expected '${expectedMotd}', got '${props["motd"]}')`,
+        );
+      }
+    }
     if (manifest.resourcePack) {
       const srp = manifest.resourcePack;
       if (props["resource-pack"] !== srp.url) {
@@ -608,17 +639,61 @@ export function readServerPropertiesMap(targetDir: string): Record<string, strin
   return res;
 }
 
-export function applyServerResourcePackProperties(
-  targetDir: string,
-  srp: {
-    url: string;
-    sha1?: string;
-    required: boolean;
-    prompt?: string;
-    id?: string;
-    uuid?: string;
-  },
-): void {
+/** server.properties values for a Lampas-managed server resource pack. */
+export function serverResourcePackProperties(srp: {
+  url: string;
+  sha1?: string;
+  required: boolean;
+  prompt?: string;
+  id?: string;
+  uuid?: string;
+}): Record<string, string> {
+  return {
+    "resource-pack": srp.url,
+    "resource-pack-sha1": srp.sha1 || "",
+    "resource-pack-id": srp.id || srp.uuid || "",
+    "resource-pack-prompt": srp.prompt ? formatPromptJson(srp.prompt) : "",
+    "require-resource-pack": String(srp.required ?? true).toLowerCase(),
+  };
+}
+
+/** server.properties values that clear a previously Lampas-managed server resource pack. */
+export const SERVER_RESOURCE_PACK_RESET_PROPERTIES: Readonly<Record<string, string>> = {
+  "resource-pack": "",
+  "resource-pack-sha1": "",
+  "resource-pack-id": "",
+  "resource-pack-prompt": "",
+  "require-resource-pack": "false",
+};
+
+/**
+ * Escapes a value for a Java .properties file: backslash, line breaks and every character outside
+ * printable ASCII become escapes, so the file stays ASCII and Properties.load reads the exact text.
+ * A leading space becomes "\ ", as Properties.store writes it, so Properties.load keeps it.
+ */
+export function escapePropertiesValue(value: string): string {
+  let out = "";
+  for (let i = 0; i < value.length; i++) {
+    const ch = value[i]!;
+    const code = value.charCodeAt(i);
+    if (ch === "\\") out += "\\\\";
+    else if (ch === "\n") out += "\\n";
+    else if (ch === "\r") out += "\\r";
+    else if (ch === "\t") out += "\\t";
+    else if (ch === " " && i === 0) out += "\\ ";
+    else if (code < 0x20 || code > 0x7e) {
+      out += `\\u${code.toString(16).toUpperCase().padStart(4, "0")}`;
+    } else out += ch;
+  }
+  return out;
+}
+
+/**
+ * Sets keys in server.properties in one write: existing lines are rewritten in place, missing keys
+ * are appended, and the previous file is copied to .lampas/backups first. Values must already be
+ * escaped. Creates the file when it does not exist.
+ */
+export function writeServerProperties(targetDir: string, keysToSet: Record<string, string>): void {
   const propsPath = path.join(targetDir, "server.properties");
   let content = "";
   let eol = "\n";
@@ -639,13 +714,9 @@ export function applyServerResourcePackProperties(
   }
 
   const lines = content ? content.split(/\r?\n/) : [];
-  const keysToSet: Record<string, string> = {
-    "resource-pack": srp.url,
-    "resource-pack-sha1": srp.sha1 || "",
-    "resource-pack-id": srp.id || srp.uuid || "",
-    "resource-pack-prompt": srp.prompt ? formatPromptJson(srp.prompt) : "",
-    "require-resource-pack": String(srp.required ?? true).toLowerCase(),
-  };
+  // A file that ends with a newline splits into a trailing empty element; drop it so the
+  // rewritten file does not grow a blank line on every write.
+  if (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
 
   const seenKeys = new Set<string>();
   const newLines = lines.map((line) => {
@@ -671,62 +742,6 @@ export function applyServerResourcePackProperties(
   const tmpPath = `${propsPath}.tmp.${process.pid}.${Date.now()}`;
   fs.writeFileSync(tmpPath, newLines.join(eol) + eol, "utf-8");
   fs.renameSync(tmpPath, propsPath);
-  console.log(`  ⚙ [Server Config] Configured resource-pack settings in server.properties`);
-}
-
-export function resetServerResourcePackProperties(targetDir: string): void {
-  const propsPath = path.join(targetDir, "server.properties");
-  if (!fs.existsSync(propsPath)) return;
-
-  let eol = "\n";
-  const raw = fs.readFileSync(propsPath);
-  if (raw.includes(Buffer.from("\r\n"))) {
-    eol = "\r\n";
-  }
-  const content = raw.toString("utf-8");
-
-  // Backup existing server.properties
-  const backupsDir = path.join(targetDir, ".lampas", "backups");
-  if (!fs.existsSync(backupsDir)) {
-    fs.mkdirSync(backupsDir, { recursive: true });
-  }
-  const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 15);
-  fs.copyFileSync(propsPath, path.join(backupsDir, `server.properties.${ts}`));
-
-  const lines = content.split(/\r?\n/);
-  const keysToReset: Record<string, string> = {
-    "resource-pack": "",
-    "resource-pack-sha1": "",
-    "resource-pack-id": "",
-    "resource-pack-prompt": "",
-    "require-resource-pack": "false",
-  };
-
-  const seenKeys = new Set<string>();
-  const newLines = lines.map((line) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("#") || trimmed.startsWith("!") || !trimmed.includes("=")) {
-      return line;
-    }
-    const eqIdx = line.indexOf("=");
-    const key = line.substring(0, eqIdx).trim();
-    if (key in keysToReset) {
-      seenKeys.add(key);
-      return `${key}=${keysToReset[key]}`;
-    }
-    return line;
-  });
-
-  for (const [key, value] of Object.entries(keysToReset)) {
-    if (!seenKeys.has(key)) {
-      newLines.push(`${key}=${value}`);
-    }
-  }
-
-  const tmpPath = `${propsPath}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmpPath, newLines.join(eol) + eol, "utf-8");
-  fs.renameSync(tmpPath, propsPath);
-  console.log(`  ⚙ [Server Config] Reset Lampas resource-pack settings in server.properties`);
 }
 
 export async function deployServer(options: DeployOptions): Promise<void> {

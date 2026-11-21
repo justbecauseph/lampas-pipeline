@@ -75,6 +75,8 @@ export interface PackConfig {
     };
   };
   server?: {
+    /** Server list MOTD written to server.properties by lampasctl sync (at most two lines). */
+    motd?: string;
     resourcepack?: {
       artifact?: string;
       required?: boolean;
@@ -279,6 +281,8 @@ export interface PackManifest {
   };
   protocol: number;
   resourcePack?: ServerResourcePackConfig;
+  /** Server manifest only: the server.properties motd. */
+  motd?: string;
   mods?: ModCatalogEntry[];
   files: ManifestFile[];
   configPatches?: ConfigPatch[];

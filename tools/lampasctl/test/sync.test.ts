@@ -3,7 +3,19 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { createHash } from "node:crypto";
-import { syncInstance, validateManifestForSync } from "../src/sync";
+import { escapePropertiesValue, syncInstance, validateManifestForSync } from "../src/sync";
+
+describe("escapePropertiesValue", () => {
+  // Expected strings decode back to the input under java.util.Properties.load rules: "\ " keeps a
+  // leading space, = : # ! need no escape after the key, \uXXXX is one UTF-16 unit.
+  test("escapes a leading space, separators stay literal, astral chars become surrogate escapes", () => {
+    expect(escapePropertiesValue(" a")).toBe("\\ a");
+    expect(escapePropertiesValue("a b")).toBe("a b");
+    expect(escapePropertiesValue("=:#!")).toBe("=:#!");
+    expect(escapePropertiesValue("\u{1F600}")).toBe("\\uD83D\\uDE00");
+    expect(escapePropertiesValue("tab\there")).toBe("tab\\there");
+  });
+});
 
 describe("server resource-pack manifest validation", () => {
   const manifestWithSize = (size: unknown) => ({
@@ -254,6 +266,109 @@ describe("sync verification modes", () => {
       await expect(syncInstance({ manifestPath, targetDir: target })).rejects.toThrow(
         /Unsafe relative path in manifest/,
       );
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("server motd", () => {
+  test("validateManifestForSync rejects motd on a client manifest and invalid values", () => {
+    const base = {
+      schemaVersion: 2,
+      pack: "Lampas 2",
+      version: "2.0.0",
+      minecraft: "26.2",
+      loader: { type: "fabric", version: "0.19.3" },
+      protocol: 3,
+      files: [],
+    };
+    expect(() =>
+      validateManifestForSync({ ...base, target: "server", motd: "Line one\nLine two" }),
+    ).not.toThrow();
+    expect(() => validateManifestForSync({ ...base, target: "client", motd: "Hi" })).toThrow(
+      "only valid on a server manifest",
+    );
+    expect(() => validateManifestForSync({ ...base, target: "server", motd: "a\nb\nc" })).toThrow(
+      "at most two lines",
+    );
+  });
+
+  test("sync writes the motd as an escaped Java property in one backed-up write", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-server-motd-"));
+    const target = path.join(dir, "server");
+    fs.mkdirSync(target, { recursive: true });
+    fs.writeFileSync(
+      path.join(target, "server.properties"),
+      ["server-port=25576", "motd=Old MOTD", "difficulty=hard", ""].join("\n"),
+      "utf-8",
+    );
+
+    const writeManifest = (name: string, extra: Record<string, unknown>) => {
+      const p = path.join(dir, name);
+      fs.writeFileSync(
+        p,
+        JSON.stringify({
+          schemaVersion: 2,
+          pack: "Lampas 2",
+          version: "2.0.0",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          protocol: 3,
+          files: [],
+          ...extra,
+        }),
+      );
+      return p;
+    };
+
+    try {
+      const withPack = writeManifest("with-pack.json", {
+        motd: "\u00a76Lampas 2: ???\nLorem C:\\path",
+        resourcePack: {
+          artifact: "lampas",
+          required: true,
+          filename: "Lampas-Resources-2.0.0.zip",
+          path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+          size: 1,
+          url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+          sha1: "abc1234567890123456789012345678901234567",
+          sha256: "a".repeat(64),
+        },
+      });
+      await syncInstance({ manifestPath: withPack, targetDir: target });
+
+      const content = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      // Properties.load reads \u00A7 as the section sign, \n as a line break and \\ as \.
+      expect(content).toBe(
+        [
+          "server-port=25576",
+          "motd=\\u00A76Lampas 2: ???\\nLorem C:\\\\path",
+          "difficulty=hard",
+          "resource-pack=https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+          "resource-pack-sha1=abc1234567890123456789012345678901234567",
+          "resource-pack-id=",
+          "resource-pack-prompt=",
+          "require-resource-pack=true",
+          "",
+        ].join("\n"),
+      );
+
+      // The single backup holds the file as it was before the sync.
+      const backups = fs.readdirSync(path.join(target, ".lampas", "backups"));
+      expect(backups.length).toBe(1);
+      expect(
+        fs.readFileSync(path.join(target, ".lampas", "backups", backups[0]!), "utf-8"),
+      ).toContain("motd=Old MOTD");
+
+      // Without motd in the manifest the last written value stays; the pack settings reset.
+      const without = writeManifest("without.json", {});
+      await syncInstance({ manifestPath: without, targetDir: target });
+      const after = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(after).toContain("motd=\\u00A76Lampas 2: ???\\nLorem C:\\\\path\n");
+      expect(after).toContain("require-resource-pack=false\n");
+      expect(after).not.toContain("\n\n");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

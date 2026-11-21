@@ -1842,3 +1842,50 @@ describe("keybind multi-key warning", () => {
     }
   });
 });
+
+describe("server motd in pack.toml", () => {
+  const packToml = (serverBlock: string) => `
+[pack]
+name = "Lampas 2"
+version = "2.0.0"
+minecraft = "26.2"
+
+[loader]
+type = "fabric"
+version = "0.19.3"
+
+${serverBlock}
+`;
+
+  test("[server] motd lands on the server manifest only", async () => {
+    const fixture = setupFixture({
+      packTomlContent: packToml('[server]\nmotd = "Lampas 2: ???\\nLorem ipsum dolet amor"'),
+    });
+    try {
+      const result = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+      expect(result.serverManifest.motd).toBe("Lampas 2: ???\nLorem ipsum dolet amor");
+      expect(result.clientManifest.motd).toBeUndefined();
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a three-line motd fails the build", async () => {
+    const fixture = setupFixture({ packTomlContent: packToml('[server]\nmotd = "a\\nb\\nc"') });
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        }),
+      ).rejects.toThrow("pack.toml [server] motd must have at most two lines");
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+});

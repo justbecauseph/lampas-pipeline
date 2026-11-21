@@ -31,7 +31,7 @@ import {
   validateProtectedClientFiles,
 } from "./config-patches";
 import { validateLoaderDefinition } from "./validator";
-import { validateManifestRules } from "./manifest-rules";
+import { assertServerMotd, validateManifestRules } from "./manifest-rules";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 import { resolvePortalBaseUrl } from "./portal";
 
@@ -412,6 +412,12 @@ export async function computeManifests(
 
   if (serverResourcePackConfig) {
     serverManifest.resourcePack = serverResourcePackConfig;
+  }
+
+  const motd = packConfig.server?.motd;
+  if (motd !== undefined) {
+    assertServerMotd(motd, "pack.toml [server] motd");
+    serverManifest.motd = motd;
   }
 
   const release: ReleaseDescriptor = {

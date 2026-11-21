@@ -56,6 +56,33 @@ const SERVER_PROTECTED_PATHS: readonly string[] = [
   ".backups/",
 ];
 
+/** Longest server MOTD, in UTF-16 code units. The Portal enforces the same limit. */
+export const MAX_MOTD_LENGTH = 512;
+
+/**
+ * The server MOTD rules, shared with the Portal: a non-empty string of at most MAX_MOTD_LENGTH
+ * characters and at most two lines (the multiplayer list shows two), with no surrounding
+ * whitespace and no control characters other than the one line break. Section-sign formatting
+ * codes and other non-ASCII text are allowed.
+ */
+export function assertServerMotd(motd: unknown, label: string): asserts motd is string {
+  if (typeof motd !== "string" || motd.length === 0) {
+    throw new Error(`${label} must be a non-empty string.`);
+  }
+  if (motd.length > MAX_MOTD_LENGTH) {
+    throw new Error(`${label} is ${motd.length} characters, above the ${MAX_MOTD_LENGTH} limit.`);
+  }
+  if (motd !== motd.trim()) {
+    throw new Error(`${label} must not start or end with whitespace.`);
+  }
+  if (/[\u0000-\u0009\u000B-\u001F\u007F]/.test(motd)) {
+    throw new Error(`${label} must not contain control characters other than a line break.`);
+  }
+  if (motd.split("\n").length > 2) {
+    throw new Error(`${label} must have at most two lines.`);
+  }
+}
+
 /** The Portal's isSafeManifestPath: no padding, no NUL, no backslash, no rooted or empty or dot segments. */
 export function isPortalSafePath(value: string): boolean {
   if (!value || value.includes("\0") || value.includes("\\")) return false;
@@ -258,6 +285,9 @@ function assertEnvelope(manifest: PackManifest): void {
   if (target === "client" && manifest.resourcePack !== undefined) {
     throw new Error("resourcePack is only valid on a server manifest.");
   }
+  if (target === "client" && manifest.motd !== undefined) {
+    throw new Error("motd is only valid on a server manifest.");
+  }
   if (target === "server" && manifest.configPatches !== undefined) {
     throw new Error("configPatches are only valid on a client manifest.");
   }
@@ -398,6 +428,9 @@ export function validateManifestRules(manifest: PackManifest): void {
 
   if (manifest.resourcePack !== undefined) {
     assertServerResourcePack(manifest.resourcePack);
+  }
+  if (manifest.motd !== undefined) {
+    assertServerMotd(manifest.motd, "server manifest motd");
   }
   if (manifest.configPatches !== undefined) {
     if (manifest.configPatches.length > MAX_ARRAY_LENGTH) {

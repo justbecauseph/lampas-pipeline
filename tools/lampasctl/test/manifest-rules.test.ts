@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { validateClientPreserveList, validateConfigPatches } from "../src/config-patches";
-import { validateManifestRules } from "../src/manifest-rules";
+import { MAX_MOTD_LENGTH, validateManifestRules } from "../src/manifest-rules";
 import { canonicalizeRelativePath } from "../src/utils";
 
 // Expectations follow lampas2-portal lib/pack-manifest-schema.ts and lampas-launcher
@@ -433,5 +433,28 @@ describe("emitted manifest rules (Portal and launcher)", () => {
     expect(() =>
       validateManifestRules(manifest("client", [], { configPatches: shared })),
     ).not.toThrow();
+  });
+});
+
+describe("server motd rules", () => {
+  test("motd is server-only and follows the shared Portal rules", () => {
+    const server = (motd: unknown) => manifest("server", [], { motd });
+    expect(() => validateManifestRules(server("\u00a76Lampas 2: ???\nLorem ipsum"))).not.toThrow();
+    expect(() => validateManifestRules(server("x".repeat(MAX_MOTD_LENGTH)))).not.toThrow();
+    expect(() => validateManifestRules(manifest("client", [], { motd: "Hi" }))).toThrow(
+      "motd is only valid on a server manifest",
+    );
+    expect(() => validateManifestRules(server(""))).toThrow("non-empty string");
+    expect(() => validateManifestRules(server(42))).toThrow("non-empty string");
+    expect(() => validateManifestRules(server("x".repeat(MAX_MOTD_LENGTH + 1)))).toThrow(
+      "above the 512 limit",
+    );
+    expect(() => validateManifestRules(server("a\nb\nc"))).toThrow("at most two lines");
+    expect(() => validateManifestRules(server("a\r\nb"))).toThrow("control characters");
+    expect(() => validateManifestRules(server("a\tb"))).toThrow("control characters");
+    expect(() => validateManifestRules(server("a\u007fb"))).toThrow("control characters");
+    expect(() => validateManifestRules(server(" padded"))).toThrow("whitespace");
+    expect(() => validateManifestRules(server("Lampas 2\n"))).toThrow("whitespace");
+    expect(() => validateManifestRules(server("Lampas "))).toThrow("whitespace");
   });
 });

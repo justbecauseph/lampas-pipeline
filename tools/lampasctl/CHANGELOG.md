@@ -3,6 +3,20 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `[server] motd` in `pack.toml` sets the server-list MOTD. `manifest` puts it on the server manifest only, and `deploy`/`install` write it to `server.properties` as an escaped Java property (`\n`, `\\`, `\uXXXX` for non-ASCII such as `§` codes) and verify it after the write. The value must be non-empty, at most 512 characters and two lines, with no leading or trailing whitespace and no control characters other than the line break; `manifest`, `deploy` and the Portal reject anything else. Removing `motd` stops managing it and leaves the last value in place. The Portal must accept `motd` before a release that carries it can be published; an older `lampasctl` on the server ignores the field.
+
+### Changed
+
+- `deploy`/`install` set the resource-pack properties and `motd` in one `server.properties` write with one backup, logged as one `[Server Config]` line.
+
+### Fixed
+
+- Rewriting `server.properties` no longer adds a blank line on every sync.
+
 ## [1.6.0] - 2026-11-17
 
 ### Added

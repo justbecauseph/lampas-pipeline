@@ -575,6 +575,19 @@ prompt = '{"text":"The Lampas 2 resource pack"}'
   - `require-resource-pack=true`
 - **Zero Local Client Footprint**: The launcher does not manage this pack in its local `resourcepacks/` directory. The vanilla Minecraft client downloads it through the dedicated server resource-pack prompt on join.
 
+### Server List MOTD and Icon (`[server] motd`, `pack/server/server-icon.png`)
+
+```toml
+[server]
+motd = "Lampas 2: ???\nLorem ipsum dolet amor"
+```
+
+- `motd` travels in the server manifest (server only; the Portal validates it with the same rules) and `lampasctl deploy`/`install` writes it to `server.properties` in the same write as the resource-pack properties, escaped as a Java property (`\n`, `\\`, and `\uXXXX` for non-ASCII such as `§` codes).
+- Rules: non-empty, at most 512 characters, at most two lines (the multiplayer list shows two), no leading or trailing whitespace, no C0 control characters or DEL other than the one line break.
+- Removing `motd` from `pack.toml` stops managing it; the last written value stays in `server.properties`.
+- `pack/server/server-icon.png` (64×64 PNG) ships as a managed server file. Clients replace the icon cached in their `servers.dat` with the one the server sends on each ping.
+- The server-list title comes from the `name` in the seed `pack/client/servers.dat`, which the launcher places only when a player has no `servers.dat`.
+
 ### 3. Direct Connect Auto-Connection (`[launcher.play]`)
 
 ```toml

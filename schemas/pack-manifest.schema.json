@@ -167,6 +167,12 @@
         "$ref": "https://lampas.town/schemas/config-patches.schema.json#/$defs/configPatch"
       }
     },
+    "motd": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Server list MOTD written to server.properties (server manifest only, at most two lines)."
+    },
     "resourcePack": {
       "type": "object",
       "description": "Dedicated server forced resource pack metadata (server manifest only).",

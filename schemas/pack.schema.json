@@ -187,6 +187,12 @@
     "server": {
       "type": "object",
       "properties": {
+        "motd": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "description": "Server list MOTD that lampasctl sync writes to server.properties. At most two lines (write \\n in TOML for the line break); section-sign formatting codes are allowed."
+        },
         "resourcepack": {
           "type": "object",
           "properties": {
