@@ -50,6 +50,7 @@ export const ConfigPatchSchema = z.object({
   adapter: z.string().min(1, "Adapter must not be empty"),
   mode: z.enum(["enforce", "once"]),
   missingFile: z.enum(["defer", "create"]),
+  modId: z.string().min(1, "Mod id must not be empty").optional(),
   operations: z.array(ConfigOperationSchema).min(1, "At least one operation is required"),
 });
 
@@ -91,6 +92,7 @@ const CONTROL_OR_DEL_PATTERN = /[\x00-\x1f\x7f]/;
 const TEXT_CONTROL_PATTERN = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/;
 const PROTOTYPE_SENSITIVE_KEYS: readonly string[] = ["__proto__", "constructor", "prototype"];
 const MAX_PATCH_ID_LENGTH = 128;
+const MAX_MOD_ID_LENGTH = 128;
 const MAX_PATCH_PATH_LENGTH = 1024;
 const MAX_OPERATION_PATH_SEGMENTS = 64;
 const MAX_OPERATION_PATH_SEGMENT_LENGTH = 256;
@@ -302,6 +304,25 @@ function assertPatchId(id: string): void {
   }
 }
 
+/** Mod ids use the patch id rules: 1 to 128 characters with no control characters and no leading or trailing whitespace. */
+function assertModId(modId: string, patchId: string): void {
+  if (modId.length > MAX_MOD_ID_LENGTH) {
+    throw new Error(
+      `Config patch '${patchId}' modId is longer than ${MAX_MOD_ID_LENGTH} characters.`,
+    );
+  }
+  if (CONTROL_OR_DEL_PATTERN.test(modId)) {
+    throw new Error(
+      `Config patch '${patchId}' modId ${JSON.stringify(modId)} contains a control character.`,
+    );
+  }
+  if (modId !== modId.trim()) {
+    throw new Error(
+      `Config patch '${patchId}' modId ${JSON.stringify(modId)} has leading or trailing whitespace.`,
+    );
+  }
+}
+
 /** Mirrors the launcher's JSON value rules for `set` values: depth, string length, and object keys. */
 function assertJsonLimits(value: unknown, label: string, depth = 0): void {
   if (depth > MAX_JSON_DEPTH) {
@@ -402,10 +423,14 @@ function assertOperationLimits(op: ConfigOperation, patchId: string): void {
   }
 }
 
+/**
+ * Validates a client config patches file. `existingFiles` are the client manifest files. When
+ * `knownModIds` is supplied, every patch `modId` must be in it (the client mod catalog ids).
+ */
 export function validateConfigPatches(
   patchesFileContent: unknown,
   existingFiles: ManifestFile[] = [],
-  options: { warn?: boolean } = {},
+  options: { warn?: boolean; knownModIds?: ReadonlySet<string> } = {},
 ): ConfigPatch[] {
   const warn = options.warn !== false;
   const parseResult = ConfigPatchesFileSchema.safeParse(patchesFileContent);
@@ -437,6 +462,15 @@ export function validateConfigPatches(
     }
     seenIds.add(patch.id);
 
+    if (patch.modId !== undefined) {
+      assertModId(patch.modId, patch.id);
+      if (options.knownModIds && !options.knownModIds.has(patch.modId)) {
+        throw new Error(
+          `Config patch '${patch.id}' modId '${patch.modId}' is not a client mod in the mod catalog (side client or both).`,
+        );
+      }
+    }
+
     if (patch.path.length > MAX_PATCH_PATH_LENGTH) {
       throw new Error(
         `Config patch '${patch.id}' target path is longer than ${MAX_PATCH_PATH_LENGTH} characters.`,
@@ -449,22 +483,26 @@ export function validateConfigPatches(
     }
     const canonicalPath = canonicalizeRelativePath(patch.path);
 
-    // Whole-file ownership. A config patch may not target any whole-file entry, except a PRESERVE
-    // options.txt with options.txt keybind patches. This runs before the protected-path check, so a
-    // patch on a PRESERVE seed reports the collision.
+    // Whole-file ownership. A config patch may not target a MANAGED, OPTIONAL, or GENERATED whole-file
+    // entry. A PRESERVE entry may take config patches on a non-protected path, and on options.txt only
+    // for once-mode keybind rebinds. Any other PRESERVE collision (servers.dat, for example) is
+    // rejected. This runs before the protected-path check, so a patch on a PRESERVE seed reports the
+    // collision.
     const wholeFile = wholeFiles.get(pathKey(canonicalPath));
     if (wholeFile) {
       const policy = wholeFile.policy || "MANAGED";
-      const isOptionsSeedException =
-        wholeFile.path === OPTIONS_TXT && policy === "PRESERVE" && isOptionsKeybindPatch(patch);
-      if (!isOptionsSeedException) {
+      const isPreserveException =
+        policy === "PRESERVE" &&
+        (!isProtectedClientPath(canonicalPath) ||
+          (wholeFile.path === OPTIONS_TXT && isOptionsKeybindPatch(patch)));
+      if (!isPreserveException) {
         if (policy === "MANAGED") {
           throw new Error(
             `Config ownership conflict: '${canonicalPath}' is both a MANAGED artifact and a managed config-patch target.`,
           );
         }
         throw new Error(
-          `Config ownership conflict: '${canonicalPath}' is both a ${policy} whole-file entry and a config-patch target. The only exception is a PRESERVE options.txt with once-mode keybind rebinds.`,
+          `Config ownership conflict: '${canonicalPath}' is both a ${policy} whole-file entry and a config-patch target. A PRESERVE entry allows config patches on non-protected paths, and on options.txt only once-mode keybind rebinds.`,
         );
       }
     }
@@ -519,7 +557,20 @@ export function validateConfigPatches(
 
     if (warn && isOptionsKeybindPatch(patch) && patch.operations.length > 1) {
       console.warn(
-        `[Config Patch Warning] '${patch.id}' sets ${patch.operations.length} keys in options.txt. The launcher defers the whole patch while any one key line is missing from options.txt, so keep one keybind patch per mod.`,
+        `[Config Patch Warning] '${patch.id}' sets ${patch.operations.length} keys in options.txt. Keep one keybind patch per mod: modId gates the whole patch, and revision re-applies all of its keys together.`,
+      );
+    }
+
+    // A non-options.txt patch that defers without a PRESERVE seed gives a first-launch install the mod's
+    // defaults until the next launch. options.txt is exempt because its keybind lines are appended.
+    if (
+      warn &&
+      canonicalPath !== OPTIONS_TXT &&
+      patch.missingFile === "defer" &&
+      wholeFile?.policy !== "PRESERVE"
+    ) {
+      console.warn(
+        `[Config Patch Warning] '${patch.id}' uses missingFile 'defer' on '${canonicalPath}', which has no PRESERVE seed in the client manifest. A first-launch install keeps the mod's defaults until the next launch. Ship a seed with [client].preserve, or use 'create' if the mod accepts a partial file.`,
       );
     }
 

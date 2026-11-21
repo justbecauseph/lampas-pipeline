@@ -86,6 +86,28 @@ describe("schemas and IDE validation configuration", () => {
     expect(client.properties.preserve.items).toEqual({ type: "string", minLength: 1 });
   });
 
+  test("config patch schema admits an optional modId string of 1 to 128 characters and no other new key", () => {
+    const schema = JSON.parse(
+      fs.readFileSync(path.join(schemasDir, "config-patches.schema.json"), "utf-8"),
+    );
+    const patch = schema.$defs.configPatch;
+
+    expect(patch.additionalProperties).toBe(false);
+    expect(patch.required).not.toContain("modId");
+    expect(patch.properties.modId).toMatchObject({ type: "string", minLength: 1, maxLength: 128 });
+    expect(Object.keys(patch.properties).sort()).toEqual(
+      ["id", "revision", "path", "adapter", "mode", "missingFile", "modId", "operations"].sort(),
+    );
+
+    // The manifest schema reuses this definition, so modId reaches manifest configPatches too
+    const manifestSchema = JSON.parse(
+      fs.readFileSync(path.join(schemasDir, "pack-manifest.schema.json"), "utf-8"),
+    );
+    expect(manifestSchema.properties.configPatches.items.$ref).toBe(
+      "https://lampas.town/schemas/config-patches.schema.json#/$defs/configPatch",
+    );
+  });
+
   test("pack and manifest schemas declare the exact 14 allowlisted server.properties keys", async () => {
     const { MANAGED_SERVER_PROPERTY_KEYS } = await import("../src/manifest-rules");
     const packSchema = JSON.parse(

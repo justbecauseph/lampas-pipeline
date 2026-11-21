@@ -549,6 +549,25 @@ function assertServerResourcePack(srp: ServerResourcePackConfig): void {
   }
 }
 
+/**
+ * A patch modId is a launcher id (1 to 128 characters, no padding, control characters, or DEL) and
+ * must be the id of an entry in manifest.mods. A patch that sets modId is rejected when the manifest
+ * has no mods list.
+ */
+function assertConfigPatchModId(manifest: PackManifest, patch: ConfigPatch, index: number): void {
+  if (patch.modId === undefined) return;
+  const label = `client manifest configPatches[${index}] modId`;
+  assertBoundedString(patch.modId, MAX_ID_LENGTH, label);
+  if (!manifest.mods) {
+    throw new Error(
+      `${label} ${JSON.stringify(patch.modId)} needs a mods list, and the manifest has none.`,
+    );
+  }
+  if (!manifest.mods.some((mod) => mod.id === patch.modId)) {
+    throw new Error(`${label} ${JSON.stringify(patch.modId)} is not the id of an entry in mods.`);
+  }
+}
+
 /** The Portal's enforce rule: no two enforce operations may target the same path, within or across patches. */
 function assertEnforceOperationsUnique(patches: readonly ConfigPatch[]): void {
   const owners = new Map<string, string>();
@@ -613,6 +632,9 @@ export function validateManifestRules(manifest: PackManifest): void {
     if (manifest.configPatches.length > MAX_ARRAY_LENGTH) {
       throw new Error(`client manifest has more than ${MAX_ARRAY_LENGTH} config patches.`);
     }
+    manifest.configPatches.forEach((patch, index) =>
+      assertConfigPatchModId(manifest, patch, index),
+    );
     assertEnforceOperationsUnique(manifest.configPatches);
   }
 }

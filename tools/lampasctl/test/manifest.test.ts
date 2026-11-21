@@ -1384,26 +1384,210 @@ describe("[client].preserve seed files", () => {
     }
   });
 
-  test("a config patch on a listed PRESERVE file fails the ownership check", async () => {
+  test("a config patch on a listed PRESERVE config file is accepted in enforce and once modes", async () => {
+    for (const mode of ["enforce", "once"] as const) {
+      const patches = {
+        schemaVersion: 1,
+        patches: [{ ...JADE_PATCH.patches[0], mode }],
+      };
+      const fixture = setupFixture({
+        packTomlContent: clientPackToml(["config/jade/jade.json"]),
+        staticFiles: { client: [{ path: "config/jade/jade.json", content: "{}" }] },
+        configPatchesContent: patches,
+      });
+
+      try {
+        const { clientManifest } = await buildManifests(fixture);
+        expect(clientManifest.files.find((f) => f.path === "config/jade/jade.json")?.policy).toBe(
+          "PRESERVE",
+        );
+        expect(clientManifest.configPatches).toHaveLength(1);
+        expect(clientManifest.configPatches![0].path).toBe("config/jade/jade.json");
+        expect(clientManifest.configPatches![0].mode).toBe(mode);
+
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
+        expect(valid).toBe(true);
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("a config patch on a MANAGED config file is still an ownership conflict", async () => {
     const fixture = setupFixture({
-      packTomlContent: clientPackToml(["config/jade/jade.json"]),
+      packTomlContent: STATIC_PACK_TOML,
       staticFiles: { client: [{ path: "config/jade/jade.json", content: "{}" }] },
       configPatchesContent: JADE_PATCH,
     });
 
     try {
       await expect(buildManifests(fixture)).rejects.toThrow(
-        "Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry",
+        "Config ownership conflict: 'config/jade/jade.json' is both a MANAGED artifact",
       );
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+});
 
+describe("config patch modId and missingFile defer in the manifest build", () => {
+  const modArtifact = (id: string, side: "client" | "server" | "both") => ({
+    id,
+    name: id,
+    side,
+    filename: `${id}-1.0.0.jar`,
+    size: 1,
+    sha256: "a".repeat(64),
+    sha1: "b".repeat(40),
+    downloadUrl: `https://cdn.example.com/${id}.jar`,
+    artifactType: "mod",
+    provider: { type: "direct", url: `https://cdn.example.com/${id}.jar`, sha256: "a".repeat(64) },
+  });
+  const MOD_ARTIFACTS = {
+    jade: modArtifact("jade", "both"),
+    chatting: modArtifact("chatting", "client"),
+    "server-only": modArtifact("server-only", "server"),
+  };
+
+  const CONFIG_PATH = "config/jade/jade.json";
+  const jadePatches = (overrides: Record<string, unknown> = {}) => ({
+    schemaVersion: 1,
+    patches: [
+      {
+        id: "jade-hud",
+        revision: 1,
+        path: CONFIG_PATH,
+        adapter: "json",
+        mode: "enforce",
+        missingFile: "defer",
+        operations: [{ op: "set", path: ["enabled"], value: false }],
+        ...overrides,
+      },
+    ],
+  });
+  const seededPackToml = `${STATIC_PACK_TOML}\n[client]\npreserve = ["${CONFIG_PATH}"]\n`;
+
+  test("a modId naming a client or both-side catalog mod is emitted on the client manifest", async () => {
+    const fixture = setupFixture({
+      packTomlContent: seededPackToml,
+      lockArtifacts: MOD_ARTIFACTS,
+      staticFiles: { client: [{ path: CONFIG_PATH, content: "{}" }] },
+      configPatchesContent: jadePatches({ modId: "jade" }),
+    });
+
+    try {
+      const { clientManifest } = await buildManifests(fixture);
+      expect(clientManifest.configPatches![0].modId).toBe("jade");
+      expect(clientManifest.mods?.map((mod) => mod.id).sort()).toEqual(["chatting", "jade"]);
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a patch without modId is emitted without the field", async () => {
+    const fixture = setupFixture({
+      packTomlContent: seededPackToml,
+      lockArtifacts: MOD_ARTIFACTS,
+      staticFiles: { client: [{ path: CONFIG_PATH, content: "{}" }] },
+      configPatchesContent: jadePatches(),
+    });
+
+    try {
+      const { clientManifest } = await buildManifests(fixture);
+      expect("modId" in clientManifest.configPatches![0]).toBe(false);
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a modId naming a server-only mod, an unknown id, or a malformed id fails the build and validate", async () => {
+    const cases: Array<[string, string]> = [
+      ["server-only", "is not a client mod in the mod catalog (side client or both)."],
+      ["not-installed", "is not a client mod in the mod catalog (side client or both)."],
+      [" jade", "has leading or trailing whitespace"],
+    ];
+
+    for (const [modId, message] of cases) {
+      const fixture = setupFixture({
+        packTomlContent: seededPackToml,
+        lockArtifacts: MOD_ARTIFACTS,
+        staticFiles: { client: [{ path: CONFIG_PATH, content: "{}" }] },
+        configPatchesContent: jadePatches({ modId }),
+      });
+
+      try {
+        await expect(buildManifests(fixture)).rejects.toThrow(message);
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
+        expect(valid).toBe(false);
+      } finally {
+        fs.rmSync(fixture.dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("validate prints the defer warning once for a non-options.txt defer patch with no seed", async () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    const fixture = setupFixture({
+      packTomlContent: STATIC_PACK_TOML,
+      configPatchesContent: jadePatches(),
+    });
+
+    try {
       const valid = await validatePack({
         packDir: fixture.packDir,
         lockFile: fixture.lockFile,
         checkFabricMeta: false,
       });
-      expect(valid).toBe(false);
+      expect(valid).toBe(true);
+      const deferWarnings = warn.mock.calls.filter((call) =>
+        String(call[0]).includes("uses missingFile 'defer'"),
+      );
+      expect(deferWarnings).toHaveLength(1);
+      expect(String(deferWarnings[0][0])).toContain(`on '${CONFIG_PATH}'`);
     } finally {
+      warn.mockRestore();
       fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("no defer warning with a PRESERVE seed, or for a keybind patch on options.txt", async () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    const seeded = setupFixture({
+      packTomlContent: seededPackToml,
+      staticFiles: { client: [{ path: CONFIG_PATH, content: "{}" }] },
+      configPatchesContent: jadePatches(),
+    });
+    const keybind = setupFixture({
+      packTomlContent: STATIC_PACK_TOML,
+      staticFiles: { client: [{ path: "options.txt", content: "version:4000\n" }] },
+      configPatchesContent: KEYBIND_PATCHES,
+    });
+
+    try {
+      for (const fixture of [seeded, keybind]) {
+        const valid = await validatePack({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          checkFabricMeta: false,
+        });
+        expect(valid).toBe(true);
+      }
+      const deferWarnings = warn.mock.calls.filter((call) =>
+        String(call[0]).includes("uses missingFile 'defer'"),
+      );
+      expect(deferWarnings).toHaveLength(0);
+    } finally {
+      warn.mockRestore();
+      fs.rmSync(seeded.dir, { recursive: true, force: true });
+      fs.rmSync(keybind.dir, { recursive: true, force: true });
     }
   });
 });

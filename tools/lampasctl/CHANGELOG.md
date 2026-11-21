@@ -3,6 +3,18 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Config patches in `pack/config-patches/client.json` accept an optional `modId`, the id of a client mod (a catalog entry with side `client` or `both`). `manifest` and `validate` reject a `modId` that is not in the client mod catalog, that is malformed (1 to 128 characters, no padding, no control characters or DEL), or that is set on a manifest with no mod list. `modId` is emitted on the client manifest's `configPatches` only. It is for launcher gating: a launcher that reads it keeps the patch deferred, without recording `once` state, while the mod is disabled. The Portal and that launcher release (planned 1.9.0) must accept `modId` before a pack that sets it can be published.
+- `validate` and `manifest` print a non-fatal `[Config Patch Warning]` when a patch other than `options.txt` uses `missingFile: "defer"` and the pack has no `PRESERVE` seed for its path. A first-launch install keeps the mod's defaults until the next launch.
+
+### Changed
+
+- A `PRESERVE` file may share its path with config patches on a non-protected path, such as `config/jade/jade.json`, in `enforce` or `once` mode. A launcher must accept the pairing (planned 1.9.0), and the Portal must accept it, before a pack that uses it can be published. `options.txt` still accepts only once-mode keybind rebinds, `servers.dat` and the other protected paths still reject every patch, and `MANAGED`, `OPTIONAL` and `GENERATED` files still reject every patch.
+- The multi-key `options.txt` warning no longer says the launcher defers the whole patch while a key line is missing. It now gives the reasons to keep one keybind patch per mod: `modId` gates the whole patch, and `revision` re-applies all of its keys together.
+
 ## [1.8.0] - 2026-11-22
 
 ### Added

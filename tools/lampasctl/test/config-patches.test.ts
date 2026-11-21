@@ -22,6 +22,20 @@ function keybindPatch(overrides: Record<string, unknown> = {}): Record<string, u
   };
 }
 
+// Valid enforce-mode json patch on a non-protected path; tests override one field at a time.
+function jadePatch(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: "jade-hud",
+    revision: 1,
+    path: "config/jade/jade.json",
+    adapter: "json",
+    mode: "enforce",
+    missingFile: "defer",
+    operations: [{ op: "set", path: ["enabled"], value: false }],
+    ...overrides,
+  };
+}
+
 function validateSingle(patch: Record<string, unknown>) {
   return validateConfigPatches({ schemaVersion: 1, patches: [patch] });
 }
@@ -511,53 +525,62 @@ describe("pipeline: config patch validation and manifest emission", () => {
     }
   });
 
-  test("whole-file entries of either policy conflict with a config patch, except a PRESERVE options.txt keybind patch", () => {
+  test("a PRESERVE whole-file entry accepts config patches on a non-protected path, in enforce and once modes", () => {
     const preserved = (p: string) => ({ path: p, policy: "PRESERVE" }) as any;
-    const managed = (p: string) => ({ path: p, policy: "MANAGED" }) as any;
 
-    const jadePatch = {
-      id: "jade-hud",
-      revision: 1,
-      path: "config/jade/jade.json",
-      adapter: "json",
-      mode: "enforce",
-      missingFile: "defer",
-      operations: [{ op: "set", path: ["enabled"], value: false }],
-    };
+    for (const mode of ["enforce", "once"] as const) {
+      const accepted = validateConfigPatches({ schemaVersion: 1, patches: [jadePatch({ mode })] }, [
+        preserved("config/jade/jade.json"),
+      ]);
+      expect(accepted).toHaveLength(1);
+      expect(accepted[0].path).toBe("config/jade/jade.json");
+    }
+  });
+
+  test("MANAGED, OPTIONAL, and GENERATED whole-file entries reject config patches on non-protected paths", () => {
+    const whole = (policy: string) => ({ path: "config/jade/jade.json", policy }) as any;
 
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
-        preserved("config/jade/jade.json"),
-      ]),
-    ).toThrow(
-      "Config ownership conflict: 'config/jade/jade.json' is both a PRESERVE whole-file entry",
-    );
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, [whole("MANAGED")]),
+    ).toThrow("is both a MANAGED artifact and a managed config-patch target.");
 
     // Case-insensitive collision, as the launcher's destination keys are case-folded on Windows
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
-        preserved("Config/Jade/Jade.json"),
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, [
+        { path: "Config/Jade/Jade.json", policy: "MANAGED" } as any,
       ]),
-    ).toThrow("is both a PRESERVE whole-file entry");
+    ).toThrow("Config ownership conflict: 'config/jade/jade.json' is both a MANAGED artifact");
 
-    expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch] }, [
-        managed("config/jade/jade.json"),
-      ]),
-    ).toThrow("is both a MANAGED artifact and a managed config-patch target.");
+    for (const policy of ["OPTIONAL", "GENERATED"]) {
+      expect(() =>
+        validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, [whole(policy)]),
+      ).toThrow("Config ownership conflict: 'config/jade/jade.json'");
+    }
+  });
 
-    // A PRESERVE options.txt with a once keybind patch is the one allowed collision
+  test("a PRESERVE options.txt accepts only once-mode keybind rebinds", () => {
+    const preserved = (p: string) => ({ path: p, policy: "PRESERVE" }) as any;
+
     const allowed = validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [
       preserved("options.txt"),
     ]);
     expect(allowed).toHaveLength(1);
 
-    // A MANAGED options.txt is never allowed a config patch
+    // A non-keybind patch on the PRESERVE options.txt collides with it
     expect(() =>
-      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [
-        managed("options.txt"),
-      ]),
-    ).toThrow("Config ownership conflict: 'options.txt' is both a MANAGED artifact");
+      validateConfigPatches(
+        {
+          schemaVersion: 1,
+          patches: [
+            keybindPatch({
+              id: "gui-scale",
+              operations: [{ op: "set", path: ["guiScale"], value: "2" }],
+            }),
+          ],
+        },
+        [preserved("options.txt")],
+      ),
+    ).toThrow("Config ownership conflict: 'options.txt' is both a PRESERVE whole-file entry");
 
     // An enforce-mode keybind patch is not the exception, so it collides with the PRESERVE entry
     expect(() =>
@@ -565,6 +588,17 @@ describe("pipeline: config patch validation and manifest emission", () => {
         preserved("options.txt"),
       ]),
     ).toThrow("is both a PRESERVE whole-file entry and a config-patch target");
+
+    // A MANAGED options.txt is never allowed a config patch
+    expect(() =>
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, [
+        { path: "options.txt", policy: "MANAGED" } as any,
+      ]),
+    ).toThrow("Config ownership conflict: 'options.txt' is both a MANAGED artifact");
+  });
+
+  test("a PRESERVE servers.dat rejects every config patch, and an unlisted servers.dat is a protected-path error", () => {
+    const preserved = (p: string) => ({ path: p, policy: "PRESERVE" }) as any;
 
     // servers.dat is a seed with no keybind exception: any patch on a PRESERVE servers.dat collides
     const serversPatch = {
@@ -592,5 +626,107 @@ describe("pipeline: config patch validation and manifest emission", () => {
     expect(() => validateConfigPatches({ schemaVersion: 1, patches: [serversPatch] }, [])).toThrow(
       "targets launcher-protected path 'servers.dat'",
     );
+  });
+
+  test("modId is optional and a valid modId is kept on the emitted patch", () => {
+    const [withoutModId] = validateSingle(jadePatch());
+    expect("modId" in withoutModId).toBe(false);
+
+    const [withModId] = validateConfigPatches(
+      { schemaVersion: 1, patches: [jadePatch({ modId: "jade" })] },
+      [],
+      { knownModIds: new Set(["jade"]) },
+    );
+    expect(withModId.modId).toBe("jade");
+  });
+
+  test("modId must be in knownModIds when that set is supplied, and is not checked otherwise", () => {
+    const patches = { schemaVersion: 1, patches: [jadePatch({ modId: "jade-unknown" })] };
+
+    expect(validateConfigPatches(patches, [])[0].modId).toBe("jade-unknown");
+    expect(() =>
+      validateConfigPatches(patches, [], { knownModIds: new Set(["jade", "chatting"]) }),
+    ).toThrow(
+      "Config patch 'jade-hud' modId 'jade-unknown' is not a client mod in the mod catalog (side client or both).",
+    );
+  });
+
+  test("modId follows the patch id rules: 1 to 128 characters, no control characters or DEL, no padding", () => {
+    const knownModIds = new Set(["x".repeat(128)]);
+    const check = (modId: unknown) =>
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch({ modId })] }, [], {
+        knownModIds,
+      });
+
+    expect(() => check("x".repeat(128))).not.toThrow();
+    expect(() => check("x".repeat(129))).toThrow(
+      "Config patch 'jade-hud' modId is longer than 128 characters.",
+    );
+    expect(() => check("jade\x01")).toThrow('modId "jade\\u0001" contains a control character.');
+    expect(() => check("jade\x7f")).toThrow("contains a control character");
+    expect(() => check(" jade")).toThrow("has leading or trailing whitespace");
+    expect(() => check("jade ")).toThrow("has leading or trailing whitespace");
+    expect(() => check("")).toThrow("Mod id must not be empty");
+    expect(() => check(7)).toThrow("Invalid config patches file schema");
+  });
+
+  test("warns, without failing, when a non-options.txt patch defers with no PRESERVE seed", () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const patches = validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, []);
+      expect(patches).toHaveLength(1);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(String(warn.mock.calls[0][0])).toContain(
+        "[Config Patch Warning] 'jade-hud' uses missingFile 'defer' on 'config/jade/jade.json', which has no PRESERVE seed",
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test("no defer warning when a PRESERVE seed exists, when missingFile is create, for options.txt, or with warn false", () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, [
+        { path: "config/jade/jade.json", policy: "PRESERVE" } as any,
+      ]);
+      expect(warn).not.toHaveBeenCalled();
+
+      validateConfigPatches(
+        { schemaVersion: 1, patches: [jadePatch({ missingFile: "create" })] },
+        [],
+      );
+      expect(warn).not.toHaveBeenCalled();
+
+      validateConfigPatches({ schemaVersion: 1, patches: [keybindPatch()] }, []);
+      expect(warn).not.toHaveBeenCalled();
+
+      validateConfigPatches({ schemaVersion: 1, patches: [jadePatch()] }, [], { warn: false });
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test("the multi-key options.txt warning names modId gating and revision, not deferral", () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      validateSingle(
+        keybindPatch({
+          id: "two-keys",
+          operations: [
+            { op: "set", path: ["key_key.snappy_tappy.toggle"], value: "key.keyboard.unknown" },
+            { op: "set", path: ["key_key.mod.dash"], value: "key.keyboard.x" },
+          ],
+        }),
+      );
+      const message = String(warn.mock.calls[0][0]);
+      expect(message).toContain("Keep one keybind patch per mod");
+      expect(message).toContain("modId gates the whole patch");
+      expect(message).toContain("revision re-applies all of its keys together");
+      expect(message).not.toContain("defers");
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

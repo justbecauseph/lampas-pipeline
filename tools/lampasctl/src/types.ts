@@ -283,6 +283,7 @@ export interface ConfigPatch {
   adapter: string;
   mode: ConfigPatchMode;
   missingFile: MissingFilePolicy;
+  modId?: string;
   operations: ConfigOperation[];
 }
 

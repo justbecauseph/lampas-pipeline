@@ -61,7 +61,7 @@ function patch(overrides: Record<string, unknown> = {}): any {
 
 /** Validates one patch through lampasctl's patch checks, which throw on rejected input. */
 function checkPatch(overrides: Record<string, unknown>): void {
-  validateConfigPatches({ schemaVersion: 1, patches: [patch(overrides)] });
+  validateConfigPatches({ schemaVersion: 1, patches: [patch(overrides)] }, [], { warn: false });
 }
 
 function srp(overrides: Record<string, unknown> = {}): any {
@@ -429,15 +429,20 @@ describe("emitted manifest rules (Portal and launcher)", () => {
         operations: [{ op: "set", path: ["enabled"], value: false }],
       });
 
-    const conflicting = validateConfigPatches({
-      schemaVersion: 1,
-      patches: [enforce("a"), enforce("b")],
-    });
+    const conflicting = validateConfigPatches(
+      { schemaVersion: 1, patches: [enforce("a"), enforce("b")] },
+      [],
+      { warn: false },
+    );
     expect(() =>
       validateManifestRules(manifest("client", [], { configPatches: conflicting })),
     ).toThrow("conflicting enforce operation");
 
-    const shared = validateConfigPatches({ schemaVersion: 1, patches: [once("a"), once("b")] });
+    const shared = validateConfigPatches(
+      { schemaVersion: 1, patches: [once("a"), once("b")] },
+      [],
+      { warn: false },
+    );
     expect(() =>
       validateManifestRules(manifest("client", [], { configPatches: shared })),
     ).not.toThrow();
@@ -645,5 +650,116 @@ describe("serverProperties rules", () => {
     ]) {
       expect(() => validateManifestRules(serverProps({ "bug-report-link": bad }))).toThrow();
     }
+  });
+});
+
+describe("config patch modId (Portal and launcher)", () => {
+  // Expectations follow lampas2-portal pack-manifest-schema.ts and lampas-launcher metadata-policy.ts:
+  // a patch modId is a 1 to 128 character id and must be the id of an entry in manifest.mods.
+  const catalogMod = (id: string): Record<string, unknown> => ({
+    id,
+    name: id,
+    side: "client",
+    filename: `${id}.jar`,
+    size: 1,
+  });
+
+  test("a modId that names an entry in manifest.mods is accepted", () => {
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], {
+          mods: [catalogMod("jade"), catalogMod("chatting")],
+          configPatches: [patch({ modId: "jade" })],
+        }),
+      ),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], {
+          mods: [catalogMod("x".repeat(128))],
+          configPatches: [patch({ modId: "x".repeat(128) })],
+        }),
+      ),
+    ).not.toThrow();
+  });
+
+  test("a patch without modId is accepted with or without a mods list", () => {
+    expect(() =>
+      validateManifestRules(manifest("client", [], { configPatches: [patch()] })),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], { mods: [catalogMod("jade")], configPatches: [patch()] }),
+      ),
+    ).not.toThrow();
+  });
+
+  test("a modId is rejected when the manifest has no mods list", () => {
+    expect(() =>
+      validateManifestRules(manifest("client", [], { configPatches: [patch({ modId: "jade" })] })),
+    ).toThrow('client manifest configPatches[0] modId "jade" needs a mods list');
+  });
+
+  test("a modId must be the id of an entry in manifest.mods", () => {
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], {
+          mods: [catalogMod("chatting")],
+          configPatches: [patch({ modId: "jade" })],
+        }),
+      ),
+    ).toThrow('client manifest configPatches[0] modId "jade" is not the id of an entry in mods');
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], { mods: [], configPatches: [patch({ modId: "jade" })] }),
+      ),
+    ).toThrow("is not the id of an entry in mods");
+    // Ids match exactly, as the Portal's Set lookup does
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], {
+          mods: [catalogMod("Jade")],
+          configPatches: [patch({ modId: "jade" })],
+        }),
+      ),
+    ).toThrow("is not the id of an entry in mods");
+  });
+
+  test("the index in the error names the offending patch", () => {
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [], {
+          mods: [catalogMod("jade")],
+          configPatches: [
+            patch({ id: "a", path: "config/a.json", modId: "jade" }),
+            patch({ id: "b", path: "config/b.json", modId: "missing" }),
+          ],
+        }),
+      ),
+    ).toThrow("configPatches[1] modId");
+  });
+
+  test("a malformed modId is rejected: padding, control characters, DEL, empty, and over 128 characters", () => {
+    const mods = [catalogMod("jade")];
+    const check = (modId: string) =>
+      validateManifestRules(manifest("client", [], { mods, configPatches: [patch({ modId })] }));
+
+    for (const modId of [" jade", "jade ", "ja\x01de", "jade\x7f", "", "x".repeat(129)]) {
+      expect(() => check(modId)).toThrow(
+        "modId must be a string of 1 to 128 characters without padding, control characters, or DEL",
+      );
+    }
+  });
+
+  test("a PRESERVE config file may share its path with a config patch on the manifest", () => {
+    // The Portal and launcher accept PRESERVE + configPatch on a non-protected path
+    expect(() =>
+      validateManifestRules(
+        manifest("client", [file("config/jade/jade.json", { policy: "PRESERVE" })], {
+          mods: [catalogMod("jade")],
+          configPatches: [patch({ modId: "jade" })],
+        }),
+      ),
+    ).not.toThrow();
   });
 });

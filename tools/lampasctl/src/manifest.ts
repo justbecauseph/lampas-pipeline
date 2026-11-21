@@ -302,7 +302,9 @@ export async function computeManifests(
   let clientConfigPatches: ConfigPatch[] | undefined = undefined;
   if (fs.existsSync(clientPatchesPath)) {
     const rawPatches = readJsonFile<any>(clientPatchesPath);
-    clientConfigPatches = validateConfigPatches(rawPatches, allClientFiles);
+    clientConfigPatches = validateConfigPatches(rawPatches, allClientFiles, {
+      knownModIds: new Set(clientModsCatalog.map((mod) => mod.id)),
+    });
   }
 
   const clientManifest: PackManifest = {

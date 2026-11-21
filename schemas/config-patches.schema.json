@@ -60,6 +60,12 @@
           "enum": ["defer", "create"],
           "description": "'defer' waits until target file exists; 'create' creates the file if missing (not allowed for text adapter)."
         },
+        "modId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Optional client mod id (a manifest mods[].id with side client or both). The launcher keeps the patch deferred, without recording once-mode state, while that mod is disabled."
+        },
         "operations": {
           "type": "array",
           "minItems": 1,
