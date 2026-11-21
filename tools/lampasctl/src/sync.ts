@@ -13,12 +13,18 @@ import {
   writeJsonFile,
 } from "./utils";
 import { backupDirectory } from "./backup";
-import { assertServerMotd } from "./manifest-rules";
+import { assertServerMotd, assertServerProperties } from "./manifest-rules";
 import { deployTokenFromEnv, resolveRelease } from "./release-resolver";
 import { prepareFabricServerRuntime, validateRuntimeDefinition } from "./fabric-runtime";
 import { DeploymentTransaction } from "./transaction";
 import { logVerbose } from "./log";
-import type { InstallationState, ManifestFile, PackManifest, ServerRuntimeState } from "./types";
+import type {
+  InstallationState,
+  ManagedServerProperties,
+  ManifestFile,
+  PackManifest,
+  ServerRuntimeState,
+} from "./types";
 
 export interface SyncOptions {
   manifestPath?: string;
@@ -188,6 +194,13 @@ export function validateManifestForSync(
       throw new Error("Invalid manifest: 'motd' is only valid on a server manifest");
     }
     assertServerMotd(manifest.motd, "server manifest motd");
+  }
+
+  if (manifest.serverProperties !== undefined) {
+    if (manifest.target !== "server") {
+      throw new Error("Invalid manifest: 'serverProperties' is only valid on a server manifest");
+    }
+    assertServerProperties(manifest.serverProperties, "server manifest serverProperties");
   }
 
   if (manifest.resourcePack) {
@@ -469,6 +482,11 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
       serverProps.motd = escapePropertiesValue(manifest.motd);
       changes.push("set motd");
     }
+    if (manifest.serverProperties !== undefined) {
+      const serialized = serializeServerProperties(manifest.serverProperties);
+      Object.assign(serverProps, serialized);
+      changes.push(`set ${Object.keys(serialized).join(", ")}`);
+    }
     if (changes.length > 0) {
       writeServerProperties(targetDir, serverProps);
       console.log(`  ⚙ [Server Config] server.properties: ${changes.join(", ")}`);
@@ -510,6 +528,17 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
         throw new Error(
           `Final verification failed: server.properties 'motd' mismatch (expected '${expectedMotd}', got '${props["motd"]}')`,
         );
+      }
+    }
+    if (manifest.serverProperties !== undefined) {
+      for (const [key, expectedValue] of Object.entries(
+        serializeServerProperties(manifest.serverProperties),
+      )) {
+        if (props[key] !== expectedValue) {
+          throw new Error(
+            `Final verification failed: server.properties '${key}' mismatch (expected '${expectedValue}', got '${props[key]}')`,
+          );
+        }
       }
     }
     if (manifest.resourcePack) {
@@ -625,9 +654,9 @@ export async function syncInstance(options: SyncOptions): Promise<InstallationSt
 
 export function readServerPropertiesMap(targetDir: string): Record<string, string> {
   const propsPath = path.join(targetDir, "server.properties");
-  if (!fs.existsSync(propsPath)) return {};
+  if (!fs.existsSync(propsPath)) return Object.create(null) as Record<string, string>;
   const content = fs.readFileSync(propsPath, "utf-8");
-  const res: Record<string, string> = {};
+  const res = Object.create(null) as Record<string, string>;
   for (const line of content.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (trimmed.startsWith("#") || trimmed.startsWith("!") || !line.includes("=")) continue;
@@ -665,6 +694,17 @@ export const SERVER_RESOURCE_PACK_RESET_PROPERTIES: Readonly<Record<string, stri
   "resource-pack-prompt": "",
   "require-resource-pack": "false",
 };
+
+/** Serializes allowlisted serverProperties into Java .properties values (sorted by key). */
+export function serializeServerProperties(props: ManagedServerProperties): Record<string, string> {
+  const result = Object.create(null) as Record<string, string>;
+  const record = props as Record<string, unknown>;
+  for (const key of Object.keys(record).sort()) {
+    const value = record[key];
+    result[key] = typeof value === "string" ? escapePropertiesValue(value) : String(value);
+  }
+  return result;
+}
 
 /**
  * Escapes a value for a Java .properties file: backslash, line breaks and every character outside
@@ -726,7 +766,7 @@ export function writeServerProperties(targetDir: string, keysToSet: Record<strin
     }
     const eqIdx = line.indexOf("=");
     const key = line.substring(0, eqIdx).trim();
-    if (key in keysToSet) {
+    if (Object.prototype.hasOwnProperty.call(keysToSet, key)) {
       seenKeys.add(key);
       return `${key}=${keysToSet[key]}`;
     }

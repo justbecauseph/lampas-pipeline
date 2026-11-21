@@ -173,6 +173,71 @@
       "maxLength": 512,
       "description": "Server list MOTD written to server.properties (server manifest only, at most two lines)."
     },
+    "serverProperties": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "description": "Allowlisted server.properties overrides written to server.properties (server manifest only).",
+      "properties": {
+        "allow-flight": {
+          "type": "boolean"
+        },
+        "bug-report-link": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "chat-spam-threshold-seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182
+        },
+        "command-spam-threshold-seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["peaceful", "easy", "normal", "hard"]
+        },
+        "enable-code-of-conduct": {
+          "type": "boolean"
+        },
+        "force-gamemode": {
+          "type": "boolean"
+        },
+        "gamemode": {
+          "type": "string",
+          "enum": ["survival", "creative", "adventure", "spectator"]
+        },
+        "hardcore": {
+          "type": "boolean"
+        },
+        "hide-online-players": {
+          "type": "boolean"
+        },
+        "max-tick-time": {
+          "type": "integer",
+          "minimum": -1,
+          "maximum": 9223372036854
+        },
+        "pause-when-empty-seconds": {
+          "type": "integer",
+          "minimum": -1,
+          "maximum": 107374182
+        },
+        "player-idle-timeout": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "spawn-protection": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      }
+    },
     "resourcePack": {
       "type": "object",
       "description": "Dedicated server forced resource pack metadata (server manifest only).",

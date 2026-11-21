@@ -46,6 +46,26 @@ export interface BlacklistTarget {
   versionId?: string | number;
 }
 
+export type ServerDifficulty = "peaceful" | "easy" | "normal" | "hard";
+export type ServerGamemode = "survival" | "creative" | "adventure" | "spectator";
+
+export interface ManagedServerProperties {
+  "allow-flight"?: boolean;
+  "bug-report-link"?: string;
+  "chat-spam-threshold-seconds"?: number;
+  "command-spam-threshold-seconds"?: number;
+  difficulty?: ServerDifficulty;
+  "enable-code-of-conduct"?: boolean;
+  "force-gamemode"?: boolean;
+  gamemode?: ServerGamemode;
+  hardcore?: boolean;
+  "hide-online-players"?: boolean;
+  "max-tick-time"?: number;
+  "pause-when-empty-seconds"?: number;
+  "player-idle-timeout"?: number;
+  "spawn-protection"?: number;
+}
+
 export interface PackConfig {
   pack: {
     name: string;
@@ -77,6 +97,8 @@ export interface PackConfig {
   server?: {
     /** Server list MOTD written to server.properties by lampasctl sync (at most two lines). */
     motd?: string;
+    /** Allowlisted server.properties overrides written by lampasctl sync. */
+    properties?: ManagedServerProperties;
     resourcepack?: {
       artifact?: string;
       required?: boolean;
@@ -283,6 +305,8 @@ export interface PackManifest {
   resourcePack?: ServerResourcePackConfig;
   /** Server manifest only: the server.properties motd. */
   motd?: string;
+  /** Server manifest only: allowlisted server.properties overrides. */
+  serverProperties?: ManagedServerProperties;
   mods?: ModCatalogEntry[];
   files: ManifestFile[];
   configPatches?: ConfigPatch[];

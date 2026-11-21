@@ -3,7 +3,12 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { createHash } from "node:crypto";
-import { escapePropertiesValue, syncInstance, validateManifestForSync } from "../src/sync";
+import {
+  escapePropertiesValue,
+  readServerPropertiesMap,
+  syncInstance,
+  validateManifestForSync,
+} from "../src/sync";
 
 describe("escapePropertiesValue", () => {
   // Expected strings decode back to the input under java.util.Properties.load rules: "\ " keeps a
@@ -369,6 +374,158 @@ describe("server motd", () => {
       expect(after).toContain("motd=\\u00A76Lampas 2: ???\\nLorem C:\\\\path\n");
       expect(after).toContain("require-resource-pack=false\n");
       expect(after).not.toContain("\n\n");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("serverProperties", () => {
+  test("validateManifestForSync rejects serverProperties on client manifests and invalid values", () => {
+    const base = {
+      schemaVersion: 2,
+      pack: "Lampas 2",
+      version: "2.0.0",
+      minecraft: "26.2",
+      loader: { type: "fabric", version: "0.19.3" },
+      protocol: 3,
+      files: [],
+    };
+    expect(() =>
+      validateManifestForSync({
+        ...base,
+        target: "server",
+        serverProperties: { "allow-flight": true, difficulty: "hard" },
+      }),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestForSync({
+        ...base,
+        target: "client",
+        serverProperties: { "allow-flight": true },
+      }),
+    ).toThrow("only valid on a server manifest");
+    expect(() =>
+      validateManifestForSync({
+        ...base,
+        target: "server",
+        serverProperties: { "server-port": 25576 },
+      }),
+    ).toThrow("unsupported property 'server-port'");
+  });
+
+  test("sync writes resourcePack, motd, and serverProperties in one backed-up write and preserves omitted keys", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-server-props-"));
+    const target = path.join(dir, "server");
+    fs.mkdirSync(target, { recursive: true });
+    fs.writeFileSync(
+      path.join(target, "server.properties"),
+      ["server-port=25576", "allow-flight=false", "difficulty=easy", "motd=Old", ""].join("\n"),
+      "utf-8",
+    );
+
+    const writeManifest = (name: string, extra: Record<string, unknown>) => {
+      const p = path.join(dir, name);
+      fs.writeFileSync(
+        p,
+        JSON.stringify({
+          schemaVersion: 2,
+          pack: "Lampas 2",
+          version: "2.0.0",
+          target: "server",
+          minecraft: "26.2",
+          loader: { type: "fabric", version: "0.19.3" },
+          protocol: 3,
+          files: [],
+          ...extra,
+        }),
+      );
+      return p;
+    };
+
+    try {
+      const first = writeManifest("first.json", {
+        motd: "Lampas 2",
+        resourcePack: {
+          artifact: "lampas",
+          required: true,
+          filename: "Lampas-Resources-2.0.0.zip",
+          path: "resourcepacks/Lampas-Resources-2.0.0.zip",
+          size: 1,
+          url: "https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+          sha1: "abc1234567890123456789012345678901234567",
+          sha256: "a".repeat(64),
+        },
+        serverProperties: {
+          "allow-flight": true,
+          "bug-report-link": "https://lampas.town/café?a=1",
+          difficulty: "hard",
+          "max-tick-time": -1,
+          "spawn-protection": 0,
+        },
+      });
+      await syncInstance({ manifestPath: first, targetDir: target });
+
+      const content = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(content).toBe(
+        [
+          "server-port=25576",
+          "allow-flight=true",
+          "difficulty=hard",
+          "motd=Lampas 2",
+          "resource-pack=https://cdn.lampas.gg/resources/Lampas-Resources-2.0.0.zip",
+          "resource-pack-sha1=abc1234567890123456789012345678901234567",
+          "resource-pack-id=",
+          "resource-pack-prompt=",
+          "require-resource-pack=true",
+          "bug-report-link=https://lampas.town/caf\\u00E9?a=1",
+          "max-tick-time=-1",
+          "spawn-protection=0",
+          "",
+        ].join("\n"),
+      );
+
+      // Single write produced a single backup containing the pre-sync content.
+      const backups = fs.readdirSync(path.join(target, ".lampas", "backups"));
+      expect(backups.length).toBe(1);
+      expect(
+        fs.readFileSync(path.join(target, ".lampas", "backups", backups[0]!), "utf-8"),
+      ).toContain("allow-flight=false");
+
+      // Clearing bug-report-link with empty string sets bug-report-link=.
+      const clearLink = writeManifest("clear-link.json", {
+        serverProperties: { "bug-report-link": "" },
+      });
+      await syncInstance({ manifestPath: clearLink, targetDir: target });
+      const cleared = fs.readFileSync(path.join(target, "server.properties"), "utf-8");
+      expect(cleared).toContain("bug-report-link=\n");
+      // Omitted serverProperties keys and motd stay as last written while resourcePack resets.
+      expect(cleared).toContain("allow-flight=true\n");
+      expect(cleared).toContain("difficulty=hard\n");
+      expect(cleared).toContain("max-tick-time=-1\n");
+      expect(cleared).toContain("spawn-protection=0\n");
+      expect(cleared).toContain("motd=Lampas 2\n");
+      expect(cleared).toContain("require-resource-pack=false\n");
+      expect(cleared).not.toContain("\n\n");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("readServerPropertiesMap returns a null-prototype map and handles prototype key names", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lampas-props-proto-"));
+    try {
+      fs.writeFileSync(
+        path.join(dir, "server.properties"),
+        ["allow-flight=true", "constructor=x", "__proto__=z", ""].join("\n"),
+        "utf-8",
+      );
+      const parsed = readServerPropertiesMap(dir);
+      expect(Object.getPrototypeOf(parsed)).toBeNull();
+      expect(parsed["allow-flight"]).toBe("true");
+      expect(parsed["constructor"]).toBe("x");
+      expect(parsed["__proto__"]).toBe("z");
+      expect(parsed["toString"]).toBeUndefined();
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

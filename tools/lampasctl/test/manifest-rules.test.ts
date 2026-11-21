@@ -1,6 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { validateClientPreserveList, validateConfigPatches } from "../src/config-patches";
-import { MAX_MOTD_LENGTH, validateManifestRules } from "../src/manifest-rules";
+import {
+  MANAGED_SERVER_PROPERTY_KEYS,
+  MAX_BUG_REPORT_LINK_LENGTH,
+  MAX_MOTD_LENGTH,
+  MAX_SERVER_PROPERTY_INT32,
+  MAX_SERVER_TICK_SECONDS,
+  MAX_SERVER_TICK_TIME,
+  validateManifestRules,
+} from "../src/manifest-rules";
 import { canonicalizeRelativePath } from "../src/utils";
 
 // Expectations follow lampas2-portal lib/pack-manifest-schema.ts and lampas-launcher
@@ -456,5 +464,186 @@ describe("server motd rules", () => {
     expect(() => validateManifestRules(server(" padded"))).toThrow("whitespace");
     expect(() => validateManifestRules(server("Lampas 2\n"))).toThrow("whitespace");
     expect(() => validateManifestRules(server("Lampas "))).toThrow("whitespace");
+  });
+});
+
+describe("serverProperties rules", () => {
+  const serverProps = (serverProperties: unknown) => manifest("server", [], { serverProperties });
+
+  test("accepts all 14 allowlisted properties and enforces server-only and non-empty rules", () => {
+    const allValid = {
+      "allow-flight": true,
+      "bug-report-link": "https://lampas.town/bugs?src=mc#new",
+      "chat-spam-threshold-seconds": 10,
+      "command-spam-threshold-seconds": 0,
+      difficulty: "hard",
+      "enable-code-of-conduct": false,
+      "force-gamemode": false,
+      gamemode: "survival",
+      hardcore: false,
+      "hide-online-players": true,
+      "max-tick-time": -1,
+      "pause-when-empty-seconds": -1,
+      "player-idle-timeout": 0,
+      "spawn-protection": 16,
+    };
+    expect(Object.keys(allValid).sort()).toEqual([...MANAGED_SERVER_PROPERTY_KEYS]);
+    expect(() => validateManifestRules(serverProps(allValid))).not.toThrow();
+
+    expect(() =>
+      validateManifestRules(manifest("client", [], { serverProperties: { "allow-flight": true } })),
+    ).toThrow("serverProperties is only valid on a server manifest");
+
+    expect(() => validateManifestRules(serverProps({}))).toThrow("at least one property");
+    expect(() => validateManifestRules(serverProps([]))).toThrow("must be an object");
+    expect(() => validateManifestRules(serverProps(null))).toThrow("must be an object");
+  });
+
+  test("rejects host-owned, unknown, and prototype keys", () => {
+    const rejectedKeys = [
+      "motd",
+      "resource-pack",
+      "rcon.password",
+      "view-distance",
+      "simulation-distance",
+      "level-name",
+      "server-name",
+      "constructor",
+    ];
+    for (const key of rejectedKeys) {
+      expect(() => validateManifestRules(serverProps({ [key]: "x" }))).toThrow(
+        `unsupported property '${key}'`,
+      );
+    }
+    const withProto = JSON.parse('{"__proto__":{"allow-flight":true}}');
+    expect(() => validateManifestRules(serverProps(withProto))).toThrow(
+      "unsupported property '__proto__'",
+    );
+  });
+
+  test("rejects wrong types, numeric difficulty/gamemode, and out-of-range integers", () => {
+    expect(() => validateManifestRules(serverProps({ "allow-flight": "true" }))).toThrow(
+      "must be a boolean",
+    );
+    expect(() => validateManifestRules(serverProps({ difficulty: 3 }))).toThrow("must be one of");
+    expect(() => validateManifestRules(serverProps({ difficulty: "HARD" }))).toThrow(
+      "must be one of",
+    );
+    expect(() => validateManifestRules(serverProps({ gamemode: "creative2" }))).toThrow(
+      "must be one of",
+    );
+    expect(() => validateManifestRules(serverProps({ "spawn-protection": 1.5 }))).toThrow(
+      "must be an integer",
+    );
+
+    // Boundaries accepted
+    expect(() =>
+      validateManifestRules(
+        serverProps({
+          "pause-when-empty-seconds": -1,
+          "max-tick-time": -1,
+          "spawn-protection": 0,
+          "player-idle-timeout": MAX_SERVER_PROPERTY_INT32,
+          "chat-spam-threshold-seconds": MAX_SERVER_TICK_SECONDS,
+          "command-spam-threshold-seconds": 0,
+        }),
+      ),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(
+        serverProps({
+          "pause-when-empty-seconds": MAX_SERVER_TICK_SECONDS,
+          "max-tick-time": MAX_SERVER_TICK_TIME,
+        }),
+      ),
+    ).not.toThrow();
+
+    // Out-of-range rejected
+    expect(() => validateManifestRules(serverProps({ "pause-when-empty-seconds": -2 }))).toThrow(
+      `between -1 and ${MAX_SERVER_TICK_SECONDS}`,
+    );
+    expect(() =>
+      validateManifestRules(
+        serverProps({ "pause-when-empty-seconds": MAX_SERVER_TICK_SECONDS + 1 }),
+      ),
+    ).toThrow(`between -1 and ${MAX_SERVER_TICK_SECONDS}`);
+    expect(() => validateManifestRules(serverProps({ "max-tick-time": -2 }))).toThrow(
+      `between -1 and ${MAX_SERVER_TICK_TIME}`,
+    );
+    expect(() =>
+      validateManifestRules(serverProps({ "max-tick-time": MAX_SERVER_TICK_TIME + 1 })),
+    ).toThrow(`between -1 and ${MAX_SERVER_TICK_TIME}`);
+    expect(() => validateManifestRules(serverProps({ "spawn-protection": -1 }))).toThrow(
+      "between 0 and 2147483647",
+    );
+    expect(() => validateManifestRules(serverProps({ "player-idle-timeout": -1 }))).toThrow(
+      "between 0 and 2147483647",
+    );
+    expect(() =>
+      validateManifestRules(
+        serverProps({ "chat-spam-threshold-seconds": MAX_SERVER_TICK_SECONDS + 1 }),
+      ),
+    ).toThrow(`between 0 and ${MAX_SERVER_TICK_SECONDS}`);
+    expect(() =>
+      validateManifestRules(
+        serverProps({ "command-spam-threshold-seconds": MAX_SERVER_TICK_SECONDS + 1 }),
+      ),
+    ).toThrow(`between 0 and ${MAX_SERVER_TICK_SECONDS}`);
+  });
+
+  test("validates bug-report-link empty string, HTTP(S) URLs, whitespace, controls, and UTF-16 length", () => {
+    expect(() => validateManifestRules(serverProps({ "bug-report-link": "" }))).not.toThrow();
+    expect(() =>
+      validateManifestRules(serverProps({ "bug-report-link": "http://localhost:3000/report" })),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(serverProps({ "bug-report-link": "https://lampas.town/bugs" })),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(serverProps({ "bug-report-link": "https://[::1]:8443/bugs" })),
+    ).not.toThrow();
+    expect(() =>
+      validateManifestRules(
+        serverProps({ "bug-report-link": "https://lampas.town/bugs?pct=100%25" }),
+      ),
+    ).not.toThrow();
+
+    const exactLimit = `https://example.com/${"a".repeat(MAX_BUG_REPORT_LINK_LENGTH - "https://example.com/".length)}`;
+    expect(exactLimit.length).toBe(MAX_BUG_REPORT_LINK_LENGTH);
+    expect(() =>
+      validateManifestRules(serverProps({ "bug-report-link": exactLimit })),
+    ).not.toThrow();
+
+    expect(() =>
+      validateManifestRules(serverProps({ "bug-report-link": `${exactLimit}a` })),
+    ).toThrow(`above the ${MAX_BUG_REPORT_LINK_LENGTH} limit`);
+
+    const surrogateLimit = `https://example.com/${"a".repeat(MAX_BUG_REPORT_LINK_LENGTH - "https://example.com/".length - 1)}\u{1F600}`;
+    expect(surrogateLimit.length).toBe(MAX_BUG_REPORT_LINK_LENGTH + 1);
+    expect(() => validateManifestRules(serverProps({ "bug-report-link": surrogateLimit }))).toThrow(
+      `above the ${MAX_BUG_REPORT_LINK_LENGTH} limit`,
+    );
+
+    for (const bad of [
+      "ftp://example.com/bugs",
+      "javascript:alert(1)",
+      "/bugs",
+      "http:///path",
+      "https:example.com/bugs",
+      "https://example.com/100%",
+      "https://example.com/a\\b",
+      "https://example.com/<tag>",
+      "https://example.com/{id}",
+      "https://example.com/?a[0]=1",
+      "https://example.com/\u0085",
+      "https://example.com/\u009f",
+      "https://example.com/a b",
+      " https://example.com",
+      "https://example.com ",
+      "https://example.com/\t",
+      "https://example.com/\n",
+    ]) {
+      expect(() => validateManifestRules(serverProps({ "bug-report-link": bad }))).toThrow();
+    }
   });
 });

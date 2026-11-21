@@ -3,6 +3,12 @@
 All notable changes to the `lampasctl` command-line distribution tool are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `[server.properties]` in `pack.toml` manages an allowlist of 14 safe `server.properties` keys (`allow-flight`, `bug-report-link`, `chat-spam-threshold-seconds`, `command-spam-threshold-seconds`, `difficulty`, `enable-code-of-conduct`, `force-gamemode`, `gamemode`, `hardcore`, `hide-online-players`, `max-tick-time`, `pause-when-empty-seconds`, `player-idle-timeout`, `spawn-protection`). `manifest` emits them in sorted key order as `serverProperties` on the server manifest only (omitting an empty `[server.properties]` table), and `deploy`/`install` write and verify them in the same single backed-up `server.properties` write as `resourcePack` and `motd`. Removing a key stops managing it and leaves the last written value in place. The Portal must accept `serverProperties` before a release that carries it can be published; an older `lampasctl` on the server ignores the field.
+
 ## [1.7.0] - 2026-11-21
 
 ### Added

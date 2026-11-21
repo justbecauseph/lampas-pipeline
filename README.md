@@ -588,6 +588,25 @@ motd = "Lampas 2: ???\nLorem ipsum dolet amor"
 - `pack/server/server-icon.png` (64×64 PNG) ships as a managed server file. Clients replace the icon cached in their `servers.dat` with the one the server sends on each ping.
 - The server-list title comes from the `name` in the seed `pack/client/servers.dat`, which the launcher places only when a player has no `servers.dat`.
 
+### Managed `server.properties` Overrides (`[server.properties]`)
+
+```toml
+[server.properties]
+allow-flight = true
+difficulty = "hard"
+pause-when-empty-seconds = -1
+max-tick-time = -1
+```
+
+- `[server.properties]` travels on the server manifest as `serverProperties` (server only; validated identically by `lampasctl` and the Portal) and `lampasctl deploy`/`install` writes all configured keys in the same backed-up `server.properties` write as `resourcePack` and `motd`, then verifies them.
+- **Allowlisted keys (14)**:
+  - `allow-flight`, `enable-code-of-conduct`, `force-gamemode`, `hardcore`, `hide-online-players` (`boolean`)
+  - `difficulty` (`"peaceful" | "easy" | "normal" | "hard"`), `gamemode` (`"survival" | "creative" | "adventure" | "spectator"`)
+  - `pause-when-empty-seconds` (`-1..107374182`), `max-tick-time` (`-1..9223372036854`), `spawn-protection` (`0..2147483647`), `player-idle-timeout` (`0..2147483647`), `chat-spam-threshold-seconds` (`0..107374182`), `command-spam-threshold-seconds` (`0..107374182`)
+  - `bug-report-link` (`""` to clear, or an `http://`/`https://` URL up to 2048 characters compatible with Java `URI`, with no whitespace or control characters)
+- Host-owned keys (secrets, ports, TLS/management settings, `view-distance`, `simulation-distance`, `level-name`, `max-players`, etc.) are rejected so a pack cannot overwrite host configuration.
+- Removing a key from `[server.properties]` stops managing it; the last written value stays in `server.properties`. Keys backed by Minecraft `MutableValue` (`allow-flight`, `difficulty`, `gamemode`, `pause-when-empty-seconds`, `spawn-protection`, `force-gamemode`, `hide-online-players`, `player-idle-timeout`) can be changed live via commands or MCMP, and reset to the `pack.toml` value on the next deploy/restart.
+
 ### 3. Direct Connect Auto-Connection (`[launcher.play]`)
 
 ```toml

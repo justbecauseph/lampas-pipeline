@@ -193,6 +193,84 @@
           "maxLength": 512,
           "description": "Server list MOTD that lampasctl sync writes to server.properties. At most two lines (write \\n in TOML for the line break); section-sign formatting codes are allowed."
         },
+        "properties": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Allowlisted server.properties overrides that lampasctl sync writes on deploy.",
+          "properties": {
+            "allow-flight": {
+              "type": "boolean",
+              "description": "Allow survival players to stay airborne (prevents false kicks from modded movement/spells)."
+            },
+            "bug-report-link": {
+              "type": "string",
+              "maxLength": 2048,
+              "description": "HTTP(S) URL for the Pause -> Report Bugs link, or empty string to clear it."
+            },
+            "chat-spam-threshold-seconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 107374182,
+              "description": "Vanilla chat spam threshold in seconds (0 disables throttling)."
+            },
+            "command-spam-threshold-seconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 107374182,
+              "description": "Vanilla command spam threshold in seconds (0 disables throttling)."
+            },
+            "difficulty": {
+              "type": "string",
+              "enum": ["peaceful", "easy", "normal", "hard"],
+              "description": "World difficulty."
+            },
+            "enable-code-of-conduct": {
+              "type": "boolean",
+              "description": "Show codeofconduct/*.txt on join."
+            },
+            "force-gamemode": {
+              "type": "boolean",
+              "description": "Reset joining players to the default gamemode."
+            },
+            "gamemode": {
+              "type": "string",
+              "enum": ["survival", "creative", "adventure", "spectator"],
+              "description": "Default player gamemode."
+            },
+            "hardcore": {
+              "type": "boolean",
+              "description": "Enable hardcore mode."
+            },
+            "hide-online-players": {
+              "type": "boolean",
+              "description": "Omit the player sample from server-list status pings."
+            },
+            "max-tick-time": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 9223372036854,
+              "description": "Dedicated server watchdog limit in milliseconds (-1 disables the watchdog)."
+            },
+            "pause-when-empty-seconds": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 107374182,
+              "description": "Seconds with zero players before pausing ticks (-1 disables pausing)."
+            },
+            "player-idle-timeout": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "description": "Minutes before kicking idle players (0 disables idle kicks)."
+            },
+            "spawn-protection": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "description": "Spawn protection radius around world spawn (0 disables)."
+            }
+          }
+        },
         "resourcepack": {
           "type": "object",
           "properties": {

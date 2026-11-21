@@ -12,6 +12,7 @@ import {
 } from "./utils";
 import type {
   ConfigPatch,
+  ManagedServerProperties,
   ManifestFile,
   ModCatalogEntry,
   PackConfig,
@@ -31,7 +32,7 @@ import {
   validateProtectedClientFiles,
 } from "./config-patches";
 import { validateLoaderDefinition } from "./validator";
-import { assertServerMotd, validateManifestRules } from "./manifest-rules";
+import { assertServerMotd, assertServerProperties, validateManifestRules } from "./manifest-rules";
 import { verifyFabricLoaderCompatibility } from "./fabric-meta-validator";
 import { resolvePortalBaseUrl } from "./portal";
 
@@ -418,6 +419,19 @@ export async function computeManifests(
   if (motd !== undefined) {
     assertServerMotd(motd, "pack.toml [server] motd");
     serverManifest.motd = motd;
+  }
+
+  const rawServerProps = packConfig.server?.properties;
+  if (rawServerProps !== undefined) {
+    assertServerProperties(rawServerProps, "pack.toml [server.properties]", { allowEmpty: true });
+    const keys = Object.keys(rawServerProps).sort() as Array<keyof ManagedServerProperties>;
+    if (keys.length > 0) {
+      const normalized: Record<string, unknown> = {};
+      for (const key of keys) {
+        normalized[key] = rawServerProps[key];
+      }
+      serverManifest.serverProperties = normalized as ManagedServerProperties;
+    }
   }
 
   const release: ReleaseDescriptor = {

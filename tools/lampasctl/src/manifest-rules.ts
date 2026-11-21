@@ -1,4 +1,12 @@
-import type { ConfigPatch, ManifestFile, PackManifest, ServerResourcePackConfig } from "./types";
+import type {
+  ConfigPatch,
+  ManagedServerProperties,
+  ManifestFile,
+  PackManifest,
+  ServerDifficulty,
+  ServerGamemode,
+  ServerResourcePackConfig,
+} from "./types";
 import { isProtectedClientPath, isSeedClientFile } from "./config-patches";
 import { canonicalizeRelativePath } from "./utils";
 
@@ -59,6 +67,44 @@ const SERVER_PROTECTED_PATHS: readonly string[] = [
 /** Longest server MOTD, in UTF-16 code units. The Portal enforces the same limit. */
 export const MAX_MOTD_LENGTH = 512;
 
+export const SERVER_DIFFICULTIES: readonly ServerDifficulty[] = [
+  "peaceful",
+  "easy",
+  "normal",
+  "hard",
+];
+export const SERVER_GAMEMODES: readonly ServerGamemode[] = [
+  "survival",
+  "creative",
+  "adventure",
+  "spectator",
+];
+export const MAX_SERVER_PROPERTY_INT32 = 2_147_483_647;
+/** floor(Long.MAX_VALUE / 1_000_000) so ServerWatchdog's maxTickTime * 1_000_000L never overflows Java long. */
+export const MAX_SERVER_TICK_TIME = 9_223_372_036_854;
+/** floor(Integer.MAX_VALUE / 20) so 20 * seconds (MinecraftServer pauseWhenEmptySeconds, TickThrottler) never overflows Java int. */
+export const MAX_SERVER_TICK_SECONDS = 107_374_182;
+export const MAX_BUG_REPORT_LINK_LENGTH = MAX_URL_LENGTH;
+
+export const MANAGED_SERVER_PROPERTY_KEYS = [
+  "allow-flight",
+  "bug-report-link",
+  "chat-spam-threshold-seconds",
+  "command-spam-threshold-seconds",
+  "difficulty",
+  "enable-code-of-conduct",
+  "force-gamemode",
+  "gamemode",
+  "hardcore",
+  "hide-online-players",
+  "max-tick-time",
+  "pause-when-empty-seconds",
+  "player-idle-timeout",
+  "spawn-protection",
+] as const;
+
+export type ManagedServerPropertyKey = (typeof MANAGED_SERVER_PROPERTY_KEYS)[number];
+
 /**
  * The server MOTD rules, shared with the Portal: a non-empty string of at most MAX_MOTD_LENGTH
  * characters and at most two lines (the multiplayer list shows two), with no surrounding
@@ -80,6 +126,131 @@ export function assertServerMotd(motd: unknown, label: string): asserts motd is 
   }
   if (motd.split("\n").length > 2) {
     throw new Error(`${label} must have at most two lines.`);
+  }
+}
+
+type ServerPropertyValidator = (value: unknown, label: string) => void;
+
+function assertBooleanProperty(value: unknown, label: string): void {
+  if (typeof value !== "boolean") {
+    throw new Error(`${label} must be a boolean.`);
+  }
+}
+
+function assertIntRangeProperty(value: unknown, min: number, max: number, label: string): void {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < min || value > max) {
+    throw new Error(`${label} must be an integer between ${min} and ${max}.`);
+  }
+}
+
+function assertEnumProperty(value: unknown, allowed: readonly string[], label: string): void {
+  if (typeof value !== "string" || !allowed.includes(value)) {
+    throw new Error(`${label} must be one of: ${allowed.join(", ")}.`);
+  }
+}
+
+const URI_CONTROL_PATTERN = /[\x00-\x1f\x7f-\x9f]/;
+const URI_DISALLOWED_ASCII_PATTERN = /[\\^`{|}"<>]/;
+const URI_BAD_PERCENT_PATTERN = /%(?![0-9a-fA-F]{2})/;
+const URI_IPV6_AUTHORITY_PATTERN = /^(?:[^@[\]]*@)?\[[0-9a-fA-F:.]+\](?::\d+)?$/;
+
+function assertBugReportLinkProperty(value: unknown, label: string): void {
+  if (typeof value !== "string") {
+    throw new Error(`${label} must be a string.`);
+  }
+  if (value === "") return;
+  if (value.length > MAX_BUG_REPORT_LINK_LENGTH) {
+    throw new Error(
+      `${label} is ${value.length} characters, above the ${MAX_BUG_REPORT_LINK_LENGTH} limit.`,
+    );
+  }
+  if (/\s/.test(value) || URI_CONTROL_PATTERN.test(value)) {
+    throw new Error(`${label} must not contain whitespace, control characters, or DEL.`);
+  }
+  if (!/^https?:\/\/[^/?#]/i.test(value)) {
+    throw new Error(`${label} must be an HTTP(S) URL with a host: ${JSON.stringify(value)}`);
+  }
+  if (URI_DISALLOWED_ASCII_PATTERN.test(value) || URI_BAD_PERCENT_PATTERN.test(value)) {
+    throw new Error(
+      `${label} contains characters or percent-escapes rejected by java.net.URI: ${JSON.stringify(value)}`,
+    );
+  }
+  const rest = value.slice(value.indexOf("//") + 2);
+  const endAuthority = rest.search(/[/?#]/);
+  const authority = endAuthority === -1 ? rest : rest.slice(0, endAuthority);
+  const afterAuthority = endAuthority === -1 ? "" : rest.slice(endAuthority);
+  if (
+    afterAuthority.includes("[") ||
+    afterAuthority.includes("]") ||
+    ((authority.includes("[") || authority.includes("]")) &&
+      !URI_IPV6_AUTHORITY_PATTERN.test(authority))
+  ) {
+    throw new Error(
+      `${label} has brackets outside a valid IPv6 host literal: ${JSON.stringify(value)}`,
+    );
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${label} must be an HTTP(S) URL or empty string: ${JSON.stringify(value)}`);
+  }
+  if (
+    (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+    parsed.hostname.length === 0
+  ) {
+    throw new Error(`${label} must be an HTTP(S) URL with a host: ${JSON.stringify(value)}`);
+  }
+}
+
+const SERVER_PROPERTY_VALIDATORS: ReadonlyMap<string, ServerPropertyValidator> = new Map<
+  ManagedServerPropertyKey,
+  ServerPropertyValidator
+>([
+  ["allow-flight", assertBooleanProperty],
+  ["bug-report-link", assertBugReportLinkProperty],
+  [
+    "chat-spam-threshold-seconds",
+    (v, l) => assertIntRangeProperty(v, 0, MAX_SERVER_TICK_SECONDS, l),
+  ],
+  [
+    "command-spam-threshold-seconds",
+    (v, l) => assertIntRangeProperty(v, 0, MAX_SERVER_TICK_SECONDS, l),
+  ],
+  ["difficulty", (v, l) => assertEnumProperty(v, SERVER_DIFFICULTIES, l)],
+  ["enable-code-of-conduct", assertBooleanProperty],
+  ["force-gamemode", assertBooleanProperty],
+  ["gamemode", (v, l) => assertEnumProperty(v, SERVER_GAMEMODES, l)],
+  ["hardcore", assertBooleanProperty],
+  ["hide-online-players", assertBooleanProperty],
+  ["max-tick-time", (v, l) => assertIntRangeProperty(v, -1, MAX_SERVER_TICK_TIME, l)],
+  ["pause-when-empty-seconds", (v, l) => assertIntRangeProperty(v, -1, MAX_SERVER_TICK_SECONDS, l)],
+  ["player-idle-timeout", (v, l) => assertIntRangeProperty(v, 0, MAX_SERVER_PROPERTY_INT32, l)],
+  ["spawn-protection", (v, l) => assertIntRangeProperty(v, 0, MAX_SERVER_PROPERTY_INT32, l)],
+]);
+
+/** Validates an allowlisted server.properties override object. Shared with the Portal. */
+export function assertServerProperties(
+  value: unknown,
+  label: string,
+  options: { allowEmpty?: boolean } = {},
+): asserts value is ManagedServerProperties {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${label} must be an object.`);
+  }
+  const record = value as Record<string, unknown>;
+  const keys = Object.keys(record);
+  if (keys.length === 0 && !options.allowEmpty) {
+    throw new Error(`${label} must set at least one property.`);
+  }
+  for (const key of keys) {
+    const validator = SERVER_PROPERTY_VALIDATORS.get(key);
+    if (!validator) {
+      throw new Error(
+        `${label} contains unsupported property '${key}'. Allowed keys: ${MANAGED_SERVER_PROPERTY_KEYS.join(", ")}.`,
+      );
+    }
+    validator(record[key], `${label} '${key}'`);
   }
 }
 
@@ -288,6 +459,9 @@ function assertEnvelope(manifest: PackManifest): void {
   if (target === "client" && manifest.motd !== undefined) {
     throw new Error("motd is only valid on a server manifest.");
   }
+  if (target === "client" && manifest.serverProperties !== undefined) {
+    throw new Error("serverProperties is only valid on a server manifest.");
+  }
   if (target === "server" && manifest.configPatches !== undefined) {
     throw new Error("configPatches are only valid on a client manifest.");
   }
@@ -431,6 +605,9 @@ export function validateManifestRules(manifest: PackManifest): void {
   }
   if (manifest.motd !== undefined) {
     assertServerMotd(manifest.motd, "server manifest motd");
+  }
+  if (manifest.serverProperties !== undefined) {
+    assertServerProperties(manifest.serverProperties, "server manifest serverProperties");
   }
   if (manifest.configPatches !== undefined) {
     if (manifest.configPatches.length > MAX_ARRAY_LENGTH) {

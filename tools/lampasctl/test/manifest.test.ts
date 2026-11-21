@@ -1888,4 +1888,76 @@ ${serverBlock}
       fs.rmSync(fixture.dir, { recursive: true, force: true });
     }
   });
+
+  test("[server.properties] lands on the server manifest in sorted key order", async () => {
+    const fixture = setupFixture({
+      packTomlContent: packToml(
+        [
+          "[server.properties]",
+          "pause-when-empty-seconds = -1",
+          'difficulty = "hard"',
+          "allow-flight = true",
+          "max-tick-time = -1",
+        ].join("\n"),
+      ),
+    });
+    try {
+      const result = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+      expect(result.serverManifest.serverProperties).toEqual({
+        "allow-flight": true,
+        difficulty: "hard",
+        "max-tick-time": -1,
+        "pause-when-empty-seconds": -1,
+      });
+      expect(Object.keys(result.serverManifest.serverProperties!)).toEqual([
+        "allow-flight",
+        "difficulty",
+        "max-tick-time",
+        "pause-when-empty-seconds",
+      ]);
+      expect(result.clientManifest.serverProperties).toBeUndefined();
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("an empty [server.properties] table omits serverProperties from the manifest", async () => {
+    const fixture = setupFixture({
+      packTomlContent: packToml("[server.properties]"),
+    });
+    try {
+      const result = await buildManifests({
+        packDir: fixture.packDir,
+        lockFile: fixture.lockFile,
+        outDir: fixture.outDir,
+      });
+      expect(result.serverManifest.serverProperties).toBeUndefined();
+      expect(result.clientManifest.serverProperties).toBeUndefined();
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a host-owned key in [server.properties] fails the build", async () => {
+    const fixture = setupFixture({
+      packTomlContent: packToml("[server.properties]\nserver-port = 25576"),
+    });
+    try {
+      await expect(
+        buildManifests({
+          packDir: fixture.packDir,
+          lockFile: fixture.lockFile,
+          outDir: fixture.outDir,
+        }),
+      ).rejects.toThrow(
+        "pack.toml [server.properties] contains unsupported property 'server-port'",
+      );
+    } finally {
+      fs.rmSync(fixture.dir, { recursive: true, force: true });
+    }
+  });
 });

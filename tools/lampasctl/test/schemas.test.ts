@@ -86,6 +86,32 @@ describe("schemas and IDE validation configuration", () => {
     expect(client.properties.preserve.items).toEqual({ type: "string", minLength: 1 });
   });
 
+  test("pack and manifest schemas declare the exact 14 allowlisted server.properties keys", async () => {
+    const { MANAGED_SERVER_PROPERTY_KEYS } = await import("../src/manifest-rules");
+    const packSchema = JSON.parse(
+      fs.readFileSync(path.join(schemasDir, "pack.schema.json"), "utf-8"),
+    );
+    const manifestSchema = JSON.parse(
+      fs.readFileSync(path.join(schemasDir, "pack-manifest.schema.json"), "utf-8"),
+    );
+
+    const packServerProps = packSchema.properties.server.properties.properties;
+    expect(packServerProps.type).toBe("object");
+    expect(packServerProps.additionalProperties).toBe(false);
+    expect(packServerProps.minProperties).toBeUndefined();
+    expect(Object.keys(packServerProps.properties).sort()).toEqual([
+      ...MANAGED_SERVER_PROPERTY_KEYS,
+    ]);
+
+    const manifestServerProps = manifestSchema.properties.serverProperties;
+    expect(manifestServerProps.type).toBe("object");
+    expect(manifestServerProps.additionalProperties).toBe(false);
+    expect(manifestServerProps.minProperties).toBe(1);
+    expect(Object.keys(manifestServerProps.properties).sort()).toEqual([
+      ...MANAGED_SERVER_PROPERTY_KEYS,
+    ]);
+  });
+
   test(".vscode/settings.json maps all schemas to appropriate file patterns", () => {
     expect(fs.existsSync(vscodeSettingsPath)).toBe(true);
     const settings = JSON.parse(fs.readFileSync(vscodeSettingsPath, "utf-8"));
